@@ -13,7 +13,7 @@ public class PluginClassLoader extends ClassLoader {
             // Load the target class using its binary name
             Class loadedMyClass = classLoader.loadClass(className);
 
-            System.out.println("Loaded class name: " + loadedMyClass.getName());
+//            System.out.println("Loaded class name: " + loadedMyClass.getName());
 
             // Create a new instance from the loaded class
             Constructor constructor = loadedMyClass.getConstructor();
@@ -24,8 +24,10 @@ public class PluginClassLoader extends ClassLoader {
             } else {
                 // Getting the target method from the loaded class and invoke it using its name
                 Method method = loadedMyClass.getMethod(methodName);
-                System.out.println("Invoked method name: " + method.getName());
+//                System.out.println("Invoked method name: " + method.getName());
                 method.invoke(myClassObject);
+
+                Logger.log("Plugin loaded successfully: " + className);
             }
 
         } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException |

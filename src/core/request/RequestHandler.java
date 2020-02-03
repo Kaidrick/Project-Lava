@@ -52,7 +52,8 @@ public final class RequestHandler<T extends BaseRequest> {
         dataOutputStream.write((jsonString + "\n").getBytes(StandardCharsets.UTF_8));
         dataOutputStream.flush();
 
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(dataInputStream));
+        BufferedReader bufferedReader = new BufferedReader(
+                new InputStreamReader(dataInputStream, StandardCharsets.UTF_8));
         String s = bufferedReader.readLine();
         dataOutputStream.close();
         socket.close();
