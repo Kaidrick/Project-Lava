@@ -17,6 +17,11 @@ public final class JsonRpcRequest {
         this.params = params;
     }
 
+    @Override
+    public String toString() {
+        return super.toString() + "|" + String.format("method: %s, params: %s", method, params);
+    }
+
     public static void main(String[] args) {
         Gson gson = new Gson();
 

@@ -1,5 +1,6 @@
 package core.request.server;
 
+import core.Logger;
 import core.request.BaseRequest;
 import core.request.RequestToServer;
 
@@ -26,7 +27,8 @@ public class ServerExecRequest extends RequestToServer {
 
     @Override
     public void resolve(String object) {
-        System.out.println(object);
+        String logMessage = luaString + "\nReturns: " + object;
+        Logger.log(logMessage, Logger.Level.DEBUG);
     }
 
     public static void main(String[] args) {

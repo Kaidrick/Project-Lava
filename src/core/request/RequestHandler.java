@@ -25,9 +25,9 @@ import java.util.stream.Collectors;
 public final class RequestHandler<T extends BaseRequest> {
     //
 //    private List<BaseRequest> waitList = new CopyOnWriteArrayList<>();
-    private Map<String, BaseRequest> waitMap = new ConcurrentHashMap<>();
-    private Map<String, String> resultMap = new ConcurrentHashMap<>();  // request ident, result
-    private Queue<BaseRequest> sendQueue = new LinkedBlockingQueue<>();
+    private Map<String, BaseRequest> waitMap = new HashMap<>();
+    private Map<String, String> resultMap = new HashMap<>();  // request ident, result
+    private Queue<BaseRequest> sendQueue = new ArrayDeque<>();
 
     private static final Gson gson = new Gson();
 
@@ -76,17 +76,23 @@ public final class RequestHandler<T extends BaseRequest> {
         Queue<BaseRequest> transmissionQueue = new ArrayDeque<>(sendQueue);
 //        System.out.println("sendQueue = " + sendQueue);
 //        System.out.println("transmissionQueue = " + transmissionQueue);
-        sendQueue.clear();
+        sendQueue.clear();  // TODO --> need more work and test
+
+//        for (int i = 0; i < transmissionQueue.size(); i++) {
+//            sendQueue.poll();
+//        }
 
         Map<Integer, List<JsonRpcRequest>> splitQueue = transmissionQueue.stream()
                 .collect(Collectors.groupingBy(BaseRequest::getPort,
                         Collectors.mapping(BaseRequest::toJsonRpcCall, Collectors.toList())));
 
+//        splitQueue.get(3010).stream().filter(e -> e.toString().contains("EXEC")).forEach(System.out::println);
+
 //        if(!transmissionQueue.toString().equals("[]"))
 //        System.out.println(transmissionQueue);
 
-        if(!splitQueue.toString().equals("{}"))
-        System.out.println(splitQueue);
+//        if(!splitQueue.toString().equals("{}"))
+//        System.out.println(splitQueue);
 
         splitQueue.forEach((port, queue) -> {
             transmissionQueue.forEach(r -> waitMap.put(r.getUuid(), r));
@@ -123,10 +129,6 @@ public final class RequestHandler<T extends BaseRequest> {
             // deserialize should be done separately? as per class?
 
         });
-
-
-        sendQueue.clear();
-
     }
 
 }

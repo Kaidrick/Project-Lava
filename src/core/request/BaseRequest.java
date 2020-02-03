@@ -74,7 +74,12 @@ public abstract class BaseRequest {
     }
 
 //    public static BaseRequest getFillerInstance() {
-//        return new BaseRequest(Level.MISSION) {};
+//        return new BaseRequest(Level.SERVER) {
+//            @Override
+//            public void resolve(String object) {
+//
+//            }
+//        };
 //    }
 
     public void prepareParameters() {
