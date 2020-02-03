@@ -17,9 +17,18 @@ for coa_name, coa_data in pairs(env.mission.coalition) do  -- parse coalition ta
                       if unit_data.skill == 'Client' then  -- is a playable unit, add to res_paste
                         local unit_name_idx = env.getValueDictByKey(unit_data.name)
                         res_paste[unit_name_idx] = {
-                        ['unit_name'] = env.getValueDictByKey(unit_data.name),  -- -> unit_name
-                        ['group_name'] = groupName,
-                        ['group_id'] = group_data.groupId
+                          ['unit_name'] = env.getValueDictByKey(unit_data.name),  -- -> unit_name
+                          ['group_name'] = groupName,
+                          ['group_id'] = group_data.groupId,
+                          ['type'] = unit_data.type,  -- -> type
+                          ['x'] = unit_data.x,
+                          ['y'] = unit_data.y,
+                          ['heading'] = unit_data.heading,
+                          ['country'] = countryName,
+                          ['category'] = category,
+                          ['onboard_num'] = unit_data.onboard_num,
+                          ['livery_id'] = unit_data.livery_id,
+                          ['start_type'] = group_data.route.points[1].type -- -> TakeOffGround
                         }
                       end
                     end --for unit_num, unit_data in pairs(group_data.units) do

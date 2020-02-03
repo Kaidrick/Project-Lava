@@ -8,8 +8,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-public class BoxOfPlayerInfo {
-    public static volatile Map<String, PlayerInfo> box = new HashMap<>();
+public final class BoxOfPlayerInfo {
+    private static volatile Map<String, PlayerInfo> box = new HashMap<>();
+
+    public static Map<String, PlayerInfo> peek() {
+        return new HashMap<>(box);
+    }
 
     public static void observeAll(Map<String, PlayerInfo> map) {
 

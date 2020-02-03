@@ -5,6 +5,7 @@ import core.object.PlayerInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+@FunctionalInterface
 public interface PlayerEnterServerObservable {
     List<PlayerEnterServerObservable> list = new ArrayList<>();
 

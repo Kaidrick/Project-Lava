@@ -2,9 +2,10 @@ package core.request;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import core.box.BoxOfExportUnit;
 import core.object.ExportObject;
-import core.request.export.ExportObjectDataRequest;
 import core.request.export.ExportFillerRequest;
+import core.request.export.ExportObjectDataRequest;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -18,11 +19,11 @@ public final class ExportPollingHandler extends PollingHandler {
     private static ExportPollingHandler instance;
 
     protected boolean isRequestDone = true;
-    protected int batchCount = 0;
-    protected List<ExportObject> groups = new ArrayList<>();
+    protected List<ExportObject> list = new ArrayList<>();
 
     private ExportPollingHandler() {
         super(PollEnv.EXPORT);
+        init();
     }
 
     public synchronized static ExportPollingHandler getInstance() {
@@ -32,81 +33,76 @@ public final class ExportPollingHandler extends PollingHandler {
         return instance;
     }
 
-    public void poll() throws IOException {
+    private void init() {
         int port = getPort();
+        Gson gson = new Gson();
+        String json;
+        List<JsonRpcRequest> container = new ArrayList<>();
 
+        ExportFillerRequest filler = new ExportFillerRequest();
+        container.add(filler.toJsonRpcCall());
+        json = gson.toJson(container);
+
+        try {
+            RequestHandler.sendAndGet(port, json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void poll() {
+        int port = getPort();
         Gson gson = new Gson();
 
         String json;
 
-//        TestExportEmptyRequest filler = new TestExportEmptyRequest();
-//        filler.prepareParameters();
-//        List<RequestToExportAsync> container = new ArrayList<>();
-//        container.add(filler);
-//        json = gson.toJson(container);
-//        System.out.println(json);
-//        String s = SendManager.sendAndGet(port, json);
-
-
         flipCount++;
-        if (flipCount >= 5 && isRequestDone) {
+        if (flipCount >= 20 && isRequestDone) {
 
             flipCount = 0;
             ExportObjectDataRequest request = new ExportObjectDataRequest();
-            request.prepareParameters();
-            List<ExportObjectDataRequest> container = new ArrayList<>();
-            container.add(request);
+            List<JsonRpcRequest> container = new ArrayList<>();
+            container.add(request.toJsonRpcCall());
             json = gson.toJson(container);
             isRequestDone = false;
         } else {
-//            System.out.println("flipCount = " + flipCount);
             ExportFillerRequest filler = new ExportFillerRequest();
-            filler.prepareParameters();
-            List<RequestToExportAsync> container = new ArrayList<>();
-            container.add(filler);
+            List<JsonRpcRequest> container = new ArrayList<>();
+            container.add(filler.toJsonRpcCall());
             json = gson.toJson(container);
         }
 
-//        System.out.println(json);
 
-        // TODO: send request iff previous polling request has been completed
-        String s = RequestHandler.sendAndGet(port, json);
-
-//        if (!s.equals("[]"))
-//            System.out.println(s);
-
-//        this.isRequestDone = true;
-//        this.batchCount = 0;
-
-        Type keyValuePairsType = new TypeToken<ArrayList<ExportPollResult>>() {}.getType();
-        ArrayList<ExportPollResult> keyValuePairsList = gson.fromJson(s, keyValuePairsType);
-
-
-        List<ExportObject> exportObjectList =
-                keyValuePairsList.stream()
-                        .flatMap(r -> r.getResult().stream()).collect(Collectors.toList());
-
-        groups.addAll(exportObjectList);
-
-        // check if all result added up to the provided count
-        Optional<ExportPollResult> resultOptional = keyValuePairsList.stream().findAny();
-        if(resultOptional.isPresent()) {
-            int dataCount = resultOptional.get().getTotal();
-            if(groups.size() == dataCount) {
-
-//                System.out.println("done!" + ++batchCount);
-
-                // let do some data testing
-//
-                groups.parallelStream()
-                        .collect(Collectors.groupingBy(ExportObject::getName, Collectors.counting()))
-                        .forEach((typeName, typeCount) -> System.out.println(typeName + "=" + typeCount));
-
-                this.isRequestDone = true;
-                groups.clear();
-            }
+        String s = "[]";
+        try {
+            s = RequestHandler.sendAndGet(port, json);
+        } catch(IOException e) {
+            e.printStackTrace();
         }
 
+        if (!s.equals("[]")) {
+//            System.out.println(s);
 
+            Type jsonRpcResponseListType = new TypeToken<ArrayList<JsonRpcResponse<List<ExportObject>>>>() {}.getType();
+            ArrayList<JsonRpcResponse<List<ExportObject>>> jsonRpcResponseList = gson.fromJson(s, jsonRpcResponseListType);
+
+            List<ExportObject> exportObjectList =
+                    jsonRpcResponseList.stream()
+                            .flatMap(r -> r.getResult().getData().stream()).collect(Collectors.toList());
+
+            list.addAll(exportObjectList);
+
+            Optional<JsonRpcResponse<List<ExportObject>>> optional = jsonRpcResponseList.stream().findAny();
+            if(optional.isPresent()) {
+                JsonRpcResponse<List<ExportObject>> response = optional.get();
+                if(list.size() == response.getResult().getTotal()) {
+                    BoxOfExportUnit.observeAll(list);
+
+                    isRequestDone = true;
+                    list.clear();
+                }
+            }
+        }
     }
 }

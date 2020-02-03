@@ -1,14 +1,22 @@
+import core.PluginClassLoader;
 import core.box.BoxOfFlyableUnit;
 import core.request.BaseRequest;
 import core.request.ExportPollingHandler;
 import core.request.RequestHandler;
 import core.request.ServerPollingHandler;
+import core.request.export.handler.ExportUnitDespawnObservable;
+import core.request.export.handler.ExportUnitSpawnObservable;
 import core.request.server.ServerLuaMemoryDataRequest;
 import core.request.server.handler.PlayerEnterServerObservable;
 import core.request.server.handler.PlayerLeaveServerObservable;
 import core.request.server.handler.PlayerSlotChangeObservable;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.*;
@@ -23,42 +31,39 @@ public class BackendMainController {
 
     public static void main(String[] args) throws IOException {
 
-//        BoxOfFlyableUnit.init();
+        BoxOfFlyableUnit.init();
 
-        PlayerEnterServerObservable playerEnterServerObservable =
-                playerInfo -> System.out.println("New connection: " + playerInfo.getName()
-                        + "@" + playerInfo.getIpaddr());
-        playerEnterServerObservable.register();
+        loadPlugins();
 
-        PlayerLeaveServerObservable playerLeaveServerObservable =
-                playerInfo -> System.out.println("player left: " + playerInfo.getName()
-                        + "@" + playerInfo.getIpaddr());
-        playerLeaveServerObservable.register();
-
-        PlayerSlotChangeObservable playerSlotChangeObservable =
-                (previous, current) -> System.out.println(
-                        current.getName()
-                                + " slot change: " + previous.getSlot() + " -> " + current.getSlot());
-        playerSlotChangeObservable.register();
-
-//        Runnable polling = () -> {
-////            BaseRequest.getFillerInstance().send();
-//            try {
-////                pollingHandler.poll(pollingHandler);
-//                missionPollingHanlder.poll();
+//        PlayerEnterServerObservable playerEnterServerObservable =
+//                playerInfo -> System.out.println("New connection: " + playerInfo.getName()
+//                        + "@" + playerInfo.getIpaddr());
+//        playerEnterServerObservable.register();
 //
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        };
+//        PlayerLeaveServerObservable playerLeaveServerObservable =
+//                playerInfo -> System.out.println("Player left: " + playerInfo.getName()
+//                        + "@" + playerInfo.getIpaddr());
+//        playerLeaveServerObservable.register();
+//
+//        PlayerSlotChangeObservable playerSlotChangeObservable =
+//                (previous, current) -> System.out.println(
+//                        current.getName()
+//                                + " slot change: " + previous.getSlot() + " -> " + current.getSlot());
+//        playerSlotChangeObservable.register();
+//
+//        ExportUnitSpawnObservable exportUnitSpawnObservable =
+//                unit -> System.out.println(String.format("Unit Spawn: %s (RuntimeID: %s) - %s Type",
+//                        unit.getUnitName(), unit.getRuntimeID(), unit.getName()));
+//        exportUnitSpawnObservable.register();
+//
+//        ExportUnitDespawnObservable exportUnitDespawnObservable =
+//                unit -> System.out.println(String.format("Unit Despawn: %s (RuntimeID: %s) - %s Type",
+//                        unit.getUnitName(), unit.getRuntimeID(), unit.getName()));
+//        exportUnitDespawnObservable.register();
 
-        Runnable exportPolling = () -> {
-            try {
-                exportPollingHandler.poll();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        };
+
+
+        Runnable exportPolling = exportPollingHandler::poll;
 
         Runnable serverPolling = () -> {
           try {
@@ -87,9 +92,9 @@ public class BackendMainController {
         ScheduledExecutorService es = Executors.newSingleThreadScheduledExecutor();
         es.scheduleWithFixedDelay(mainLoop, 1000, 1, TimeUnit.MILLISECONDS);
 
-//        ScheduledExecutorService exportPollingScheduler = Executors.newSingleThreadScheduledExecutor();
-//        exportPollingScheduler.scheduleWithFixedDelay(exportPolling,
-//                1000, 1, TimeUnit.MILLISECONDS);
+        ScheduledExecutorService exportPollingScheduler = Executors.newSingleThreadScheduledExecutor();
+        exportPollingScheduler.scheduleWithFixedDelay(exportPolling,
+                1000, 1, TimeUnit.MILLISECONDS);
 
 
         ScheduledExecutorService serverPollingScheduler = Executors.newSingleThreadScheduledExecutor();
@@ -104,5 +109,33 @@ public class BackendMainController {
 //        ep.scheduleWithFixedDelay(() -> new ServerLuaMemoryDataRequest().send()
 //                , 2000, 1000, TimeUnit.MILLISECONDS);
 //
+    }
+
+    /**
+     * Load plugin classes from plugin package
+     * for each directory, load the class that implements Plugin interface
+     */
+    private static void loadPlugins() throws IOException {
+        Path pluginPath = Paths.get("src/plugin");
+        List<Path> pluginNameList = new ArrayList<>();
+        Files.list(pluginPath).forEach(p -> pluginNameList.add(p.getFileName()));
+        System.out.println("Found " + pluginNameList.size() + " plugins: " + pluginNameList);
+
+        PluginClassLoader pluginClassLoader = new PluginClassLoader();
+        pluginNameList.forEach(
+                p -> {
+                    Path path = Paths.get("src", "plugin").resolve(p);
+                    try {
+                        Files.walk(path).filter(c -> c.toString().endsWith(".java")).forEach(
+                                r -> pluginClassLoader.invokeClassMethod(
+                                        "plugin" + "." + p + "." +
+                                                r.getFileName().toString().replace(".java", ""),
+                                        "register")
+                        );
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+        );
     }
 }

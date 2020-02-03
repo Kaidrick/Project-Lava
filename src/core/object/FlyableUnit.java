@@ -5,6 +5,22 @@ public class FlyableUnit {
     private int group_id;
     private String group_name;
     private String unit_name;
+    private String type;
+    private double x;
+    private double y;
+    private double heading;
+    private String countryName;
+    private String category;
+    private String livery_id;
+    private String start_type;
+
+    @Override
+    public String toString() {
+        return String.format("Flyable %s %s (%s) starting at (%.0f,%.0f) HDG: %.0f in Group %d using livery \"%s\"",
+                getCategory(), getType(), getStart_type(),
+                getX(), getY(), getHeading(),
+                getGroup_id(), getLivery_id());
+    }
 
     public int getGroup_id() {
         return group_id;
@@ -16,5 +32,41 @@ public class FlyableUnit {
 
     public String getUnit_name() {
         return unit_name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getHeading() {
+        return Math.toDegrees(heading);
+    }
+
+    public String getCountryName() {
+        return countryName;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getLivery_id() {
+        return livery_id;
+    }
+
+    public String getStart_type() {
+        return start_type;
+    }
+
+    public void setStart_type(String start_type) {
+        this.start_type = start_type;
     }
 }

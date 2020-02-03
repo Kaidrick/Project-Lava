@@ -1,8 +1,9 @@
 package core.object;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public class ExportObject {
+public final class ExportObject {
     private double Bank;
     private String Coalition;
     private int CoalitionID;
@@ -35,7 +36,7 @@ public class ExportObject {
     }
 
     public Map<String, Boolean> getFlags() {
-        return Flags;
+        return new HashMap<>(Flags);
     }
 
     public String getGroupName() {
@@ -47,7 +48,7 @@ public class ExportObject {
     }
 
     public Map<String, Double> getLatLongAlt() {
-        return LatLongAlt;
+        return new HashMap<>(LatLongAlt);
     }
 
     public String getName() {
@@ -59,10 +60,14 @@ public class ExportObject {
     }
 
     public Map<String, Double> getPosition() {
-        return Position;
+        return new HashMap<>(Position);
     }
 
     public int getRuntimeID() {
         return RuntimeID;
+    }
+
+    public String getUnitName() {
+        return UnitName;
     }
 }

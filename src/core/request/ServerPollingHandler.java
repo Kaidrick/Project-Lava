@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,11 +23,7 @@ public final class ServerPollingHandler extends PollingHandler {
 
     private ServerPollingHandler() {
         super(PollEnv.SERVER);
-        try {
-            init();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        init();
     }
 
     private List<PlayerInfo> list = new ArrayList<>();
@@ -38,18 +35,21 @@ public final class ServerPollingHandler extends PollingHandler {
         return instance;
     }
 
-    private void init() throws IOException {
+    private void init() {
         int port = getPort();
         Gson gson = new Gson();
         String json;
-        ServerFillerRequest filler = new ServerFillerRequest();
-//            filler.prepareParameters();
         List<JsonRpcRequest> container = new ArrayList<>();
+
+        ServerFillerRequest filler = new ServerFillerRequest();
         container.add(filler.toJsonRpcCall());
         json = gson.toJson(container);
-//        System.out.println(json);
-        String s = RequestHandler.sendAndGet(port, json);
-        System.out.println("cleaning..." + s);
+
+        try {
+            RequestHandler.sendAndGet(port, json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -92,21 +92,42 @@ public final class ServerPollingHandler extends PollingHandler {
 
 //            System.out.println(jsonRpcResponseList.get(0).getResult().getData());
 
-            jsonRpcResponseList.stream().findAny().ifPresent(
-                    r -> {
-                        list.addAll(r.getResult().getData());
-                        if (list.size() == r.getResult().getTotal()) {
-                            isRequestDone = true;
+            List<PlayerInfo> playerInfoList =
+                    jsonRpcResponseList.stream()
+                            .flatMap(r -> r.getResult().getData().stream()).collect(Collectors.toList());
 
-                            Map<String, PlayerInfo> compareMap = list.stream()
-                                    .collect(Collectors.toMap(PlayerInfo::getName, Function.identity()));
+            // TODO --> check size, make map
+            list.addAll(playerInfoList);
 
-                            BoxOfPlayerInfo.observeAll(compareMap);
+            Optional<JsonRpcResponse<List<PlayerInfo>>> optional = jsonRpcResponseList.stream().findAny();
+            if(optional.isPresent()) {
+                JsonRpcResponse<List<PlayerInfo>> response = optional.get();
+                if(list.size() == response.getResult().getTotal()) {
 
-                            list.clear();
-                        }
-                    }
-            );
+                    Map<String, PlayerInfo> compareMap = list.stream()
+                            .collect(Collectors.toMap(PlayerInfo::getName, Function.identity()));
+                    BoxOfPlayerInfo.observeAll(compareMap);
+
+                    isRequestDone = true;
+                    list.clear();
+                }
+            }
+
+//            jsonRpcResponseList.stream().findAny().ifPresent(
+//                    r -> {
+//                        list.addAll(r.getResult().getData());
+//                        if (list.size() == r.getResult().getTotal()) {
+//                            isRequestDone = true;
+//
+//                            Map<String, PlayerInfo> compareMap = list.stream()
+//                                    .collect(Collectors.toMap(PlayerInfo::getName, Function.identity()));
+//
+//                            BoxOfPlayerInfo.observeAll(compareMap);
+//
+//                            list.clear();
+//                        }
+//                    }
+//            );
         }
     }
 

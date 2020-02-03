@@ -29,28 +29,44 @@ public class BoxOfFlyableUnit {
                 Type mapUnitNameDataType = new TypeToken<Map<String, FlyableUnit>>(){}.getType();
                 Map<String, FlyableUnit> flyableUnitMap = gson.fromJson(dataString, mapUnitNameDataType);
                 box.putAll(flyableUnitMap);
+
+                System.out.println(box.size() + " flyable units data collected from DCS mission env.");
             }
         );
     }
 
-    public static void init() throws IOException {
+    public static void init() {
         // map all playable units from env
         // send init request to lua
+
         Path pathMapPlayable = Paths.get("src/core/request/scripts/map_playable.lua");
-        BufferedReader bufferedReader = Files.newBufferedReader(pathMapPlayable);
-        Optional<String> wholeText = bufferedReader.lines().reduce((s1, s2) -> s1 + "\n" + s2);
 
-        ServerExecRequest serverExecRequest = new ServerExecRequest(wholeText.orElseThrow(
-                () -> new RuntimeException("Error accessing script: " + pathMapPlayable.toString())));
+        try {
+            BufferedReader bufferedReader = Files.newBufferedReader(pathMapPlayable);
 
-        ArrayList<JsonRpcRequest> wrapList = new ArrayList<>();
-        wrapList.add(serverExecRequest.toJsonRpcCall());
-//        serverExecRequest.prepareParameters();
-        RequestHandler.sendAndGet(BaseRequest.Level.SERVER.getPort(), new Gson().toJson(wrapList));
-        String playableJson = RequestHandler.sendAndGet(
-                BaseRequest.Level.SERVER.getPort(), "");  // TODO --> make proper jsonrpc
+            Optional<String> wholeText = bufferedReader.lines().reduce((s1, s2) -> s1 + "\n" + s2);
 
-//        System.out.println(playableJson);
-        BoxOfFlyableUnit.parse(playableJson);
+            ServerExecRequest serverExecRequest = new ServerExecRequest(wholeText.orElseThrow(
+                    () -> new RuntimeException("Error accessing script: " + pathMapPlayable.toString())));
+
+            ArrayList<JsonRpcRequest> wrapList = new ArrayList<>();
+            wrapList.add(serverExecRequest.toJsonRpcCall());
+            RequestHandler.sendAndGet(BaseRequest.Level.SERVER.getPort(), new Gson().toJson(wrapList));
+            String playableJson = RequestHandler.sendAndGet(
+                    BaseRequest.Level.SERVER.getPort(), "");  // TODO --> make proper jsonrpc
+
+            BoxOfFlyableUnit.parse(playableJson);
+        } catch (IOException | RuntimeException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static int getGroupId(String groupName) {
+        Optional<Map.Entry<String, FlyableUnit>> optional =
+                box.entrySet().stream()
+                        .filter(e -> e.getValue().getGroup_name().equals(groupName))
+                        .findAny();
+        return optional.orElseThrow(() -> new RuntimeException("Group name does not exist."))
+                .getValue().getGroup_id();
     }
 }
