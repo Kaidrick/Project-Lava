@@ -19,10 +19,14 @@ public class PluginClassLoader extends ClassLoader {
             Constructor constructor = loadedMyClass.getConstructor();
             Object myClassObject = constructor.newInstance();
 
-            // Getting the target method from the loaded class and invoke it using its name
-            Method method = loadedMyClass.getMethod(methodName);
-            System.out.println("Invoked method name: " + method.getName());
-            method.invoke(myClassObject);
+            if(!(myClassObject instanceof Plugin)) {
+
+            } else {
+                // Getting the target method from the loaded class and invoke it using its name
+                Method method = loadedMyClass.getMethod(methodName);
+                System.out.println("Invoked method name: " + method.getName());
+                method.invoke(myClassObject);
+            }
 
         } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException |
                 NoSuchMethodException | InstantiationException e) {

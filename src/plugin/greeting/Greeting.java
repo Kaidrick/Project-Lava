@@ -1,49 +1,30 @@
 package plugin.greeting;
 
+import core.LuaScripts;
 import core.Plugin;
 import core.box.BoxOfFlyableUnit;
+import core.function.TriggerMessage;
+import core.object.ExportObject;
 import core.request.export.handler.ExportUnitSpawnObservable;
 import core.request.server.ServerExecRequest;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.List;
 
 public class Greeting implements Plugin {
 
-    // TODO --> need to make wrap lua code in a helper class
-
-    private static String triggerMessageByGroupId;
-
-    static {
-        try {
-            Path path = Paths.get("src/core/request/scripts/send_message_by_group_id.lua");
-            BufferedReader bufferedReader = Files.newBufferedReader(path);
-            triggerMessageByGroupId = bufferedReader.lines()
-                    .reduce((s1, s2) -> s1 + "\n" + s2)
-                    .orElseThrow(() -> new RuntimeException("Error Reading Script: " + path));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    private static final List<String> greetingMessageList = null;
 
     public void register() {
-        ExportUnitSpawnObservable exportUnitSpawnObservable =
-                unit -> {
-                    Boolean playerControl = unit.getFlags().get("Human");
-                    if(playerControl) {
-//                        System.out.println(triggerMessageByGroupId);
-
-                        String preparedString = String.format(triggerMessageByGroupId,
-                                BoxOfFlyableUnit.getGroupId(unit.getGroupName()),
-                                "Hello from 422d Backend Powered By Java", 5, "false");
-                        System.out.println(preparedString);
-                        new ServerExecRequest(preparedString).send();
-                    }
-
-                };
+        ExportUnitSpawnObservable exportUnitSpawnObservable = this::greet;
         exportUnitSpawnObservable.register();
+    }
+
+    private void greet(ExportObject unit) {
+        if(unit.getFlags().get("Human")) {
+            TriggerMessage.TriggerMessageBuilder builder = new TriggerMessage.TriggerMessageBuilder();
+            builder.setMessage("Hello from 422d Backend Powered By Java 8")
+                    .setReceiverGroupId(BoxOfFlyableUnit.getGroupId(unit.getGroupName()))
+                    .setDuration(5).build().send();
+        }
     }
 }
