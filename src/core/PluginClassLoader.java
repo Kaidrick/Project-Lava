@@ -3,9 +3,11 @@ package core;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 public class PluginClassLoader extends ClassLoader {
-    public void invokeClassMethod(String className, String methodName) {
+    public void invokeClassMethod(String className) {
         try {
             // Create a new JavaClassLoader
             ClassLoader classLoader = this.getClass().getClassLoader();
@@ -14,20 +16,18 @@ public class PluginClassLoader extends ClassLoader {
             Class loadedMyClass = classLoader.loadClass(className);
 
 //            System.out.println("Loaded class name: " + loadedMyClass.getName());
+            List<Class> interfaces = Arrays.asList(loadedMyClass.getInterfaces());
 
-            // Create a new instance from the loaded class
-            Constructor constructor = loadedMyClass.getConstructor();
-            Object myClassObject = constructor.newInstance();
+            if(interfaces.contains(Plugin.class)) {
+                Constructor constructor = loadedMyClass.getConstructor();
+                Object myClassObject = constructor.newInstance();
 
-            if(!(myClassObject instanceof Plugin)) {
-
-            } else {
                 // Getting the target method from the loaded class and invoke it using its name
-                Method method = loadedMyClass.getMethod(methodName);
+                Method method = loadedMyClass.getMethod("register");
 //                System.out.println("Invoked method name: " + method.getName());
                 method.invoke(myClassObject);
 
-                Logger.log("Plugin loaded successfully: " + className);
+                Logger.log("Plugin loaded successfully from class: " + className);
             }
 
         } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException |

@@ -126,9 +126,9 @@ public class BackendMain extends Application {
         exportPollingScheduler.scheduleWithFixedDelay(exportPolling,
                 1000, 1, TimeUnit.MILLISECONDS);
 
-//        serverPollingScheduler = Executors.newSingleThreadScheduledExecutor();
-//        serverPollingScheduler.scheduleWithFixedDelay(serverPolling,
-//                1000, 1, TimeUnit.MILLISECONDS);
+        serverPollingScheduler = Executors.newSingleThreadScheduledExecutor();
+        serverPollingScheduler.scheduleWithFixedDelay(serverPolling,
+                1000, 1, TimeUnit.MILLISECONDS);
 
 
 //        ScheduledExecutorService ep = Executors.newSingleThreadScheduledExecutor();
@@ -198,7 +198,7 @@ public class BackendMain extends Application {
                 .filter(c -> c.toString().endsWith(".java") || c.toString().endsWith(".class"))
                 .collect(Collectors.toList());
 
-        Logger.log("Found " + pluginList.size() + " plugins: "
+        Logger.log("Found " + Files.list(pluginPath).count() + " plugins with classes: "
                 + pluginList.stream().map(e -> e.getFileName().toString().replace(".class", ""))
                 .collect(Collectors.joining(", ")));
 
@@ -210,11 +210,9 @@ public class BackendMain extends Application {
                                 p.getName(p.getNameCount() - 2) + "." +
                                 p.getFileName().toString()
                                         .replace(".java", "")
-                                        .replace(".class", ""),
-                        "register"
+                                        .replace(".class", "")
                 )
         );
-
     }
 
     private static FXMLLoader loader =
@@ -240,8 +238,19 @@ public class BackendMain extends Application {
     @Override
     public void stop() throws Exception {
         background.interrupt();
-        es.shutdownNow();
-        serverPollingScheduler.shutdownNow();
-        exportPollingScheduler.shutdownNow();
+        if(es != null) {
+            es.shutdown();
+            es.awaitTermination(10, TimeUnit.SECONDS);
+        }
+
+        if(serverPollingScheduler != null) {
+            serverPollingScheduler.shutdown();
+            serverPollingScheduler.awaitTermination(10, TimeUnit.SECONDS);
+        }
+
+        if(exportPollingScheduler != null) {
+            exportPollingScheduler.shutdown();
+            exportPollingScheduler.awaitTermination(10, TimeUnit.SECONDS);
+        }
     }
 }

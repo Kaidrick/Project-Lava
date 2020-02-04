@@ -1,0 +1,13 @@
+#button_ExecuteLuaDebug {
+    -fx-background-image: url("image/lua_102040.png");
+    -fx-background-size: 30 30;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}
+
+#button_ClearLuaString {
+    -fx-background-image: url("image/eraser.png");
+    -fx-background-size: 30 30;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+}

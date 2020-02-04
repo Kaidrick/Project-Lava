@@ -5,7 +5,7 @@ package.cpath = package.cpath .. ";./LuaSocket/?.dll"
 -- require external libs
 local socket = require("socket")
 local JSON = require("JSON")
-local inspect = require("inspect")
+-- local inspect = require("inspect")
 
 -- Constants
 local PORT = PORT or 3012
