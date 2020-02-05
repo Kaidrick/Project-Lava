@@ -17,7 +17,6 @@ public final class BoxOfExportUnit {
 
     public static void observeAll(List<ExportObject> list) {
 
-        // TODO --> do something here
 //        System.out.println("list = " + list.size());
 
         List<String> boxNameList = box.parallelStream().map(ExportObject::getUnitName).collect(Collectors.toList());

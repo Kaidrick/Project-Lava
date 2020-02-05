@@ -18,7 +18,6 @@ public class ServerExecRequest extends RequestToServer {
     private transient String env;
     private transient String luaString;
 
-
     public ServerExecRequest(String luaString) {
         this.luaString = luaString;
         this.env = this.state.name().toLowerCase();
@@ -29,12 +28,6 @@ public class ServerExecRequest extends RequestToServer {
     public void resolve(String object) {
         String logMessage = luaString + "\nReturns: " + object;
         Logger.log(logMessage, Logger.Level.DEBUG);
-    }
-
-    public static void main(String[] args) {
-        BaseRequest baseRequest = new ServerExecRequest("trigger.action.outText('test', 1)");
-        baseRequest.send();
-        System.out.println(baseRequest.toString());
     }
 }
 

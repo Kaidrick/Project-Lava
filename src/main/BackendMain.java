@@ -1,6 +1,7 @@
 package main;
 
 import core.Logger;
+import core.MissionStartObservable;
 import core.PluginClassLoader;
 import core.box.BoxOfFlyableUnit;
 import core.request.BaseRequest;
@@ -17,16 +18,16 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import plugin.static_display.StaticDisplay;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -60,30 +61,31 @@ public class BackendMain extends Application {
     public static void run() throws IOException, URISyntaxException {
 
         BoxOfFlyableUnit.init();
-
         loadPlugins();
+
+        MissionStartObservable.invokeAll();
 
         PlayerEnterServerObservable playerEnterServerObservable =
                 playerInfo -> Logger.log("New connection: " + playerInfo.getName()
                         + "@" + playerInfo.getIpaddr());
         playerEnterServerObservable.register();
-//
+
         PlayerLeaveServerObservable playerLeaveServerObservable =
                 playerInfo -> Logger.log("Player left: " + playerInfo.getName()
                         + "@" + playerInfo.getIpaddr());
         playerLeaveServerObservable.register();
-//
+
         PlayerSlotChangeObservable playerSlotChangeObservable =
                 (previous, current) -> Logger.log(
                         current.getName()
                                 + " slot change: " + previous.getSlot() + " -> " + current.getSlot());
         playerSlotChangeObservable.register();
-//
+
         ExportUnitSpawnObservable exportUnitSpawnObservable =
                 unit -> Logger.log(String.format("Unit Spawn: %s (RuntimeID: %s) - %s Type",
                         unit.getUnitName(), unit.getRuntimeID(), unit.getName()));
         exportUnitSpawnObservable.register();
-//
+
         ExportUnitDespawnObservable exportUnitDespawnObservable =
                 unit -> Logger.log(String.format("Unit Despawn: %s (RuntimeID: %s) - %s Type",
                         unit.getUnitName(), unit.getRuntimeID(), unit.getName()));
@@ -220,6 +222,7 @@ public class BackendMain extends Application {
     private static Parent root;
     static {
         try {
+            loader.setResources(ResourceBundle.getBundle("main/BackendMain", Locale.CHINA, new UTF8Control()));
             root = loader.load();
         } catch (IOException e) {
             e.printStackTrace();
@@ -230,8 +233,13 @@ public class BackendMain extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setScene(new Scene(root, 500, 700));
+        primaryStage.getIcons().add(
+                new Image(Objects.requireNonNull(
+                        ClassLoader.getSystemResourceAsStream("main/image/green_bat.png")
+                ))
+        );
         background.start();
-        primaryStage.setTitle("422d Backend Control");
+        primaryStage.setTitle(loader.getResources().getString("app_title"));
         primaryStage.show();
     }
 

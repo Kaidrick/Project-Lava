@@ -3,6 +3,7 @@ package core.object;
 public class FlyableUnit {
 
     private int group_id;
+    private int unit_id;
     private String group_name;
     private String unit_name;
     private String type;
@@ -10,21 +11,25 @@ public class FlyableUnit {
     private double y;
     private double heading;
     private String countryName;
+    private int country_id;
     private String category;
+    private String onboard_num;
     private String livery_id;
     private String start_type;
 
     @Override
     public String toString() {
         return String.format("Flyable %s %s (%s) starting at (%.0f,%.0f) HDG: %.0f in Group %d using livery \"%s\"",
-                getCategory(), getType(), getStart_type(),
-                getX(), getY(), getHeading(),
+                getCategory(), getType(), getUnit_id(),
+                getX(), getY(), getHeadingForDisplay(),
                 getGroup_id(), getLivery_id());
     }
 
     public int getGroup_id() {
         return group_id;
     }
+
+    public int getUnit_id() { return unit_id; }
 
     public String getGroup_name() {
         return group_name;
@@ -47,6 +52,10 @@ public class FlyableUnit {
     }
 
     public double getHeading() {
+        return heading;
+    }
+
+    public double getHeadingForDisplay() {
         return Math.toDegrees(heading);
     }
 
@@ -68,5 +77,13 @@ public class FlyableUnit {
 
     public void setStart_type(String start_type) {
         this.start_type = start_type;
+    }
+
+    public int getCountry_id() {
+        return country_id;
+    }
+
+    public String getOnboard_num() {
+        return onboard_num;
     }
 }

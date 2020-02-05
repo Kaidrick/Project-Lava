@@ -13,9 +13,9 @@
     <AnchorPane maxHeight="-1.0" maxWidth="-1.0" VBox.vgrow="ALWAYS">
       <children>
             <TextArea fx:id="logTextArea" layoutX="14.0" layoutY="14.0" prefHeight="236.0" prefWidth="423.0" AnchorPane.bottomAnchor="140.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="150.0" AnchorPane.topAnchor="15.0" />
-            <CheckBox fx:id="checkBox_LuaDebugInteractive" layoutX="347.0" layoutY="552.0" mnemonicParsing="false" text="Interactive Lua Debug" AnchorPane.rightAnchor="7.0" />
-            <Button fx:id="mainLoopStartButton" layoutX="431.0" layoutY="48.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" text="Start" AnchorPane.rightAnchor="75.0" />
-            <TextArea fx:id="textArea_LuaDebugString" layoutX="15.0" layoutY="596.0" prefHeight="94.0" prefWidth="388.0" promptText="Enter Lua code here, press Execute Lua button to send" wrapText="true" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="70.0" />
+            <CheckBox fx:id="checkBox_LuaDebugInteractive" layoutX="347.0" layoutY="552.0" mnemonicParsing="false" text="%interactive_lua_debug" AnchorPane.rightAnchor="7.0" />
+            <Button fx:id="mainLoopStartButton" layoutX="431.0" layoutY="48.0" mnemonicParsing="false" prefHeight="60.0" prefWidth="60.0" text="%start" AnchorPane.rightAnchor="75.0" />
+            <TextArea fx:id="textArea_LuaDebugString" layoutX="15.0" layoutY="596.0" prefHeight="94.0" prefWidth="388.0" promptText="%enter_lua_code_here" wrapText="true" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="70.0" />
             <Button fx:id="button_ExecuteLuaDebug" layoutX="431.0" layoutY="595.0" mnemonicParsing="false" onAction="#debugLuaString" prefHeight="45.0" prefWidth="45.0" AnchorPane.bottomAnchor="70.0" AnchorPane.rightAnchor="15.0" />
             <Button fx:id="button_ClearLuaString" layoutX="431.0" layoutY="645.0" mnemonicParsing="false" onAction="#clearLuaString" prefHeight="45.0" prefWidth="45.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="15.0" />
             <Separator layoutX="15.0" layoutY="582.0" prefWidth="200.0" AnchorPane.bottomAnchor="125.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />

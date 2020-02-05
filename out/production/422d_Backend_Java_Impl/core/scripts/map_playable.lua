@@ -20,11 +20,13 @@ for coa_name, coa_data in pairs(env.mission.coalition) do  -- parse coalition ta
                           ['unit_name'] = env.getValueDictByKey(unit_data.name),  -- -> unit_name
                           ['group_name'] = groupName,
                           ['group_id'] = group_data.groupId,
+                          ['unit_id'] = unit_data.unitId,
                           ['type'] = unit_data.type,  -- -> type
                           ['x'] = unit_data.x,
                           ['y'] = unit_data.y,
                           ['heading'] = unit_data.heading,
                           ['country'] = countryName,
+                          ['country_id'] = cntry_id,
                           ['category'] = category,
                           ['onboard_num'] = unit_data.onboard_num,
                           ['livery_id'] = unit_data.livery_id,

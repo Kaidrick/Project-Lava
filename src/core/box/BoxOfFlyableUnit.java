@@ -31,6 +31,7 @@ public class BoxOfFlyableUnit {
                 box.putAll(flyableUnitMap);
 
                 Logger.log(box.size() + " flyable units data collected from DCS mission env.");
+                box.forEach((name, data) -> System.out.println(data));
             }
         );
     }

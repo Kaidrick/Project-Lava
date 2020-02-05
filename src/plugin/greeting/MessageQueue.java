@@ -14,6 +14,8 @@ class MessageQueue {
     private int receiverGroupId;
     private Queue<Message> messageQueue = new ArrayDeque<>();
 
+    private int nextTimeStamp;
+
     private MessageQueue() {}
 
     public MessageQueue(int receiverGroupId) {
@@ -28,17 +30,32 @@ class MessageQueue {
         messageQueue.offer(message);
     }
 
-    public void send() {
-        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-        messageQueue.forEach(m ->
-                scheduledExecutorService.schedule(
-                        () -> {
-                            TriggerMessage.TriggerMessageBuilder builder = new TriggerMessage.TriggerMessageBuilder();
-                            builder.setMessage(m.getContent())
-                                    .setReceiverGroupId(receiverGroupId)
-                                    .setDuration(m.getDuration()).build().send();
-                        }, m.getWaitNextMessage(), TimeUnit.MILLISECONDS));
+    public int nextTime(Message message) {
 
+        int currentTime = nextTimeStamp;
+        nextTimeStamp += message.getWaitNextMessage();
+        return currentTime;
+    }
+
+    public void send() {
+        new Thread(() -> {
+            ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+            messageQueue.forEach(m ->
+                    scheduledExecutorService.schedule(
+                            () -> {
+                                TriggerMessage.TriggerMessageBuilder builder = new TriggerMessage.TriggerMessageBuilder();
+                                builder.setMessage(m.getContent())
+                                        .setReceiverGroupId(receiverGroupId)
+                                        .setDuration(m.getDuration()).build().send();
+                            }, nextTime(m), TimeUnit.SECONDS));
+            scheduledExecutorService.shutdown();
+            try {
+                scheduledExecutorService.awaitTermination(nextTimeStamp + 30, TimeUnit.SECONDS);
+                scheduledExecutorService.shutdownNow();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
 }

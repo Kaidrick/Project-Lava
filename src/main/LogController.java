@@ -4,11 +4,17 @@ import core.request.server.ServerExecRequest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
+import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 
 import javafx.scene.control.Button;
 
-public class LogController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class LogController implements Initializable {
+
+    private ResourceBundle bundle;
     @FXML private Button button_ClearLuaString;
     @FXML private Button mainLoopStartButton;
     @FXML private TextArea logTextArea;
@@ -29,5 +35,10 @@ public class LogController {
 
     @FXML public void clearLuaString(ActionEvent actionEvent) {
         textArea_LuaDebugString.clear();
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        bundle = resources;
     }
 }

@@ -1,0 +1,1 @@
+Object.destroy({ id_ = %s })
