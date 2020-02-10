@@ -7,40 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4af9032f-ac19-4f7a-b3cc-78b620366905" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/422d_Backend_Java_Impl/core/request/scripts/map_playable.lua" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/422d_Backend_Java_Impl/core/request/scripts/send_message_by_group_id.lua" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/422d_Backend_Java_Impl/main/BackendMainController.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/422d_Backend_Java_Impl/main/BackendMainController.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/Scripts/Export.lua" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/Scripts/Hooks/ofsmiz.lua" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/BackendMainController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/box/BoxOfExportUnit.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/box/BoxOfFlyableUnit.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/box/BoxOfGroups.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/box/BoxOfPlayerInfo.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/box/BoxOfUnits.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/box/BoxOfUnits.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/object/Group.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/object/Group.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/object/Unit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/object/Unit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/object/Vector3D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/object/Vector3D.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/request/BaseRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/request/BaseRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/request/JsonRpcRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/request/JsonRpcRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/request/ListResult.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/request/MissionPollingHandler.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/request/PollingHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/request/PollingHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/request/QueryGroupDataRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/request/RequestHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/request/RequestHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/request/RequestToServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/request/RequestToServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/request/scripts/map_playable.lua" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/request/scripts/send_message_by_group_id.lua" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/request/server/ServerDataRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/request/server/ServerDataRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/BackendMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/BackendMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/BackendMainController.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/BackendMainController.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/BackendMainController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/LogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/LogController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plugin/static_display/StaticDisplay.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/plugin/static_display/StaticDisplay.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -246,12 +213,24 @@
       <workItem from="1581127029510" duration="16038000" />
       <workItem from="1581164875198" duration="15182000" />
       <workItem from="1581213323889" duration="20058000" />
-      <workItem from="1581298496094" duration="967000" />
+      <workItem from="1581298496094" duration="2407000" />
     </task>
+    <task id="LOCAL-00001" summary="added a automatic parking data collector; it should be used in single player mode to obtain parking data from each airport">
+      <created>1581301335345</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1581301335345</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="added a automatic parking data collector; it should be used in single player mode to obtain parking data from each airport" />
+    <option name="LAST_COMMIT_MESSAGE" value="added a automatic parking data collector; it should be used in single player mode to obtain parking data from each airport" />
   </component>
   <component name="WindowStateProjectService">
     <state x="482" y="524" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1581181462534">
@@ -308,10 +287,10 @@
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="436" y="441" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580823335452" />
-    <state x="258" y="315" key="CommitChangelistDialog2" timestamp="1581301308268">
+    <state x="258" y="315" key="CommitChangelistDialog2" timestamp="1581301334815">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state x="258" y="315" key="CommitChangelistDialog2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581301308268" />
+    <state x="258" y="315" key="CommitChangelistDialog2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581301334815" />
     <state x="0" y="132" key="DiffContextDialog" timestamp="1581301219862">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
