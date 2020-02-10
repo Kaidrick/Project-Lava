@@ -4,6 +4,7 @@ import core.Logger;
 import core.MissionStartObservable;
 import core.PluginClassLoader;
 import core.box.BoxOfFlyableUnit;
+import core.box.BoxOfParking;
 import core.request.BaseRequest;
 import core.request.ExportPollingHandler;
 import core.request.RequestHandler;
@@ -59,7 +60,9 @@ public class BackendMain extends Application {
 
     public static void startBackgroundTask() throws IOException, URISyntaxException {
 
+        BoxOfParking.init();
         BoxOfFlyableUnit.init();
+
         loadPlugins();
 
         MissionStartObservable.invokeAll();

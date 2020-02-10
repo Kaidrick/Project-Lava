@@ -1,9 +1,11 @@
 package plugin.static_display;
 
+import core.Logger;
 import core.LuaScripts;
 import core.MissionStartObservable;
 import core.Plugin;
 import core.box.BoxOfFlyableUnit;
+import core.box.BoxOfParking;
 import core.object.FlyableUnit;
 import core.object.PlayerInfo;
 import core.request.server.ServerDataRequest;
@@ -49,10 +51,8 @@ public class StaticDisplay implements Plugin {
 
 
     public static void initStaticDisplay() {
-        // for each playable, spawn static object
-        BoxOfFlyableUnit.box.values().stream()
-                .filter(unit -> unit.getStart_type().equals("TakeOffGround"))
-                .forEach(StaticDisplay::spawnControl);
+        // for each playable, spawn static object if TakeOffGround or TakeOffParking
+        BoxOfFlyableUnit.box.values().forEach(StaticDisplay::spawnControl);
     }
 
     private static final List<String> excludedTypeList = Arrays.asList("SA342M", "SA342L",
@@ -72,14 +72,23 @@ public class StaticDisplay implements Plugin {
         type = replacement.getOrDefault(rawType, rawType);
 
         if(!excludedTypeList.contains(type)) {
-            // spawn static
+            String startType = flyableUnit.getStart_type();
+
+            double heading;
+            if (startType.equals("TakeOffGround")) {
+                heading = flyableUnit.getHeading();
+            } else if (startType.equals("TakeOffParking")) {
+                heading = BoxOfParking.get(flyableUnit.getAirdromeId(), flyableUnit.getParking())
+                        .getInitialHeading();
+            } else return;
             String p = String.format(luaStringAddStatic,
                     "_StaticDisplay_" + flyableUnit.getUnit_name(), type,
                     flyableUnit.getX(), flyableUnit.getY(), flyableUnit.getLivery_id(),
-                    flyableUnit.getOnboard_num(), flyableUnit.getHeading(), flyableUnit.getCountry_id());
+                    flyableUnit.getOnboard_num(), heading, flyableUnit.getCountry_id());
+
             new ServerDataRequest(p)
                     .addProcessable(s -> mapSlotStaticId.put(String.valueOf(flyableUnit.getUnit_id()), s))
-//                    .addProcessable(s -> Logger.log(s + " -> static object spawned"))
+                    .addProcessable(s -> Logger.log(s + " -> static object spawned"))
                     .send();
         }  // else no spawn
     }
@@ -87,7 +96,7 @@ public class StaticDisplay implements Plugin {
     private static void despawnControl(FlyableUnit flyableUnit) {
         String runtimeId = mapSlotStaticId.get(String.valueOf(flyableUnit.getUnit_id()));
         new ServerDataRequest(String.format(luaStringRemoveObject, runtimeId))
-//                .addProcessable(s -> Logger.log(runtimeId + " -> static object removed"))
+                .addProcessable(s -> Logger.log(runtimeId + " -> static object removed"))
                 .send();
     }
 

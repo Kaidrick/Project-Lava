@@ -16,6 +16,9 @@ public class FlyableUnit {
     private String onboard_num;
     private String livery_id;
     private String start_type;
+    private int airdromeId;
+    private String parking_id;
+    private String parking;
 
     @Override
     public String toString() {
@@ -85,5 +88,17 @@ public class FlyableUnit {
 
     public String getOnboard_num() {
         return onboard_num;
+    }
+
+    public int getAirdromeId() {
+        return airdromeId;
+    }
+
+    public String getParking_id() {
+        return parking_id;
+    }
+
+    public int getParking() {
+        return Integer.parseInt(parking);
     }
 }

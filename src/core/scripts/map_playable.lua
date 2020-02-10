@@ -30,7 +30,10 @@ for coa_name, coa_data in pairs(env.mission.coalition) do  -- parse coalition ta
                           ['category'] = category,
                           ['onboard_num'] = unit_data.onboard_num,
                           ['livery_id'] = unit_data.livery_id,
-                          ['start_type'] = group_data.route.points[1].type -- -> TakeOffGround
+                          ['start_type'] = group_data.route.points[1].type, -- -> TakeOffGround
+                          ['airdromeId'] = group_data.route.points[1].airdromeId,
+                          ['parking_id'] = unit_data.parking_id,  --> string
+                          ['parking'] = unit_data.parking  --> number
                         }
                       end
                     end --for unit_num, unit_data in pairs(group_data.units) do

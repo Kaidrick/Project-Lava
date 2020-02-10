@@ -1,11 +1,5 @@
 package main;
 
-import com.google.gson.Gson;
-import core.Logger;
-import core.LuaScripts;
-import core.object.Group;
-import core.object.Unit;
-import core.request.server.ServerDataRequest;
 import core.request.server.ServerExecRequest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -14,7 +8,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextArea;
 
 import javafx.scene.control.Button;
-import plugin.static_display.AirdromeDataCollector;
+import util.AirdromeDataCollector;
 
 import java.net.URL;
 import java.util.ResourceBundle;

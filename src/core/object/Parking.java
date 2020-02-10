@@ -15,7 +15,8 @@ public class Parking implements Serializable {
     }
 
     public double getReadableHeading() {
-        return Math.toDegrees(initialHeading);
+        // initial heading is between [-pi, pi]
+        return Math.toDegrees(initialHeading + Math.PI);
     }
 
     public String toString() {

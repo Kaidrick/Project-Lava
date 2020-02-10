@@ -1,4 +1,4 @@
-package plugin.static_display;
+package util;
 
 import com.google.gson.Gson;
 import core.LuaScripts;
@@ -16,15 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
-// how to check for validity of returned data?
-// after the aircraft spawned, check if xy matches that of the parking
-// if so, validate data
-// if not, use another playable type to query
-
-
-// ONLY WORKS FOR FRESH MAP OFFLINE!!!
-
 /**
  * AirdromeDataCollector class is used to collect parking data from each airbases
  * The collector is supposed to be used in single player environment to be able to correctly polling data
@@ -41,7 +32,6 @@ public class AirdromeDataCollector {
 
         // load script
         String script = LuaScripts.load("add_group.lua");
-
         String mapTheater = ((ServerDataRequest) new ServerDataRequest("return env.mission.theatre").send())
                 .get();
 
@@ -60,20 +50,16 @@ public class AirdromeDataCollector {
                 .setSkill(Unit.Skill.HIGH)
                 .setType(sampleHelicopterType).build();
 
-        // for each airport
         Gson gson = new Gson();
         int totalAirbasesNum = ((ServerDataRequest) new ServerDataRequest("return #world.getAirbases()")
                 .send()).getAsInt();
 
-//        System.out.println(totalAirbasesNum);
 
         // 1
         for (int airbaseListIndex = 1; airbaseListIndex <= totalAirbasesNum; airbaseListIndex++) {
             String prep = String.format("return #world.getAirbases()[%d]:getParking()", airbaseListIndex);
             int totalParkings = ((ServerDataRequest) new ServerDataRequest(prep).send()).getAsInt();
             for (int parkingListIndex = 1; parkingListIndex <= totalParkings; parkingListIndex++) {
-                // get parking data from game
-                // if Term_type == 40 then use helicopter sample instead
                 String getParkingLua =
                         LuaScripts.load("get_parking_by_airdrome_id_and_parking_list_index.lua");
                 String prepGetParkingLua = String.format(getParkingLua, airbaseListIndex, parkingListIndex);
@@ -85,7 +71,6 @@ public class AirdromeDataCollector {
                 int termIndex = parking.getId();
 
                 Group.GroupBuilder groupBuilder;
-//                System.out.println(typeConst);
                 if(typeConst == 40) {  // Helicopter only spawn
                     // use helicopter
                     groupBuilder = helicopterUnit.toGroupBuilderWithRouteOfInitialParking(airbaseListIndex,

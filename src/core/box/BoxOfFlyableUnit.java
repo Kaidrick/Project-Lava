@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
 
-public class BoxOfFlyableUnit {
+public final class BoxOfFlyableUnit {
     public static Map<String, FlyableUnit> box = new HashMap<>();
 
     private static void parse(String playableJsonString) {
@@ -37,6 +37,8 @@ public class BoxOfFlyableUnit {
     }
 
     public static void init() {
+        box.clear();
+
         String wholeText = LuaScripts.load("map_playable.lua");
 
         try {

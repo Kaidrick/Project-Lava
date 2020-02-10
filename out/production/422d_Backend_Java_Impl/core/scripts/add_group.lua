@@ -8,7 +8,7 @@ local this_group = Group.getByName(group_data.name)
 local success, err = pcall(
 function(target)
     local pos = target:getUnit(1):getPosition()
-    return math.atan2(pos.x.z, pos.x.x) + math.pi
+    return math.atan2(pos.x.z, pos.x.x)
 end, this_group)
 
 if success then
