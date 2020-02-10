@@ -117,7 +117,7 @@ public abstract class BaseRequest {
         return super.toString() + "|" + gson.toJson(this);
     }
 
-    public void send() {
+    public BaseRequest send() {
         if(isSent) {
             throw new RequestBadStateException();
         } else {
@@ -125,7 +125,7 @@ public abstract class BaseRequest {
             RequestHandler.getInstance().take(this);
             isSent = true;
         }
-
+        return this;
     }
 
     public abstract void resolve(String object);

@@ -12,10 +12,13 @@ public class ServerDataRequest extends RequestToServer {
         state = State.SERVER;
     }
 
+    private volatile String result;
     private List<Processable> list = new ArrayList<>();
 
     private transient String env;
     private transient String luaString;
+
+
 
     public ServerDataRequest(String luaString) {
         this.luaString = luaString;
@@ -24,9 +27,30 @@ public class ServerDataRequest extends RequestToServer {
 
     @Override
     public void resolve(String object) {
-//        System.out.println(object);
+        this.result = object;
         notifyProcessable(object);
     }
+
+    /**
+     * blocking call
+     * @return result
+     */
+    public String get() {
+        while(true) {
+            if(result != null) {
+                return result;
+            }
+        }
+    }
+
+    public int getAsInt() {
+        return Integer.parseInt(get());
+    }
+
+    public double getAsDouble() {
+        return Double.parseDouble(get());
+    }
+
 
     public ServerDataRequest addProcessable(Processable processable) {
         list.add(processable);

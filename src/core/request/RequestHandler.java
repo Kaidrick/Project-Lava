@@ -27,7 +27,7 @@ public final class RequestHandler<T extends BaseRequest> {
 //    private List<BaseRequest> waitList = new CopyOnWriteArrayList<>();
     private Map<String, BaseRequest> waitMap = new HashMap<>();
     private Map<String, String> resultMap = new HashMap<>();  // request ident, result
-    private Queue<BaseRequest> sendQueue = new ArrayDeque<>();
+    private volatile Queue<BaseRequest> sendQueue = new ArrayDeque<>();
 
     private static final Gson gson = new Gson();
 
@@ -76,11 +76,11 @@ public final class RequestHandler<T extends BaseRequest> {
         Queue<BaseRequest> transmissionQueue = new ArrayDeque<>(sendQueue);
 //        System.out.println("sendQueue = " + sendQueue);
 //        System.out.println("transmissionQueue = " + transmissionQueue);
-        sendQueue.clear();  // TODO --> need more work and test
+//        sendQueue.clear();  // TODO --> need more work and test
 
-//        for (int i = 0; i < transmissionQueue.size(); i++) {
-//            sendQueue.poll();
-//        }
+        for (int i = 0; i < transmissionQueue.size(); i++) {
+            sendQueue.poll();
+        }
 
         Map<Integer, List<JsonRpcRequest>> splitQueue = transmissionQueue.stream()
                 .collect(Collectors.groupingBy(BaseRequest::getPort,
@@ -117,7 +117,7 @@ public final class RequestHandler<T extends BaseRequest> {
                 jsonRpcResponseList.forEach(
                         r -> waitMap.computeIfPresent(r.getId(),
                             (k, v) -> {
-                                System.out.println(v.getClass().toString());
+//                                System.out.println(v.getClass().toString());
                                 v.resolve(r.getResult().getData());
                                 return null;
                             }));

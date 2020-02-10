@@ -20,7 +20,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import plugin.static_display.StaticDisplay;
 
 import java.io.IOException;
 import java.net.URI;
@@ -46,9 +45,9 @@ public class BackendMain extends Application {
 
     public static javafx.scene.control.TextArea textArea = new javafx.scene.control.TextArea();
 
-    private Thread background = new Thread(() -> {
+    private Thread backgroundThread = new Thread(() -> {
         try {
-            run();
+            startBackgroundTask();
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
@@ -58,7 +57,7 @@ public class BackendMain extends Application {
         Application.launch(args);
     }
 
-    public static void run() throws IOException, URISyntaxException {
+    public static void startBackgroundTask() throws IOException, URISyntaxException {
 
         BoxOfFlyableUnit.init();
         loadPlugins();
@@ -142,7 +141,7 @@ public class BackendMain extends Application {
 //
     }
 
-    static Path resourceToPath(URL resource)
+    public static Path resourceToPath(URL resource)
             throws IOException,
             URISyntaxException {
 
@@ -238,14 +237,14 @@ public class BackendMain extends Application {
                         ClassLoader.getSystemResourceAsStream("main/image/green_bat.png")
                 ))
         );
-        background.start();
+        backgroundThread.start();
         primaryStage.setTitle(loader.getResources().getString("app_title"));
         primaryStage.show();
     }
 
     @Override
     public void stop() throws Exception {
-        background.interrupt();
+        backgroundThread.interrupt();
         if(es != null) {
             es.shutdown();
             es.awaitTermination(10, TimeUnit.SECONDS);

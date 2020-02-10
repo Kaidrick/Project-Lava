@@ -1,67 +1,165 @@
 package core.object;
 
-import java.util.List;
+import com.google.gson.Gson;
+
+import java.util.Map;
 
 public class Unit extends SimObject {
+    private Double alt;
+    private String alt_type = "BARO";
+    private String livery_id = "default_livery";
+    private String skill = "High";
+    private String parking;
+    private Double speed;
+    private String type;
+    private Integer unitId;
+    private Double psi;
+    private String parking_id;
+    private Double x;
+    private Double y;
+    private Double heading;
+    private Map<String, Object> payload;
+    private Object callsign;
+    private String onboard_num;
 
-    private List<AmmoData>      ammo;
-    private List<Vector3D>      att;
-    private String              callsign;
-    private int                 country;
-    private double              fuel;
-    private double              nc;
-    private boolean             player_control;
-    private Vector3D            pos;
-    private long                runtime_id;
-    private String              type;
-    private Vector3D            velocity;
-    private Coord               coord;
-
-    public Vector3D getPos() {
-        return pos;
+    private String getParking() {
+        return parking;
     }
 
-    public List<AmmoData> getAmmo() {
-        return ammo;
+    private void setParking(int parking) {
+        this.parking = String.valueOf(parking);
     }
 
-    public List<Vector3D> getAtt() {
-        return att;
+    public static class UnitBuilder {
+        private Unit unit = new Unit();
+
+        public UnitBuilder setName(String name) {
+            unit.name = name;
+            return this;
+        }
+        public UnitBuilder setLivery(String liveryName) {
+            unit.livery_id = liveryName;
+            return this;
+        }
+        public UnitBuilder setSkill(Skill skillLevel) {
+            unit.skill = skillLevel.toString();
+            return this;
+        }
+        public UnitBuilder setParking(int parking) {
+            unit.setParking(parking);
+            return this;
+        }
+        public UnitBuilder setSpeed(double speed) {
+            unit.speed = speed;
+            return this;
+        }
+        public UnitBuilder setType(String type) {
+            unit.type = type;
+            return this;
+        }
+        public UnitBuilder setPos(double x, double y) {
+            setX(x); setY(y);
+            return this;
+        }
+        public UnitBuilder setX(double x) {
+            unit.x = x;
+            return this;
+        }
+        public UnitBuilder setY(double y) {
+            unit.y = y;
+            return this;
+        }
+        public UnitBuilder setParkingId(int parkingId) {
+            unit.parking_id = String.valueOf(parkingId);
+            return this;
+        }
+        public UnitBuilder setHeading(double heading) {
+            unit.heading = heading;
+            return this;
+        }
+        public UnitBuilder setOnboardNum(String onboardNum) {
+            unit.onboard_num = onboardNum;
+            return this;
+        }
+        public UnitBuilder setCategory(Category category) {
+            unit.category = category.ordinal();
+            return this;
+        }
+
+        public Unit build() {
+            return unit;
+        }
     }
 
-    public String getCallsign() {
-        return callsign;
+    public Group.GroupBuilder packToGroupBuilder() {
+        Group.GroupBuilder groupBuilder = new Group.GroupBuilder();
+        groupBuilder.addUnit(this);
+        groupBuilder.setName(this.name + "_Group");
+        return groupBuilder;
     }
 
-    public int getCountry() {
-        return country;
+    public Group.GroupBuilder toGroupBuilderWithRouteOfInitialParking(int airdromeId, int parking) {
+        this.setParking(parking);
+        Group.GroupBuilder groupBuilder = new Group.GroupBuilder();
+        Point initPoint = Point.ofParkingInitialPoint(airdromeId);
+        Route route = new Route();
+        route.addPoint(initPoint);
+        return groupBuilder.addUnit(this).setName("Group_" + this.name)
+                .setRoute(route).setCategory(this.category);
     }
 
-    public double getFuel() {
-        return fuel;
+    public Group.GroupBuilder toGroupBuilderWithRouteOfIntialRunwayTakeOff(int airdromeId, int parking) {
+        this.setParking(parking);  // runway parking of type 16 only
+        Group.GroupBuilder groupBuilder = new Group.GroupBuilder();
+        Point initPoint = Point.ofTakeOffInitialPoint(airdromeId);
+        Route route = new Route();
+        route.addPoint(initPoint);
+        return groupBuilder.addUnit(this).setName("Group_" + this.name)
+                .setRoute(route).setCategory(this.category);
     }
 
-    public double getNc() {
-        return nc;
+    public enum Skill {
+        HIGH("High");
+
+        private String skill;
+        Skill(String name) {
+            skill = name;
+        }
+        public String toString() { return skill; }
     }
 
-    public boolean isPlayer_control() {
-        return player_control;
+    public enum Category {
+        AIRPLANE, HELICOPTER, GROUND_UNIT, SHIP, STRUCTURE
     }
 
-    public long getRuntime_id() {
-        return runtime_id;
+    public enum RefuelingSystem {
+        BOOM_AND_RECEPTACLE,
+        PROBE_AND_DROGUE
     }
 
-    public String getType() {
-        return type;
+    public enum SensorType {
+        OPTIC, RADAR, IRST, RWR
     }
 
-    public Vector3D getVelocity() {
-        return velocity;
+    public enum OpticType {
+        TV, LLTV, IR
     }
 
-    public Coord getCoord() {
-        return coord;
+    public enum RadarType {
+        AS, SS
+    }
+}
+
+class TestUnit {
+    public static void main(String[] args) {
+        Unit.UnitBuilder builder = new Unit.UnitBuilder();
+        Unit unit = builder.setPos(-396434.90625, -17126.658203125)
+                .setParking(155)
+                .setSkill(Unit.Skill.HIGH)
+                .setCategory(Unit.Category.HELICOPTER)
+                .setName("test unit").build();
+
+        Gson gson = new Gson();
+        System.out.println(gson.toJson(unit));
     }
 }

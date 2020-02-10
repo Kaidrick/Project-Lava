@@ -21,12 +21,4 @@ public final class JsonRpcRequest {
     public String toString() {
         return super.toString() + "|" + String.format("method: %s, params: %s", method, params);
     }
-
-    public static void main(String[] args) {
-        Gson gson = new Gson();
-
-        System.out.println(
-                gson.toJson(new JsonRpcRequest(UUID.randomUUID(),
-                        "test", Arrays.asList(1, 2, 3))));
-    }
 }

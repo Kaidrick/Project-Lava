@@ -1,6 +1,5 @@
 package plugin.static_display;
 
-import core.Logger;
 import core.LuaScripts;
 import core.MissionStartObservable;
 import core.Plugin;
@@ -11,11 +10,19 @@ import core.request.server.ServerDataRequest;
 import core.request.server.handler.PlayerLeaveServerObservable;
 import core.request.server.handler.PlayerSlotChangeObservable;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This addon class implements the functionality to place a static object matching the type and livery of
  * a flyable aircraft when the aircraft is idle (slot not occupied by a player)
+
+ * TODO -> normal unit cannot replace static object because it occupies a parking in game
+ * TODO -> therefore the only option to make it work for cold start flyable unit
+ * TODO -> is to manually gather heading information for each parking position.
+ * TODO -> get parking position from
  */
 public class StaticDisplay implements Plugin {
     private static final String luaStringAddStatic = LuaScripts.load("add_static_object.lua");

@@ -1,10 +1,6 @@
 package core.request;
 
-import core.object.Unit;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * PollingHandler class handles the connection to polling port in three different lua states.
@@ -13,7 +9,7 @@ import java.util.List;
  */
 public abstract class PollingHandler {
     public enum PollEnv {
-        MISSION(3008), SERVER(3011), EXPORT(3013);
+        SERVER(3011), EXPORT(3013);
 
         int portNumber;
 
@@ -34,7 +30,6 @@ public abstract class PollingHandler {
 
     protected boolean isRequestDone = true;
     protected int batchCount = 0;
-    protected List<Unit> units = new ArrayList<>();
 
     protected int flipCount = 0;
     public abstract void poll() throws IOException;
