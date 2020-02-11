@@ -1,10 +1,13 @@
 package main;
 
+import core.request.RequestToServer;
 import core.request.server.ServerExecRequest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 
 import javafx.scene.control.Button;
@@ -21,17 +24,29 @@ public class LogController implements Initializable {
     @FXML private TextArea logTextArea;
     @FXML private Button button_ExecuteLuaDebug;
     @FXML private TextArea textArea_LuaDebugString;
+    @FXML private RadioButton radioLoadstringAPI;
+    @FXML private RadioButton radioLoadstringState;
+    @FXML private CheckBox checkBox_LuaDebugInteractive;
 
     @FXML public void appendLog(String logMessage) {
         logTextArea.appendText(logMessage);
     }
 
     @FXML public void debugLuaString(ActionEvent actionEvent) {
-        ServerExecRequest serverExecRequest =
-                new ServerExecRequest(textArea_LuaDebugString.getText());
-        System.out.println(textArea_LuaDebugString.getText());
+        if (radioLoadstringState.isSelected()) {
+            ServerExecRequest serverExecRequest =
+                    new ServerExecRequest(textArea_LuaDebugString.getText());
+            System.out.println(textArea_LuaDebugString.getText());
 
-        serverExecRequest.send();
+            serverExecRequest.send();
+        } else if (radioLoadstringAPI.isSelected()) {
+            ServerExecRequest serverExecRequest =
+                    new ServerExecRequest(RequestToServer.State.DEBUG,
+                            textArea_LuaDebugString.getText());
+            System.out.println(textArea_LuaDebugString.getText());
+
+            serverExecRequest.send();
+        }
     }
 
     @FXML public void clearLuaString(ActionEvent actionEvent) {
@@ -39,16 +54,16 @@ public class LogController implements Initializable {
     }
 
     @FXML public void testStart(ActionEvent actionEvent) {
-        System.out.println(actionEvent.toString());
-
         AirdromeDataCollector.collect();
     }
 
     @FXML public void selectLoadstringApi(ActionEvent actionEvent) {
-        System.out.println(actionEvent);
+        radioLoadstringAPI.setSelected(true);
+        radioLoadstringState.setSelected(false);
     }
     @FXML public void selectLoadstringLuaState(ActionEvent actionEvent) {
-        System.out.println(actionEvent);
+        radioLoadstringAPI.setSelected(false);
+        radioLoadstringState.setSelected(true);
     }
 
     @Override

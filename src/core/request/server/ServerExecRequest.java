@@ -23,6 +23,11 @@ public class ServerExecRequest extends RequestToServer {
         this.env = this.state.name().toLowerCase();
     }
 
+    public ServerExecRequest(State state, String luaString) {
+        this.state = state;
+        this.luaString = luaString;
+        this.env = this.state.name().toLowerCase();
+    }
 
     @Override
     public void resolve(String object) {

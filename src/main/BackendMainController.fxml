@@ -20,8 +20,8 @@
             <Button fx:id="button_ExecuteLuaDebug" layoutX="431.0" layoutY="595.0" mnemonicParsing="false" onAction="#debugLuaString" prefHeight="45.0" prefWidth="45.0" AnchorPane.bottomAnchor="70.0" AnchorPane.rightAnchor="15.0" />
             <Button fx:id="button_ClearLuaString" layoutX="431.0" layoutY="645.0" mnemonicParsing="false" onAction="#clearLuaString" prefHeight="45.0" prefWidth="45.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="15.0" />
             <Separator layoutX="15.0" layoutY="582.0" prefWidth="200.0" AnchorPane.bottomAnchor="125.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
-            <RadioButton fx:id="radioLoadstringAPI" layoutX="356.0" layoutY="468.0" mnemonicParsing="false" onAction="#selectLoadstringApi" text="Loadstring in API" AnchorPane.rightAnchor="24.0" />
-            <RadioButton fx:id="radioLoadstringState" layoutX="356.0" layoutY="494.0" mnemonicParsing="false" onAction="#selectLoadstringLuaState" text="Loadstring in State" AnchorPane.rightAnchor="14.0" />
+            <RadioButton fx:id="radioLoadstringAPI" layoutX="349.0" layoutY="531.0" mnemonicParsing="false" onAction="#selectLoadstringApi" text="Loadstring in API" AnchorPane.rightAnchor="31.0" />
+            <RadioButton fx:id="radioLoadstringState" layoutX="349.0" layoutY="510.0" mnemonicParsing="false" onAction="#selectLoadstringLuaState" selected="true" text="Loadstring in Mission" AnchorPane.rightAnchor="8.0" />
       </children>
     </AnchorPane>
   </children>

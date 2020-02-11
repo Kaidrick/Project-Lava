@@ -6,20 +6,13 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4af9032f-ac19-4f7a-b3cc-78b620366905" name="Default Changelist" comment="">
+    <list default="true" id="4af9032f-ac19-4f7a-b3cc-78b620366905" name="Default Changelist" comment="completed static display plugin/addon">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/422d_Backend_Java_Impl/core/data/Nevada.apron" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/422d_Backend_Java_Impl/core/data/Nevada.apron" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/422d_Backend_Java_Impl/core/scripts/add_group.lua" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/422d_Backend_Java_Impl/core/scripts/add_group.lua" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/box/BoxOfFlyableUnit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/box/BoxOfFlyableUnit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/data/Nevada.apron" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/data/Nevada.apron" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/object/FlyableUnit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/object/FlyableUnit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/object/Parking.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/object/Parking.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/scripts/add_group.lua" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/scripts/add_group.lua" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/core/scripts/map_playable.lua" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/scripts/map_playable.lua" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/BackendMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/BackendMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/422d_Backend_Java_Impl/main/BackendMainController.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/422d_Backend_Java_Impl/main/BackendMainController.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/request/server/ServerEnvRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/request/server/ServerEnvRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/core/request/server/ServerExecRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/core/request/server/ServerExecRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/BackendMainController.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/BackendMainController.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/LogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/LogController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plugin/static_display/AirdromeDataCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/util/AirdromeDataCollector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/plugin/static_display/StaticDisplay.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/plugin/static_display/StaticDisplay.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -226,6 +219,9 @@
       <workItem from="1581164875198" duration="15182000" />
       <workItem from="1581213323889" duration="20058000" />
       <workItem from="1581298496094" duration="12605000" />
+      <workItem from="1581335530486" duration="2933000" />
+      <workItem from="1581347697532" duration="1528000" />
+      <workItem from="1581383911411" duration="2632000" />
     </task>
     <task id="LOCAL-00001" summary="added a automatic parking data collector; it should be used in single player mode to obtain parking data from each airport">
       <created>1581301335345</created>
@@ -241,7 +237,21 @@
       <option name="project" value="LOCAL" />
       <updated>1581304565538</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="added a automatic parking data collector; it should be used in single player mode to obtain parking data from each airport">
+      <created>1581335700655</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1581335700655</updated>
+    </task>
+    <task id="LOCAL-00004" summary="completed static display plugin/addon">
+      <created>1581335744631</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1581335744631</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -249,7 +259,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="added a automatic parking data collector; it should be used in single player mode to obtain parking data from each airport" />
-    <option name="LAST_COMMIT_MESSAGE" value="added a automatic parking data collector; it should be used in single player mode to obtain parking data from each airport" />
+    <MESSAGE value="completed static display plugin/addon" />
+    <option name="LAST_COMMIT_MESSAGE" value="completed static display plugin/addon" />
   </component>
   <component name="WindowStateProjectService">
     <state x="482" y="524" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1581181462534">
@@ -306,43 +317,44 @@
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="436" y="441" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580823335452" />
-    <state x="258" y="315" key="CommitChangelistDialog2" timestamp="1581335700077">
+    <state x="258" y="315" key="CommitChangelistDialog2" timestamp="1581426629823">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state x="258" y="315" key="CommitChangelistDialog2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581335700077" />
+    <state x="258" y="315" key="CommitChangelistDialog2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581426629823" />
     <state x="0" y="132" key="DiffContextDialog" timestamp="1581301219862">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="0" y="132" key="DiffContextDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581301219862" />
-    <state x="515" y="454" key="FileChooserDialogImpl" timestamp="1580977823742">
-      <screen x="0" y="0" width="3440" height="1400" />
+    <state x="515" y="467" key="FileChooserDialogImpl" timestamp="1581387409081">
+      <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="515" y="454" key="FileChooserDialogImpl/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580977823742" />
     <state x="515" y="467" key="FileChooserDialogImpl/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580533568656" />
-    <state width="1409" height="504" key="GridCell.Tab.0.bottom" timestamp="1581318415893">
+    <state x="515" y="467" key="FileChooserDialogImpl/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581387409081" />
+    <state width="1409" height="390" key="GridCell.Tab.0.bottom" timestamp="1581349595783">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.bottom/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.bottom/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1409" height="504" key="GridCell.Tab.0.bottom/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581318415893" />
-    <state width="1409" height="504" key="GridCell.Tab.0.center" timestamp="1581318415893">
+    <state width="1409" height="390" key="GridCell.Tab.0.bottom/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581349595783" />
+    <state width="1409" height="390" key="GridCell.Tab.0.center" timestamp="1581349595783">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.center/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.center/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1409" height="504" key="GridCell.Tab.0.center/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581318415893" />
-    <state width="1409" height="504" key="GridCell.Tab.0.left" timestamp="1581318415893">
+    <state width="1409" height="390" key="GridCell.Tab.0.center/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581349595783" />
+    <state width="1409" height="390" key="GridCell.Tab.0.left" timestamp="1581349595783">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.left/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.left/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1409" height="504" key="GridCell.Tab.0.left/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581318415893" />
-    <state width="1409" height="504" key="GridCell.Tab.0.right" timestamp="1581318415893">
+    <state width="1409" height="390" key="GridCell.Tab.0.left/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581349595783" />
+    <state width="1409" height="390" key="GridCell.Tab.0.right" timestamp="1581349595783">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.right/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.right/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1409" height="504" key="GridCell.Tab.0.right/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581318415893" />
+    <state width="1409" height="390" key="GridCell.Tab.0.right/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581349595783" />
     <state width="1409" height="504" key="GridCell.Tab.1.bottom" timestamp="1581318415893">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -368,12 +380,12 @@
     </state>
     <state x="596" y="256" key="SettingsEditor/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580977685870" />
     <state x="599" y="251" key="SettingsEditor/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580707168173" />
-    <state x="464" y="550" key="com.intellij.ide.util.TipDialog" timestamp="1581335530050">
+    <state x="464" y="550" key="com.intellij.ide.util.TipDialog" timestamp="1581383911393">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="464" y="535" key="com.intellij.ide.util.TipDialog/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580977660781" />
     <state x="464" y="550" key="com.intellij.ide.util.TipDialog/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580781246975" />
-    <state x="464" y="550" key="com.intellij.ide.util.TipDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581335530050" />
+    <state x="464" y="550" key="com.intellij.ide.util.TipDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581383911393" />
     <state x="366" y="301" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1580657536928">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -382,16 +394,16 @@
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="296" y="457" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581314952589" />
-    <state x="1487" y="144" width="1034" height="1162" key="dock-window-1" timestamp="1581305760349">
+    <state x="1208" y="157" width="1028" height="999" key="dock-window-1" timestamp="1581337289288">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="2328" y="170" width="1038" height="1006" key="dock-window-1/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580807331748" />
-    <state x="1487" y="144" width="1034" height="1162" key="dock-window-1/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581305760349" />
-    <state x="1563" y="245" width="1034" height="999" key="dock-window-2" timestamp="1581309176835">
+    <state x="1208" y="157" width="1028" height="999" key="dock-window-1/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581337289288" />
+    <state x="2242" y="168" width="1028" height="999" key="dock-window-2" timestamp="1581347726184">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="1523" y="184" width="1038" height="1006" key="dock-window-2/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580812468338" />
-    <state x="1563" y="245" width="1034" height="999" key="dock-window-2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581309176835" />
+    <state x="2242" y="168" width="1028" height="999" key="dock-window-2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581347726184" />
     <state x="1496" y="165" width="1034" height="999" key="dock-window-3" timestamp="1581309817316">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -414,10 +426,11 @@
     </state>
     <state x="499" y="577" key="extract.method.dialog/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580653835448" />
     <state x="473" y="820" key="extract.method.dialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581167001316" />
-    <state x="118" y="333" key="new project wizard" timestamp="1579265825618">
+    <state x="118" y="333" key="new project wizard" timestamp="1581387353112">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="118" y="333" key="new project wizard/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1579265825618" />
+    <state x="118" y="333" key="new project wizard/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581387353112" />
     <state x="362" y="329" key="run.anything.popup" timestamp="1581094118406">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
