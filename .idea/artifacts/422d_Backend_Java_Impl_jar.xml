@@ -3,7 +3,6 @@
     <output-path>$PROJECT_DIR$/out/artifacts/422d_Backend_Java_Impl_jar</output-path>
     <root id="archive" name="422d_Backend_Java_Impl.jar">
       <element id="module-output" name="422d_Backend_Java_Impl" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/src/lib/gson-2.8.6.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>
