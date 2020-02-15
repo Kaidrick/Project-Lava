@@ -41,8 +41,6 @@ public class BackendMain extends Application {
     static ScheduledExecutorService exportPollingScheduler;
     static ScheduledExecutorService serverPollingScheduler;
 
-    public static javafx.scene.control.TextArea textArea = new javafx.scene.control.TextArea();
-
     private Thread backgroundThread = new Thread(() -> {
         try {
             startBackgroundTask();
