@@ -23,7 +23,7 @@ public final class ExportPollingHandler extends PollingHandler {
 
     private ExportPollingHandler() {
         super(PollEnv.EXPORT);
-        init();
+//        init();
     }
 
     public synchronized static ExportPollingHandler getInstance() {
@@ -33,7 +33,7 @@ public final class ExportPollingHandler extends PollingHandler {
         return instance;
     }
 
-    private void init() {
+    public void init() {
         int port = getPort();
         Gson gson = new Gson();
         String json;

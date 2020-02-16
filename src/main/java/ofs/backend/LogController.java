@@ -1,16 +1,13 @@
 package ofs.backend;
 
+import javafx.scene.control.*;
 import ofs.backend.core.request.RequestToServer;
 import ofs.backend.core.request.server.ServerExecRequest;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextArea;
 
-import javafx.scene.control.Button;
 import ofs.backend.util.AirdromeDataCollector;
 
 import java.net.URL;
@@ -27,6 +24,7 @@ public class LogController implements Initializable {
     @FXML private RadioButton radioLoadstringAPI;
     @FXML private RadioButton radioLoadstringState;
     @FXML private CheckBox checkBox_LuaDebugInteractive;
+    @FXML private Label labelConnectionStatus;
 
     @FXML public void appendLog(String logMessage) {
         logTextArea.appendText(logMessage);
@@ -47,6 +45,10 @@ public class LogController implements Initializable {
 
             serverExecRequest.send();
         }
+    }
+
+    @FXML public void setLabelConnectionStatus(String status) {
+        labelConnectionStatus.setText(status);
     }
 
     @FXML public void clearLuaString(ActionEvent actionEvent) {

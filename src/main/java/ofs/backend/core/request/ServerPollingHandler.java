@@ -23,7 +23,7 @@ public final class ServerPollingHandler extends PollingHandler {
 
     private ServerPollingHandler() {
         super(PollEnv.SERVER);
-        init();
+//        init();
     }
 
     private List<PlayerInfo> list = new ArrayList<>();
@@ -35,7 +35,7 @@ public final class ServerPollingHandler extends PollingHandler {
         return instance;
     }
 
-    private void init() {
+    public void init() {
         int port = getPort();
         Gson gson = new Gson();
         String json;

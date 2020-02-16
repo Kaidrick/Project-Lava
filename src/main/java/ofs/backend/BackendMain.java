@@ -1,23 +1,22 @@
 package ofs.backend;
 
-import ofs.backend.core.box.BoxOfFlyableUnit;
-import ofs.backend.core.box.BoxOfParking;
-import ofs.backend.core.request.BaseRequest;
-import ofs.backend.core.request.ExportPollingHandler;
-import ofs.backend.core.request.RequestHandler;
-import ofs.backend.core.request.ServerPollingHandler;
-import ofs.backend.core.request.export.handler.ExportUnitDespawnObservable;
-import ofs.backend.core.request.export.handler.ExportUnitSpawnObservable;
-import ofs.backend.core.request.server.ServerFillerRequest;
-import ofs.backend.core.request.server.handler.PlayerEnterServerObservable;
-import ofs.backend.core.request.server.handler.PlayerLeaveServerObservable;
-import ofs.backend.core.request.server.handler.PlayerSlotChangeObservable;
+import com.google.gson.Gson;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import ofs.backend.core.box.BoxOfFlyableUnit;
+import ofs.backend.core.box.BoxOfParking;
+import ofs.backend.core.request.*;
+import ofs.backend.core.request.export.handler.ExportUnitDespawnObservable;
+import ofs.backend.core.request.export.handler.ExportUnitSpawnObservable;
+import ofs.backend.core.request.server.ServerFillerRequest;
+import ofs.backend.core.request.server.handler.PlayerEnterServerObservable;
+import ofs.backend.core.request.server.handler.PlayerLeaveServerObservable;
+import ofs.backend.core.request.server.handler.PlayerSlotChangeObservable;
+import ofs.backend.util.UTF8Control;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,12 +24,18 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
+// auto connect and reconnect
+// if no exception is thrown, run background task
+// if exception is thrown, halt all schedulers and run heartbeat signal thread
+
+// if
 public class BackendMain extends Application {
 
     private static final RequestHandler<BaseRequest> requestHandler = RequestHandler.getInstance();
@@ -41,24 +46,89 @@ public class BackendMain extends Application {
     static ScheduledExecutorService exportPollingScheduler;
     static ScheduledExecutorService serverPollingScheduler;
 
-    private Thread backgroundThread = new Thread(() -> {
+    public static boolean needRestart;
+    public static AtomicBoolean heartbeatStarted = new AtomicBoolean(false);
+    public static boolean stopSign;
+
+    public static AtomicBoolean isHalted = new AtomicBoolean(false);
+
+    private static FXMLLoader loader =
+            new FXMLLoader(BackendMain.class.getResource("/BackendMainController.fxml"));
+    private static Parent root;
+    static {
+        try {
+            loader.setResources(ResourceBundle.getBundle("BackendMain", Locale.CHINA, new UTF8Control()));
+            root = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public static LogController logController = loader.getController();
+
+
+    private static void shutdownExecutorService(ExecutorService service) {
+        if(service != null) {
+            service.shutdown();
+            try {
+                if (!service.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
+                    service.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                service.shutdownNow();
+            }
+        }
+    }
+
+    public static void halt() throws InterruptedException {
+        if(isHalted.get()) return;
+
+        backgroundThread.interrupt();
+        requestHandler.dispose();
+
+        shutdownExecutorService(es);
+        shutdownExecutorService(serverPollingScheduler);
+        shutdownExecutorService(exportPollingScheduler);
+
+        isHalted.set(true);
+    }
+
+
+    public static Runnable background = () -> {
         try {
             startBackgroundTask();
         } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
-    });
+    };
+    public static Thread backgroundThread = new Thread(background);
+
+
+    public static Thread heartbeatSignalThread;
+
+
 
     public static void main(String[] args) {
         Application.launch(args);
     }
 
+
+    // restart background task when connect is cut
     public static void startBackgroundTask() throws IOException, URISyntaxException {
 
+        isHalted.set(false);
+
+        System.out.println("Starting background tasks");
+
+        ConnectionManager.sanitizeDataPipeline(requestHandler);
+
+        exportPollingHandler.init();
+        serverPollingHandler.init();
+
         BoxOfParking.init();
+
         BoxOfFlyableUnit.init();
 
-        loadPlugins();
+        Plugin.loadPlugins();
 
         MissionStartObservable.invokeAll();
 
@@ -101,8 +171,6 @@ public class BackendMain extends Application {
           }
         };
 
-//        new DebugRequest("trigger.action.outText('what?', 5)", true).send();
-
         // main loop
 //         requests are sent and result are received in this thread only
         Runnable mainLoop = () -> {
@@ -119,24 +187,15 @@ public class BackendMain extends Application {
 //         dedicated polling thread
 //         polling and receive data only in this thread
         es = Executors.newSingleThreadScheduledExecutor();
-        es.scheduleWithFixedDelay(mainLoop, 1000, 1, TimeUnit.MILLISECONDS);
+        es.scheduleWithFixedDelay(mainLoop, 0, 1, TimeUnit.MILLISECONDS);
 
         exportPollingScheduler = Executors.newSingleThreadScheduledExecutor();
         exportPollingScheduler.scheduleWithFixedDelay(exportPolling,
-                1000, 1, TimeUnit.MILLISECONDS);
+                0, 1, TimeUnit.MILLISECONDS);
 
         serverPollingScheduler = Executors.newSingleThreadScheduledExecutor();
         serverPollingScheduler.scheduleWithFixedDelay(serverPolling,
-                1000, 1, TimeUnit.MILLISECONDS);
-
-
-//        ScheduledExecutorService ep = Executors.newSingleThreadScheduledExecutor();
-//        ep.scheduleWithFixedDelay(() -> new ServerExecRequest("return timer.getAbsTime()").send()
-//                , 4000, 1000, TimeUnit.MILLISECONDS);
-
-//        ep.scheduleWithFixedDelay(() -> new ServerLuaMemoryDataRequest().send()
-//                , 2000, 1000, TimeUnit.MILLISECONDS);
-//
+                0, 1, TimeUnit.MILLISECONDS);
     }
 
     public static Path resourceToPath(URL resource)
@@ -185,47 +244,6 @@ public class BackendMain extends Application {
     }
 
 
-    /**
-     * Load ofs.backend.plugin classes from ofs.backend.plugin package
-     * for each directory, load the class that implements Plugin interface
-     */
-    private static void loadPlugins() throws IOException, URISyntaxException {
-        Path pluginPath = resourceToPath(BackendMain.class.getResource("plugin"));
-
-        List<Path> pluginList = Files.walk(pluginPath)
-                .filter(c -> c.toString().endsWith(".java") || c.toString().endsWith(".class"))
-                .collect(Collectors.toList());
-
-        Logger.log("Found " + Files.list(pluginPath).count() + " plugins with classes: "
-                + pluginList.stream().map(e -> e.getFileName().toString().replace(".class", ""))
-                .collect(Collectors.joining(", ")));
-
-        PluginClassLoader pluginClassLoader = new PluginClassLoader();
-
-        pluginList.forEach(
-                p -> pluginClassLoader.invokeClassMethod(
-                        "ofs.backend.plugin" + "." +
-                                p.getName(p.getNameCount() - 2) + "." +
-                                p.getFileName().toString()
-                                        .replace(".java", "")
-                                        .replace(".class", "")
-                )
-        );
-    }
-
-    private static FXMLLoader loader =
-            new FXMLLoader(BackendMain.class.getResource("/BackendMainController.fxml"));
-    private static Parent root;
-    static {
-        try {
-            loader.setResources(ResourceBundle.getBundle("BackendMain", Locale.CHINA, new UTF8Control()));
-            root = loader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    public static LogController logController = loader.getController();
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setScene(new Scene(root, 500, 700));
@@ -234,27 +252,21 @@ public class BackendMain extends Application {
                         ClassLoader.getSystemResourceAsStream("green_bat.png")
                 ))
         );
-        backgroundThread.start();
+
         primaryStage.setTitle(loader.getResources().getString("app_title"));
         primaryStage.show();
+
+        // start background thread only if connect can be made
+        Thread heartbeat = HeartbeatThreadFactory.getHeartbeatThread();
+        if(heartbeat != null) {
+            heartbeat.start();
+        }
     }
 
     @Override
     public void stop() throws Exception {
-        backgroundThread.interrupt();
-        if(es != null) {
-            es.shutdown();
-            es.awaitTermination(10, TimeUnit.SECONDS);
-        }
-
-        if(serverPollingScheduler != null) {
-            serverPollingScheduler.shutdown();
-            serverPollingScheduler.awaitTermination(10, TimeUnit.SECONDS);
-        }
-
-        if(exportPollingScheduler != null) {
-            exportPollingScheduler.shutdown();
-            exportPollingScheduler.awaitTermination(10, TimeUnit.SECONDS);
-        }
+        halt();
+        heartbeatSignalThread.interrupt();
+        stopSign = true;
     }
 }

@@ -1,6 +1,8 @@
 package ofs.backend.core.box;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import ofs.backend.LuaScripts;
 import ofs.backend.core.object.Parking;
@@ -46,7 +48,13 @@ public final class BoxOfParking {
         jsonRpcResponseList.stream().findAny().ifPresent(
                 r -> {
                     String dataString = r.getResult().getData();
-                    String theater = gson.fromJson(dataString, String.class);
+                    String theater = null;
+                    try {
+                        theater = gson.fromJson(dataString, String.class);
+                    } catch (JsonSyntaxException e) {
+                        e.printStackTrace();
+                        System.out.println("bad data -> " + gson.fromJson(dataString, LinkedTreeMap.class));
+                    }
                     try {
                         loadData(theater);
                     } catch (IOException | ClassNotFoundException e) {

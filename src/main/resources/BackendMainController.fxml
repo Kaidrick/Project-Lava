@@ -3,6 +3,7 @@
 <?import java.net.URL?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextArea?>
@@ -22,6 +23,7 @@
             <Separator layoutX="15.0" layoutY="582.0" prefWidth="200.0" AnchorPane.bottomAnchor="125.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" />
             <RadioButton fx:id="radioLoadstringAPI" layoutX="349.0" layoutY="531.0" mnemonicParsing="false" onAction="#selectLoadstringApi" text="Loadstring in API" AnchorPane.rightAnchor="31.0" />
             <RadioButton fx:id="radioLoadstringState" layoutX="349.0" layoutY="510.0" mnemonicParsing="false" onAction="#selectLoadstringLuaState" selected="true" text="Loadstring in Mission" AnchorPane.rightAnchor="8.0" />
+            <Label fx:id="labelConnectionStatus" layoutX="21.0" layoutY="6.0" text="Status" />
       </children>
     </AnchorPane>
   </children>

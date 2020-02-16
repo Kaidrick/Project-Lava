@@ -2,10 +2,15 @@ package ofs.backend.core.request;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import ofs.backend.BackendMain;
+import ofs.backend.HeartbeatThreadFactory;
+import ofs.backend.LogController;
+import ofs.backend.Logger;
 
 import java.io.*;
 import java.lang.reflect.Type;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,19 +48,54 @@ public final class RequestHandler<T extends BaseRequest> {
         return instance;
     }
 
+    public void dispose() {
+        sendQueue.clear();
+    }
+
+
+    // if exception is thrown here, try reconnect: check if connection can be made
+    // if so, restart backend
     public static String sendAndGet(int port, String jsonString) throws IOException {
 
-        Socket socket = new Socket("127.0.0.1", port);
-        DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-        DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-        dataOutputStream.write((jsonString + "\n").getBytes(StandardCharsets.UTF_8));
-        dataOutputStream.flush();
+        if(BackendMain.needRestart) {
+            try {
+                BackendMain.halt();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
-        BufferedReader bufferedReader = new BufferedReader(
-                new InputStreamReader(dataInputStream, StandardCharsets.UTF_8));
-        String s = bufferedReader.readLine();
-        dataOutputStream.close();
-        socket.close();
+        String s = null;
+        try (Socket socket = new Socket("127.0.0.1", port);
+             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+             DataInputStream dataInputStream = new DataInputStream(socket.getInputStream())) {
+
+            dataOutputStream.write((jsonString + "\n").getBytes(StandardCharsets.UTF_8));
+            dataOutputStream.flush();
+
+            // java.net.ConnectionException: Connection refused: connect
+            // let main thread send heartbeat signal?
+            BufferedReader bufferedReader = new BufferedReader(
+                    new InputStreamReader(dataInputStream, StandardCharsets.UTF_8));
+            s = bufferedReader.readLine();
+        } catch (SocketException e) {
+            javafx.application.Platform.runLater(() ->
+                    BackendMain.logController.setLabelConnectionStatus("disconnected"));
+
+            System.out.println(port + " Connection Lost -> Stopping Application");
+
+            try {
+                BackendMain.halt();
+                if(HeartbeatThreadFactory.isHeartbeatStarted()) {
+                    System.out.println("heartbeat already exists");
+                } else {
+                    Thread heartbeat = HeartbeatThreadFactory.getHeartbeatThread();
+                    Objects.requireNonNull(heartbeat).start();
+                }
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
         return s;
     }
 
@@ -71,6 +111,10 @@ public final class RequestHandler<T extends BaseRequest> {
      * Convert sendQueue to a JSON string and send it over tcp to Lua server in DCS
      */
     public void transmitAndReceive() {
+
+        if(BackendMain.needRestart) {
+            return;
+        }
 
         Queue<BaseRequest> transmissionQueue = new ArrayDeque<>(sendQueue);
 //        System.out.println("sendQueue = " + sendQueue);
@@ -113,14 +157,15 @@ public final class RequestHandler<T extends BaseRequest> {
                 Type jsonRpcResponseListType = new TypeToken<List<JsonRpcResponse<String>>>() {}.getType();
                 List<JsonRpcResponse<String>> jsonRpcResponseList = gson.fromJson(s, jsonRpcResponseListType);
 
-                jsonRpcResponseList.forEach(
-                        r -> waitMap.computeIfPresent(r.getId(),
-                            (k, v) -> {
+                if(jsonRpcResponseList != null) {
+                    jsonRpcResponseList.forEach(
+                            r -> waitMap.computeIfPresent(r.getId(),
+                                    (k, v) -> {
 //                                System.out.println(v.getClass().toString());
-                                v.resolve(r.getResult().getData());
-                                return null;
-                            }));
-
+                                        v.resolve(r.getResult().getData());
+                                        return null;
+                                    }));
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

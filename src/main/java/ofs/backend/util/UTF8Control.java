@@ -1,4 +1,4 @@
-package ofs.backend;
+package ofs.backend.util;
 
 import java.io.IOException;
 import java.io.InputStream;
