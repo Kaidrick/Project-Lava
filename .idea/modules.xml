@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/422d-backend-ui.iml" filepath="$PROJECT_DIR$/422d-backend-ui.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend-core/backend-core.iml" filepath="$PROJECT_DIR$/backend-core/backend-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend-main/backend-main.iml" filepath="$PROJECT_DIR$/backend-main/backend-main.iml" />
     </modules>
   </component>
 </project>

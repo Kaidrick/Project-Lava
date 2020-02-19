@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import org.controlsfx.control.CheckListView?>
+<?import org.controlsfx.control.StatusBar?>
+<?import org.controlsfx.control.ToggleSwitch?>
+
+<VBox prefHeight="800.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="moe.ofs.backend.MainController">
+  <children>
+      <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+        <tabs>
+          <Tab text="Log / Debug">
+               <content>
+                <AnchorPane fx:id="anchorPane" maxHeight="-1.0" maxWidth="-1.0" prefWidth="500.0">
+                  <children>
+                        <SplitPane dividerPositions="0.7" layoutX="14.0" layoutY="14.0" orientation="VERTICAL" prefHeight="479.0" prefWidth="490.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                          <items>
+                            <AnchorPane>
+                                 <children>
+                                    <TextArea fx:id="logTextArea" layoutX="8.0" layoutY="7.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                                 </children>
+                              </AnchorPane>
+                            <AnchorPane>
+                                 <children>
+                                    <TextArea fx:id="textArea_LuaDebugString" layoutX="14.0" layoutY="14.0" promptText="enter_lua_code_here" wrapText="true" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="160.0" AnchorPane.topAnchor="5.0" />
+                                    <Pane layoutX="258.0" layoutY="5.0" AnchorPane.bottomAnchor="55.0" AnchorPane.rightAnchor="5.0">
+                                       <children>
+                                          <RadioButton fx:id="radioLoadstringState" layoutX="4.0" layoutY="6.0" mnemonicParsing="false" onAction="#selectLoadstringLuaState" selected="true" text="%do_string_in_mission" />
+                                          <RadioButton fx:id="radioLoadstringAPI" layoutX="4.0" layoutY="30.0" mnemonicParsing="false" onAction="#selectLoadstringApi" text="%do_string_in_api" />
+                                          <ToggleSwitch fx:id="toggleSwitch_LuaDebugInteractive" contentDisplay="RIGHT" graphicTextGap="0.0" layoutX="4.0" layoutY="65.0" onMouseClicked="#toggleInteractiveLuaDebug" text="%interactive_lua_debug" />
+                                       </children>
+                                    </Pane>
+                                    <Button fx:id="button_ExecuteLuaDebug" layoutX="310.0" layoutY="102.0" mnemonicParsing="false" onAction="#debugLuaString" prefHeight="45.0" prefWidth="45.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="55.0" />
+                                    <Button fx:id="button_ClearLuaString" layoutX="360.0" layoutY="102.0" mnemonicParsing="false" onAction="#clearLuaString" prefHeight="45.0" prefWidth="45.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+                                 </children>
+                              </AnchorPane>
+                          </items>
+                        </SplitPane>
+                  </children>
+                </AnchorPane>
+               </content>
+            </Tab>
+          <Tab text="Settings">
+               <content>
+                  <Accordion>
+                    <panes>
+                      <TitledPane animated="false" text="Addons">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <CheckListView AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </TitledPane>
+                      <TitledPane animated="false" text="Config">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                      </TitledPane>
+                      <TitledPane animated="false" text="Miscellaneous">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                      </TitledPane>
+                    </panes>
+                  </Accordion>
+               </content></Tab>
+          <Tab text="Dev / Test">
+               <content>
+                  <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <Button fx:id="mainLoopStartButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#testStart" text="%start" />
+                     </children>
+                  </AnchorPane>
+               </content></Tab>
+        </tabs>
+      </TabPane>
+      <StatusBar fx:id="statusBar_Connection" text="Connection Status" VBox.vgrow="NEVER" />
+  </children>
+
+  <stylesheets>
+    <URL value="@main.css" />
+  </stylesheets>
+</VBox>
