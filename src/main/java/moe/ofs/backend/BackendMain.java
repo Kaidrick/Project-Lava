@@ -21,6 +21,7 @@ import moe.ofs.backend.core.request.server.handler.PlayerEnterServerObservable;
 import moe.ofs.backend.core.request.server.handler.PlayerLeaveServerObservable;
 import moe.ofs.backend.core.request.server.handler.PlayerSlotChangeObservable;
 import moe.ofs.backend.util.UTF8Control;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.IOException;
 import java.net.URI;
@@ -284,5 +285,7 @@ public class BackendMain extends Application {
 
         // global stop flag
         stopSign = true;
+
+        moe.ofs.backend.Application.ctx.close();
     }
 }

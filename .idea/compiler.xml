@@ -6,11 +6,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="422d_Backend_Java_Impl" />
+        <module name="422d-backend-ui" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="422d_Backend_Java_Impl" target="8" />
+      <module name="422d-backend-ui" target="8" />
     </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="422d-backend-ui" options="-parameters" />
+    </option>
   </component>
 </project>
