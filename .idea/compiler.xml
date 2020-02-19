@@ -10,7 +10,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="422d-backend-ui" target="8" />
+      <module name="422d-backend-ui" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

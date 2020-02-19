@@ -22,6 +22,7 @@ import moe.ofs.backend.core.request.server.handler.PlayerLeaveServerObservable;
 import moe.ofs.backend.core.request.server.handler.PlayerSlotChangeObservable;
 import moe.ofs.backend.util.UTF8Control;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 import java.net.URI;
@@ -263,7 +264,7 @@ public class BackendMain extends Application {
         primaryStage.setMinHeight(260);
         primaryStage.getIcons().add(
                 new Image(Objects.requireNonNull(
-                        ClassLoader.getSystemResourceAsStream("green_bat.png")
+                        new ClassPathResource("green_bat.png").getInputStream()
                 ))
         );
 
