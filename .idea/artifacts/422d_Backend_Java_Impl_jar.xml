@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="422d_Backend_Java_Impl:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/422d_Backend_Java_Impl_jar</output-path>
-    <root id="archive" name="422d_Backend_Java_Impl.jar">
-      <element id="module-output" name="422d_Backend_Java_Impl" />
-    </root>
-  </artifact>
-</component>
