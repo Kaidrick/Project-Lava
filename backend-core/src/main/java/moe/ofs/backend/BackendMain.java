@@ -119,6 +119,8 @@ public class BackendMain extends Application {
     // restart background task when connect is cut
     public static void startBackgroundTask() throws IOException {
 
+        BackgroundTaskRestartObservable.invokeAll();
+
         isHalted.set(false);
 
         System.out.println("Starting background tasks");
