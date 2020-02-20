@@ -5,6 +5,7 @@ import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import moe.ofs.backend.BackendMain;
+import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.object.Parking;
 import moe.ofs.backend.request.BaseRequest;
@@ -22,7 +23,16 @@ import java.util.List;
 import java.util.Optional;
 
 public final class BoxOfParking {
-    public static List<Parking> box = new ArrayList<>();
+    private static List<Parking> box = new ArrayList<>();
+
+    static {
+        BackgroundTaskRestartObservable backgroundTaskRestartObservable = BoxOfParking::dispose;
+        backgroundTaskRestartObservable.register();
+    }
+
+    public static void dispose() {
+        box.clear();
+    }
 
     @SuppressWarnings("unchecked")
     private static void loadData(String theaterName) throws IOException, ClassNotFoundException {

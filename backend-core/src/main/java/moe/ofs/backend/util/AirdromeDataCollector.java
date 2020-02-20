@@ -6,6 +6,7 @@ import moe.ofs.backend.object.Unit;
 import moe.ofs.backend.object.Parking;
 import moe.ofs.backend.request.server.ServerDataRequest;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -28,6 +29,8 @@ public class AirdromeDataCollector {
     private static final String sampleUnitName = "Test Unit";
 
     public static void collect() {
+
+        parkingList.clear();
 
         // load script
         String script = LuaScripts.load("add_group.lua");
@@ -108,6 +111,10 @@ public class AirdromeDataCollector {
         // serialization to file
         try {
             Path path = Paths.get( "backend-core/src/main/resources/data").resolve(mapTheater + ".apron");
+
+
+//            Path path = Paths.get(System.getProperty("user.home")).resolve(mapTheater + ".apron");
+
             System.out.println(path.toAbsolutePath());
             FileOutputStream fileOutputStream = new FileOutputStream(path.toFile());
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);

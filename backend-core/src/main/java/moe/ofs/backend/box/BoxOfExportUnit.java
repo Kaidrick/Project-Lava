@@ -1,5 +1,6 @@
 package moe.ofs.backend.box;
 
+import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.object.ExportObject;
 import moe.ofs.backend.handlers.ExportUnitDespawnObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
@@ -11,8 +12,17 @@ import java.util.stream.Collectors;
 public final class BoxOfExportUnit {
     private static volatile List<ExportObject> box = new ArrayList<>();
 
+    static {
+        BackgroundTaskRestartObservable backgroundTaskRestartObservable = BoxOfExportUnit::dispose;
+        backgroundTaskRestartObservable.register();
+    }
+
     public static List<ExportObject> peek() {
         return new ArrayList<>(box);
+    }
+
+    public static void dispose() {
+        box.clear();
     }
 
     public static void observeAll(List<ExportObject> list) {
