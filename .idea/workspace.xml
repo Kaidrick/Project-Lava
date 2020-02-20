@@ -6,16 +6,17 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4af9032f-ac19-4f7a-b3cc-78b620366905" name="Default Changelist" comment="">
+    <list default="true" id="4af9032f-ac19-4f7a-b3cc-78b620366905" name="Default Changelist" comment="added a maven plugin to automatically generate a properties file containing name and main class of plugins">
+      <change afterPath="$PROJECT_DIR$/plugin-builder-maven-plugin/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plugin-builder-maven-plugin/src/main/java/PluginBuilderMojo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/BackendMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/BackendMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/ControlPanelShutdownObservable.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/handlers/ControlPanelShutdownObservable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/MissionStartObservable.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/handlers/MissionStartObservable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/plugin/static_display/StaticDisplay.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/plugin/static_display/StaticDisplay.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/request/RequestHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/request/RequestHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/request/ServerPollingHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/request/ServerPollingHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-main/src/main/java/moe/ofs/backend/Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-main/src/main/java/moe/ofs/backend/Application.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-main/src/main/java/moe/ofs/backend/bootstrap/BackendRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-main/src/main/java/moe/ofs/backend/bootstrap/BackendRunner.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/util/PluginBaker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-core/src/main/resources/enabled_plugins.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/resources/enabled_plugins.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,7 +90,7 @@
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.ignored.files" />
   </component>
   <component name="RecentsManager">
     <key name="MoveMembersDialog.RECENTS_KEY">
@@ -109,6 +110,7 @@
       <recent name="core.request" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="" />
       <recent name="core.object" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -231,7 +233,7 @@
       <workItem from="1582091268606" duration="338000" />
       <workItem from="1582101222076" duration="2362000" />
       <workItem from="1582120867986" duration="11326000" />
-      <workItem from="1582161741386" duration="6456000" />
+      <workItem from="1582161741386" duration="23719000" />
     </task>
     <task id="LOCAL-00001" summary="added a automatic parking data collector; it should be used in single player mode to obtain parking data from each airport">
       <created>1581301335345</created>
@@ -310,7 +312,14 @@
       <option name="project" value="LOCAL" />
       <updated>1582166466539</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="minor refactoring and clean up">
+      <created>1582170120366</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1582170120366</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -338,7 +347,8 @@
     <MESSAGE value="very bad implementation of auto connect and re-connect. need more refactoring in the future. closes #3." />
     <MESSAGE value="split project into a multi-module spring project. added a very basic view to show all ExportObject in html" />
     <MESSAGE value="fixed Plugin load mechanism with pre-made enabled_plugins.properties, generated new map data, removed unused class MapResult.java, some minor refactoring of BackendMain.java" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed Plugin load mechanism with pre-made enabled_plugins.properties, generated new map data, removed unused class MapResult.java, some minor refactoring of BackendMain.java" />
+    <MESSAGE value="minor refactoring and clean up" />
+    <option name="LAST_COMMIT_MESSAGE" value="minor refactoring and clean up" />
   </component>
   <component name="WindowStateProjectService">
     <state x="326" y="379" key="#Project_Structure" timestamp="1582119551363">
@@ -353,11 +363,11 @@
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="482" y="524" key="#com.intellij.fileTypes.FileTypeChooser/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581181462534" />
-    <state x="511" y="404" key="#com.intellij.ide.util.MemberChooser" timestamp="1582166624427">
+    <state x="511" y="404" key="#com.intellij.ide.util.MemberChooser" timestamp="1582174063124">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="511" y="404" key="#com.intellij.ide.util.MemberChooser/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580823899303" />
-    <state x="511" y="404" key="#com.intellij.ide.util.MemberChooser/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166624427" />
+    <state x="511" y="404" key="#com.intellij.ide.util.MemberChooser/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582174063124" />
     <state x="849" y="460" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1581824312775">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -407,14 +417,15 @@
     </state>
     <state x="304" y="52" width="832" height="1258" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580365020007" />
     <state x="304" y="52" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581859290466" />
-    <state x="436" y="441" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1580823335452">
+    <state x="436" y="441" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1582199704422">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="436" y="441" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580823335452" />
-    <state x="258" y="315" key="CommitChangelistDialog2" timestamp="1582166465902">
+    <state x="436" y="441" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582199704422" />
+    <state x="258" y="315" key="CommitChangelistDialog2" timestamp="1582200027135">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state x="258" y="315" key="CommitChangelistDialog2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166465902" />
+    <state x="258" y="315" key="CommitChangelistDialog2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582200027135" />
     <state x="0" y="132" key="DiffContextDialog" timestamp="1581301219862">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -425,50 +436,50 @@
     <state x="515" y="454" key="FileChooserDialogImpl/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580977823742" />
     <state x="515" y="467" key="FileChooserDialogImpl/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580533568656" />
     <state x="515" y="467" key="FileChooserDialogImpl/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581387409081" />
-    <state width="1449" height="390" key="GridCell.Tab.0.bottom" timestamp="1582166475593">
+    <state width="1449" height="390" key="GridCell.Tab.0.bottom" timestamp="1582200027152">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.bottom/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.bottom/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1449" height="390" key="GridCell.Tab.0.bottom/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166475593" />
-    <state width="1449" height="390" key="GridCell.Tab.0.center" timestamp="1582166475593">
+    <state width="1449" height="390" key="GridCell.Tab.0.bottom/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582200027152" />
+    <state width="1449" height="390" key="GridCell.Tab.0.center" timestamp="1582200027152">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.center/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.center/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1449" height="390" key="GridCell.Tab.0.center/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166475593" />
-    <state width="1449" height="390" key="GridCell.Tab.0.left" timestamp="1582166475593">
+    <state width="1449" height="390" key="GridCell.Tab.0.center/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582200027152" />
+    <state width="1449" height="390" key="GridCell.Tab.0.left" timestamp="1582200027152">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.left/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.left/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1449" height="390" key="GridCell.Tab.0.left/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166475593" />
-    <state width="1449" height="390" key="GridCell.Tab.0.right" timestamp="1582166475593">
+    <state width="1449" height="390" key="GridCell.Tab.0.left/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582200027152" />
+    <state width="1449" height="390" key="GridCell.Tab.0.right" timestamp="1582200027152">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.right/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.right/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1449" height="390" key="GridCell.Tab.0.right/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166475593" />
-    <state width="1449" height="390" key="GridCell.Tab.1.bottom" timestamp="1582166069064">
+    <state width="1449" height="390" key="GridCell.Tab.0.right/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582200027152" />
+    <state width="1449" height="390" key="GridCell.Tab.1.bottom" timestamp="1582174234609">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1351" height="446" key="GridCell.Tab.1.bottom/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1579712565156" />
-    <state width="1449" height="390" key="GridCell.Tab.1.bottom/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166069064" />
-    <state width="1449" height="390" key="GridCell.Tab.1.center" timestamp="1582166069064">
+    <state width="1449" height="390" key="GridCell.Tab.1.bottom/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582174234609" />
+    <state width="1449" height="390" key="GridCell.Tab.1.center" timestamp="1582174234608">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1351" height="446" key="GridCell.Tab.1.center/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1579712565156" />
-    <state width="1449" height="390" key="GridCell.Tab.1.center/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166069064" />
-    <state width="1449" height="390" key="GridCell.Tab.1.left" timestamp="1582166069064">
+    <state width="1449" height="390" key="GridCell.Tab.1.center/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582174234608" />
+    <state width="1449" height="390" key="GridCell.Tab.1.left" timestamp="1582174234608">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1351" height="446" key="GridCell.Tab.1.left/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1579712565156" />
-    <state width="1449" height="390" key="GridCell.Tab.1.left/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166069064" />
-    <state width="1449" height="390" key="GridCell.Tab.1.right" timestamp="1582166069064">
+    <state width="1449" height="390" key="GridCell.Tab.1.left/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582174234608" />
+    <state width="1449" height="390" key="GridCell.Tab.1.right" timestamp="1582174234608">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1351" height="446" key="GridCell.Tab.1.right/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1579712565156" />
-    <state width="1449" height="390" key="GridCell.Tab.1.right/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166069064" />
+    <state width="1449" height="390" key="GridCell.Tab.1.right/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582174234608" />
     <state x="285" y="376" key="Maven.ArtifactSearchDialog" timestamp="1581865153562">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -477,16 +488,16 @@
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="429" y="429" width="651" height="577" key="RefactorJ.ExtractClass/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582121716631" />
-    <state x="434" y="319" key="SettingsEditor" timestamp="1582167247532">
+    <state x="434" y="319" key="SettingsEditor" timestamp="1582182185053">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="596" y="256" key="SettingsEditor/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580977685870" />
     <state x="599" y="251" key="SettingsEditor/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580707168173" />
-    <state x="434" y="319" key="SettingsEditor/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582167247532" />
-    <state x="326" y="454" key="Vcs.Push.Dialog.v2" timestamp="1582102930719">
+    <state x="434" y="319" key="SettingsEditor/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582182185053" />
+    <state x="326" y="454" key="Vcs.Push.Dialog.v2" timestamp="1582170130121">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state x="326" y="454" key="Vcs.Push.Dialog.v2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582102930719" />
+    <state x="326" y="454" key="Vcs.Push.Dialog.v2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582170130121" />
     <state x="464" y="550" key="com.intellij.ide.util.TipDialog" timestamp="1581383911393">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -533,11 +544,11 @@
     </state>
     <state x="499" y="577" key="extract.method.dialog/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580653835448" />
     <state x="473" y="820" key="extract.method.dialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581914251667" />
-    <state x="289" y="392" key="new project wizard" timestamp="1582120005337">
+    <state x="289" y="392" key="new project wizard" timestamp="1582170250019">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="118" y="333" key="new project wizard/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1579265825618" />
-    <state x="289" y="392" key="new project wizard/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582120005337" />
+    <state x="289" y="392" key="new project wizard/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582170250019" />
     <state x="461" y="349" key="refactoring.ChangeSignatureDialog" timestamp="1581867211083">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>

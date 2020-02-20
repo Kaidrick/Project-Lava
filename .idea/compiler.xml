@@ -6,14 +6,16 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="backend-core" />
         <module name="backend-main" />
+        <module name="backend-core" />
+        <module name="plugin-builder-maven-plugin" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="422d-backend-ui" target="1.8" />
       <module name="backend-core" target="1.8" />
       <module name="backend-main" target="1.8" />
+      <module name="plugin-builder-maven-plugin" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -21,6 +23,7 @@
       <module name="422d-backend-ui" options="-parameters" />
       <module name="backend-core" options="-parameters" />
       <module name="backend-main" options="-parameters" />
+      <module name="plugin-builder-maven-plugin" options="" />
     </option>
   </component>
 </project>

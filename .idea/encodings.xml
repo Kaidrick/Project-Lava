@@ -3,5 +3,6 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/backend-core/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/backend-main/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/plugin-builder-maven-plugin/src/main/java" charset="UTF-8" />
   </component>
 </project>

@@ -7,6 +7,7 @@
     <modules>
         <module>backend-core</module>
         <module>backend-main</module>
+        <module>plugin-builder-maven-plugin</module>
     </modules>
 
     <groupId>moe.ofs</groupId>
