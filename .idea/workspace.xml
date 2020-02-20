@@ -7,31 +7,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4af9032f-ac19-4f7a-b3cc-78b620366905" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/util/PluginBaker.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/util/ResourceManager.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend-core/src/main/resources/enabled_plugins.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/BackendMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/BackendMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/Plugin.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/Plugin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/box/BoxOfExportUnit.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/box/BoxOfExportUnit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/box/BoxOfParking.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/box/BoxOfParking.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/box/BoxOfPlayerInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/box/BoxOfPlayerInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/plugin/greeting/Greeting.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/plugin/greeting/Greeting.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/ControlPanelShutdownObservable.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/handlers/ControlPanelShutdownObservable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/MissionStartObservable.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/handlers/MissionStartObservable.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/plugin/static_display/StaticDisplay.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/plugin/static_display/StaticDisplay.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/request/MapResult.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/request/export/handler/ExportUnitDespawnObservable.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/handlers/ExportUnitDespawnObservable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/request/export/handler/ExportUnitSpawnObservable.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/handlers/ExportUnitSpawnObservable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/request/server/handler/PlayerEnterServerObservable.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/handlers/PlayerEnterServerObservable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/request/server/handler/PlayerLeaveServerObservable.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/handlers/PlayerLeaveServerObservable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/request/server/handler/PlayerSlotChangeObservable.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/handlers/PlayerSlotChangeObservable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/util/AirdromeDataCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/util/AirdromeDataCollector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/resources/BackendMainController.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/resources/BackendMainController.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/resources/data/Caucasus.apron" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/resources/data/Caucasus.apron" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/resources/data/Nevada.apron" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/resources/data/Nevada.apron" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend-core/src/main/resources/data/PersianGulf.apron" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/resources/data/PersianGulf.apron" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/request/RequestHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/request/RequestHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/request/ServerPollingHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/request/ServerPollingHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend-main/src/main/java/moe/ofs/backend/Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-main/src/main/java/moe/ofs/backend/Application.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-main/src/main/java/moe/ofs/backend/bootstrap/BackendRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend-main/src/main/java/moe/ofs/backend/bootstrap/BackendRunner.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +89,7 @@
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.importing" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
     <key name="MoveMembersDialog.RECENTS_KEY">
@@ -247,7 +231,7 @@
       <workItem from="1582091268606" duration="338000" />
       <workItem from="1582101222076" duration="2362000" />
       <workItem from="1582120867986" duration="11326000" />
-      <workItem from="1582161741386" duration="4589000" />
+      <workItem from="1582161741386" duration="6456000" />
     </task>
     <task id="LOCAL-00001" summary="added a automatic parking data collector; it should be used in single player mode to obtain parking data from each airport">
       <created>1581301335345</created>
@@ -319,7 +303,14 @@
       <option name="project" value="LOCAL" />
       <updated>1582129061445</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="fixed Plugin load mechanism with pre-made enabled_plugins.properties, generated new map data, removed unused class MapResult.java, some minor refactoring of BackendMain.java">
+      <created>1582166466539</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1582166466539</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -346,7 +337,8 @@
     <MESSAGE value="configured maven for jar packaging. ready to move to spring." />
     <MESSAGE value="very bad implementation of auto connect and re-connect. need more refactoring in the future. closes #3." />
     <MESSAGE value="split project into a multi-module spring project. added a very basic view to show all ExportObject in html" />
-    <option name="LAST_COMMIT_MESSAGE" value="split project into a multi-module spring project. added a very basic view to show all ExportObject in html" />
+    <MESSAGE value="fixed Plugin load mechanism with pre-made enabled_plugins.properties, generated new map data, removed unused class MapResult.java, some minor refactoring of BackendMain.java" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed Plugin load mechanism with pre-made enabled_plugins.properties, generated new map data, removed unused class MapResult.java, some minor refactoring of BackendMain.java" />
   </component>
   <component name="WindowStateProjectService">
     <state x="326" y="379" key="#Project_Structure" timestamp="1582119551363">
@@ -361,11 +353,11 @@
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="482" y="524" key="#com.intellij.fileTypes.FileTypeChooser/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581181462534" />
-    <state x="511" y="404" key="#com.intellij.ide.util.MemberChooser" timestamp="1582128290417">
+    <state x="511" y="404" key="#com.intellij.ide.util.MemberChooser" timestamp="1582166624427">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="511" y="404" key="#com.intellij.ide.util.MemberChooser/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580823899303" />
-    <state x="511" y="404" key="#com.intellij.ide.util.MemberChooser/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582128290417" />
+    <state x="511" y="404" key="#com.intellij.ide.util.MemberChooser/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166624427" />
     <state x="849" y="460" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1581824312775">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -419,10 +411,10 @@
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="436" y="441" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580823335452" />
-    <state x="258" y="315" key="CommitChangelistDialog2" timestamp="1582129060866">
+    <state x="258" y="315" key="CommitChangelistDialog2" timestamp="1582166465902">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state x="258" y="315" key="CommitChangelistDialog2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582129060866" />
+    <state x="258" y="315" key="CommitChangelistDialog2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166465902" />
     <state x="0" y="132" key="DiffContextDialog" timestamp="1581301219862">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -433,30 +425,30 @@
     <state x="515" y="454" key="FileChooserDialogImpl/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580977823742" />
     <state x="515" y="467" key="FileChooserDialogImpl/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580533568656" />
     <state x="515" y="467" key="FileChooserDialogImpl/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581387409081" />
-    <state width="1449" height="390" key="GridCell.Tab.0.bottom" timestamp="1582166073654">
+    <state width="1449" height="390" key="GridCell.Tab.0.bottom" timestamp="1582166475593">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.bottom/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.bottom/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1449" height="390" key="GridCell.Tab.0.bottom/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166073654" />
-    <state width="1449" height="390" key="GridCell.Tab.0.center" timestamp="1582166073654">
+    <state width="1449" height="390" key="GridCell.Tab.0.bottom/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166475593" />
+    <state width="1449" height="390" key="GridCell.Tab.0.center" timestamp="1582166475593">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.center/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.center/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1449" height="390" key="GridCell.Tab.0.center/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166073654" />
-    <state width="1449" height="390" key="GridCell.Tab.0.left" timestamp="1582166073654">
+    <state width="1449" height="390" key="GridCell.Tab.0.center/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166475593" />
+    <state width="1449" height="390" key="GridCell.Tab.0.left" timestamp="1582166475593">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.left/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.left/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1449" height="390" key="GridCell.Tab.0.left/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166073654" />
-    <state width="1449" height="390" key="GridCell.Tab.0.right" timestamp="1582166073654">
+    <state width="1449" height="390" key="GridCell.Tab.0.left/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166475593" />
+    <state width="1449" height="390" key="GridCell.Tab.0.right" timestamp="1582166475593">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.right/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.right/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1449" height="390" key="GridCell.Tab.0.right/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166073654" />
+    <state width="1449" height="390" key="GridCell.Tab.0.right/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582166475593" />
     <state width="1449" height="390" key="GridCell.Tab.1.bottom" timestamp="1582166069064">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -485,12 +477,12 @@
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="429" y="429" width="651" height="577" key="RefactorJ.ExtractClass/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582121716631" />
-    <state x="434" y="319" key="SettingsEditor" timestamp="1582135394113">
+    <state x="434" y="319" key="SettingsEditor" timestamp="1582167247532">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="596" y="256" key="SettingsEditor/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580977685870" />
     <state x="599" y="251" key="SettingsEditor/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580707168173" />
-    <state x="434" y="319" key="SettingsEditor/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582135394113" />
+    <state x="434" y="319" key="SettingsEditor/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582167247532" />
     <state x="326" y="454" key="Vcs.Push.Dialog.v2" timestamp="1582102930719">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>

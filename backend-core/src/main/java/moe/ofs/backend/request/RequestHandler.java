@@ -101,7 +101,7 @@ public final class RequestHandler<T extends BaseRequest> {
      * takes a BaseRequest object, adds it to sendList, and send it with other BaseRequest
      * to lua server with a fixed interval?
      */
-    public void take(BaseRequest request) {
+    public void take(T request) {
         sendQueue.offer(request);
     }
 
@@ -167,9 +167,6 @@ public final class RequestHandler<T extends BaseRequest> {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            // deserialize should be done separately? as per class?
-
         });
     }
 

@@ -2,7 +2,7 @@ package moe.ofs.backend.plugin.static_display;
 
 import moe.ofs.backend.util.Logger;
 import moe.ofs.backend.util.LuaScripts;
-import moe.ofs.backend.MissionStartObservable;
+import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.Plugin;
 import moe.ofs.backend.box.BoxOfFlyableUnit;
 import moe.ofs.backend.box.BoxOfParking;

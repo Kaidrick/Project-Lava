@@ -1,7 +1,6 @@
 package moe.ofs.backend.bootstrap;
 
 import moe.ofs.backend.BackendMain;
-import moe.ofs.backend.ControlPanelShutdownObservable;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 

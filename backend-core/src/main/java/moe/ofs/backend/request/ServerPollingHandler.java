@@ -81,7 +81,6 @@ public final class ServerPollingHandler extends PollingHandler {
 //        if(!json.equals("[]"))
 //            System.out.println(json);
 
-        // TODO: send request iff previous polling request has been completed
         String s = RequestHandler.sendAndGet(port, json);
 
         if (!s.equals("[]")) {
@@ -96,7 +95,6 @@ public final class ServerPollingHandler extends PollingHandler {
                     jsonRpcResponseList.stream()
                             .flatMap(r -> r.getResult().getData().stream()).collect(Collectors.toList());
 
-            // TODO --> check size, make map
             list.addAll(playerInfoList);
 
             Optional<JsonRpcResponse<List<PlayerInfo>>> optional = jsonRpcResponseList.stream().findAny();
@@ -112,30 +110,6 @@ public final class ServerPollingHandler extends PollingHandler {
                     list.clear();
                 }
             }
-
-//            jsonRpcResponseList.stream().findAny().ifPresent(
-//                    r -> {
-//                        list.addAll(r.getResult().getData());
-//                        if (list.size() == r.getResult().getTotal()) {
-//                            isRequestDone = true;
-//
-//                            Map<String, PlayerInfo> compareMap = list.stream()
-//                                    .collect(Collectors.toMap(PlayerInfo::getName, Function.identity()));
-//
-//                            BoxOfPlayerInfo.observeAll(compareMap);
-//
-//                            list.clear();
-//                        }
-//                    }
-//            );
-        }
-    }
-
-    public static void main(String[] args) throws IOException {
-        ServerPollingHandler serverPollingHandler = ServerPollingHandler.getInstance();
-
-        while(true){
-            serverPollingHandler.poll();
         }
     }
 }
