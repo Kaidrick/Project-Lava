@@ -6,107 +6,17 @@
     </artifacts-to-build>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4af9032f-ac19-4f7a-b3cc-78b620366905" name="Default Changelist" comment="very bad implementation of auto connect and re-connect. need more refactoring in the future. closes #3.">
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_controlsfx_controlsfx_8_40_14.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_jfxtras_jmetro_8_6_8.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/HeartbeatThreadFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/object/AmmoData.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/data/Caucasus.apron" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/data/PersianGulf.apron" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/BackendMain.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/BackendMainController.fxml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/BackendMain_zh_CN.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/data/Caucasus.apron" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/data/Nevada.apron" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/data/PersianGulf.apron" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/eraser.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/green_bat.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/lua_102040.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/main.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/scripts/add_group.lua" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/scripts/add_static_object.lua" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/scripts/get_map_theater_name.lua" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/scripts/get_parking_by_airdrome_id_and_parking_list_index.lua" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/scripts/map_playable.lua" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/scripts/remove_object_by_runtime_id.lua" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/scripts/send_message_by_group_id.lua" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/target/classes/scripts/test_add_group.lua" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/artifacts/422d_Backend_Java_Impl_jar.xml" beforeDir="false" />
+    <list default="true" id="4af9032f-ac19-4f7a-b3cc-78b620366905" name="Default Changelist" comment="added a maven plugin to automatically generate a properties file containing name and main class of plugins">
+      <change afterPath="$PROJECT_DIR$/plugin-builder-maven-plugin/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/plugin-builder-maven-plugin/src/main/java/PluginBuilderMojo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/422d_Backend_Java_Impl.iml" beforeDir="false" afterPath="$PROJECT_DIR$/422d_Backend_Java_Impl.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/422d_Backend_Java_Impl/META-INF/422d_Backend_Java_Impl.kotlin_module" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/META-INF/422d_Backend_Java_Impl.kotlin_module" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-core/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-core/src/main/java/moe/ofs/backend/util/PluginBaker.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend-core/src/main/resources/enabled_plugins.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend-core/src/main/resources/enabled_plugins.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/BackendMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/BackendMain.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/ConnectionManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/ConnectionManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/LogController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/controllers/MainController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/Logger.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/Logger.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/LuaScripts.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/LuaScripts.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/MissionStartObservable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/MissionStartObservable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/Plugin.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/Plugin.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/PluginClassLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/PluginClassLoader.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/box/BoxOfExportUnit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/box/BoxOfExportUnit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/box/BoxOfFlyableUnit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/box/BoxOfFlyableUnit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/box/BoxOfGroups.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/box/BoxOfGroups.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/box/BoxOfParking.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/box/BoxOfParking.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/box/BoxOfPlayerInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/box/BoxOfPlayerInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/function/TriggerMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/function/TriggerMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/object/Airbase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/object/Airbase.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/object/AmmoData.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/object/Coord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/object/Coord.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/object/ExportObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/object/ExportObject.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/object/FlyableUnit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/object/FlyableUnit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/object/Group.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/object/Group.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/object/MGRS.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/object/MGRS.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/object/Parking.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/object/Parking.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/object/PlayerInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/object/PlayerInfo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/object/Point.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/object/Point.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/object/Route.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/object/Route.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/object/SimObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/object/SimObject.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/object/Unit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/object/Unit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/object/Vector3D.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/object/Vector3D.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/BaseRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/BaseRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/DebugRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/DebugRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/ExportDataRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/ExportDataRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/ExportPollingHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/ExportPollingHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/JsonRpcRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/JsonRpcRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/JsonRpcResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/JsonRpcResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/MapResult.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/MapResult.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/PollingHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/PollingHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/RequestHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/RequestHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/RequestToExport.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/RequestToExport.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/RequestToExportAsync.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/RequestToExportAsync.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/RequestToMission.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/RequestToMission.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/RequestToServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/RequestToServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/Requests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/Requests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/Result.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/Result.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/SendMessageRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/SendMessageRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/ServerPollingHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/ServerPollingHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/export/ExportFillerRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/export/ExportFillerRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/export/ExportObjectDataRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/export/ExportObjectDataRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/export/handler/ExportUnitDespawnObservable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/export/handler/ExportUnitDespawnObservable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/export/handler/ExportUnitSpawnObservable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/export/handler/ExportUnitSpawnObservable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/scripts/get_hook_memory.lua" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/scripts/get_hook_memory.lua" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/server/Processable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/server/Processable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/server/ServerDataRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/server/ServerDataRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/server/ServerExecRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/server/ServerExecRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/server/ServerFillerRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/server/ServerFillerRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/server/ServerLuaMemoryDataRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/server/ServerLuaMemoryDataRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/server/ServerPlayerInfoRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/server/ServerPlayerInfoRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/server/handler/PlayerEnterServerObservable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/server/handler/PlayerEnterServerObservable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/server/handler/PlayerLeaveServerObservable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/server/handler/PlayerLeaveServerObservable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/core/request/server/handler/PlayerSlotChangeObservable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/core/request/server/handler/PlayerSlotChangeObservable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/plugin/greeting/Greeting.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/plugin/greeting/Greeting.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/plugin/greeting/Message.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/plugin/greeting/Message.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/plugin/greeting/MessageQueue.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/plugin/greeting/MessageQueue.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/plugin/static_display/StaticDisplay.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/plugin/static_display/StaticDisplay.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/util/AirdromeDataCollector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/util/AirdromeDataCollector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/util/ApronDataValidator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/util/ApronDataValidator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ofs/backend/util/UTF8Control.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/moe/ofs/backend/util/UTF8Control.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/BackendMain.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/BackendMain.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/BackendMainController.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/BackendMainController.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/BackendMain_zh_CN.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/BackendMain_zh_CN.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/data/Nevada.apron" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/data/Nevada.apron" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/scripts/get_parking_by_airdrome_id_and_parking_list_index.lua" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/scripts/get_parking_by_airdrome_id_and_parking_list_index.lua" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,13 +41,27 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
+        <option value="HTML File" />
         <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="jdkForImporter" value="1.8.0_241" />
+        <option name="vmOptionsForImporter" value="-Xmx768m" />
+      </MavenImportingSettings>
+    </option>
   </component>
   <component name="ProjectId" id="1WWTPMGmMBPwnNPNC2PyiqspepD" />
   <component name="ProjectViewState">
@@ -146,6 +70,11 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RequestMappingsPanelOrder0" value="0" />
+    <property name="RequestMappingsPanelOrder1" value="1" />
+    <property name="RequestMappingsPanelWidth0" value="75" />
+    <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -158,13 +87,14 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="project.structure.last.edited" value="Artifacts" />
+    <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.repository.indices" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.ignored.files" />
   </component>
   <component name="RecentsManager">
     <key name="MoveMembersDialog.RECENTS_KEY">
+      <recent name="moe.ofs.backend.util.ResourceManager" />
       <recent name="ofs.backend.Plugin" />
       <recent name="core.request.RequestHandler" />
     </key>
@@ -175,31 +105,65 @@
       <recent name="core.request.server.handler" />
       <recent name="core.request" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Administrator\Documents\GitHub\422d_Backend_Java_Impl\src\main\java\ofs\backend\core" />
-      <recent name="C:\Users\Administrator\Documents\GitHub\422d_Backend_Java_Impl\src\main\resources" />
-      <recent name="C:\Users\Administrator\Documents\GitHub\422d_Backend_Java_Impl\src\main\java\ofs\backend\core\scripts" />
-      <recent name="C:\Users\Administrator\Documents\GitHub\422d_Backend_Java_Impl\src\main\java\ofs\backend" />
-      <recent name="C:\Users\Administrator\IdeaProjects\422d_Backend_Java_Impl\resources\main" />
-    </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="core.object" />
-    </key>
     <key name="CreateClassDialog.RecentsKey">
       <recent name="core.request.server" />
       <recent name="core.request" />
     </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="" />
+      <recent name="core.object" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Administrator\Documents\GitHub\422d-backend-ui\backend-core\src\main\resources\scripts" />
+      <recent name="C:\Users\Administrator\Documents\GitHub\422d-backend-ui\backend-core\src\main\resources" />
+      <recent name="C:\Users\Administrator\Documents\GitHub\422d-backend-ui\backend-main\src\main\resources" />
+      <recent name="C:\Users\Administrator\Documents\GitHub\422d-backend-ui\backend-main\src\main" />
+      <recent name="C:\Users\Administrator\Documents\GitHub\422d-backend-ui\backend-main\src\main\java\moe\ofs\backend" />
+    </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Spring Boot.Application">
     <configuration name="BackendMain" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="moe.ofs.backend.BackendMain" />
-      <module name="422d_Backend_Java_Impl" />
+      <module name="backend-main" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="PluginBaker" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="moe.ofs.backend.util.PluginBaker" />
+      <module name="backend-core" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="moe.ofs.backend.util.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <module name="backend-main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="moe.ofs.backend.controllers.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="SPRING_BOOT_MAIN_CLASS" value="moe.ofs.backend.Application" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.BackendMain" />
+      <item itemvalue="Spring Boot.Application" />
+      <item itemvalue="Application.PluginBaker" />
+    </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Spring Boot.Application" />
+        <item itemvalue="Application.PluginBaker" />
         <item itemvalue="Application.BackendMain" />
       </list>
     </recent_temporary>
@@ -267,6 +231,9 @@
       <workItem from="1581864974373" duration="12090000" />
       <workItem from="1581906588145" duration="5268000" />
       <workItem from="1582091268606" duration="338000" />
+      <workItem from="1582101222076" duration="2362000" />
+      <workItem from="1582120867986" duration="11326000" />
+      <workItem from="1582161741386" duration="23719000" />
     </task>
     <task id="LOCAL-00001" summary="added a automatic parking data collector; it should be used in single player mode to obtain parking data from each airport">
       <created>1581301335345</created>
@@ -324,11 +291,52 @@
       <option name="project" value="LOCAL" />
       <updated>1581821197097</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="very bad implementation of auto connect and re-connect. need more refactoring in the future. closes #3.">
+      <created>1582102919035</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1582102919035</updated>
+    </task>
+    <task id="LOCAL-00010" summary="split project into a multi-module spring project. added a very basic view to show all ExportObject in html">
+      <created>1582129061445</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1582129061445</updated>
+    </task>
+    <task id="LOCAL-00011" summary="fixed Plugin load mechanism with pre-made enabled_plugins.properties, generated new map data, removed unused class MapResult.java, some minor refactoring of BackendMain.java">
+      <created>1582166466539</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1582166466539</updated>
+    </task>
+    <task id="LOCAL-00012" summary="minor refactoring and clean up">
+      <created>1582170120366</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1582170120366</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="added a automatic parking data collector; it should be used in single player mode to obtain parking data from each airport" />
@@ -337,13 +345,16 @@
     <MESSAGE value="moved project into Maven. fixed resources path closes #1." />
     <MESSAGE value="configured maven for jar packaging. ready to move to spring." />
     <MESSAGE value="very bad implementation of auto connect and re-connect. need more refactoring in the future. closes #3." />
-    <option name="LAST_COMMIT_MESSAGE" value="very bad implementation of auto connect and re-connect. need more refactoring in the future. closes #3." />
+    <MESSAGE value="split project into a multi-module spring project. added a very basic view to show all ExportObject in html" />
+    <MESSAGE value="fixed Plugin load mechanism with pre-made enabled_plugins.properties, generated new map data, removed unused class MapResult.java, some minor refactoring of BackendMain.java" />
+    <MESSAGE value="minor refactoring and clean up" />
+    <option name="LAST_COMMIT_MESSAGE" value="minor refactoring and clean up" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="326" y="379" key="#Project_Structure" timestamp="1581754641860">
+    <state x="326" y="379" key="#Project_Structure" timestamp="1582119551363">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state x="326" y="379" key="#Project_Structure/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581754641860" />
+    <state x="326" y="379" key="#Project_Structure/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582119551363" />
     <state x="188" y="376" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1581824326579">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -352,21 +363,21 @@
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="482" y="524" key="#com.intellij.fileTypes.FileTypeChooser/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581181462534" />
-    <state x="511" y="404" key="#com.intellij.ide.util.MemberChooser" timestamp="1581129588525">
+    <state x="511" y="404" key="#com.intellij.ide.util.MemberChooser" timestamp="1582174063124">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="511" y="404" key="#com.intellij.ide.util.MemberChooser/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580823899303" />
-    <state x="511" y="404" key="#com.intellij.ide.util.MemberChooser/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581129588525" />
+    <state x="511" y="404" key="#com.intellij.ide.util.MemberChooser/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582174063124" />
     <state x="849" y="460" key="#com.intellij.ide.util.TreeClassChooserDialog" timestamp="1581824312775">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="849" y="460" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580657966639" />
     <state x="849" y="460" key="#com.intellij.ide.util.TreeClassChooserDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581824312775" />
-    <state x="391" y="413" key="#com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog" timestamp="1581753660648">
+    <state x="391" y="413" key="#com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog" timestamp="1582119942957">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="391" y="413" key="#com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580707146831" />
-    <state x="391" y="413" key="#com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581753660648" />
+    <state x="391" y="413" key="#com.intellij.ide.util.frameworkSupport.AddFrameworkSupportDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582119942957" />
     <state x="909" y="589" key="#com.intellij.ide.util.projectWizard.JdkChooserPanel.MyDialog" timestamp="1580963304118">
       <screen x="0" y="0" width="3440" height="1400" />
     </state>
@@ -384,10 +395,10 @@
     </state>
     <state x="410" y="378" key="#com.intellij.refactoring.encapsulateFields.EncalpsulateFieldsDialog/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580813272929" />
     <state x="410" y="378" key="#com.intellij.refactoring.encapsulateFields.EncalpsulateFieldsDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581309145194" />
-    <state x="352" y="646" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1581754874723">
+    <state x="352" y="646" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog" timestamp="1582120714772">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state x="352" y="646" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581754874723" />
+    <state x="352" y="646" key="#com.intellij.refactoring.move.MoveHandler.SelectRefactoringDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582120714772" />
     <state x="502" y="579" width="408" height="237" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1580790542743">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -396,24 +407,25 @@
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="557" y="621" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.packages/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580707232550" />
-    <state x="611" y="777" key="#com.intellij.refactoring.move.moveMembers.MoveMembersDialog" timestamp="1581815728623">
+    <state x="611" y="777" key="#com.intellij.refactoring.move.moveMembers.MoveMembersDialog" timestamp="1582164061393">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="611" y="777" key="#com.intellij.refactoring.move.moveMembers.MoveMembersDialog/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580458378272" />
-    <state x="611" y="777" key="#com.intellij.refactoring.move.moveMembers.MoveMembersDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581815728623" />
+    <state x="611" y="777" key="#com.intellij.refactoring.move.moveMembers.MoveMembersDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582164061393" />
     <state x="304" y="52" width="832" height="1258" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1581859290466">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="304" y="52" width="832" height="1258" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580365020007" />
     <state x="304" y="52" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581859290466" />
-    <state x="436" y="441" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1580823335452">
+    <state x="436" y="441" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1582199704422">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="436" y="441" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580823335452" />
-    <state x="258" y="315" key="CommitChangelistDialog2" timestamp="1581821555882">
+    <state x="436" y="441" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582199704422" />
+    <state x="258" y="315" key="CommitChangelistDialog2" timestamp="1582200027135">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state x="258" y="315" key="CommitChangelistDialog2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581821555882" />
+    <state x="258" y="315" key="CommitChangelistDialog2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582200027135" />
     <state x="0" y="132" key="DiffContextDialog" timestamp="1581301219862">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -424,64 +436,68 @@
     <state x="515" y="454" key="FileChooserDialogImpl/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580977823742" />
     <state x="515" y="467" key="FileChooserDialogImpl/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580533568656" />
     <state x="515" y="467" key="FileChooserDialogImpl/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581387409081" />
-    <state width="1450" height="390" key="GridCell.Tab.0.bottom" timestamp="1581931151966">
+    <state width="1449" height="390" key="GridCell.Tab.0.bottom" timestamp="1582200027152">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.bottom/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.bottom/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1450" height="390" key="GridCell.Tab.0.bottom/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581931151966" />
-    <state width="1450" height="390" key="GridCell.Tab.0.center" timestamp="1581931151966">
+    <state width="1449" height="390" key="GridCell.Tab.0.bottom/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582200027152" />
+    <state width="1449" height="390" key="GridCell.Tab.0.center" timestamp="1582200027152">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.center/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.center/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1450" height="390" key="GridCell.Tab.0.center/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581931151966" />
-    <state width="1450" height="390" key="GridCell.Tab.0.left" timestamp="1581931151966">
+    <state width="1449" height="390" key="GridCell.Tab.0.center/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582200027152" />
+    <state width="1449" height="390" key="GridCell.Tab.0.left" timestamp="1582200027152">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.left/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.left/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1450" height="390" key="GridCell.Tab.0.left/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581931151966" />
-    <state width="1450" height="390" key="GridCell.Tab.0.right" timestamp="1581931151966">
+    <state width="1449" height="390" key="GridCell.Tab.0.left/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582200027152" />
+    <state width="1449" height="390" key="GridCell.Tab.0.right" timestamp="1582200027152">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1377" height="328" key="GridCell.Tab.0.right/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580980188402" />
     <state width="1472" height="350" key="GridCell.Tab.0.right/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580832761041" />
-    <state width="1450" height="390" key="GridCell.Tab.0.right/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581931151966" />
-    <state width="1409" height="504" key="GridCell.Tab.1.bottom" timestamp="1581318415893">
+    <state width="1449" height="390" key="GridCell.Tab.0.right/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582200027152" />
+    <state width="1449" height="390" key="GridCell.Tab.1.bottom" timestamp="1582174234609">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1351" height="446" key="GridCell.Tab.1.bottom/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1579712565156" />
-    <state width="1409" height="504" key="GridCell.Tab.1.bottom/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581318415893" />
-    <state width="1409" height="504" key="GridCell.Tab.1.center" timestamp="1581318415893">
+    <state width="1449" height="390" key="GridCell.Tab.1.bottom/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582174234609" />
+    <state width="1449" height="390" key="GridCell.Tab.1.center" timestamp="1582174234608">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1351" height="446" key="GridCell.Tab.1.center/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1579712565156" />
-    <state width="1409" height="504" key="GridCell.Tab.1.center/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581318415893" />
-    <state width="1409" height="504" key="GridCell.Tab.1.left" timestamp="1581318415893">
+    <state width="1449" height="390" key="GridCell.Tab.1.center/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582174234608" />
+    <state width="1449" height="390" key="GridCell.Tab.1.left" timestamp="1582174234608">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1351" height="446" key="GridCell.Tab.1.left/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1579712565156" />
-    <state width="1409" height="504" key="GridCell.Tab.1.left/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581318415893" />
-    <state width="1409" height="504" key="GridCell.Tab.1.right" timestamp="1581318415893">
+    <state width="1449" height="390" key="GridCell.Tab.1.left/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582174234608" />
+    <state width="1449" height="390" key="GridCell.Tab.1.right" timestamp="1582174234608">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state width="1351" height="446" key="GridCell.Tab.1.right/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1579712565156" />
-    <state width="1409" height="504" key="GridCell.Tab.1.right/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581318415893" />
+    <state width="1449" height="390" key="GridCell.Tab.1.right/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582174234608" />
     <state x="285" y="376" key="Maven.ArtifactSearchDialog" timestamp="1581865153562">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="285" y="376" key="Maven.ArtifactSearchDialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581865153562" />
-    <state x="434" y="319" key="SettingsEditor" timestamp="1581864865792">
+    <state x="429" y="429" width="651" height="577" key="RefactorJ.ExtractClass" timestamp="1582121716631">
+      <screen x="0" y="0" width="3440" height="1440" />
+    </state>
+    <state x="429" y="429" width="651" height="577" key="RefactorJ.ExtractClass/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582121716631" />
+    <state x="434" y="319" key="SettingsEditor" timestamp="1582182185053">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="596" y="256" key="SettingsEditor/0.0.3440.1400/-1920.359.1920.1040@0.0.3440.1400" timestamp="1580977685870" />
     <state x="599" y="251" key="SettingsEditor/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580707168173" />
-    <state x="434" y="319" key="SettingsEditor/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581864865792" />
-    <state x="326" y="454" key="Vcs.Push.Dialog.v2" timestamp="1581821199207">
+    <state x="434" y="319" key="SettingsEditor/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582182185053" />
+    <state x="326" y="454" key="Vcs.Push.Dialog.v2" timestamp="1582170130121">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
-    <state x="326" y="454" key="Vcs.Push.Dialog.v2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581821199207" />
+    <state x="326" y="454" key="Vcs.Push.Dialog.v2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582170130121" />
     <state x="464" y="550" key="com.intellij.ide.util.TipDialog" timestamp="1581383911393">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -496,11 +512,11 @@
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="296" y="457" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581314952589" />
-    <state x="1462" y="217" width="1004" height="999" key="dock-window-1" timestamp="1581865000650">
+    <state x="1517" y="183" width="850" height="999" key="dock-window-1" timestamp="1582161922484">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="2328" y="170" width="1038" height="1006" key="dock-window-1/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580807331748" />
-    <state x="1462" y="217" width="1004" height="999" key="dock-window-1/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581865000650" />
+    <state x="1517" y="183" width="850" height="999" key="dock-window-1/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582161922484" />
     <state x="2242" y="168" width="1028" height="999" key="dock-window-2" timestamp="1581347726184">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
@@ -528,11 +544,11 @@
     </state>
     <state x="499" y="577" key="extract.method.dialog/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1580653835448" />
     <state x="473" y="820" key="extract.method.dialog/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581914251667" />
-    <state x="118" y="333" key="new project wizard" timestamp="1581387353112">
+    <state x="289" y="392" key="new project wizard" timestamp="1582170250019">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>
     <state x="118" y="333" key="new project wizard/0.0.3440.1440/-1920.353.1920.1080@0.0.3440.1440" timestamp="1579265825618" />
-    <state x="118" y="333" key="new project wizard/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1581387353112" />
+    <state x="289" y="392" key="new project wizard/0.0.3440.1440/-1920.359.1920.1080@0.0.3440.1440" timestamp="1582170250019" />
     <state x="461" y="349" key="refactoring.ChangeSignatureDialog" timestamp="1581867211083">
       <screen x="0" y="0" width="3440" height="1440" />
     </state>

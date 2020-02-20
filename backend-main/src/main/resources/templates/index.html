@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>List Of All Export Objects</title>
+</head>
+<body>
+<h1>Export Object List</h1>
+<table>
+    <tr>
+        <th>Runtime ID</th>
+        <th>Name</th>
+        <th>Position</th>
+    </tr>
+    <tr th:each="object : ${exportObjects}">
+        <td th:text="${object.getRuntimeID()}">runtime_id</td>
+        <td th:text="${object.getUnitName()}">unit_name</td>
+        <td th:text="${object.getLatLongAlt()}"></td>
+    </tr>
+
+</table>
+</body>
+</html>
