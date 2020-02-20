@@ -1,4 +1,4 @@
-package moe.ofs.backend.request.server.handler;
+package moe.ofs.backend.handlers;
 
 import moe.ofs.backend.object.PlayerInfo;
 
@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @FunctionalInterface
-public interface PlayerEnterServerObservable {
-    List<PlayerEnterServerObservable> list = new ArrayList<>();
+public interface PlayerLeaveServerObservable {
+    List<PlayerLeaveServerObservable> list = new ArrayList<>();
 
     void observe(PlayerInfo playerInfo);
 

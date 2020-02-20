@@ -2,7 +2,7 @@ package moe.ofs.backend.plugin.greeting;
 
 import moe.ofs.backend.Plugin;
 import moe.ofs.backend.object.ExportObject;
-import moe.ofs.backend.request.export.handler.ExportUnitSpawnObservable;
+import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 
 import java.util.List;
 

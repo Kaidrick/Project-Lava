@@ -107,7 +107,7 @@ public class AirdromeDataCollector {
 
         // serialization to file
         try {
-            Path path = Paths.get( "src/main/resources/data").resolve(mapTheater + ".apron");
+            Path path = Paths.get( "backend-core/src/main/resources/data").resolve(mapTheater + ".apron");
             System.out.println(path.toAbsolutePath());
             FileOutputStream fileOutputStream = new FileOutputStream(path.toFile());
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);

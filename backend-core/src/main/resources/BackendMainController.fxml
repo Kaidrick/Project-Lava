@@ -33,7 +33,7 @@
                               </AnchorPane>
                             <AnchorPane>
                                  <children>
-                                    <TextArea fx:id="textArea_LuaDebugString" layoutX="14.0" layoutY="14.0" promptText="enter_lua_code_here" wrapText="true" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="160.0" AnchorPane.topAnchor="5.0" />
+                                    <TextArea fx:id="textArea_LuaDebugString" layoutX="14.0" layoutY="14.0" promptText="%enter_lua_code_here" wrapText="true" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="160.0" AnchorPane.topAnchor="5.0" />
                                     <Pane layoutX="258.0" layoutY="5.0" AnchorPane.bottomAnchor="55.0" AnchorPane.rightAnchor="5.0">
                                        <children>
                                           <RadioButton fx:id="radioLoadstringState" layoutX="4.0" layoutY="6.0" mnemonicParsing="false" onAction="#selectLoadstringLuaState" selected="true" text="%do_string_in_mission" />

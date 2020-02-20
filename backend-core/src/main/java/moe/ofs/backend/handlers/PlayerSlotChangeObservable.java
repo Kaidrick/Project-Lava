@@ -1,4 +1,4 @@
-package moe.ofs.backend.request.server.handler;
+package moe.ofs.backend.handlers;
 
 import moe.ofs.backend.object.PlayerInfo;
 

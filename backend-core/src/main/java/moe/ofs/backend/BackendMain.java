@@ -9,16 +9,17 @@ import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import moe.ofs.backend.box.BoxOfFlyableUnit;
+import moe.ofs.backend.box.BoxOfParking;
 import moe.ofs.backend.request.BaseRequest;
 import moe.ofs.backend.request.ExportPollingHandler;
 import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.request.ServerPollingHandler;
-import moe.ofs.backend.request.export.handler.ExportUnitDespawnObservable;
-import moe.ofs.backend.request.export.handler.ExportUnitSpawnObservable;
+import moe.ofs.backend.handlers.ExportUnitDespawnObservable;
+import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 import moe.ofs.backend.request.server.ServerFillerRequest;
-import moe.ofs.backend.request.server.handler.PlayerEnterServerObservable;
-import moe.ofs.backend.request.server.handler.PlayerLeaveServerObservable;
-import moe.ofs.backend.request.server.handler.PlayerSlotChangeObservable;
+import moe.ofs.backend.handlers.PlayerEnterServerObservable;
+import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
+import moe.ofs.backend.handlers.PlayerSlotChangeObservable;
 import moe.ofs.backend.util.ConnectionManager;
 import moe.ofs.backend.util.HeartbeatThreadFactory;
 import moe.ofs.backend.util.Logger;
@@ -51,9 +52,9 @@ public class BackendMain extends Application {
     private static final ExportPollingHandler exportPollingHandler = ExportPollingHandler.getInstance();
     private static final ServerPollingHandler serverPollingHandler = ServerPollingHandler.getInstance();
 
-    static ScheduledExecutorService es;
-    static ScheduledExecutorService exportPollingScheduler;
-    static ScheduledExecutorService serverPollingScheduler;
+    private static ScheduledExecutorService mainRequestScheduler;
+    private static ScheduledExecutorService exportPollingScheduler;
+    private static ScheduledExecutorService serverPollingScheduler;
 
     public static boolean needRestart;
     public static boolean stopSign;
@@ -94,7 +95,7 @@ public class BackendMain extends Application {
         backgroundThread.interrupt();
         requestHandler.dispose();
 
-        shutdownExecutorService(es);
+        shutdownExecutorService(mainRequestScheduler);
         shutdownExecutorService(serverPollingScheduler);
         shutdownExecutorService(exportPollingScheduler);
 
@@ -105,7 +106,7 @@ public class BackendMain extends Application {
     public static Runnable background = () -> {
         try {
             startBackgroundTask();
-        } catch (IOException | URISyntaxException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     };
@@ -122,7 +123,7 @@ public class BackendMain extends Application {
 
 
     // restart background task when connect is cut
-    public static void startBackgroundTask() throws IOException, URISyntaxException {
+    public static void startBackgroundTask() throws IOException {
 
         isHalted.set(false);
 
@@ -133,11 +134,11 @@ public class BackendMain extends Application {
         exportPollingHandler.init();
         serverPollingHandler.init();
 
-//        BoxOfParking.init();
+        BoxOfParking.init();
 
         BoxOfFlyableUnit.init();
 
-//        Plugin.loadPlugins();
+        Plugin.loadPlugins();
 
         MissionStartObservable.invokeAll();
 
@@ -195,8 +196,8 @@ public class BackendMain extends Application {
 
 //         dedicated polling thread
 //         polling and receive data only in this thread
-        es = Executors.newSingleThreadScheduledExecutor();
-        es.scheduleWithFixedDelay(mainLoop, 0, 1, TimeUnit.MILLISECONDS);
+        mainRequestScheduler = Executors.newSingleThreadScheduledExecutor();
+        mainRequestScheduler.scheduleWithFixedDelay(mainLoop, 0, 1, TimeUnit.MILLISECONDS);
 
         exportPollingScheduler = Executors.newSingleThreadScheduledExecutor();
         exportPollingScheduler.scheduleWithFixedDelay(exportPolling,
@@ -205,32 +206,6 @@ public class BackendMain extends Application {
         serverPollingScheduler = Executors.newSingleThreadScheduledExecutor();
         serverPollingScheduler.scheduleWithFixedDelay(serverPolling,
                 0, 1, TimeUnit.MILLISECONDS);
-    }
-
-    public static Path resourceToPath(URL resource)
-            throws IOException,
-            URISyntaxException {
-
-        Objects.requireNonNull(resource, "Resource URL cannot be null");
-        URI uri = resource.toURI();
-
-        String scheme = uri.getScheme();
-        if (scheme.equals("file")) {
-            return Paths.get(uri);
-        }
-
-        if (!scheme.equals("jar")) {
-            throw new IllegalArgumentException("Cannot convert to Path: " + uri);
-        }
-
-        String s = uri.toString();
-        int separator = s.indexOf("!/");
-        String entryName = s.substring(separator + 2);
-        URI fileURI = URI.create(s.substring(0, separator));
-
-        FileSystem fs = FileSystems.newFileSystem(fileURI,
-                Collections.emptyMap());
-        return fs.getPath(entryName);
     }
 
 
@@ -263,9 +238,10 @@ public class BackendMain extends Application {
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(555);
         primaryStage.setMinHeight(260);
+
         primaryStage.getIcons().add(
                 new Image(Objects.requireNonNull(
-                        ClassLoader.getSystemResourceAsStream("green_bat.png")
+                        BackendMain.class.getResourceAsStream("/green_bat.png")
                 ))
         );
 
@@ -289,7 +265,5 @@ public class BackendMain extends Application {
         stopSign = true;
 
         ControlPanelShutdownObservable.invokeAll();
-
-//        moe.ofs.backend.Application.ctx.close();
     }
 }

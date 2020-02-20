@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
+import moe.ofs.backend.BackendMain;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.object.Parking;
 import moe.ofs.backend.request.BaseRequest;
@@ -27,8 +28,8 @@ public final class BoxOfParking {
     private static void loadData(String theaterName) throws IOException, ClassNotFoundException {
         box.clear();
 
-        InputStream inputStream = ClassLoader.getSystemClassLoader()
-                .getResourceAsStream(String.format("data/%s.apron", theaterName));
+        InputStream inputStream = BackendMain.class
+                .getResourceAsStream(String.format("/data/%s.apron", theaterName));
         ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
         Object object = objectInputStream.readObject();
         objectInputStream.close();
@@ -80,14 +81,6 @@ public final class BoxOfParking {
         } catch (IOException | RuntimeException e) {
             e.printStackTrace();
         }
-
-
-//        String theaterName = ((ServerDataRequest) new ServerDataRequest(luaString).send()).get();
-//        try {
-//            loadData(theaterName);
-//        } catch (IOException | ClassNotFoundException e) {
-//            e.printStackTrace();
-//        }
     }
 
     public static Parking get(int airdromeId, int parkingId) {

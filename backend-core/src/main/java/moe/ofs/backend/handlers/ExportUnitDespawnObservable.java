@@ -1,4 +1,4 @@
-package moe.ofs.backend.request.export.handler;
+package moe.ofs.backend.handlers;
 
 import moe.ofs.backend.object.ExportObject;
 
