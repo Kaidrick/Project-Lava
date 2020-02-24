@@ -13,6 +13,8 @@
     <groupId>moe.ofs</groupId>
     <artifactId>backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <name>ofs-backend</name>
+    <description>OFS backend project</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -20,7 +22,6 @@
         <version>2.2.4.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-
 
     <build>
         <plugins>

@@ -20,17 +20,17 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <id>jcenter</id>
-            <name>bintray</name>
-            <url>https://jcenter.bintray.com</url>
+            <id>central</id>
+            <name>maven2</name>
+            <url>https://repo.maven.apache.org/maven2</url>
         </repository>
         <repository>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <id>central</id>
-            <name>maven2</name>
-            <url>https://repo.maven.apache.org/maven2</url>
+            <id>jcenter</id>
+            <name>bintray</name>
+            <url>https://jcenter.bintray.com</url>
         </repository>
     </repositories>
 
