@@ -6,12 +6,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
-public class Application {
+public class BackendApplication {
 
 	public static ConfigurableApplicationContext ctx;
 
 	public static void main(String[] args) {
-		ctx = SpringApplication.run(Application.class, args);
+		ctx = SpringApplication.run(BackendApplication.class, args);
 
 		ControlPanelShutdownObservable controlPanelShutdownObservable = () -> ctx.close();
 		controlPanelShutdownObservable.register();
