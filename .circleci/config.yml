@@ -4,14 +4,6 @@ orbs:
   maven: circleci/maven@0.0.12
 
 workflows:
-  jobs:
-    maven-orb-test:
-      executor:
-        name: maven/default
-        tag: '11.0.6'
-      steps:
-        - checkout
-        - maven/with_cache:
-            maven_command: mvn compile
-            steps:
-              - run: mvn compile
+  maven_test:
+    jobs:
+      - maven/test # checkout, build, test, and upload test results

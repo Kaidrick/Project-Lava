@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <modules>
-        <module>backend-core</module>
         <module>backend-main</module>
+        <module>backend-core</module>
         <module>plugin-builder-maven-plugin</module>
     </modules>
 
