@@ -6,7 +6,6 @@ import moe.ofs.backend.object.Unit;
 import moe.ofs.backend.object.Parking;
 import moe.ofs.backend.request.server.ServerDataRequest;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;

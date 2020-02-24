@@ -28,7 +28,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>moe.ofs.backend.Application</mainClass>
+                    <mainClass>moe.ofs.backend.BackendApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
