@@ -32,6 +32,7 @@
                     <mainClass>moe.ofs.backend.BackendApplication</mainClass>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 
