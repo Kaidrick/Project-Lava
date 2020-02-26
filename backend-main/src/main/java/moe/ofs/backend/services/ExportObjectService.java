@@ -4,4 +4,6 @@ public interface ExportObjectService {
     String getInfo();
 
     String getPosition();
+
+    Integer getGroupId();
 }

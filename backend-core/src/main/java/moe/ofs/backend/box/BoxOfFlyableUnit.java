@@ -56,12 +56,11 @@ public final class BoxOfFlyableUnit {
         }
     }
 
-    public static int getGroupIdByName(String groupName) {
+    public static Optional<Integer> getGroupIdByName(String groupName) {
         Optional<Map.Entry<String, FlyableUnit>> optional =
                 box.entrySet().stream()
                         .filter(e -> e.getValue().getGroup_name().equals(groupName))
                         .findAny();
-        return optional.orElseThrow(() -> new RuntimeException("Group name does not exist."))
-                .getValue().getGroup_id();
+        return optional.map(stringFlyableUnitEntry -> stringFlyableUnitEntry.getValue().getGroup_id());
     }
 }

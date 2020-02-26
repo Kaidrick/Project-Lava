@@ -5,6 +5,7 @@ import moe.ofs.backend.object.ExportObject;
 import moe.ofs.backend.function.TriggerMessage;
 
 import java.util.ArrayDeque;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -23,7 +24,10 @@ class MessageQueue {
     }
 
     public MessageQueue(ExportObject object) {
-        this.receiverGroupId = BoxOfFlyableUnit.getGroupIdByName(object.getGroupName());
+
+        Optional<Integer> id = BoxOfFlyableUnit.getGroupIdByName(object.getGroupName());
+
+        this.receiverGroupId = id.orElseThrow(() -> new RuntimeException("Group ID Not Found!"));
     }
 
     public void pend(Message message) {

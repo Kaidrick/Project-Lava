@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Flyable Units</title>
+</head>
+<body>
+<h1>Flyable Units</h1>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Group Name</th>
+        <th>Group ID</th>
+        <th>Unit Name</th>
+        <th>Unit ID</th>
+    </tr>
+    <tr th:each="flyable : ${flyableUnits}">
+        <td th:text="${flyable.getKey()}">Name</td>
+        <td th:text="${flyable.getValue().getGroup_name()}">unit_name</td>
+        <td th:text="${flyable.getValue().getGroup_id()}"></td>
+        <td th:text="${flyable.getValue().getUnit_name()}"></td>
+        <td th:text="${flyable.getValue().getUnit_id()}"></td>
+    </tr>
+
+</table>
+</body>
+</html>
