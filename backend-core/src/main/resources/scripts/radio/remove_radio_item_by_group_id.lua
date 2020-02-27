@@ -1,0 +1,1 @@
+missionCommands.removeItemForGroup(%d, %s)

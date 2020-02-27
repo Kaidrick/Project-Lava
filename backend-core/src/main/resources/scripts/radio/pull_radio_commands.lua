@@ -1,0 +1,1 @@
+return query_commands()

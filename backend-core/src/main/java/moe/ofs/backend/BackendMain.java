@@ -10,6 +10,7 @@ import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import moe.ofs.backend.box.BoxOfFlyableUnit;
 import moe.ofs.backend.box.BoxOfParking;
+import moe.ofs.backend.function.RadioCommands;
 import moe.ofs.backend.handlers.*;
 import moe.ofs.backend.request.BaseRequest;
 import moe.ofs.backend.request.ExportPollingHandler;
@@ -133,6 +134,8 @@ public class BackendMain extends Application {
         BoxOfParking.init();
 
         BoxOfFlyableUnit.init();
+
+        RadioCommands.init();
 
         Plugin.loadPlugins();
 

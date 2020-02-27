@@ -1,1 +1,1 @@
-trigger.action.outTextForGroup(%d, '%s', %d, %s)
+trigger.action.outTextForGroup(%d, '%s', %d, %b)

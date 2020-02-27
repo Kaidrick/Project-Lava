@@ -50,7 +50,8 @@ class MessageQueue {
                                 TriggerMessage.TriggerMessageBuilder builder = new TriggerMessage.TriggerMessageBuilder();
                                 builder.setMessage(m.getContent())
                                         .setReceiverGroupId(receiverGroupId)
-                                        .setDuration(m.getDuration()).build().send();
+                                        .setDuration(m.getDuration())
+                                        .setClearView(false).build().send();
                             }, nextTime(m), TimeUnit.SECONDS));
             scheduledExecutorService.shutdown();
             try {
