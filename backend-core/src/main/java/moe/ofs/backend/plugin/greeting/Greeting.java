@@ -3,6 +3,7 @@ package moe.ofs.backend.plugin.greeting;
 import moe.ofs.backend.Plugin;
 import moe.ofs.backend.object.ExportObject;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
+import moe.ofs.backend.util.Logger;
 
 import java.util.List;
 
@@ -15,11 +16,32 @@ import java.util.List;
 
 public class Greeting implements Plugin {
 
+    public final String name = "Server Greeting";
+    public final String desc = "Say Hello on player spawn";
+
     private static final List<String> greetingMessageList = null;
 
+    private ExportUnitSpawnObservable exportUnitSpawnObservable;
+
+    @Override
     public void register() {
-        ExportUnitSpawnObservable exportUnitSpawnObservable = this::greet;
+        exportUnitSpawnObservable = this::greet;
         exportUnitSpawnObservable.register();
+    }
+
+    @Override
+    public void unregister() {
+        exportUnitSpawnObservable.unregister();
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return desc;
     }
 
     private void greet(ExportObject unit) {

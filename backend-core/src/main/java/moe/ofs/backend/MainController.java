@@ -1,15 +1,18 @@
 package moe.ofs.backend;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import jfxtras.styles.jmetro.JMetroStyleClass;
+import lombok.SneakyThrows;
 import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.util.AirdromeDataCollector;
@@ -17,9 +20,45 @@ import org.controlsfx.control.StatusBar;
 import org.controlsfx.control.ToggleSwitch;
 
 import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class MainController implements Initializable {
+
+    private static class PluginListCell extends ListCell<String> {
+        HBox hbox = new HBox();
+        Label label = new Label();
+        Pane pane = new Pane();
+        Pane pane2 = new Pane();
+        Label desc = new Label();
+        Button enableButton = new Button("Enable");
+        Button disableButton = new Button("Disable");
+        public PluginListCell() {
+            super();
+            hbox.getChildren().addAll(label, pane, desc, pane2, enableButton, disableButton);
+            HBox.setHgrow(pane, Priority.ALWAYS);
+            HBox.setHgrow(pane2, Priority.ALWAYS);
+            enableButton.setOnAction(event -> System.out.println("enable " + getItem()));
+            disableButton.setOnAction(event -> System.out.println("disable " + getItem()));
+//            disableButton.setOnAction(event -> getListView().getItems().remove(getItem()));
+        }
+        @Override
+        protected void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+            setText(null);
+            setGraphic(null);
+
+            if (item != null && !empty) {
+                label.setText(item);
+                desc.setText(PluginClassLoader.loadedPluginSet.stream()
+                        .filter(p -> p.getName().equals(item))
+                        .findAny()
+                        .orElseThrow(() -> new RuntimeException("Invalid Plugin Name"))
+                        .getDescription());
+                setGraphic(hbox);
+            }
+        }
+    }
 
     private ResourceBundle bundle;
     @FXML private AnchorPane anchorPane;
@@ -33,6 +72,7 @@ public class MainController implements Initializable {
     @FXML private Label labelConnectionStatus;
     @FXML private ToggleSwitch toggleSwitch_LuaDebugInteractive;
     @FXML private StatusBar statusBar_Connection;
+    @FXML private ListView<String> listViewAddons;
 
     @FXML public void appendLog(String logMessage) {
         logTextArea.appendText(logMessage);
@@ -79,6 +119,20 @@ public class MainController implements Initializable {
     @FXML public void setConnectionStatusBarText(String status) {
         statusBar_Connection.setText(status);
     }
+
+    @FXML public void populateLoadedPluginListView() {
+        Set<Plugin> pluginSet = new HashSet<>(PluginClassLoader.loadedPluginSet);
+        List<String> pluginNameList = pluginSet.stream().map(Plugin::getName).collect(Collectors.toList());
+
+        ObservableList<String> list = FXCollections.observableArrayList(pluginNameList);
+
+        listViewAddons.setItems(list);
+        listViewAddons.setCellFactory(param -> new PluginListCell());
+
+        System.out.println("populateLoadedPluginListView");
+    }
+
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

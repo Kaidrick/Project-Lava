@@ -38,17 +38,44 @@ public class StaticDisplay implements Plugin {
      * Register to PlayerLeaveServer as well
      * when player leaves server, get the current slot of the player, check for matching unit
      */
+
+    // name
+    public final String name = "Static Aircraft Display";
+    public final String desc = "Display a flyable static aircraft";
+
+    // handlers
+    PlayerSlotChangeObservable playerSlotChangeObservable;
+    MissionStartObservable missionStartObservable;
+    PlayerLeaveServerObservable playerLeaveServerObservable;
+
+    @Override
     public void register() {
-        PlayerSlotChangeObservable playerSlotChangeObservable = this::switchStaticDisplay;
+        playerSlotChangeObservable = this::switchStaticDisplay;
         playerSlotChangeObservable.register();
 
-        MissionStartObservable missionStartObservable = StaticDisplay::initStaticDisplay;
+        missionStartObservable = StaticDisplay::initStaticDisplay;
         missionStartObservable.register();
 
-        PlayerLeaveServerObservable playerLeaveServerObservable = this::respawnOnPlayerLeaveServer;
+        playerLeaveServerObservable = this::respawnOnPlayerLeaveServer;
         playerLeaveServerObservable.register();
     }
 
+    @Override
+    public void unregister() {
+        playerLeaveServerObservable.unregister();
+        missionStartObservable.unregister();
+        playerLeaveServerObservable.unregister();
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getDescription() {
+        return desc;
+    }
 
     public static void initStaticDisplay() {
         // for each playable, spawn static object if TakeOffGround or TakeOffParking

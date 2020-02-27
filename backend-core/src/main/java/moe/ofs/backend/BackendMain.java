@@ -138,6 +138,7 @@ public class BackendMain extends Application {
         RadioCommands.init();
 
         Plugin.loadPlugins();
+        logController.populateLoadedPluginListView();
 
         MissionStartObservable.invokeAll();
 

@@ -22,4 +22,13 @@ public interface Plugin {
                 pluginClassLoader.invokeClassMethod(String.format("moe.ofs.backend.plugin.%s.%s",
                         pluginName, pluginCoreClassName)));
     }
+
+    void register();
+    void unregister();
+    String getName();
+    String getDescription();
+    default String getIdent() {
+        String[] strings = getClass().getCanonicalName().split("\\.");
+        return strings[strings.length - 2];
+    };
 }
