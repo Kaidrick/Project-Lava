@@ -19,7 +19,6 @@ public class ServerDataRequest extends RequestToServer {
     private transient String luaString;
 
 
-
     public ServerDataRequest(String luaString) {
         this.luaString = luaString;
         this.env = this.state.name().toLowerCase();

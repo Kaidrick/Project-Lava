@@ -102,6 +102,9 @@ public class StaticDisplay implements Plugin {
         return isLoaded;
     }
 
+
+    // if connection is not established, wait for establishment and than init
+    // if connection is already established, init immediately?
     public void initStaticDisplay() {
         // for each playable, spawn static object if TakeOffGround or TakeOffParking
         BoxOfFlyableUnit.box.values().forEach(StaticDisplay::spawnControl);
@@ -140,7 +143,10 @@ public class StaticDisplay implements Plugin {
 
             new ServerDataRequest(p)
                     .addProcessable(s -> mapSlotStaticId.put(String.valueOf(flyableUnit.getUnit_id()), s))
-                    .addProcessable(s -> Logger.log(s + " -> static object spawned"))
+                    .addProcessable(s -> Logger.log(
+                            String.format("Static Object [%s] spawned for %s with livery [%s]",
+                                    s, flyableUnit.getUnit_name(), flyableUnit.getLivery_id())
+                    ))
                     .send();
         }  // else no spawn
     }

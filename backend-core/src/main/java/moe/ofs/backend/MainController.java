@@ -11,8 +11,10 @@ import javafx.scene.layout.AnchorPane;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 import moe.ofs.backend.gui.PluginListCell;
 import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.util.AirdromeDataCollector;
+import moe.ofs.backend.util.LuaScripts;
 import org.controlsfx.control.StatusBar;
 import org.controlsfx.control.ToggleSwitch;
 
@@ -57,8 +59,11 @@ public class MainController implements Initializable {
         }
     }
 
-    @FXML public void superTestButtonVeryDangerous(ActionEvent actionEvent) {
-        PluginClassLoader.loadedPluginSet.forEach(p -> p.getPluginListCell().getControlButton().setText("trololo"));
+    @FXML public void reloadCurrentMission(ActionEvent actionEvent) {
+//        PluginClassLoader.loadedPluginSet.forEach(p -> p.getPluginListCell().getControlButton().setText("trololo"));
+
+        new ServerExecRequest(RequestToServer.State.DEBUG,
+                LuaScripts.load("api/reload_current_mission.lua")).send();
     }
 
     @FXML public void toggleInteractiveLuaDebug(MouseEvent actionEvent) {
