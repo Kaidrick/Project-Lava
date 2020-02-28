@@ -44,6 +44,7 @@ public class Greeting implements Plugin {
     public void register() {
         exportUnitSpawnObservable = this::greet;
         exportUnitSpawnObservable.register();
+        isLoaded = true;
     }
 
     @Override

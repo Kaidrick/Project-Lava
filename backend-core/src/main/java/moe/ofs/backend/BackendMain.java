@@ -127,6 +127,36 @@ public class BackendMain extends Application {
             Plugin.loadPlugins();
             logController.populateLoadedPluginListView();
 
+
+            // TODO --> VERY BAD IMPLEMENTATION! REFACTOR!
+            PlayerEnterServerObservable playerEnterServerObservable =
+                    playerInfo -> Logger.log("New connection: " + playerInfo.getName()
+                            + "@" + playerInfo.getIpaddr());
+            playerEnterServerObservable.register();
+
+            PlayerLeaveServerObservable playerLeaveServerObservable =
+                    playerInfo -> Logger.log("Player left: " + playerInfo.getName()
+                            + "@" + playerInfo.getIpaddr());
+            playerLeaveServerObservable.register();
+
+            PlayerSlotChangeObservable playerSlotChangeObservable =
+                    (previous, current) -> Logger.log(
+                            current.getName()
+                                    + " slot change: " + previous.getSlot() + " -> " + current.getSlot());
+            playerSlotChangeObservable.register();
+
+            ExportUnitSpawnObservable exportUnitSpawnObservable =
+                    unit -> Logger.log(String.format("Unit Spawn: %s (RuntimeID: %s) - %s Type",
+                            unit.getUnitName(), unit.getRuntimeID(), unit.getName()));
+            exportUnitSpawnObservable.register();
+
+            ExportUnitDespawnObservable exportUnitDespawnObservable =
+                    unit -> Logger.log(String.format("Unit Despawn: %s (RuntimeID: %s) - %s Type",
+                            unit.getUnitName(), unit.getRuntimeID(), unit.getName()));
+            exportUnitDespawnObservable.register();
+
+
+
             initialized = true;
         } else {
             System.out.println("Already Initialized in last session");
@@ -154,33 +184,6 @@ public class BackendMain extends Application {
         serverPollingHandler.init();
 
         MissionStartObservable.invokeAll();
-
-        PlayerEnterServerObservable playerEnterServerObservable =
-                playerInfo -> Logger.log("New connection: " + playerInfo.getName()
-                        + "@" + playerInfo.getIpaddr());
-        playerEnterServerObservable.register();
-
-        PlayerLeaveServerObservable playerLeaveServerObservable =
-                playerInfo -> Logger.log("Player left: " + playerInfo.getName()
-                        + "@" + playerInfo.getIpaddr());
-        playerLeaveServerObservable.register();
-
-        PlayerSlotChangeObservable playerSlotChangeObservable =
-                (previous, current) -> Logger.log(
-                        current.getName()
-                                + " slot change: " + previous.getSlot() + " -> " + current.getSlot());
-        playerSlotChangeObservable.register();
-
-        ExportUnitSpawnObservable exportUnitSpawnObservable =
-                unit -> Logger.log(String.format("Unit Spawn: %s (RuntimeID: %s) - %s Type",
-                        unit.getUnitName(), unit.getRuntimeID(), unit.getName()));
-        exportUnitSpawnObservable.register();
-
-        ExportUnitDespawnObservable exportUnitDespawnObservable =
-                unit -> Logger.log(String.format("Unit Despawn: %s (RuntimeID: %s) - %s Type",
-                        unit.getUnitName(), unit.getRuntimeID(), unit.getName()));
-        exportUnitDespawnObservable.register();
-
 
 
         Runnable exportPolling = exportPollingHandler::poll;
@@ -243,9 +246,9 @@ public class BackendMain extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        JMetro jMetro = new JMetro(Style.LIGHT);
         Scene scene = new Scene(root);
 
+        JMetro jMetro = new JMetro(Style.LIGHT);
         jMetro.setScene(scene);
 
         primaryStage.setScene(scene);

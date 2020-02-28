@@ -30,11 +30,11 @@ public class PluginListCell extends ListCell<String> {
         if(plugin.isLoaded()) {
             plugin.unregister();
             System.out.println(getItem() + " unregistered");
-//            controlButton.setText("Enable");
+            controlButton.setText("Enable");
         } else {
             plugin.register();
             System.out.println(getItem() + " registered");
-//            controlButton.setText("Disable");
+            controlButton.setText("Disable");
         }
     }
 
