@@ -1,12 +1,14 @@
 package moe.ofs.backend.plugin.greeting;
 
+import javafx.application.Platform;
+import lombok.Getter;
 import moe.ofs.backend.Plugin;
-import moe.ofs.backend.object.ExportObject;
+import moe.ofs.backend.gui.PluginListCell;
+import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
-import moe.ofs.backend.util.Logger;
+import moe.ofs.backend.object.ExportObject;
 
 import java.util.List;
-
 
 /**
  * Greeting addon implements the functionality to send Message of the Day to players who just spawn into game
@@ -19,9 +21,24 @@ public class Greeting implements Plugin {
     public final String name = "Server Greeting";
     public final String desc = "Say Hello on player spawn";
 
+    private boolean isLoaded;
+
     private static final List<String> greetingMessageList = null;
 
     private ExportUnitSpawnObservable exportUnitSpawnObservable;
+    private BackgroundTaskRestartObservable backgroundTaskRestartObservable;
+
+    private PluginListCell pluginListCell;
+
+    @Override
+    public PluginListCell getPluginListCell() {
+        return pluginListCell;
+    }
+
+    @Override
+    public void setPluginListCell(PluginListCell cell) {
+        pluginListCell = cell;
+    }
 
     @Override
     public void register() {
@@ -32,6 +49,7 @@ public class Greeting implements Plugin {
     @Override
     public void unregister() {
         exportUnitSpawnObservable.unregister();
+        isLoaded = false;
     }
 
     @Override
@@ -42,6 +60,11 @@ public class Greeting implements Plugin {
     @Override
     public String getDescription() {
         return desc;
+    }
+
+    @Override
+    public boolean isLoaded() {
+        return isLoaded;
     }
 
     private void greet(ExportObject unit) {

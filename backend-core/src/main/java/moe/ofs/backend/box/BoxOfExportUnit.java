@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public final class BoxOfExportUnit {
     private static volatile List<ExportObject> box = new ArrayList<>();
 
-    static {
+    public static void init() {
         BackgroundTaskRestartObservable backgroundTaskRestartObservable = BoxOfExportUnit::dispose;
         backgroundTaskRestartObservable.register();
     }
@@ -23,6 +23,7 @@ public final class BoxOfExportUnit {
 
     public static void dispose() {
         box.clear();
+        System.out.println("BoxOfExportUnit disposed -> " + box);
     }
 
     public static void observeAll(List<ExportObject> list) {
@@ -41,8 +42,6 @@ public final class BoxOfExportUnit {
                 .forEach(ExportUnitDespawnObservable::invokeAll);
 
         // use partition by and then for each?
-
-
 
         box.clear();
         box.addAll(list);

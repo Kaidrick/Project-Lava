@@ -8,11 +8,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
 import jfxtras.styles.jmetro.JMetroStyleClass;
-import lombok.SneakyThrows;
+import moe.ofs.backend.gui.PluginListCell;
 import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.util.AirdromeDataCollector;
@@ -24,41 +21,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MainController implements Initializable {
-
-    private static class PluginListCell extends ListCell<String> {
-        HBox hbox = new HBox();
-        Label label = new Label();
-        Pane pane = new Pane();
-        Pane pane2 = new Pane();
-        Label desc = new Label();
-        Button enableButton = new Button("Enable");
-        Button disableButton = new Button("Disable");
-        public PluginListCell() {
-            super();
-            hbox.getChildren().addAll(label, pane, desc, pane2, enableButton, disableButton);
-            HBox.setHgrow(pane, Priority.ALWAYS);
-            HBox.setHgrow(pane2, Priority.ALWAYS);
-            enableButton.setOnAction(event -> System.out.println("enable " + getItem()));
-            disableButton.setOnAction(event -> System.out.println("disable " + getItem()));
-//            disableButton.setOnAction(event -> getListView().getItems().remove(getItem()));
-        }
-        @Override
-        protected void updateItem(String item, boolean empty) {
-            super.updateItem(item, empty);
-            setText(null);
-            setGraphic(null);
-
-            if (item != null && !empty) {
-                label.setText(item);
-                desc.setText(PluginClassLoader.loadedPluginSet.stream()
-                        .filter(p -> p.getName().equals(item))
-                        .findAny()
-                        .orElseThrow(() -> new RuntimeException("Invalid Plugin Name"))
-                        .getDescription());
-                setGraphic(hbox);
-            }
-        }
-    }
 
     private ResourceBundle bundle;
     @FXML private AnchorPane anchorPane;
@@ -93,6 +55,10 @@ public class MainController implements Initializable {
 
             serverExecRequest.send();
         }
+    }
+
+    @FXML public void superTestButtonVeryDangerous(ActionEvent actionEvent) {
+        PluginClassLoader.loadedPluginSet.forEach(p -> p.getPluginListCell().getControlButton().setText("trololo"));
     }
 
     @FXML public void toggleInteractiveLuaDebug(MouseEvent actionEvent) {

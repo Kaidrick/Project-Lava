@@ -1,5 +1,6 @@
 package moe.ofs.backend.plugin.static_display;
 
+import moe.ofs.backend.gui.PluginListCell;
 import moe.ofs.backend.util.Logger;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.handlers.MissionStartObservable;
@@ -43,21 +44,38 @@ public class StaticDisplay implements Plugin {
     public final String name = "Static Aircraft Display";
     public final String desc = "Display a flyable static aircraft";
 
+    private boolean isLoaded;
+
     // handlers
     PlayerSlotChangeObservable playerSlotChangeObservable;
     MissionStartObservable missionStartObservable;
     PlayerLeaveServerObservable playerLeaveServerObservable;
+
+    private PluginListCell pluginListCell;
+
+    @Override
+    public PluginListCell getPluginListCell() {
+        return pluginListCell;
+    }
+
+    @Override
+    public void setPluginListCell(PluginListCell cell) {
+        pluginListCell = cell;
+    }
+
 
     @Override
     public void register() {
         playerSlotChangeObservable = this::switchStaticDisplay;
         playerSlotChangeObservable.register();
 
-        missionStartObservable = StaticDisplay::initStaticDisplay;
+        missionStartObservable = this::initStaticDisplay;
         missionStartObservable.register();
 
         playerLeaveServerObservable = this::respawnOnPlayerLeaveServer;
         playerLeaveServerObservable.register();
+
+        isLoaded = true;
     }
 
     @Override
@@ -65,6 +83,8 @@ public class StaticDisplay implements Plugin {
         playerLeaveServerObservable.unregister();
         missionStartObservable.unregister();
         playerLeaveServerObservable.unregister();
+
+        isLoaded = false;
     }
 
     @Override
@@ -77,7 +97,12 @@ public class StaticDisplay implements Plugin {
         return desc;
     }
 
-    public static void initStaticDisplay() {
+    @Override
+    public boolean isLoaded() {
+        return isLoaded;
+    }
+
+    public void initStaticDisplay() {
         // for each playable, spawn static object if TakeOffGround or TakeOffParking
         BoxOfFlyableUnit.box.values().forEach(StaticDisplay::spawnControl);
     }

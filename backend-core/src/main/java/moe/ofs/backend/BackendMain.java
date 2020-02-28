@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
+import moe.ofs.backend.box.BoxOfExportUnit;
 import moe.ofs.backend.box.BoxOfFlyableUnit;
 import moe.ofs.backend.box.BoxOfParking;
 import moe.ofs.backend.function.RadioCommands;
@@ -117,10 +118,31 @@ public class BackendMain extends Application {
 //    }
 
 
+    // load only once
+    // core and plugin should register a handler to deal with mission/background task restart
+    private static boolean initialized;
+    private static void initCore() throws IOException {
+        if(!initialized) {
+            RadioCommands.init();
+            Plugin.loadPlugins();
+            logController.populateLoadedPluginListView();
+
+            initialized = true;
+        } else {
+            System.out.println("Already Initialized in last session");
+        }
+    }
+
     // restart background task when connect is cut
     public static void startBackgroundTask() throws IOException {
 
         BackgroundTaskRestartObservable.invokeAll();
+
+        initCore();
+
+        BoxOfParking.init();
+        BoxOfFlyableUnit.init();
+        BoxOfExportUnit.init();
 
         isHalted.set(false);
 
@@ -130,15 +152,6 @@ public class BackendMain extends Application {
 
         exportPollingHandler.init();
         serverPollingHandler.init();
-
-        BoxOfParking.init();
-
-        BoxOfFlyableUnit.init();
-
-        RadioCommands.init();
-
-        Plugin.loadPlugins();
-        logController.populateLoadedPluginListView();
 
         MissionStartObservable.invokeAll();
 

@@ -74,12 +74,16 @@ public final class ExportPollingHandler extends PollingHandler {
         }
 
 
+
+
         String s = "[]";
         try {
             s = RequestHandler.sendAndGet(port, json);
         } catch(IOException e) {
             e.printStackTrace();
         }
+
+        System.out.println(s);
 
         if (!s.equals("[]")) {
 //            System.out.println(s);
