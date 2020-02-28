@@ -77,6 +77,8 @@ public final class BoxOfParking {
     }
 
     public static void init() {
+        box.clear();
+
         String luaString = LuaScripts.load("get_map_theater_name.lua");
 
         try {

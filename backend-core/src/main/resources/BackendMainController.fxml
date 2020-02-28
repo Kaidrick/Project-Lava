@@ -43,6 +43,7 @@
                                     </Pane>
                                     <Button fx:id="button_ExecuteLuaDebug" layoutX="310.0" layoutY="102.0" mnemonicParsing="false" onAction="#debugLuaString" prefHeight="45.0" prefWidth="45.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="55.0" />
                                     <Button fx:id="button_ClearLuaString" layoutX="360.0" layoutY="102.0" mnemonicParsing="false" onAction="#clearLuaString" prefHeight="45.0" prefWidth="45.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+                                    <Button layoutX="362.0" layoutY="22.0" mnemonicParsing="false" onAction="#superTestButtonVeryDangerous" text="Button" />
                                  </children>
                               </AnchorPane>
                           </items>

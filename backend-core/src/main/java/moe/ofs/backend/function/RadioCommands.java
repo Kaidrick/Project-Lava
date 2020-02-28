@@ -24,6 +24,10 @@ import java.util.stream.Collectors;
  */
 public class RadioCommands {
 
+    static MissionStartObservable missionStartObservable;
+    static BackgroundTaskRestartObservable backgroundTaskRestartObservable;
+    static ControlPanelShutdownObservable controlPanelShutdownObservable;
+
     // a radio control can be added as a menu or a item
     // a menu has zero or more items in it
     // a item is clickable and will call a function on click
@@ -96,16 +100,19 @@ public class RadioCommands {
     };
 
     public static void init() {
-        MissionStartObservable missionStartObservable = RadioCommands::setUp;
+        System.out.println("Init RadioCommands");
+
+        missionStartObservable = RadioCommands::setUp;
         missionStartObservable.register();
 
-        BackgroundTaskRestartObservable backgroundTaskRestartObservable = RadioCommands::tearDown;
+        backgroundTaskRestartObservable = RadioCommands::tearDown;
         backgroundTaskRestartObservable.register();
 
-        ControlPanelShutdownObservable controlPanelShutdownObservable = RadioCommands::tearDown;
+        controlPanelShutdownObservable = RadioCommands::tearDown;
         controlPanelShutdownObservable.register();
     }
 
+    // should only be set up once
     public static void setUp() {
         // inject a lua table into mission runtime lua state
         // send a request to get all pulls every 100 milliseconds
@@ -145,6 +152,10 @@ public class RadioCommands {
     }
 
     public static void tearDown() {
+//        missionStartObservable.unregister();
+//        backgroundTaskRestartObservable.unregister();
+//        controlPanelShutdownObservable.unregister();
+
         radioPullExecutorService.shutdown();
         new ServerDataRequest("radio_commands = nil").send();
     }

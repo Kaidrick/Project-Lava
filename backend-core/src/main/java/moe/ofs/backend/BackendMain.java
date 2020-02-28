@@ -8,6 +8,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
+import moe.ofs.backend.box.BoxOfExportUnit;
 import moe.ofs.backend.box.BoxOfFlyableUnit;
 import moe.ofs.backend.box.BoxOfParking;
 import moe.ofs.backend.function.RadioCommands;
@@ -117,10 +118,61 @@ public class BackendMain extends Application {
 //    }
 
 
+    // load only once
+    // core and plugin should register a handler to deal with mission/background task restart
+    private static boolean initialized;
+    private static void initCore() throws IOException {
+        if(!initialized) {
+            RadioCommands.init();
+            Plugin.loadPlugins();
+            logController.populateLoadedPluginListView();
+
+
+            // TODO --> VERY BAD IMPLEMENTATION! REFACTOR!
+            PlayerEnterServerObservable playerEnterServerObservable =
+                    playerInfo -> Logger.log("New connection: " + playerInfo.getName()
+                            + "@" + playerInfo.getIpaddr());
+            playerEnterServerObservable.register();
+
+            PlayerLeaveServerObservable playerLeaveServerObservable =
+                    playerInfo -> Logger.log("Player left: " + playerInfo.getName()
+                            + "@" + playerInfo.getIpaddr());
+            playerLeaveServerObservable.register();
+
+            PlayerSlotChangeObservable playerSlotChangeObservable =
+                    (previous, current) -> Logger.log(
+                            current.getName()
+                                    + " slot change: " + previous.getSlot() + " -> " + current.getSlot());
+            playerSlotChangeObservable.register();
+
+            ExportUnitSpawnObservable exportUnitSpawnObservable =
+                    unit -> Logger.log(String.format("Unit Spawn: %s (RuntimeID: %s) - %s Type",
+                            unit.getUnitName(), unit.getRuntimeID(), unit.getName()));
+            exportUnitSpawnObservable.register();
+
+            ExportUnitDespawnObservable exportUnitDespawnObservable =
+                    unit -> Logger.log(String.format("Unit Despawn: %s (RuntimeID: %s) - %s Type",
+                            unit.getUnitName(), unit.getRuntimeID(), unit.getName()));
+            exportUnitDespawnObservable.register();
+
+
+
+            initialized = true;
+        } else {
+            System.out.println("Already Initialized in last session");
+        }
+    }
+
     // restart background task when connect is cut
     public static void startBackgroundTask() throws IOException {
 
         BackgroundTaskRestartObservable.invokeAll();
+
+        initCore();
+
+        BoxOfParking.init();
+        BoxOfFlyableUnit.init();
+        BoxOfExportUnit.init();
 
         isHalted.set(false);
 
@@ -131,43 +183,7 @@ public class BackendMain extends Application {
         exportPollingHandler.init();
         serverPollingHandler.init();
 
-        BoxOfParking.init();
-
-        BoxOfFlyableUnit.init();
-
-        RadioCommands.init();
-
-        Plugin.loadPlugins();
-        logController.populateLoadedPluginListView();
-
         MissionStartObservable.invokeAll();
-
-        PlayerEnterServerObservable playerEnterServerObservable =
-                playerInfo -> Logger.log("New connection: " + playerInfo.getName()
-                        + "@" + playerInfo.getIpaddr());
-        playerEnterServerObservable.register();
-
-        PlayerLeaveServerObservable playerLeaveServerObservable =
-                playerInfo -> Logger.log("Player left: " + playerInfo.getName()
-                        + "@" + playerInfo.getIpaddr());
-        playerLeaveServerObservable.register();
-
-        PlayerSlotChangeObservable playerSlotChangeObservable =
-                (previous, current) -> Logger.log(
-                        current.getName()
-                                + " slot change: " + previous.getSlot() + " -> " + current.getSlot());
-        playerSlotChangeObservable.register();
-
-        ExportUnitSpawnObservable exportUnitSpawnObservable =
-                unit -> Logger.log(String.format("Unit Spawn: %s (RuntimeID: %s) - %s Type",
-                        unit.getUnitName(), unit.getRuntimeID(), unit.getName()));
-        exportUnitSpawnObservable.register();
-
-        ExportUnitDespawnObservable exportUnitDespawnObservable =
-                unit -> Logger.log(String.format("Unit Despawn: %s (RuntimeID: %s) - %s Type",
-                        unit.getUnitName(), unit.getRuntimeID(), unit.getName()));
-        exportUnitDespawnObservable.register();
-
 
 
         Runnable exportPolling = exportPollingHandler::poll;
@@ -230,9 +246,9 @@ public class BackendMain extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        JMetro jMetro = new JMetro(Style.LIGHT);
         Scene scene = new Scene(root);
 
+        JMetro jMetro = new JMetro(Style.LIGHT);
         jMetro.setScene(scene);
 
         primaryStage.setScene(scene);

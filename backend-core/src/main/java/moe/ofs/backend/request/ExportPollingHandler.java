@@ -34,6 +34,9 @@ public final class ExportPollingHandler extends PollingHandler {
     }
 
     public void init() {
+        isRequestDone = true;
+        list.clear();
+
         int port = getPort();
         Gson gson = new Gson();
         String json;
@@ -73,13 +76,14 @@ public final class ExportPollingHandler extends PollingHandler {
             json = gson.toJson(container);
         }
 
-
         String s = "[]";
         try {
             s = RequestHandler.sendAndGet(port, json);
         } catch(IOException e) {
             e.printStackTrace();
         }
+
+//        System.out.println(s);
 
         if (!s.equals("[]")) {
 //            System.out.println(s);
