@@ -243,13 +243,17 @@ public class BackendMain extends Application {
         }
     }
 
+    public static Stage stage;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        stage = primaryStage;
+
         Scene scene = new Scene(root);
 
         JMetro jMetro = new JMetro(Style.LIGHT);
         jMetro.setScene(scene);
+
 
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(555);

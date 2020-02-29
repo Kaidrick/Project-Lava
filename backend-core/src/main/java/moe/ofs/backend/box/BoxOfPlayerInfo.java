@@ -6,6 +6,7 @@ import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 import moe.ofs.backend.handlers.PlayerSlotChangeObservable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public final class BoxOfPlayerInfo {
@@ -38,5 +39,9 @@ public final class BoxOfPlayerInfo {
 
         box.clear();
         box.putAll(map);
+    }
+
+    public static PlayerInfo findByName(String name) {
+        return box.get(name);
     }
 }

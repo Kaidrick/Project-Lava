@@ -63,4 +63,17 @@ public final class BoxOfFlyableUnit {
                         .findAny();
         return optional.map(stringFlyableUnitEntry -> stringFlyableUnitEntry.getValue().getGroup_id());
     }
+
+    public static Optional<FlyableUnit> getByUnitId(int id) {
+        return box.values().stream()
+                .filter(e -> e.getUnit_id() == id)
+                .findAny();
+    }
+
+    public static Optional<FlyableUnit> getByUnitId(String idString) {
+        int id = Integer.parseInt(idString);
+        return box.values().stream()
+                .filter(e -> e.getUnit_id() == id)
+                .findAny();
+    }
 }
