@@ -1,5 +1,8 @@
 package moe.ofs.backend.object;
 
+import lombok.Data;
+
+@Data
 public class PlayerInfo extends SimObject {
     private static final String emptySlotAltName = "Observer";
 
@@ -26,34 +29,10 @@ public class PlayerInfo extends SimObject {
         return false;
     }
 
-    public String getIpaddr() {
-        return ipaddr;
-    }
-
-    public String getLang() {
-        return lang;
-    }
-
-    public int getPing() {
-        return ping;
-    }
-
-    public int getSide() {
-        return side;
-    }
-
     public String getSlot() {
         if(slot.equals("")) {
             return emptySlotAltName;
         }
         return slot;
-    }
-
-    public boolean isStarted() {
-        return started;
-    }
-
-    public String getUcid() {
-        return ucid;
     }
 }

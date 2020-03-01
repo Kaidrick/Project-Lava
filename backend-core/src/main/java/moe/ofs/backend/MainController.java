@@ -44,6 +44,16 @@ public class MainController implements Initializable {
     @FXML private ListView<String> listViewAddons;
     @FXML private ListView<String> listViewConnectedPlayer;
 
+    @FXML private Label labelDebugInfo1;
+    @FXML private Label labelDebugInfo2;
+
+    @FXML public void setDebugLabelTextOne(String info) {
+        labelDebugInfo1.setText(info);
+    }
+    @FXML public void setDebugLabelTextTwo(String info) {
+        labelDebugInfo2.setText(info);
+    }
+
     @FXML public void appendLog(String logMessage) {
         logTextArea.appendText(logMessage);
     }

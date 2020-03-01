@@ -1,8 +1,10 @@
 package moe.ofs.backend.object;
 
-import java.util.HashMap;
+import lombok.Data;
+
 import java.util.Map;
 
+@Data
 public final class ExportObject {
     private double Bank;
     private String Coalition;
@@ -18,56 +20,4 @@ public final class ExportObject {
     private int RuntimeID;
     private Map<String, Integer> Type;
     private String UnitName;
-
-    public double getBank() {
-        return Bank;
-    }
-
-    public String getCoalition() {
-        return Coalition;
-    }
-
-    public int getCoalitionID() {
-        return CoalitionID;
-    }
-
-    public int getCountry() {
-        return Country;
-    }
-
-    public Map<String, Boolean> getFlags() {
-        return new HashMap<>(Flags);
-    }
-
-    public String getGroupName() {
-        return GroupName;
-    }
-
-    public double getHeading() {
-        return Heading;
-    }
-
-    public Map<String, Double> getLatLongAlt() {
-        return new HashMap<>(LatLongAlt);
-    }
-
-    public String getName() {
-        return Name;
-    }
-
-    public double getPitch() {
-        return Pitch;
-    }
-
-    public Map<String, Double> getPosition() {
-        return new HashMap<>(Position);
-    }
-
-    public int getRuntimeID() {
-        return RuntimeID;
-    }
-
-    public String getUnitName() {
-        return UnitName;
-    }
 }

@@ -1,5 +1,6 @@
 package moe.ofs.backend.request.server;
 
+import moe.ofs.backend.request.Resolvable;
 import moe.ofs.backend.util.Logger;
 import moe.ofs.backend.request.RequestToServer;
 
@@ -7,7 +8,7 @@ import moe.ofs.backend.request.RequestToServer;
  * The constructor of ServerExecRequest can take a RequestToMission
  */
 
-public class ServerExecRequest extends RequestToServer {
+public class ServerExecRequest extends RequestToServer implements Resolvable {
     {
         handle = Handle.EXEC;
         port = 3010;

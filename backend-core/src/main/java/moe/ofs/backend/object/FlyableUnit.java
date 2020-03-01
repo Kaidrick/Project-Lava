@@ -1,5 +1,8 @@
 package moe.ofs.backend.object;
 
+import lombok.Data;
+
+@Data
 public class FlyableUnit {
 
     private int group_id;
@@ -28,74 +31,8 @@ public class FlyableUnit {
                 getGroup_id(), getLivery_id());
     }
 
-    public int getGroup_id() {
-        return group_id;
-    }
-
-    public int getUnit_id() { return unit_id; }
-
-    public String getGroup_name() {
-        return group_name;
-    }
-
-    public String getUnit_name() {
-        return unit_name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public double getHeading() {
-        return heading;
-    }
-
     public double getHeadingForDisplay() {
         return Math.toDegrees(heading);
-    }
-
-    public String getCountryName() {
-        return countryName;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public String getLivery_id() {
-        return livery_id;
-    }
-
-    public String getStart_type() {
-        return start_type;
-    }
-
-    public void setStart_type(String start_type) {
-        this.start_type = start_type;
-    }
-
-    public int getCountry_id() {
-        return country_id;
-    }
-
-    public String getOnboard_num() {
-        return onboard_num;
-    }
-
-    public int getAirdromeId() {
-        return airdromeId;
-    }
-
-    public String getParking_id() {
-        return parking_id;
     }
 
     public int getParking() {

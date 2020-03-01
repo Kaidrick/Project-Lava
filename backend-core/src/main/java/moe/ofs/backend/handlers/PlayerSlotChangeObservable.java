@@ -7,7 +7,7 @@ import java.util.List;
 
 @FunctionalInterface
 public interface PlayerSlotChangeObservable {
-    // list of class?
+
     List<PlayerSlotChangeObservable> list = new ArrayList<>();
 
     void observe(PlayerInfo previous, PlayerInfo current);

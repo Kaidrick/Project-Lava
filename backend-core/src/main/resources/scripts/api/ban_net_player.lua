@@ -1,0 +1,1 @@
+net.banlist_add(%d, %d, %s)

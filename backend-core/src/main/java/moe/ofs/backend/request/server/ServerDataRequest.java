@@ -1,10 +1,12 @@
 package moe.ofs.backend.request.server;
 
 import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.Resolvable;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerDataRequest extends RequestToServer {
+public class ServerDataRequest extends RequestToServer implements Resolvable {
 
     {
         handle = Handle.EXEC;

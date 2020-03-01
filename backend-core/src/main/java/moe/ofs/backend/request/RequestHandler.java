@@ -2,6 +2,7 @@ package moe.ofs.backend.request;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import javafx.application.Platform;
 import moe.ofs.backend.BackendMain;
 import moe.ofs.backend.util.HeartbeatThreadFactory;
 
@@ -30,7 +31,6 @@ public final class RequestHandler<T extends BaseRequest> {
     //
 //    private List<BaseRequest> waitList = new CopyOnWriteArrayList<>();
     private Map<String, BaseRequest> waitMap = new HashMap<>();
-    private Map<String, String> resultMap = new HashMap<>();  // request ident, result
     private volatile BlockingQueue<BaseRequest> sendQueue = new LinkedBlockingQueue<>();
 
     private static final Gson gson = new Gson();
@@ -135,8 +135,9 @@ public final class RequestHandler<T extends BaseRequest> {
 //        if(!splitQueue.toString().equals("{}"))
 //        System.out.println(splitQueue);
 
+        // only add to wait map if result is definitely needed
         splitQueue.forEach((port, queue) -> {
-            transmissionQueue.forEach(r -> waitMap.put(r.getUuid(), r));
+            transmissionQueue.stream().filter(r -> r instanceof Resolvable).forEach(r -> waitMap.put(r.getUuid(), r));
 
             try {
                 String json = gson.toJson(queue);
@@ -155,19 +156,43 @@ public final class RequestHandler<T extends BaseRequest> {
                 Type jsonRpcResponseListType = new TypeToken<List<JsonRpcResponse<String>>>() {}.getType();
                 List<JsonRpcResponse<String>> jsonRpcResponseList = gson.fromJson(s, jsonRpcResponseListType);
 
+                // what is the use of wait map here?
+                // json rpc response list contains elements
+                // each element is a response
+                // we need to remove
+
                 if(jsonRpcResponseList != null) {
                     jsonRpcResponseList.forEach(
-                            r -> waitMap.computeIfPresent(r.getId(),
-                                    (k, v) -> {
-//                                System.out.println(v.getClass().toString());
-                                        v.resolve(r.getResult().getData());
-                                        return null;
-                                    }));
+                            response -> {
+                                BaseRequest request = waitMap.remove(response.getId());
+                                if(request != null) {
+                                    request.resolve(response.getResult().getData());
+                                }
+//
+                                Platform.runLater(() ->
+                                        BackendMain.logController.setDebugLabelTextTwo(
+                                                "waitMap.size() = " + waitMap.size()
+                                        ));
+                            }
+                    );
                 }
+
+//                if(jsonRpcResponseList != null) {
+//                    jsonRpcResponseList.forEach(
+//                            r -> waitMap.computeIfPresent(r.getId(),
+//                                    (k, v) -> {
+////                                System.out.println(v.getClass().toString());
+//                                        v.resolve(r.getResult().getData());
+//                                        return null;
+//                                    }));
+//                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
+
+
+
     }
 
 }
