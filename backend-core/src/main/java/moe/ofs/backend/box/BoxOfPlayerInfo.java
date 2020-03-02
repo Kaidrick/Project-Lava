@@ -18,19 +18,19 @@ public final class BoxOfPlayerInfo {
 
     public static void observeAll(Map<String, PlayerInfo> map) {
 
-        for (int i = 5; i < 20; i++) {
-            PlayerInfo playerInfo = new PlayerInfo();
-            playerInfo.setId(i);
-            playerInfo.setName("test" + i);
-            playerInfo.setIpaddr("dfasdfsd");
-            playerInfo.setLang("cn");
-            playerInfo.setPing(999);
-            playerInfo.setSide(1);
-            playerInfo.setSlot("1247");
-            playerInfo.setUcid("2579384yhtfgn39845ygh94");
-            playerInfo.setStarted(true);
-            map.put("test" + i, playerInfo);
-        }
+//        for (int i = 5; i < 20; i++) {
+//            PlayerInfo playerInfo = new PlayerInfo();
+//            playerInfo.setId(i);
+//            playerInfo.setName("test" + i);
+//            playerInfo.setIpaddr("dfasdfsd");
+//            playerInfo.setLang("cn");
+//            playerInfo.setPing(999);
+//            playerInfo.setSide(1);
+//            playerInfo.setSlot("1247");
+//            playerInfo.setUcid("2579384yhtfgn39845ygh94");
+//            playerInfo.setStarted(true);
+//            map.put("test" + i, playerInfo);
+//        }
 
 
         map.keySet().stream()

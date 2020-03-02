@@ -13,6 +13,8 @@ import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.util.LuaScripts;
 
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -74,21 +76,44 @@ public class PlayerListCell extends ListCell<String> {
     };
     EventHandler<ActionEvent> banPlayer = event -> {
         PlayerInfo playerInfo = BoxOfPlayerInfo.findByName(getItem());
-        TextInputDialog textInputDialog = new TextInputDialog();
-        textInputDialog.setTitle("Ban Player");
-        textInputDialog.setHeaderText(String.format("Confirm banning player \"%s\"", playerInfo.getName()));
-        textInputDialog.setContentText("Specify reason:");
-
-        textInputDialog.initModality(Modality.APPLICATION_MODAL);
-        textInputDialog.initOwner(BackendMain.stage);
 
         // TODO --> do custom dialog, get reason and ban duration fields of day, hours, min
-        Optional<String> kickReasonOptional = textInputDialog.showAndWait();
-        if(kickReasonOptional.isPresent()) {
-            String reason = kickReasonOptional.get();
-            System.out.println("ban " + playerInfo.getName() + " -> " + reason);
+        BanPlayerOptionDialog dialog = new BanPlayerOptionDialog();
+
+        dialog.setTitle("Ban Player");
+        dialog.setHeaderText(String.format("Confirm banning player \"%s\"", playerInfo.getName()));
+        dialog.setContentText("Specify reason:");
+
+        dialog.initModality(Modality.APPLICATION_MODAL);
+        dialog.initOwner(BackendMain.stage);
+        Optional<BanPlayerOptionDialogResult> resultOptional = dialog.showAndWait();
+        if(resultOptional.isPresent()) {
+            BanPlayerOptionDialogResult result = resultOptional.get();
+            String reason = !result.getReason().equals("") ? result.getReason() : "No reason specified.";
+            LocalDate date = result.getDate();
+            Duration duration;
+            if(result.isPermanent()) {
+                // permanent ban
+                duration = Duration.ofDays(10000);
+            } else {
+                if(date != null) {
+                    duration = Duration.between(LocalDateTime.now(),
+                            LocalDateTime.of(result.getDate(), LocalTime.now()));
+                } else {
+                    duration = Duration.parse(String.format("P%dDT%dH%dM",
+                            result.getDays(), result.getHours(), result.getMinutes()));
+                }
+            }
+            Long banSeconds = duration.getSeconds();
+
+            String banDescription = reason + "\\n" +
+                    "Effective until " +
+                    LocalDateTime.now().plus(duration) + "\\n" +
+                    "Contact @NameSetByServer if you believe you are banned by mistake.";
+            System.out.println("Ban " + playerInfo.getName() +
+                    " for " + banSeconds + " seconds due to " + banDescription);
             String luaString = LuaScripts.loadAndPrepare("api/ban_net_player.lua",
-                    playerInfo.getId(), Long.MAX_VALUE, !reason.equals("") ? reason : "Server specifies no ban reason.");
+                    playerInfo.getId(), banSeconds, banDescription);
                         new ServerExecRequest(RequestToServer.State.DEBUG, luaString).send();
         }
     };
