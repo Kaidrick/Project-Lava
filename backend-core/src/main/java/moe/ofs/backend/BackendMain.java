@@ -21,6 +21,7 @@ import moe.ofs.backend.request.server.ServerFillerRequest;
 import moe.ofs.backend.util.ConnectionManager;
 import moe.ofs.backend.util.HeartbeatThreadFactory;
 import moe.ofs.backend.util.Logger;
+import org.springframework.context.ConfigurableApplicationContext;
 
 
 import java.io.IOException;
@@ -51,6 +52,8 @@ public class BackendMain extends Application {
     private static ScheduledExecutorService mainRequestScheduler;
     private static ScheduledExecutorService exportPollingScheduler;
     private static ScheduledExecutorService serverPollingScheduler;
+
+    public static ConfigurableApplicationContext applicationContext;
 
     public static boolean needRestart;
     public static boolean stopSign;
