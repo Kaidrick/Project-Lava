@@ -56,6 +56,9 @@ public final class BoxOfExportUnit {
         box.parallelStream().filter(e -> !updateNameList.contains(e.getUnitName()))
                 .forEach(exportObjectRepository::delete);
 
+        // TODO --> db needs to update value
+//        list.forEach(exportObjectRepository::save);
+
         box.clear();
         box.addAll(list);
     }

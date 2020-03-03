@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class BoxOfExportObjectServiceImpl implements BoxOfExportUnitService {
+public class BoxOfExportUnitServiceImpl implements BoxOfExportUnitService {
     @Override
     public List<ExportObject> getAll() {
         return BoxOfExportUnit.peek();

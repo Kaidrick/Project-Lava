@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import moe.ofs.backend.box.BoxOfExportUnit;
 import moe.ofs.backend.object.ExportObject;
+import moe.ofs.backend.object.ExportObjectConverter;
 import moe.ofs.backend.request.export.ExportFillerRequest;
 import moe.ofs.backend.request.export.ExportObjectDataRequest;
 
@@ -88,18 +89,20 @@ public final class ExportPollingHandler extends PollingHandler {
         if (!s.equals("[]")) {
 //            System.out.println(s);
 
-            Type jsonRpcResponseListType = new TypeToken<ArrayList<JsonRpcResponse<List<ExportObject>>>>() {}.getType();
-            ArrayList<JsonRpcResponse<List<ExportObject>>> jsonRpcResponseList = gson.fromJson(s, jsonRpcResponseListType);
+            Type jsonRpcResponseListType = new TypeToken<ArrayList<JsonRpcResponse<List<ExportObjectConverter>>>>() {}.getType();
+            ArrayList<JsonRpcResponse<List<ExportObjectConverter>>> jsonRpcResponseList = gson.fromJson(s, jsonRpcResponseListType);
 
             List<ExportObject> exportObjectList =
                     jsonRpcResponseList.stream()
-                            .flatMap(r -> r.getResult().getData().stream()).collect(Collectors.toList());
+                            .flatMap(r -> r.getResult().getData().stream())
+                            .map(ExportObject::new)
+                            .collect(Collectors.toList());
 
             list.addAll(exportObjectList);
 
-            Optional<JsonRpcResponse<List<ExportObject>>> optional = jsonRpcResponseList.stream().findAny();
+            Optional<JsonRpcResponse<List<ExportObjectConverter>>> optional = jsonRpcResponseList.stream().findAny();
             if(optional.isPresent()) {
-                JsonRpcResponse<List<ExportObject>> response = optional.get();
+                JsonRpcResponse<List<ExportObjectConverter>> response = optional.get();
                 if(list.size() == response.getResult().getTotal()) {
                     BoxOfExportUnit.observeAll(list);
 

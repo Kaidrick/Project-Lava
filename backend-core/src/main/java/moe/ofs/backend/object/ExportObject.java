@@ -12,17 +12,55 @@ import java.util.Map;
 @Getter
 @NoArgsConstructor
 @Entity
+@Table(name = "export_objects")
 public final class ExportObject extends BaseEntity {
-    private double Bank;
-    private String Coalition;
-    private int CoalitionID;
-    private int Country;
-    private String GroupName;
-    private double Heading;
-    private String Name;
-    private double Pitch;
-    private int RuntimeID;
-    private String UnitName;
+    @Column(name = "own_bank")
+    private double bank;
+
+    @Column(name = "coalition")
+    private String coalition;
+
+    @Column(name = "coalition_id")
+    private int coalitionID;
+
+    @Column(name = "country_id")
+    private int country;
+
+    @Column(name = "group_name")
+    private String groupName;
+
+    @Column(name = "own_heading")
+    private double heading;
+
+    @Column(name = "own_name")
+    private String name;
+
+    @Column(name = "own_pitch")
+    private double pitch;
+
+    @Column(name = "runtime_id")
+    private int runtimeID;
+
+    @Column(name = "unit_name")
+    private String unitName;
+
+    public ExportObject(ExportObjectConverter converter) {
+        this.bank = converter.getBank();
+        this.coalition = converter.getCoalition();
+        this.coalitionID = converter.getCoalitionID();
+        this.country = converter.getCountry();
+        this.groupName = converter.getGroupName();
+        this.heading = converter.getHeading();
+        this.name = converter.getName();
+        this.pitch = converter.getPitch();
+        this.runtimeID = converter.getRuntimeID();
+        this.unitName = converter.getUnitName();
+
+        this.flags = converter.getFlags();
+        this.latLongAlt = converter.getLatLongAlt();
+        this.position = converter.getPosition();
+        this.type = converter.getType();
+    }
 
     @Builder
     public ExportObject(Long id, double bank, String coalition, int coalitionID, int country, String groupName, double heading,
@@ -30,44 +68,44 @@ public final class ExportObject extends BaseEntity {
                         Map<String, Boolean> flags, Map<String, Double> latLongAlt,
                         Map<String, Double> position, Map<String, Integer> type) {
         super(id);
-        this.Bank = bank;
-        this.Coalition = coalition;
-        this.CoalitionID = coalitionID;
-        this.Country = country;
-        this.GroupName = groupName;
-        this.Heading = heading;
-        this.Name = name;
-        this.Pitch = pitch;
-        this.RuntimeID = runtimeID;
-        this.UnitName = unitName;
+        this.bank = bank;
+        this.coalition = coalition;
+        this.coalitionID = coalitionID;
+        this.country = country;
+        this.groupName = groupName;
+        this.heading = heading;
+        this.name = name;
+        this.pitch = pitch;
+        this.runtimeID = runtimeID;
+        this.unitName = unitName;
 
-        this.Flags = flags;
-        this.LatLongAlt = latLongAlt;
-        this.Position = position;
-        this.Type = type;
+        this.flags = flags;
+        this.latLongAlt = latLongAlt;
+        this.position = position;
+        this.type = type;
     }
 
     @ElementCollection
     @MapKeyColumn(name="key")
     @Column(name="value")
     @CollectionTable(name="flags", joinColumns=@JoinColumn(name="id"))
-    private Map<String, Boolean> Flags;
+    private Map<String, Boolean> flags;
 
     @ElementCollection
     @MapKeyColumn(name="key")
     @Column(name="value")
     @CollectionTable(name="lat_lon_alt", joinColumns=@JoinColumn(name="id"))
-    private Map<String, Double> LatLongAlt;
+    private Map<String, Double> latLongAlt;
 
     @ElementCollection
     @MapKeyColumn(name="key")
     @Column(name="value")
     @CollectionTable(name="position", joinColumns=@JoinColumn(name="id"))
-    private Map<String, Double> Position;
+    private Map<String, Double> position;
 
     @ElementCollection
     @MapKeyColumn(name="key")
     @Column(name="value")
     @CollectionTable(name="type", joinColumns=@JoinColumn(name="id"))
-    private Map<String, Integer> Type;
+    private Map<String, Integer> type;
 }
