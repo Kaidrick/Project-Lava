@@ -1,6 +1,6 @@
 package moe.ofs.backend.bootstrap;
 
-import moe.ofs.backend.BackendMain;
+import moe.ofs.backend.ControlPanelApplication;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +10,7 @@ public class BackendRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         System.out.println("Spring Boot application started");
 
-        new Thread(() -> javafx.application.Application.launch(BackendMain.class)).start();
+        new Thread(() -> javafx.application.Application.launch(ControlPanelApplication.class)).start();
 
     }
 }

@@ -1,6 +1,6 @@
 package moe.ofs.backend.util;
 
-import moe.ofs.backend.BackendMain;
+import moe.ofs.backend.ControlPanelApplication;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -18,7 +18,7 @@ public class Logger {
                 level + " -> " + string;
 
         javafx.application.Platform.runLater(() ->
-                BackendMain.logController.appendLog(logMessage + "\n"));
+                ControlPanelApplication.logController.appendLog(logMessage + "\n"));
     }
 
     public static void log(String string) {
@@ -29,6 +29,6 @@ public class Logger {
                 Level.INFO + " -> " + string;
 
         javafx.application.Platform.runLater(() ->
-                BackendMain.logController.appendLog(logMessage + "\n"));
+                ControlPanelApplication.logController.appendLog(logMessage + "\n"));
     }
 }

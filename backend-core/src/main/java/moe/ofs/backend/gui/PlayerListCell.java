@@ -4,7 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
-import moe.ofs.backend.BackendMain;
+import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.box.BoxOfFlyableUnit;
 import moe.ofs.backend.box.BoxOfPlayerInfo;
 import moe.ofs.backend.object.FlyableUnit;
@@ -14,7 +14,6 @@ import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.util.LuaScripts;
 
 import java.time.*;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -51,7 +50,7 @@ public class PlayerListCell extends ListCell<String> {
                 playerSlot, unitName));
 
         alert.initModality(Modality.APPLICATION_MODAL);
-        alert.initOwner(BackendMain.stage);
+        alert.initOwner(ControlPanelApplication.stage);
 
         alert.show();
     };
@@ -64,7 +63,7 @@ public class PlayerListCell extends ListCell<String> {
         textInputDialog.setContentText("Specify reason:");
 
         textInputDialog.initModality(Modality.APPLICATION_MODAL);
-        textInputDialog.initOwner(BackendMain.stage);
+        textInputDialog.initOwner(ControlPanelApplication.stage);
         Optional<String> kickReasonOptional = textInputDialog.showAndWait();
         if(kickReasonOptional.isPresent()) {
             String reason = kickReasonOptional.get();
@@ -85,7 +84,7 @@ public class PlayerListCell extends ListCell<String> {
         dialog.setContentText("Specify reason:");
 
         dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.initOwner(BackendMain.stage);
+        dialog.initOwner(ControlPanelApplication.stage);
         Optional<BanPlayerOptionDialogResult> resultOptional = dialog.showAndWait();
         if(resultOptional.isPresent()) {
             BanPlayerOptionDialogResult result = resultOptional.get();

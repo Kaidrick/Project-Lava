@@ -18,7 +18,7 @@ public interface Plugin {
         PluginClassLoader pluginClassLoader = new PluginClassLoader();
 
         Properties properties = new Properties();
-        properties.load(BackendMain.class.getResourceAsStream("/enabled_plugins.properties"));
+        properties.load(ControlPanelApplication.class.getResourceAsStream("/enabled_plugins.properties"));
 
         properties.forEach((pluginName, pluginCoreClassName) ->
                 pluginClassLoader.invokeClassMethod(String.format("moe.ofs.backend.plugin.%s.%s",
@@ -60,5 +60,5 @@ public interface Plugin {
     default String getIdent() {
         String[] strings = getClass().getCanonicalName().split("\\.");
         return strings[strings.length - 2];
-    };
+    }
 }

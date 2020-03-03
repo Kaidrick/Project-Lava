@@ -1,13 +1,5 @@
 package moe.ofs.backend;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.stage.Stage;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 import moe.ofs.backend.box.BoxOfExportUnit;
 import moe.ofs.backend.box.BoxOfFlyableUnit;
 import moe.ofs.backend.box.BoxOfParking;
@@ -19,32 +11,22 @@ import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.request.ServerPollingHandler;
 import moe.ofs.backend.request.server.ServerFillerRequest;
 import moe.ofs.backend.util.ConnectionManager;
-import moe.ofs.backend.util.HeartbeatThreadFactory;
 import moe.ofs.backend.util.Logger;
 import org.springframework.context.ConfigurableApplicationContext;
-
 
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
 import java.util.Collections;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static moe.ofs.backend.ControlPanelApplication.logController;
 
-// auto connect and reconnect
-// if no exception is thrown, run background task
-// if exception is thrown, halt all schedulers and run heartbeat signal thread
-
-// if
-public class BackendMain extends Application {
-
+public class BackgroundTask {
     private static final RequestHandler<BaseRequest> requestHandler = RequestHandler.getInstance();
     private static final ExportPollingHandler exportPollingHandler = ExportPollingHandler.getInstance();
     private static final ServerPollingHandler serverPollingHandler = ServerPollingHandler.getInstance();
@@ -59,20 +41,6 @@ public class BackendMain extends Application {
     public static boolean stopSign;
 
     public static AtomicBoolean isHalted = new AtomicBoolean(false);
-
-    private static FXMLLoader loader;
-
-    private static Parent root;
-    static {
-        try {
-            loader = new FXMLLoader(BackendMain.class.getResource("/BackendMainController.fxml"));
-            loader.setResources(ResourceBundle.getBundle("BackendMain", Locale.CHINA, new UTF8Control()));
-            root = loader.load();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-    public static MainController logController = loader.getController();
 
 
     private static void shutdownExecutorService(ExecutorService service) {
@@ -115,14 +83,6 @@ public class BackendMain extends Application {
     public static Thread heartbeatSignalThread;
 
 
-
-//    public static void main(String[] args) {
-//        Application.launch(args);
-//    }
-
-
-    // load only once
-    // core and plugin should register a handler to deal with mission/background task restart
     private static boolean initialized;
     private static void initCore() throws IOException {
         if(!initialized) {
@@ -192,12 +152,12 @@ public class BackendMain extends Application {
         Runnable exportPolling = exportPollingHandler::poll;
 
         Runnable serverPolling = () -> {
-          try {
-              serverPollingHandler.poll();
+            try {
+                serverPollingHandler.poll();
 //              throw new IOException();
-          } catch (IOException e) {
-              e.printStackTrace();
-          }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         };
 
         // main loop
@@ -234,7 +194,7 @@ public class BackendMain extends Application {
 
     public static void processResource(URI uri, IOConsumer<Path> action) throws IOException {
         try {
-            Path p=Paths.get(uri);
+            Path p= Paths.get(uri);
             action.accept(p);
         }
         catch(FileSystemNotFoundException ex) {
@@ -244,49 +204,5 @@ public class BackendMain extends Application {
                 action.accept(p);
             }
         }
-    }
-
-    public static Stage stage;
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        stage = primaryStage;
-
-        Scene scene = new Scene(root);
-
-        JMetro jMetro = new JMetro(Style.LIGHT);
-        jMetro.setScene(scene);
-
-
-        primaryStage.setScene(scene);
-        primaryStage.setMinWidth(555);
-        primaryStage.setMinHeight(260);
-
-        primaryStage.getIcons().add(
-                new Image(Objects.requireNonNull(
-                        BackendMain.class.getResourceAsStream("/green_bat.png")
-                ))
-        );
-
-        primaryStage.setTitle("422d Backend Control Panel");
-        primaryStage.show();
-
-        // start background thread only if connect can be made
-        Thread heartbeat = HeartbeatThreadFactory.getHeartbeatThread();
-        if(heartbeat != null) {
-            heartbeat.start();
-        }
-    }
-
-    @Override
-    public void stop() throws Exception {
-        halt();
-        if(heartbeatSignalThread != null)
-            heartbeatSignalThread.interrupt();
-
-        // global stop flag
-        stopSign = true;
-
-        ControlPanelShutdownObservable.invokeAll();
     }
 }

@@ -1,6 +1,6 @@
 package moe.ofs.backend.box;
 
-import moe.ofs.backend.BackendMain;
+import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.handlers.ExportUnitDespawnObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 import moe.ofs.backend.object.ExportObject;
@@ -14,7 +14,7 @@ public final class BoxOfExportUnit {
     private static volatile List<ExportObject> box = new ArrayList<>();
 
     public static ExportObjectRepository exportObjectRepository =
-            BackendMain.applicationContext.getBean("exportObjectRepository", ExportObjectRepository.class);
+            ControlPanelApplication.applicationContext.getBean("exportObjectRepository", ExportObjectRepository.class);
 
     public static void init() {
         dispose();
@@ -49,6 +49,7 @@ public final class BoxOfExportUnit {
 
         // use partition by and then for each?
 
+        // TODO --> db needs to update value
         list.parallelStream().filter(e -> !boxNameList.contains(e.getUnitName()))
                 .forEach(exportObjectRepository::save);
 

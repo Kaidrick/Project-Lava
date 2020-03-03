@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
-import moe.ofs.backend.BackendMain;
+import moe.ofs.backend.ControlPanelApplication;
 
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.util.LuaScripts;
@@ -39,7 +39,7 @@ public final class BoxOfParking {
     private static void loadData(String theaterName) throws IOException, ClassNotFoundException {
         box.clear();
 
-        InputStream inputStream = BackendMain.class
+        InputStream inputStream = ControlPanelApplication.class
                 .getResourceAsStream(String.format("/data/%s.apron", theaterName));
         ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
         Object object = objectInputStream.readObject();

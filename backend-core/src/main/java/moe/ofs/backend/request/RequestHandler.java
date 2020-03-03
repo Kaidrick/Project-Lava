@@ -3,7 +3,8 @@ package moe.ofs.backend.request;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Platform;
-import moe.ofs.backend.BackendMain;
+import moe.ofs.backend.ControlPanelApplication;
+import moe.ofs.backend.BackgroundTask;
 import moe.ofs.backend.util.HeartbeatThreadFactory;
 
 import java.io.*;
@@ -57,9 +58,9 @@ public final class RequestHandler<T extends BaseRequest> {
     // if so, restart backend
     public static String sendAndGet(int port, String jsonString) throws IOException {
 
-        if(BackendMain.needRestart) {
+        if(BackgroundTask.needRestart) {
             try {
-                BackendMain.halt();
+                BackgroundTask.halt();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -83,7 +84,7 @@ public final class RequestHandler<T extends BaseRequest> {
             System.out.println(port + " Connection Lost -> Stopping Application");
 
             try {
-                BackendMain.halt();
+                BackgroundTask.halt();
                 if(HeartbeatThreadFactory.isHeartbeatStarted()) {
                     System.out.println("heartbeat already exists");
                 } else {
@@ -110,7 +111,7 @@ public final class RequestHandler<T extends BaseRequest> {
      */
     public void transmitAndReceive() {
 
-        if(BackendMain.needRestart) {
+        if(BackgroundTask.needRestart) {
             return;
         }
 
@@ -170,7 +171,7 @@ public final class RequestHandler<T extends BaseRequest> {
                                 }
 //
                                 Platform.runLater(() ->
-                                        BackendMain.logController.setDebugLabelTextTwo(
+                                        ControlPanelApplication.logController.setDebugLabelTextTwo(
                                                 "waitMap.size() = " + waitMap.size()
                                         ));
                             }

@@ -13,7 +13,7 @@ public class BackendApplication {
 	public static void main(String[] args) {
 		ctx = SpringApplication.run(BackendApplication.class, args);
 
-		BackendMain.applicationContext = ctx;
+		ControlPanelApplication.applicationContext = ctx;
 		ControlPanelShutdownObservable controlPanelShutdownObservable = () -> ctx.close();
 		controlPanelShutdownObservable.register();
 	}

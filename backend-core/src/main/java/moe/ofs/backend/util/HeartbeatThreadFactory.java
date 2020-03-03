@@ -1,7 +1,8 @@
 package moe.ofs.backend.util;
 
 import com.google.gson.Gson;
-import moe.ofs.backend.BackendMain;
+import moe.ofs.backend.ControlPanelApplication;
+import moe.ofs.backend.BackgroundTask;
 import moe.ofs.backend.request.JsonRpcRequest;
 import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.request.server.ServerFillerRequest;
@@ -48,20 +49,20 @@ public final class HeartbeatThreadFactory {
         heartbeatStarted = true;
         System.out.println("Heartbeat started");
         javafx.application.Platform.runLater(() ->
-                BackendMain.logController.setConnectionStatusBarText("Waiting for connection..."));
+                ControlPanelApplication.logController.setConnectionStatusBarText("Waiting for connection..."));
 
         while(true) {
             if(isExportConnectionEstablished() && isServerConnectionEstablished()) {
 
                 javafx.application.Platform.runLater(() ->
-                        BackendMain.logController.setConnectionStatusBarText("Connected"));
+                        ControlPanelApplication.logController.setConnectionStatusBarText("Connected"));
 
 
-                BackendMain.backgroundThread = new Thread(BackendMain.background);
-                BackendMain.backgroundThread.start();
+                BackgroundTask.backgroundThread = new Thread(BackgroundTask.background);
+                BackgroundTask.backgroundThread.start();
                 break;
             }
-            if(BackendMain.stopSign)
+            if(BackgroundTask.stopSign)
                 break;
         }
         heartbeatStarted = false;
