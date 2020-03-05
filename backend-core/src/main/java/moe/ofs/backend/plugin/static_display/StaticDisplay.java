@@ -145,7 +145,7 @@ public class StaticDisplay implements Plugin {
                     .addProcessable(s -> mapSlotStaticId.put(String.valueOf(flyableUnit.getUnit_id()), s))
                     .addProcessable(s -> Logger.log(
                             String.format("Static Object [%s] spawned for %s with livery [%s]",
-                                    s, flyableUnit.getUnit_name(), flyableUnit.getLivery_id())
+                                    s, flyableUnit.getUnit_name(), flyableUnit.getLivery_id()), Logger.Level.ADDON
                     ))
                     .send();
         }  // else no spawn
@@ -154,7 +154,7 @@ public class StaticDisplay implements Plugin {
     private static void despawnControl(FlyableUnit flyableUnit) {
         String runtimeId = mapSlotStaticId.get(String.valueOf(flyableUnit.getUnit_id()));
         new ServerDataRequest(String.format(luaStringRemoveObject, runtimeId))
-                .addProcessable(s -> Logger.log(runtimeId + " -> static object removed"))
+                .addProcessable(s -> Logger.log(runtimeId + " -> static object removed", Logger.Level.ADDON))
                 .send();
     }
 

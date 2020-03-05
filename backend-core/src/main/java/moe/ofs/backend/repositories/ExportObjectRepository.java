@@ -10,5 +10,7 @@ public interface ExportObjectRepository extends CrudRepository<ExportObject, Lon
 
     Optional<ExportObject> findById(Long id);
 
-    ExportObject findByGroupName(String id);
+    Optional<ExportObject> findByUnitName(String name);
+
+    void deleteByRuntimeID(Long runtimeId);
 }

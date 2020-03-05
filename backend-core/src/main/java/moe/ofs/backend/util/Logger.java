@@ -4,10 +4,12 @@ import moe.ofs.backend.ControlPanelApplication;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Comparator;
 
 public class Logger {
     public enum Level {
-        ERROR, INFO, WARNING, EVENT, ADDON, DEBUG
+        ERROR, INFO, WARNING, EVENT, ADDON, DEBUG;
     }
 
     public static void log(String string, Level level) {
@@ -15,7 +17,7 @@ public class Logger {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("uuuu-MM-dd/HH:mm:ss");
 
         String logMessage = dateTimeFormatter.format(zonedDateTime) + " " +
-                level + " -> " + string;
+                level + " " + string;
 
         javafx.application.Platform.runLater(() ->
                 ControlPanelApplication.logController.appendLog(logMessage + "\n"));
@@ -26,7 +28,7 @@ public class Logger {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("uuuu-MM-dd/HH:mm:ss");
 
         String logMessage = dateTimeFormatter.format(zonedDateTime) + " " +
-                Level.INFO + " -> " + string;
+                Level.INFO + " " + string;
 
         javafx.application.Platform.runLater(() ->
                 ControlPanelApplication.logController.appendLog(logMessage + "\n"));

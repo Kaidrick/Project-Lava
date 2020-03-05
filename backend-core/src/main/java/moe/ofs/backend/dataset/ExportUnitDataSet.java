@@ -30,20 +30,26 @@ public class ExportUnitDataSet {
         exportObjectHashMapUpdateService.dispose();
         Logger.log("ExportObjectHashMapRepository disposed");
 
+        exportObjectJpaService.dispose();
+        Logger.log("ExportObjectH2Data disposed");
+
     }
 
     private void processUpdateExportObject(ExportObject exportObject) {
         exportObjectHashMapUpdateService.update(exportObject);
+        exportObjectJpaService.save(exportObject);
     }
 
     private void processNewExportObject(ExportObject exportObject) {
         ExportUnitSpawnObservable.invokeAll(exportObject);
         exportObjectHashMapUpdateService.save(exportObject);
+        exportObjectJpaService.save(exportObject);
     }
 
     private void processObsoleteExportObject(ExportObject exportObject) {
         ExportUnitDespawnObservable.invokeAll(exportObject);
         exportObjectHashMapUpdateService.delete(exportObject);
+        exportObjectJpaService.delete(exportObject);
     }
 
     public void cycle(List<ExportObject> list) {
