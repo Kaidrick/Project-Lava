@@ -7,7 +7,7 @@ import java.util.Map;
 
 @Getter
 @Setter
-public class ExportObjectConverter {
+public class ExportObjectWrapper {
 
     private double Bank;
 

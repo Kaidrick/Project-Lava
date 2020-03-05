@@ -22,10 +22,6 @@ public final class BoxOfExportUnit {
 //        backgroundTaskRestartObservable.register();
     }
 
-    public static List<ExportObject> peek() {
-        return new ArrayList<>(box);
-    }
-
     public static void dispose() {
         box.clear();
         System.out.println("BoxOfExportUnit disposed -> " + box);
@@ -33,13 +29,15 @@ public final class BoxOfExportUnit {
 
     public static void observeAll(List<ExportObject> list) {
 
-//        System.out.println("list = " + list.size());
-//        System.out.println("box = " + box.size());
+        // difference should be determined only once
 
         List<String> boxNameList = box.parallelStream().map(ExportObject::getUnitName).collect(Collectors.toList());
         List<String> updateNameList = list.parallelStream().map(ExportObject::getUnitName).collect(Collectors.toList());
 
+        // call registered handlers
+
         // unit in list but not in box -> new spawn
+        // add new spawn to a list
         list.parallelStream().filter(e -> !boxNameList.contains(e.getUnitName()))
                 .forEach(ExportUnitSpawnObservable::invokeAll);
 
@@ -47,7 +45,6 @@ public final class BoxOfExportUnit {
         box.parallelStream().filter(e -> !updateNameList.contains(e.getUnitName()))
                 .forEach(ExportUnitDespawnObservable::invokeAll);
 
-        // use partition by and then for each?
 
         // TODO --> db needs to update value
         list.parallelStream().filter(e -> !boxNameList.contains(e.getUnitName()))

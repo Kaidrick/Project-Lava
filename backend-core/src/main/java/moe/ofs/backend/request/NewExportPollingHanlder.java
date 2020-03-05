@@ -2,7 +2,8 @@ package moe.ofs.backend.request;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import moe.ofs.backend.box.BoxOfExportUnit;
+import moe.ofs.backend.ControlPanelApplication;
+import moe.ofs.backend.dataset.ExportUnitDataSet;
 import moe.ofs.backend.object.ExportObject;
 import moe.ofs.backend.object.ExportObjectWrapper;
 import moe.ofs.backend.request.export.ExportFillerRequest;
@@ -15,23 +16,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public final class ExportPollingHandler extends PollingHandler {
-
-    private static ExportPollingHandler instance;
-
+public final class NewExportPollingHanlder extends PollingHandler {
     protected boolean isRequestDone = true;
     protected List<ExportObject> list = new ArrayList<>();
 
-    private ExportPollingHandler() {
-        super(PollEnv.EXPORT);
-//        init();
-    }
+    ExportUnitDataSet exportUnitDataSet = ControlPanelApplication.applicationContext.getBean(ExportUnitDataSet.class);
 
-    public synchronized static ExportPollingHandler getInstance() {
-        if (instance == null) {
-            instance = new ExportPollingHandler();
-        }
-        return instance;
+    public NewExportPollingHanlder() {
+        super(PollEnv.EXPORT);
     }
 
     public void init() {
@@ -84,10 +76,7 @@ public final class ExportPollingHandler extends PollingHandler {
             e.printStackTrace();
         }
 
-//        System.out.println(s);
-
         if (!s.equals("[]")) {
-//            System.out.println(s);
 
             Type jsonRpcResponseListType = new TypeToken<ArrayList<JsonRpcResponse<List<ExportObjectWrapper>>>>() {}.getType();
             ArrayList<JsonRpcResponse<List<ExportObjectWrapper>>> jsonRpcResponseList = gson.fromJson(s, jsonRpcResponseListType);
@@ -104,7 +93,7 @@ public final class ExportPollingHandler extends PollingHandler {
             if(optional.isPresent()) {
                 JsonRpcResponse<List<ExportObjectWrapper>> response = optional.get();
                 if(list.size() == response.getResult().getTotal()) {
-                    BoxOfExportUnit.observeAll(list);
+                    exportUnitDataSet.cycle(list);
 
                     isRequestDone = true;
                     list.clear();

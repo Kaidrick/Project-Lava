@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Map;
+import java.util.Objects;
 
 @Setter
 @Getter
@@ -39,12 +40,12 @@ public final class ExportObject extends BaseEntity {
     private double pitch;
 
     @Column(name = "runtime_id")
-    private int runtimeID;
+    private long runtimeID;
 
     @Column(name = "unit_name")
     private String unitName;
 
-    public ExportObject(ExportObjectConverter converter) {
+    public ExportObject(ExportObjectWrapper converter) {
         this.bank = converter.getBank();
         this.coalition = converter.getCoalition();
         this.coalitionID = converter.getCoalitionID();
@@ -108,4 +109,28 @@ public final class ExportObject extends BaseEntity {
     @Column(name="value")
     @CollectionTable(name="type", joinColumns=@JoinColumn(name="id"))
     private Map<String, Integer> type;
+
+
+    /**
+     * Two ExportObject is consider equal if runtime id and unitName is the same.
+     * @param o the object to be tested equality with.
+     * @return boolean value indicating whether two ExportObject are equal.
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ExportObject that = (ExportObject) o;
+
+        if (runtimeID != that.runtimeID) return false;
+        return Objects.equals(unitName, that.unitName);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (runtimeID ^ (runtimeID >>> 32));
+        result = 31 * result + (unitName != null ? unitName.hashCode() : 0);
+        return result;
+    }
 }

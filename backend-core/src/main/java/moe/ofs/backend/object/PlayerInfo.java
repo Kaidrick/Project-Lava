@@ -1,8 +1,10 @@
 package moe.ofs.backend.object;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class PlayerInfo extends SimObject {
     private static final String emptySlotAltName = "Observer";
 

@@ -1,12 +1,12 @@
 package moe.ofs.backend;
 
-import moe.ofs.backend.box.BoxOfExportUnit;
 import moe.ofs.backend.box.BoxOfFlyableUnit;
 import moe.ofs.backend.box.BoxOfParking;
+import moe.ofs.backend.dataset.ExportUnitDataSet;
 import moe.ofs.backend.function.RadioCommands;
 import moe.ofs.backend.handlers.*;
 import moe.ofs.backend.request.BaseRequest;
-import moe.ofs.backend.request.ExportPollingHandler;
+import moe.ofs.backend.request.NewExportPollingHanlder;
 import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.request.ServerPollingHandler;
 import moe.ofs.backend.request.server.ServerFillerRequest;
@@ -28,8 +28,13 @@ import static moe.ofs.backend.ControlPanelApplication.logController;
 
 public class BackgroundTask {
     private static final RequestHandler<BaseRequest> requestHandler = RequestHandler.getInstance();
-    private static final ExportPollingHandler exportPollingHandler = ExportPollingHandler.getInstance();
+//    private static final ExportPollingHandler exportPollingHandler = ExportPollingHandler.getInstance();
     private static final ServerPollingHandler serverPollingHandler = ServerPollingHandler.getInstance();
+
+    private static final NewExportPollingHanlder newExportPollingHanlder = new NewExportPollingHanlder();
+
+    private static final ExportUnitDataSet exportUnitDataSet = ControlPanelApplication.applicationContext
+            .getBean("exportUnitDataSet", ExportUnitDataSet.class);
 
     private static ScheduledExecutorService mainRequestScheduler;
     private static ScheduledExecutorService exportPollingScheduler;
@@ -135,7 +140,8 @@ public class BackgroundTask {
 
         BoxOfParking.init();
         BoxOfFlyableUnit.init();
-        BoxOfExportUnit.init();
+//        BoxOfExportUnit.init();
+        exportUnitDataSet.init();
 
         isHalted.set(false);
 
@@ -143,13 +149,15 @@ public class BackgroundTask {
 
         ConnectionManager.sanitizeDataPipeline(requestHandler);
 
-        exportPollingHandler.init();
+//        exportPollingHandler.init();
+        newExportPollingHanlder.init();
         serverPollingHandler.init();
 
         MissionStartObservable.invokeAll();
 
 
-        Runnable exportPolling = exportPollingHandler::poll;
+//        Runnable exportPolling = exportPollingHandler::poll;
+        Runnable exportPolling = newExportPollingHanlder::poll;
 
         Runnable serverPolling = () -> {
             try {

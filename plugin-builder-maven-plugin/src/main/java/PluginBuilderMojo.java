@@ -66,14 +66,15 @@ public class PluginBuilderMojo extends AbstractMojo {
                         classLoader.loadClass(pluginPackage + "."
                                 + pluginName + "." + pluginMainClass);
 
-                System.out.println(Arrays.toString(targetClass.getInterfaces()));
+//                System.out.println(Arrays.toString(targetClass.getInterfaces()));
                 if (Arrays.asList(targetClass.getInterfaces()).contains(pluginInterface)) {
                     properties.setProperty(pluginName, pluginMainClass);
                 }
             }
 
             // write to properties file
-            System.out.println(properties);
+            getLog().info("Generated plugin config properties: " + properties);
+
             Path path = Paths.get("backend-core/src/main/resources/enabled_plugins.properties");
             try (FileOutputStream fileOutputStream = new FileOutputStream(path.toFile())) {
                 properties.store(fileOutputStream,

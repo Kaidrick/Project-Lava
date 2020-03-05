@@ -2,15 +2,18 @@ package moe.ofs.backend.services;
 
 import moe.ofs.backend.object.ExportObject;
 
+import java.util.Map;
 import java.util.Optional;
 
-public interface ExportObjectService {
+public interface ExportObjectService extends ObjectRepositoryService<ExportObject> {
 
-    ExportObject save(ExportObject object);
+    Optional<ExportObject> findByRuntimeId(long runtimeId);
 
-    ExportObject update(ExportObject object);
+    Optional<ExportObject> findByUnitName(String unitName);
+
+    void deleteByRuntimeId(long runtimeId);
 
     void delete(ExportObject object);
 
-    Optional<ExportObject> findByRuntimeId(int runtimeId);
+    Map<Long, ExportObject> findAll();
 }

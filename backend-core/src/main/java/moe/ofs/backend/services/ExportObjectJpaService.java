@@ -4,6 +4,7 @@ import moe.ofs.backend.object.ExportObject;
 import moe.ofs.backend.repositories.ExportObjectRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -32,7 +33,22 @@ public class ExportObjectJpaService implements ExportObjectService {
     }
 
     @Override
-    public Optional<ExportObject> findByRuntimeId(int runtimeId) {
+    public Map<Long, ExportObject> findAll() {
+        return null;
+    }
+
+    @Override
+    public Optional<ExportObject> findByRuntimeId(long runtimeId) {
         return Optional.empty();
+    }
+
+    @Override
+    public Optional<ExportObject> findByUnitName(String unitName) {
+        return Optional.empty();
+    }
+
+    @Override
+    public void deleteByRuntimeId(long runtimeId) {
+
     }
 }

@@ -76,7 +76,6 @@ public class PlayerListCell extends ListCell<String> {
     EventHandler<ActionEvent> banPlayer = event -> {
         PlayerInfo playerInfo = BoxOfPlayerInfo.findByName(getItem());
 
-        // TODO --> do custom dialog, get reason and ban duration fields of day, hours, min
         BanPlayerOptionDialog dialog = new BanPlayerOptionDialog();
 
         dialog.setTitle("Ban Player");
