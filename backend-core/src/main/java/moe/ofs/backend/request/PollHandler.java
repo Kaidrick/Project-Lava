@@ -3,11 +3,11 @@ package moe.ofs.backend.request;
 import java.io.IOException;
 
 /**
- * PollingHandler class handles the connection to polling port in three different lua states.
+ * PollHandler class handles the connection to polling port in three different lua states.
  * It always connects to lua server to retrieve polling data from DCS.
  * It does not have to send any meaningful bytes to lua server.
  */
-public abstract class PollingHandler {
+public abstract class PollHandler {
     public enum PollEnv {
         SERVER(3011), EXPORT(3013);
 
@@ -20,7 +20,7 @@ public abstract class PollingHandler {
 
     private PollEnv env;
 
-    protected PollingHandler(PollEnv env) {
+    protected PollHandler(PollEnv env) {
         this.env = env;
     }
 

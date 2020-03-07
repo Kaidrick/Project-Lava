@@ -2,12 +2,12 @@ package moe.ofs.backend.request;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import moe.ofs.backend.ControlPanelApplication;
-import moe.ofs.backend.dataset.ExportUnitDataSet;
-import moe.ofs.backend.object.ExportObject;
-import moe.ofs.backend.object.ExportObjectWrapper;
+import moe.ofs.backend.domain.ExportObject;
+import moe.ofs.backend.domain.ExportObjectWrapper;
 import moe.ofs.backend.request.export.ExportFillerRequest;
 import moe.ofs.backend.request.export.ExportObjectDataRequest;
+import moe.ofs.backend.services.ExportObjectService;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -16,16 +16,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public final class NewExportPollingHanlder extends PollingHandler {
+@Component
+public final class ExportPollHandler extends PollHandler {
     protected boolean isRequestDone = true;
     protected List<ExportObject> list = new ArrayList<>();
 
-    ExportUnitDataSet exportUnitDataSet = ControlPanelApplication.applicationContext.getBean(ExportUnitDataSet.class);
+    private final ExportObjectService exportObjectService;
 
-    public NewExportPollingHanlder() {
+    public ExportPollHandler(ExportObjectService exportObjectService) {
         super(PollEnv.EXPORT);
+
+        this.exportObjectService = exportObjectService;
     }
 
+    // TODO --> refactor PollHandler abstract class
     public void init() {
         isRequestDone = true;
         list.clear();
@@ -93,7 +97,8 @@ public final class NewExportPollingHanlder extends PollingHandler {
             if(optional.isPresent()) {
                 JsonRpcResponse<List<ExportObjectWrapper>> response = optional.get();
                 if(list.size() == response.getResult().getTotal()) {
-                    exportUnitDataSet.cycle(list);
+
+                    exportObjectService.cycle(list);
 
                     isRequestDone = true;
                     list.clear();

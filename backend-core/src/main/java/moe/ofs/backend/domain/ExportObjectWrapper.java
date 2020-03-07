@@ -1,4 +1,4 @@
-package moe.ofs.backend.object;
+package moe.ofs.backend.domain;
 
 import lombok.Getter;
 import lombok.Setter;

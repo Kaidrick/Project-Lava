@@ -1,18 +1,22 @@
 package moe.ofs.backend.plugin.static_display;
 
-import moe.ofs.backend.gui.PluginListCell;
-import moe.ofs.backend.util.Logger;
-import moe.ofs.backend.util.LuaScripts;
-import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.Plugin;
-import moe.ofs.backend.box.BoxOfFlyableUnit;
-import moe.ofs.backend.box.BoxOfParking;
-import moe.ofs.backend.object.FlyableUnit;
-import moe.ofs.backend.object.PlayerInfo;
-import moe.ofs.backend.request.server.ServerDataRequest;
+import moe.ofs.backend.PluginClassLoader;
+import moe.ofs.backend.domain.PlayerInfo;
+import moe.ofs.backend.gui.PluginListCell;
+import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 import moe.ofs.backend.handlers.PlayerSlotChangeObservable;
+import moe.ofs.backend.object.FlyableUnit;
+import moe.ofs.backend.request.server.ServerDataRequest;
+import moe.ofs.backend.services.FlyableUnitService;
+import moe.ofs.backend.services.ParkingInfoService;
+import moe.ofs.backend.util.Logger;
+import moe.ofs.backend.util.LuaScripts;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -27,9 +31,27 @@ import java.util.Map;
  * TODO -> is to manually gather heading information for each parking position.
  * TODO -> get parking position from
  */
+
+@Component
 public class StaticDisplay implements Plugin {
     private static final String luaStringAddStatic = LuaScripts.load("add_static_object.lua");
     private static final String luaStringRemoveObject = LuaScripts.load("remove_object_by_runtime_id.lua");
+
+    private final FlyableUnitService flyableUnitService;
+    private final ParkingInfoService parkingInfoService;
+
+    @Autowired
+    public StaticDisplay(FlyableUnitService flyableUnitService, ParkingInfoService parkingInfoService) {
+        this.flyableUnitService = flyableUnitService;
+        this.parkingInfoService = parkingInfoService;
+    }
+
+    @PostConstruct
+    public void init() {
+        System.out.println("Static Display plugin bean constructed..register");
+        register();
+        PluginClassLoader.loadedPluginSet.add(this);
+    }
 
     /**
      * Register to PlayerChangeSlot
@@ -107,7 +129,7 @@ public class StaticDisplay implements Plugin {
     // if connection is already established, init immediately?
     public void initStaticDisplay() {
         // for each playable, spawn static object if TakeOffGround or TakeOffParking
-        BoxOfFlyableUnit.box.values().forEach(StaticDisplay::spawnControl);
+        flyableUnitService.findAll().forEach(this::spawnControl);
     }
 
     private static final List<String> excludedTypeList = Arrays.asList("SA342M", "SA342L",
@@ -121,7 +143,7 @@ public class StaticDisplay implements Plugin {
         replacement.put("F-14B", "F-14A");
     }
 
-    private static void spawnControl(FlyableUnit flyableUnit) {
+    private void spawnControl(FlyableUnit flyableUnit) {
         String type;
         String rawType = flyableUnit.getType();
         type = replacement.getOrDefault(rawType, rawType);
@@ -133,7 +155,7 @@ public class StaticDisplay implements Plugin {
             if (startType.equals("TakeOffGround")) {
                 heading = flyableUnit.getHeading();
             } else if (startType.equals("TakeOffParking")) {
-                heading = BoxOfParking.get(flyableUnit.getAirdromeId(), flyableUnit.getParking())
+                heading = parkingInfoService.getParking(flyableUnit.getAirdromeId(), flyableUnit.getParking()).get()
                         .getInitialHeading();
             } else return;
             String p = String.format(luaStringAddStatic,
@@ -151,7 +173,7 @@ public class StaticDisplay implements Plugin {
         }  // else no spawn
     }
 
-    private static void despawnControl(FlyableUnit flyableUnit) {
+    private void despawnControl(FlyableUnit flyableUnit) {
         String runtimeId = mapSlotStaticId.get(String.valueOf(flyableUnit.getUnit_id()));
         new ServerDataRequest(String.format(luaStringRemoveObject, runtimeId))
                 .addProcessable(s -> Logger.log(runtimeId + " -> static object removed", Logger.Level.ADDON))
@@ -160,20 +182,15 @@ public class StaticDisplay implements Plugin {
 
     private void respawnOnPlayerLeaveServer(PlayerInfo playerInfo) {
         // find previous slot
-        BoxOfFlyableUnit.box.values().stream()
-                .filter(f -> String.valueOf(f.getUnit_id()).equals(playerInfo.getSlot()))
-                .findAny().ifPresent(StaticDisplay::spawnControl);
+        flyableUnitService.findByUnitId(playerInfo.getSlot()).ifPresent(this::spawnControl);
     }
 
     // TODO --> redundant code, see above
 
     private void switchStaticDisplay(PlayerInfo previous, PlayerInfo current) {
-        BoxOfFlyableUnit.box.values().stream()
-                .filter(f -> String.valueOf(f.getUnit_id()).equals(previous.getSlot()))
-                .findAny().ifPresent(StaticDisplay::spawnControl);
 
-        BoxOfFlyableUnit.box.values().stream()
-                .filter(f -> String.valueOf(f.getUnit_id()).equals(current.getSlot()))
-                .findAny().ifPresent(StaticDisplay::despawnControl);
+        flyableUnitService.findByUnitId(previous.getSlot()).ifPresent(this::spawnControl);
+        flyableUnitService.findByUnitId(current.getSlot()).ifPresent(this::despawnControl);
+
     }
 }

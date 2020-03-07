@@ -5,35 +5,48 @@ import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 import moe.ofs.backend.ControlPanelApplication;
-import moe.ofs.backend.box.BoxOfFlyableUnit;
-import moe.ofs.backend.box.BoxOfPlayerInfo;
+import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.object.FlyableUnit;
-import moe.ofs.backend.object.PlayerInfo;
+import moe.ofs.backend.repositories.PlayerInfoRepository;
 import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.server.ServerExecRequest;
+import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.util.LuaScripts;
 
-import java.time.*;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class PlayerListCell extends ListCell<String> {
 
+    private final static PlayerInfoRepository PLAYER_INFO_REPOSITORY =
+            ControlPanelApplication.applicationContext.getBean(PlayerInfoRepository.class);
+
+    private final static FlyableUnitService FLYABLE_UNIT_SERVICE =
+            ControlPanelApplication.applicationContext.getBean(FlyableUnitService.class);
+
+    ContextMenu contextMenu = new ContextMenu();
+
     EventHandler<ActionEvent> showPlayerDetail = event -> {
         // show a prompt dialog that contains the info for this player
-        PlayerInfo playerInfo = BoxOfPlayerInfo.findByName(getItem());
-        int playerId = playerInfo.getId();
+        PlayerInfo playerInfo = PLAYER_INFO_REPOSITORY.findByName(getItem()).orElseThrow(
+                () -> new RuntimeException("Unable to find PlayerInfo by player name: " + getItem())
+        );
+        long playerId = playerInfo.getId();
         String playerUcid = playerInfo.getUcid();
         String playerIpaddr = playerInfo.getIpaddr();
         String playerLang = playerInfo.getLang();
         int playerPing = playerInfo.getPing();
-        String playerSlot = playerInfo.getSlot().equals("Observer") ? "Observer" : "#" + playerInfo.getSlot();
+        String playerSlot = playerInfo.getSlot().equals("") ? "Observer" : "#" + playerInfo.getSlot();
         String unitName =
-                playerInfo.getSlot().equals("Observer") ?
+                playerInfo.getSlot().equals("") ?
                         "" :
                         "[" +
-                        BoxOfFlyableUnit.getByUnitId(playerInfo.getSlot()).orElse(new FlyableUnit()).getUnit_name() +
+                        FLYABLE_UNIT_SERVICE.findByUnitId(playerInfo.getSlot()).orElse(new FlyableUnit()).getUnit_name() +
                         "]";
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -55,7 +68,9 @@ public class PlayerListCell extends ListCell<String> {
         alert.show();
     };
     EventHandler<ActionEvent> kickPlayer = event -> {
-        PlayerInfo playerInfo = BoxOfPlayerInfo.findByName(getItem());
+        PlayerInfo playerInfo = PLAYER_INFO_REPOSITORY.findByName(getItem()).orElseThrow(
+                () -> new RuntimeException("Unable to find PlayerInfo by player name: " + getItem())
+        );
 
         TextInputDialog textInputDialog = new TextInputDialog();
         textInputDialog.setTitle("Kick Player");
@@ -74,7 +89,9 @@ public class PlayerListCell extends ListCell<String> {
         }
     };
     EventHandler<ActionEvent> banPlayer = event -> {
-        PlayerInfo playerInfo = BoxOfPlayerInfo.findByName(getItem());
+        PlayerInfo playerInfo = PLAYER_INFO_REPOSITORY.findByName(getItem()).orElseThrow(
+                () -> new RuntimeException("Unable to find PlayerInfo by player name: " + getItem())
+        );
 
         BanPlayerOptionDialog dialog = new BanPlayerOptionDialog();
 
@@ -116,16 +133,15 @@ public class PlayerListCell extends ListCell<String> {
         }
     };
 
-    ContextMenu contextMenu = new ContextMenu();
-
     public PlayerListCell(ListView<String> listView) {
 
         this.textProperty().bind(this.itemProperty());
 
         this.itemProperty().addListener(((observable, oldValue, newValue) -> {
             if(newValue != null) {
-                PlayerInfo playerInfo = BoxOfPlayerInfo.findByName(newValue);
-//                System.out.println(playerInfo);
+                PlayerInfo playerInfo = PLAYER_INFO_REPOSITORY.findByName(getItem()).orElseThrow(
+                        () -> new RuntimeException("Unable to find PlayerInfo by player name: " + getItem())
+                );
 
                 List<MenuItem> list = new ArrayList<>();
 

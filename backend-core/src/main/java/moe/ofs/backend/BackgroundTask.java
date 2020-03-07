@@ -1,15 +1,19 @@
 package moe.ofs.backend;
 
-import moe.ofs.backend.box.BoxOfFlyableUnit;
-import moe.ofs.backend.box.BoxOfParking;
-import moe.ofs.backend.dataset.ExportUnitDataSet;
 import moe.ofs.backend.function.RadioCommands;
 import moe.ofs.backend.handlers.*;
 import moe.ofs.backend.request.BaseRequest;
-import moe.ofs.backend.request.NewExportPollingHanlder;
+import moe.ofs.backend.request.ExportPollHandler;
 import moe.ofs.backend.request.RequestHandler;
-import moe.ofs.backend.request.ServerPollingHandler;
+import moe.ofs.backend.request.ServerPollHandler;
 import moe.ofs.backend.request.server.ServerFillerRequest;
+import moe.ofs.backend.services.ExportObjectService;
+import moe.ofs.backend.services.FlyableUnitService;
+import moe.ofs.backend.services.ParkingInfoService;
+import moe.ofs.backend.services.PlayerInfoService;
+import moe.ofs.backend.services.jpa.ExportObjectJpaService;
+import moe.ofs.backend.services.jpa.PlayerInfoJpaService;
+import moe.ofs.backend.services.map.FlyableUnitMapService;
 import moe.ofs.backend.util.ConnectionManager;
 import moe.ofs.backend.util.Logger;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -28,13 +32,24 @@ import static moe.ofs.backend.ControlPanelApplication.logController;
 
 public class BackgroundTask {
     private static final RequestHandler<BaseRequest> requestHandler = RequestHandler.getInstance();
-//    private static final ExportPollingHandler exportPollingHandler = ExportPollingHandler.getInstance();
-    private static final ServerPollingHandler serverPollingHandler = ServerPollingHandler.getInstance();
 
-    private static final NewExportPollingHanlder newExportPollingHanlder = new NewExportPollingHanlder();
+    private static final ExportPollHandler exportPollHandler =
+            ControlPanelApplication.applicationContext.getBean(ExportPollHandler.class);
+    private static final ServerPollHandler serverPollHandler =
+            ControlPanelApplication.applicationContext.getBean(ServerPollHandler.class);
 
-    private static final ExportUnitDataSet exportUnitDataSet = ControlPanelApplication.applicationContext
-            .getBean("exportUnitDataSet", ExportUnitDataSet.class);
+    private static final ExportObjectService EXPORT_OBJECT_SERVICE =
+            ControlPanelApplication.applicationContext.getBean(ExportObjectJpaService.class);
+
+    private static final PlayerInfoService PLAYER_INFO_SERVICE =
+            ControlPanelApplication.applicationContext.getBean(PlayerInfoJpaService.class);
+
+    private static final FlyableUnitService FLYABLE_UNIT_SERVICE =
+            ControlPanelApplication.applicationContext.getBean(FlyableUnitMapService.class);
+
+    private static final ParkingInfoService PARKING_INFO_SERVICE =
+            ControlPanelApplication.applicationContext.getBean(ParkingInfoService.class);
+
 
     private static ScheduledExecutorService mainRequestScheduler;
     private static ScheduledExecutorService exportPollingScheduler;
@@ -92,7 +107,7 @@ public class BackgroundTask {
     private static void initCore() throws IOException {
         if(!initialized) {
             RadioCommands.init();
-            Plugin.loadPlugins();
+
             logController.populateLoadedPluginListView();
 
 
@@ -138,10 +153,15 @@ public class BackgroundTask {
 
         initCore();
 
-        BoxOfParking.init();
-        BoxOfFlyableUnit.init();
-//        BoxOfExportUnit.init();
-        exportUnitDataSet.init();
+        // dispose obsolete data if any
+        FLYABLE_UNIT_SERVICE.dispose();
+        PARKING_INFO_SERVICE.dispose();
+        EXPORT_OBJECT_SERVICE.dispose();
+        PLAYER_INFO_SERVICE.dispose();
+
+        // load static data
+        FLYABLE_UNIT_SERVICE.loadData();
+        PARKING_INFO_SERVICE.loadData();
 
         isHalted.set(false);
 
@@ -149,19 +169,17 @@ public class BackgroundTask {
 
         ConnectionManager.sanitizeDataPipeline(requestHandler);
 
-//        exportPollingHandler.init();
-        newExportPollingHanlder.init();
-        serverPollingHandler.init();
+
+        exportPollHandler.init();
+        serverPollHandler.init();
 
         MissionStartObservable.invokeAll();
 
-
-//        Runnable exportPolling = exportPollingHandler::poll;
-        Runnable exportPolling = newExportPollingHanlder::poll;
+        Runnable exportPolling = exportPollHandler::poll;
 
         Runnable serverPolling = () -> {
             try {
-                serverPollingHandler.poll();
+                serverPollHandler.poll();
 //              throw new IOException();
             } catch (IOException e) {
                 e.printStackTrace();

@@ -1,8 +1,8 @@
 package moe.ofs.backend.plugin.greeting;
 
-import moe.ofs.backend.box.BoxOfFlyableUnit;
-import moe.ofs.backend.object.ExportObject;
+import moe.ofs.backend.domain.ExportObject;
 import moe.ofs.backend.function.TriggerMessage;
+import moe.ofs.backend.services.FlyableUnitService;
 
 import java.util.ArrayDeque;
 import java.util.Optional;
@@ -15,6 +15,8 @@ class MessageQueue {
     private int receiverGroupId;
     private Queue<Message> messageQueue = new ArrayDeque<>();
 
+    private FlyableUnitService flyableUnitService;
+
     private int nextTimeStamp;
 
     private MessageQueue() {}
@@ -23,9 +25,11 @@ class MessageQueue {
         this.receiverGroupId = receiverGroupId;
     }
 
-    public MessageQueue(ExportObject object) {
+    public MessageQueue(ExportObject object, FlyableUnitService flyableUnitService) {
 
-        Optional<Integer> id = BoxOfFlyableUnit.getGroupIdByName(object.getGroupName());
+        this.flyableUnitService = flyableUnitService;
+
+        Optional<Integer> id = flyableUnitService.findGroupIdByName(object.getGroupName());
 
         this.receiverGroupId = id.orElseThrow(() -> new RuntimeException("Group ID Not Found!"));
     }

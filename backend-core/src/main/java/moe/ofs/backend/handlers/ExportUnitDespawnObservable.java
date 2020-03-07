@@ -1,6 +1,6 @@
 package moe.ofs.backend.handlers;
 
-import moe.ofs.backend.object.ExportObject;
+import moe.ofs.backend.domain.ExportObject;
 
 import java.util.ArrayList;
 import java.util.List;

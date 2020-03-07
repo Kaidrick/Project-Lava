@@ -1,6 +1,6 @@
 package moe.ofs.backend.services;
 
-import moe.ofs.backend.object.ExportObject;
+import moe.ofs.backend.domain.ExportObject;
 
 import java.util.List;
 

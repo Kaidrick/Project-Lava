@@ -60,7 +60,7 @@ public class ControlPanelApplication extends Application {
         primaryStage.setTitle("422d Backend Control Panel");
         primaryStage.show();
 
-        // start background thread only if connect can be made
+//         start background thread only if connect can be made
         Thread heartbeat = HeartbeatThreadFactory.getHeartbeatThread();
         if(heartbeat != null) {
             heartbeat.start();

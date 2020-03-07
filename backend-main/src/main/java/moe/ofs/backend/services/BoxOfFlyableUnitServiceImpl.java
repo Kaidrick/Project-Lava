@@ -1,25 +1,27 @@
 package moe.ofs.backend.services;
 
-import moe.ofs.backend.box.BoxOfFlyableUnit;
 import moe.ofs.backend.object.FlyableUnit;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class BoxOfFlyableUnitServiceImpl implements BoxOfFlyableUnitService {
 
-    // very badly encapsulated, TODO -> properly implement repository
-    private final Map<String, FlyableUnit> box = BoxOfFlyableUnit.box;
+    private final FlyableUnitService flyableUnitService;
 
-    @Override
-    public Optional<Integer> getGroupIdByName(String groupName) {
-        return BoxOfFlyableUnit.getGroupIdByName(groupName);
+    public BoxOfFlyableUnitServiceImpl(FlyableUnitService flyableUnitService) {
+        this.flyableUnitService = flyableUnitService;
     }
 
     @Override
-    public Map<String, FlyableUnit> getAll() {
-        return box;
+    public Optional<Integer> getGroupIdByName(String groupName) {
+        return flyableUnitService.findGroupIdByName(groupName);
+    }
+
+    @Override
+    public Set<FlyableUnit> getAll() {
+        return flyableUnitService.findAll();
     }
 }

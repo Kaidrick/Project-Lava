@@ -1,13 +1,15 @@
 package moe.ofs.backend.plugin.greeting;
 
-import javafx.application.Platform;
-import lombok.Getter;
 import moe.ofs.backend.Plugin;
+import moe.ofs.backend.PluginClassLoader;
 import moe.ofs.backend.gui.PluginListCell;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
-import moe.ofs.backend.object.ExportObject;
+import moe.ofs.backend.domain.ExportObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
 /**
@@ -16,6 +18,7 @@ import java.util.List;
  * If there are multiple message to be sent, user should be able to specify the delay between each message
  */
 
+@Component
 public class Greeting implements Plugin {
 
     public final String name = "Server Greeting";
@@ -23,12 +26,24 @@ public class Greeting implements Plugin {
 
     private boolean isLoaded;
 
-    private static final List<String> greetingMessageList = null;
-
     private ExportUnitSpawnObservable exportUnitSpawnObservable;
     private BackgroundTaskRestartObservable backgroundTaskRestartObservable;
 
     private PluginListCell pluginListCell;
+
+    private final MessageQueueFactory messageQueueFactory;
+
+    @Autowired
+    public Greeting(MessageQueueFactory messageQueueFactory) {
+        this.messageQueueFactory = messageQueueFactory;
+    }
+
+    @PostConstruct
+    public void init() {
+        System.out.println("Greeting plugin bean constructed...register");
+        register();
+        PluginClassLoader.loadedPluginSet.add(this);
+    }
 
     @Override
     public PluginListCell getPluginListCell() {
@@ -70,24 +85,24 @@ public class Greeting implements Plugin {
 
     private void greet(ExportObject unit) {
         testMessageFunction(unit);
-//        if(unit.getFlags().get("Human")) {
-//            TriggerMessage.TriggerMessageBuilder builder = new TriggerMessage.TriggerMessageBuilder();
-//            builder.setMessage("Hello from 422d Backend Powered By Java 8")
-//                    .setReceiverGroupId(BoxOfFlyableUnit.getGroupIdByName(unit.getGroupName()))
-//                    .setDuration(5).build().send();
-//        }
     }
 
     private void testMessageFunction(ExportObject object) {
         if(object.getFlags().get("Human")) {
-            MessageQueue messageQueue = new MessageQueue(object);
-            messageQueue.pend(new Message("Hello from 422d Backend Powered By Java 8", 3));
-            messageQueue.pend(new Message("We (I mean, \"I\") are still working on " +
-                    "some of the very fundamental" +
-                    " features of the server.", 8));
-            messageQueue.pend(new Message("Enjoy your stay here and fly safe!", 10));
+            messageQueueFactory.setExportObject(object);
+            MessageQueue messageQueue = messageQueueFactory.getObject();
+            if (messageQueue != null) {
+                messageQueue.pend(new Message("Hello from 422d Backend Powered By Java 8", 3));
+                messageQueue.pend(new Message("We (I mean, \"I\") are still working on " +
+                        "some of the very fundamental" +
+                        " features of the server.", 8));
+                messageQueue.pend(new Message("Enjoy your stay here and fly safe!", 10));
 
-            messageQueue.send();
+                messageQueue.send();
+            } else {
+                throw new RuntimeException("MessageQueueFactory failed to provide a new MessageQueue instance.");
+            }
+
         }
     }
 }

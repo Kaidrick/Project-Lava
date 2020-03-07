@@ -10,13 +10,12 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import jfxtras.styles.jmetro.JMetroStyleClass;
+import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.gui.PlayerListCell;
 import moe.ofs.backend.gui.PluginListCell;
 import moe.ofs.backend.handlers.PlayerEnterServerObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
-import moe.ofs.backend.object.PlayerInfo;
 import moe.ofs.backend.request.RequestToServer;
-import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.util.AirdromeDataCollector;
 import moe.ofs.backend.util.LuaScripts;
@@ -24,7 +23,10 @@ import org.controlsfx.control.StatusBar;
 import org.controlsfx.control.ToggleSwitch;
 
 import java.net.URL;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class MainController implements Initializable {

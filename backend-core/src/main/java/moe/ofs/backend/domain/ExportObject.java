@@ -1,4 +1,4 @@
-package moe.ofs.backend.object;
+package moe.ofs.backend.domain;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -45,22 +45,24 @@ public final class ExportObject extends BaseEntity {
     @Column(name = "unit_name")
     private String unitName;
 
-    public ExportObject(ExportObjectWrapper converter) {
-        this.bank = converter.getBank();
-        this.coalition = converter.getCoalition();
-        this.coalitionID = converter.getCoalitionID();
-        this.country = converter.getCountry();
-        this.groupName = converter.getGroupName();
-        this.heading = converter.getHeading();
-        this.name = converter.getName();
-        this.pitch = converter.getPitch();
-        this.runtimeID = converter.getRuntimeID();
-        this.unitName = converter.getUnitName();
+    // TODO --> don't use map!
 
-        this.flags = converter.getFlags();
-        this.latLongAlt = converter.getLatLongAlt();
-        this.position = converter.getPosition();
-        this.type = converter.getType();
+    public ExportObject(ExportObjectWrapper wrapper) {
+        this.bank = wrapper.getBank();
+        this.coalition = wrapper.getCoalition();
+        this.coalitionID = wrapper.getCoalitionID();
+        this.country = wrapper.getCountry();
+        this.groupName = wrapper.getGroupName();
+        this.heading = wrapper.getHeading();
+        this.name = wrapper.getName();
+        this.pitch = wrapper.getPitch();
+        this.runtimeID = wrapper.getRuntimeID();
+        this.unitName = wrapper.getUnitName();
+
+        this.flags = wrapper.getFlags();
+        this.latLongAlt = wrapper.getLatLongAlt();
+        this.position = wrapper.getPosition();
+        this.type = wrapper.getType();
     }
 
     @Builder
@@ -86,25 +88,26 @@ public final class ExportObject extends BaseEntity {
         this.type = type;
     }
 
-    @ElementCollection
+
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name="key")
     @Column(name="value")
     @CollectionTable(name="flags", joinColumns=@JoinColumn(name="id"))
     private Map<String, Boolean> flags;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name="key")
     @Column(name="value")
     @CollectionTable(name="lat_lon_alt", joinColumns=@JoinColumn(name="id"))
     private Map<String, Double> latLongAlt;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name="key")
     @Column(name="value")
     @CollectionTable(name="position", joinColumns=@JoinColumn(name="id"))
     private Map<String, Double> position;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name="key")
     @Column(name="value")
     @CollectionTable(name="type", joinColumns=@JoinColumn(name="id"))

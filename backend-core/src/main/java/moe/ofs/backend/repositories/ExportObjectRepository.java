@@ -1,16 +1,15 @@
 package moe.ofs.backend.repositories;
 
-import moe.ofs.backend.object.ExportObject;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
+import moe.ofs.backend.domain.ExportObject;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface ExportObjectRepository extends CrudRepository<ExportObject, Long> {
-
-    Optional<ExportObject> findById(Long id);
+public interface ExportObjectRepository extends JpaRepository<ExportObject, Long> {
 
     Optional<ExportObject> findByUnitName(String name);
+
+    Optional<ExportObject> findByRuntimeID(Long runtimeId);
 
     void deleteByRuntimeID(Long runtimeId);
 }

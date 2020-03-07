@@ -1,9 +1,17 @@
 package moe.ofs.backend.object;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import moe.ofs.backend.domain.BaseEntity;
 
-@Data
-public class FlyableUnit {
+import java.util.Objects;
+
+@Getter
+@Setter
+
+public class FlyableUnit extends BaseEntity {
+
+    // TODO --> use a wrapper to comply with java naming convention? or use LinkedTreeMap<?, ?>
 
     private int group_id;
     private int unit_id;
@@ -37,5 +45,27 @@ public class FlyableUnit {
 
     public int getParking() {
         return Integer.parseInt(parking);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FlyableUnit that = (FlyableUnit) o;
+
+        if (group_id != that.group_id) return false;
+        if (unit_id != that.unit_id) return false;
+        if (!Objects.equals(type, that.type)) return false;
+        return Objects.equals(category, that.category);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = group_id;
+        result = 31 * result + unit_id;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (category != null ? category.hashCode() : 0);
+        return result;
     }
 }

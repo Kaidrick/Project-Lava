@@ -4,12 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.Getter;
 import lombok.Setter;
-import moe.ofs.backend.box.BoxOfFlyableUnit;
+import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.request.server.ServerDataRequest;
+import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.util.LuaScripts;
 
 import java.lang.reflect.Type;
@@ -27,6 +28,9 @@ public class RadioCommands {
     static MissionStartObservable missionStartObservable;
     static BackgroundTaskRestartObservable backgroundTaskRestartObservable;
     static ControlPanelShutdownObservable controlPanelShutdownObservable;
+
+    private static final FlyableUnitService FLYABLE_UNIT_SERVICE =
+            ControlPanelApplication.applicationContext.getBean(FlyableUnitService.class);
 
     // a radio control can be added as a menu or a item
     // a menu has zero or more items in it
@@ -123,7 +127,7 @@ public class RadioCommands {
         radioPullExecutorService.scheduleWithFixedDelay(getRadioPulls, 0, 100, TimeUnit.MILLISECONDS);
 
         ExportUnitSpawnObservable exportUnitSpawnObservable = unit -> {
-            Optional<Integer> optional = BoxOfFlyableUnit.getGroupIdByName(unit.getGroupName());
+            Optional<Integer> optional = FLYABLE_UNIT_SERVICE.findGroupIdByName(unit.getGroupName());
             optional.ifPresent(id -> {
                 sanitizeGroupRadioControl(id);  // remove all previous radio controls if any
 
