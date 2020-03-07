@@ -72,7 +72,11 @@ public class AirdromeDataCollector {
                 int termIndex = parking.getId();
 
                 // avoid using airbaseListIndex because airdromeId is messed up in Caucasus map
+                // TODO --> deal with caucasus mess-up
                 int airdromeIdOfParking = parking.getAirdromeId();
+
+                airdromeIdOfParking = airbaseListIndex;
+
 
                 Group.GroupBuilder groupBuilder;
                 if(typeConst == 40) {  // Helicopter only spawn

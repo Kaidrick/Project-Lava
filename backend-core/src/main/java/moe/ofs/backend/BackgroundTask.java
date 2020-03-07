@@ -1,6 +1,5 @@
 package moe.ofs.backend;
 
-import moe.ofs.backend.function.RadioCommands;
 import moe.ofs.backend.handlers.*;
 import moe.ofs.backend.request.BaseRequest;
 import moe.ofs.backend.request.ExportPollHandler;
@@ -106,10 +105,8 @@ public class BackgroundTask {
     private static boolean initialized;
     private static void initCore() throws IOException {
         if(!initialized) {
-            RadioCommands.init();
 
             logController.populateLoadedPluginListView();
-
 
             // TODO --> VERY BAD IMPLEMENTATION! REFACTOR!
             PlayerEnterServerObservable playerEnterServerObservable =

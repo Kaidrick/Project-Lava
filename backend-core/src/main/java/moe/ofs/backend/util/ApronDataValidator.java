@@ -11,7 +11,7 @@ import java.util.List;
 public class ApronDataValidator {
     @SuppressWarnings("unchecked")
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        try(InputStream inputStream = ClassLoader.class.getResourceAsStream("/data/Nevada.apron");
+        try(InputStream inputStream = ClassLoader.class.getResourceAsStream("/data/obsolete/Nevada.apron");
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
             Object object = objectInputStream.readObject();
 
