@@ -2,8 +2,6 @@ package moe.ofs.backend.request;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import javafx.application.Platform;
-import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.BackgroundTask;
 import moe.ofs.backend.util.HeartbeatThreadFactory;
 
@@ -166,27 +164,14 @@ public final class RequestHandler<T extends BaseRequest> {
                     jsonRpcResponseList.forEach(
                             response -> {
                                 BaseRequest request = waitMap.remove(response.getId());
-                                if(request != null) {
-                                    request.resolve(response.getResult().getData());
+
+                                // resolve Resolvable only
+                                if(request instanceof Resolvable) {
+                                    ((Resolvable) request).resolve(response.getResult().getData());
                                 }
-//
-                                Platform.runLater(() ->
-                                        ControlPanelApplication.logController.setDebugLabelTextTwo(
-                                                "waitMap.size() = " + waitMap.size()
-                                        ));
                             }
                     );
                 }
-
-//                if(jsonRpcResponseList != null) {
-//                    jsonRpcResponseList.forEach(
-//                            r -> waitMap.computeIfPresent(r.getId(),
-//                                    (k, v) -> {
-////                                System.out.println(v.getClass().toString());
-//                                        v.resolve(r.getResult().getData());
-//                                        return null;
-//                                    }));
-//                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

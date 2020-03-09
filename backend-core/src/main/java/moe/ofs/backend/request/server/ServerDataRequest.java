@@ -1,5 +1,7 @@
 package moe.ofs.backend.request.server;
 
+import moe.ofs.backend.request.Handle;
+import moe.ofs.backend.request.Level;
 import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.Resolvable;
 
@@ -22,6 +24,8 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
 
 
     public ServerDataRequest(String luaString) {
+        super(Level.SERVER);
+
         this.luaString = luaString;
         this.env = this.state.name().toLowerCase();
     }

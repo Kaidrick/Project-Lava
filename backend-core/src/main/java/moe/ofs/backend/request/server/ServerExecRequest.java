@@ -1,5 +1,7 @@
 package moe.ofs.backend.request.server;
 
+import moe.ofs.backend.request.Handle;
+import moe.ofs.backend.request.Level;
 import moe.ofs.backend.request.Resolvable;
 import moe.ofs.backend.util.Logger;
 import moe.ofs.backend.request.RequestToServer;
@@ -19,11 +21,13 @@ public class ServerExecRequest extends RequestToServer implements Resolvable {
     private transient String luaString;
 
     public ServerExecRequest(String luaString) {
+        super(Level.SERVER);
         this.luaString = luaString;
         this.env = this.state.name().toLowerCase();
     }
 
     public ServerExecRequest(State state, String luaString) {
+        super(Level.SERVER);
         this.state = state;
         this.luaString = luaString;
         this.env = this.state.name().toLowerCase();

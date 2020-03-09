@@ -13,25 +13,12 @@ import java.util.function.Consumer;
 
 public abstract class BaseRequest {
 
-    public enum Level {
-        MISSION_POLL(3008), MISSION(3009),
-        SERVER(3010), SERVER_POLL(3011),
-        EXPORT(3012), EXPORT_POLL(3013);
+    protected int port;
+    protected Handle handle;
+    protected List<Object> params = new ArrayList<>();
+    protected UUID uuid;
 
-        private int port;
-
-        Level(int port) {
-            this.port = port;
-        }
-
-        public int getPort() {
-            return port;
-        }
-    }
-
-    public enum Handle {
-        MESSAGE, QUERY, DEBUG, EXEC, EMPTY
-    }
+    private transient boolean isSent = false;
 
     private static class RequestBadStateException extends RuntimeException {
         RequestBadStateException() {
@@ -39,24 +26,12 @@ public abstract class BaseRequest {
         }
     }
 
-    private static class RequestPreparedParameterRepeatedException extends RuntimeException {
-        RequestPreparedParameterRepeatedException() {
-            super("Request parameter cannot be prepared more than once.");
-        }
-    }
 
-    protected int port;
-    protected Handle handle;
-    protected List<Object> params = new ArrayList<>();
-
-    private transient boolean isSent = false;
 
     public BaseRequest(Level level) {
         this.port = level.getPort();
         this.uuid = UUID.randomUUID();
     }
-
-    protected UUID uuid;
 
     public int getPort() {
         return port;
@@ -66,21 +41,11 @@ public abstract class BaseRequest {
         return uuid.toString();
     }
 
-    public JsonRpcRequest jsonRpcRequest;
-
     public JsonRpcRequest toJsonRpcCall() {
         prepareParameters();
         return new JsonRpcRequest (uuid, handle.name(), params);
     }
 
-//    public static BaseRequest getFillerInstance() {
-//        return new BaseRequest(Level.SERVER) {
-//            @Override
-//            public void resolve(String object) {
-//
-//            }
-//        };
-//    }
 
     public void prepareParameters() {
         if(isSent) {
@@ -127,9 +92,6 @@ public abstract class BaseRequest {
         }
         return this;
     }
-
-    public abstract void resolve(String object);
-
 }
 
 
