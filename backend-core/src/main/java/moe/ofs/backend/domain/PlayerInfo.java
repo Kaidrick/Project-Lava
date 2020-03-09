@@ -1,8 +1,11 @@
 package moe.ofs.backend.domain;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import moe.ofs.backend.request.Level;
+import moe.ofs.backend.util.LuaState;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -11,11 +14,17 @@ import java.util.Objects;
 @Setter
 @Getter
 @NoArgsConstructor
+@LuaState(Level.SERVER_POLL)
 @Entity
 @Table(name = "player_info")
 public class PlayerInfo extends BaseEntity {
     private static final String emptySlotAltName = "Observer";
 
+    @SerializedName("pilotid")
+    private long pilotId;  // what is this for?
+
+    @SerializedName("id")
+    private int netId;
     private String name;
     private String ipaddr;
     private String lang;
@@ -28,7 +37,8 @@ public class PlayerInfo extends BaseEntity {
     @Override
     public String toString() {
         String slot = getSlot();
-        return String.format("Player <%s>(%s) Slot <%s> using [%s] Client @ %s", name, ucid, slot, lang.toUpperCase(), ipaddr);
+        return String.format("Player <%s>(%s) Slot <%s> using [%s] Client @ %s",
+                name, ucid, slot, lang.toUpperCase(), ipaddr);
     }
 
     @Override

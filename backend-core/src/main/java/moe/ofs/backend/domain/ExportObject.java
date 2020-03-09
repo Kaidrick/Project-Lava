@@ -1,9 +1,12 @@
 package moe.ofs.backend.domain;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import moe.ofs.backend.request.Level;
+import moe.ofs.backend.util.LuaState;
 
 import javax.persistence.*;
 import java.util.Map;
@@ -12,58 +15,77 @@ import java.util.Objects;
 @Setter
 @Getter
 @NoArgsConstructor
+@LuaState(Level.EXPORT_POLL)
 @Entity
 @Table(name = "export_objects")
 public final class ExportObject extends BaseEntity {
     @Column(name = "own_bank")
+    @SerializedName("Bank")
     private double bank;
 
     @Column(name = "coalition")
+    @SerializedName("Coalition")
     private String coalition;
 
     @Column(name = "coalition_id")
+    @SerializedName("CoalitionID")
     private int coalitionID;
 
     @Column(name = "country_id")
+    @SerializedName("Country")
     private int country;
 
     @Column(name = "group_name")
+    @SerializedName("GroupName")
     private String groupName;
 
     @Column(name = "own_heading")
+    @SerializedName("Heading")
     private double heading;
 
     @Column(name = "own_name")
+    @SerializedName("Name")
     private String name;
 
     @Column(name = "own_pitch")
+    @SerializedName("Pitch")
     private double pitch;
 
     @Column(name = "runtime_id")
+    @SerializedName("RuntimeID")
     private long runtimeID;
 
     @Column(name = "unit_name")
+    @SerializedName("UnitName")
     private String unitName;
 
-    // TODO --> don't use map!
+    @ElementCollection(fetch = FetchType.EAGER)
+    @MapKeyColumn(name="key")
+    @Column(name="value")
+    @CollectionTable(name="flags", joinColumns=@JoinColumn(name="id"))
+    @SerializedName("Flags")
+    private Map<String, Boolean> flags;
 
-    public ExportObject(ExportObjectWrapper wrapper) {
-        this.bank = wrapper.getBank();
-        this.coalition = wrapper.getCoalition();
-        this.coalitionID = wrapper.getCoalitionID();
-        this.country = wrapper.getCountry();
-        this.groupName = wrapper.getGroupName();
-        this.heading = wrapper.getHeading();
-        this.name = wrapper.getName();
-        this.pitch = wrapper.getPitch();
-        this.runtimeID = wrapper.getRuntimeID();
-        this.unitName = wrapper.getUnitName();
+    @ElementCollection(fetch = FetchType.EAGER)
+    @MapKeyColumn(name="key")
+    @Column(name="value")
+    @CollectionTable(name="lat_lon_alt", joinColumns=@JoinColumn(name="id"))
+    @SerializedName("LatLongAlt")
+    private Map<String, Double> latLongAlt;
 
-        this.flags = wrapper.getFlags();
-        this.latLongAlt = wrapper.getLatLongAlt();
-        this.position = wrapper.getPosition();
-        this.type = wrapper.getType();
-    }
+    @ElementCollection(fetch = FetchType.EAGER)
+    @MapKeyColumn(name="key")
+    @Column(name="value")
+    @CollectionTable(name="position", joinColumns=@JoinColumn(name="id"))
+    @SerializedName("Position")
+    private Map<String, Double> position;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @MapKeyColumn(name="key")
+    @Column(name="value")
+    @CollectionTable(name="type", joinColumns=@JoinColumn(name="id"))
+    @SerializedName("Type")
+    private Map<String, Integer> type;
 
     @Builder
     public ExportObject(Long id, double bank, String coalition, int coalitionID, int country, String groupName, double heading,
@@ -89,29 +111,7 @@ public final class ExportObject extends BaseEntity {
     }
 
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="key")
-    @Column(name="value")
-    @CollectionTable(name="flags", joinColumns=@JoinColumn(name="id"))
-    private Map<String, Boolean> flags;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="key")
-    @Column(name="value")
-    @CollectionTable(name="lat_lon_alt", joinColumns=@JoinColumn(name="id"))
-    private Map<String, Double> latLongAlt;
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="key")
-    @Column(name="value")
-    @CollectionTable(name="position", joinColumns=@JoinColumn(name="id"))
-    private Map<String, Double> position;
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="key")
-    @Column(name="value")
-    @CollectionTable(name="type", joinColumns=@JoinColumn(name="id"))
-    private Map<String, Integer> type;
 
 
     /**
