@@ -15,7 +15,7 @@ public class ConnectionManager {
 
     private static final Gson gson = new Gson();
 
-    public static void sanitizeDataPipeline(RequestHandler<BaseRequest> requestHandler) {
+    public static void sanitizeDataPipeline(RequestHandler requestHandler) {
         new FillerRequest(Level.SERVER).send();
         new FillerRequest(Level.SERVER_POLL).send();
         new FillerRequest(Level.EXPORT).send();

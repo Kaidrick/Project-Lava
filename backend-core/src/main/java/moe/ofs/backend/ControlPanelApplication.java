@@ -25,6 +25,8 @@ public class ControlPanelApplication extends Application {
     private static Parent root;
     public static MainController logController;
 
+    public static BackgroundTask task;
+
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -36,6 +38,8 @@ public class ControlPanelApplication extends Application {
         loader.setResources(ResourceBundle.getBundle("ControlPanelApplication", Locale.CHINA, new UTF8Control()));
         root = loader.load();
         logController = loader.getController();
+
+        task = applicationContext.getBean(BackgroundTask.class);
     }
 
     @Override
@@ -69,12 +73,12 @@ public class ControlPanelApplication extends Application {
 
     @Override
     public void stop() throws Exception {
-        BackgroundTask.halt();
-        if(BackgroundTask.heartbeatSignalThread != null)
-            BackgroundTask.heartbeatSignalThread.interrupt();
+        task.halt();
+        if(task.heartbeatSignalThread != null)
+            task.heartbeatSignalThread.interrupt();
 
         // global stop flag
-        BackgroundTask.stopSign = true;
+        task.stopSign = true;
 
         ControlPanelShutdownObservable.invokeAll();
     }

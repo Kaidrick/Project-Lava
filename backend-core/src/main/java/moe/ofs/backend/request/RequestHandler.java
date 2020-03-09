@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  *
  */
 
-public final class RequestHandler<T extends BaseRequest> {
+public final class RequestHandler {
     //
 //    private List<BaseRequest> waitList = new CopyOnWriteArrayList<>();
     private Map<String, BaseRequest> waitMap = new HashMap<>();
@@ -34,15 +34,15 @@ public final class RequestHandler<T extends BaseRequest> {
 
     private static final Gson gson = new Gson();
 
-    private static RequestHandler<BaseRequest> instance;
+    private static RequestHandler instance;
 
     private RequestHandler() { }
 
-    public static synchronized RequestHandler<BaseRequest> getInstance() {
+    public static synchronized RequestHandler getInstance() {
         // singleton
-        //check if exists
+        // check if exists
         if(instance == null) {
-            instance = new RequestHandler<>();
+            instance = new RequestHandler();
         }
         return instance;
     }
@@ -55,14 +55,6 @@ public final class RequestHandler<T extends BaseRequest> {
     // if exception is thrown here, try reconnect: check if connection can be made
     // if so, restart backend
     public static String sendAndGet(int port, String jsonString) throws IOException {
-
-        if(BackgroundTask.needRestart) {
-            try {
-                BackgroundTask.halt();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
 
         String s = null;
         try (Socket socket = new Socket("127.0.0.1", port);
@@ -78,19 +70,13 @@ public final class RequestHandler<T extends BaseRequest> {
                     new InputStreamReader(dataInputStream, StandardCharsets.UTF_8));
             s = bufferedReader.readLine();
         } catch (SocketException e) {
-
-            System.out.println(port + " Connection Lost -> Stopping Application");
-
-            try {
-                BackgroundTask.halt();
-                if(HeartbeatThreadFactory.isHeartbeatStarted()) {
-                    System.out.println("heartbeat already exists");
-                } else {
-                    Thread heartbeat = HeartbeatThreadFactory.getHeartbeatThread();
-                    Objects.requireNonNull(heartbeat).start();
-                }
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
+            if(HeartbeatThreadFactory.isHeartbeatStarted()) {
+                System.out.println("heartbeat already exists");
+            } else {
+                System.out.println(port + " Connection Lost -> Stopping Background Task");
+                BackgroundTask.setStop(true);
+                Thread heartbeat = HeartbeatThreadFactory.getHeartbeatThread();
+                Objects.requireNonNull(heartbeat).start();
             }
         }
         return s;
@@ -100,7 +86,7 @@ public final class RequestHandler<T extends BaseRequest> {
      * takes a BaseRequest object, adds it to sendList, and send it with other BaseRequest
      * to lua server with a fixed interval?
      */
-    public void take(T request) {
+    public void take(BaseRequest request) {
         sendQueue.offer(request);
     }
 
@@ -109,7 +95,7 @@ public final class RequestHandler<T extends BaseRequest> {
      */
     public void transmitAndReceive() {
 
-        if(BackgroundTask.needRestart) {
+        if(BackgroundTask.isStop()) {
             return;
         }
 

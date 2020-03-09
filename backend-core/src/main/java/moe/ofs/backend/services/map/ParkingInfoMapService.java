@@ -6,9 +6,10 @@ import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.object.ParkingInfo;
-import moe.ofs.backend.request.*;
+import moe.ofs.backend.request.JsonRpcResponse;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.services.ParkingInfoService;
+import moe.ofs.backend.util.ConnectionManager;
 import moe.ofs.backend.util.LuaScripts;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static moe.ofs.backend.util.ConnectionManager.*;
 
 @Service
 public class ParkingInfoMapService extends AbstractMapService<ParkingInfo> implements ParkingInfoService {
@@ -49,8 +48,8 @@ public class ParkingInfoMapService extends AbstractMapService<ParkingInfo> imple
             ServerDataRequest serverExecRequest = new ServerDataRequest(luaString);
 
 
-            fastPackThenSendAndCheck(serverExecRequest);
-            String theaterDataJson = fastPackThenSendAndGet(serverExecRequest);
+            ConnectionManager.fastPackThenSendAndCheck(serverExecRequest);
+            String theaterDataJson = ConnectionManager.fastPackThenSendAndGet(serverExecRequest);
 
             Gson gson = new Gson();
             Type jsonRpcResponseListType = new TypeToken<ArrayList<JsonRpcResponse<String>>>(){}.getType();

@@ -1,19 +1,19 @@
 package moe.ofs.backend;
 
 import moe.ofs.backend.handlers.*;
-import moe.ofs.backend.request.*;
-import moe.ofs.backend.request.export.ExportPollHandlerService;
-import moe.ofs.backend.request.server.ServerPollHandlerService;
+import moe.ofs.backend.request.FillerRequest;
+import moe.ofs.backend.request.Level;
+import moe.ofs.backend.request.PollHandlerService;
+import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.services.ExportObjectService;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.services.ParkingInfoService;
 import moe.ofs.backend.services.PlayerInfoService;
-import moe.ofs.backend.services.jpa.ExportObjectJpaService;
-import moe.ofs.backend.services.jpa.PlayerInfoJpaService;
-import moe.ofs.backend.services.map.FlyableUnitMapService;
 import moe.ofs.backend.util.ConnectionManager;
 import moe.ofs.backend.util.Logger;
-import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URI;
@@ -27,40 +27,75 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static moe.ofs.backend.ControlPanelApplication.logController;
 
+@Component
 public class BackgroundTask {
-    private static final RequestHandler<BaseRequest> requestHandler = RequestHandler.getInstance();
 
-    private static final ExportPollHandlerService EXPORT_POLL_HANDLER_SERVICE =
-            ControlPanelApplication.applicationContext.getBean(ExportPollHandlerService.class);
-    private static final ServerPollHandlerService SERVER_POLL_HANDLER =
-            ControlPanelApplication.applicationContext.getBean(ServerPollHandlerService.class);
+    private final RequestHandler requestHandler = RequestHandler.getInstance();
 
-    private static final ExportObjectService EXPORT_OBJECT_SERVICE =
-            ControlPanelApplication.applicationContext.getBean(ExportObjectJpaService.class);
+    private final PollHandlerService exportObjectPollService;
 
-    private static final PlayerInfoService PLAYER_INFO_SERVICE =
-            ControlPanelApplication.applicationContext.getBean(PlayerInfoJpaService.class);
+    private final PollHandlerService playerInfoPollService;
 
-    private static final FlyableUnitService FLYABLE_UNIT_SERVICE =
-            ControlPanelApplication.applicationContext.getBean(FlyableUnitMapService.class);
+    private final ExportObjectService exportObjectService;
 
-    private static final ParkingInfoService PARKING_INFO_SERVICE =
-            ControlPanelApplication.applicationContext.getBean(ParkingInfoService.class);
+    private final PlayerInfoService playerInfoService;
+
+    private final FlyableUnitService flyableUnitService;
+
+    private final ParkingInfoService parkingInfoService;
+
+    @Autowired
+    public BackgroundTask(
+
+            @Qualifier("exportObject") PollHandlerService exportObjectPollService,
+            @Qualifier("playerInfo") PollHandlerService playerInfoPollService,
+
+            ExportObjectService exportObjectService,
+            PlayerInfoService playerInfoService,
+            FlyableUnitService flyableUnitService,
+            ParkingInfoService parkingInfoService) {
+
+        this.exportObjectPollService = exportObjectPollService;
+        this.playerInfoPollService = playerInfoPollService;
+        this.exportObjectService = exportObjectService;
+        this.playerInfoService = playerInfoService;
+
+        this.flyableUnitService = flyableUnitService;
+        this.parkingInfoService = parkingInfoService;
+
+        currentTask = this;
+    }
+
+    private ScheduledExecutorService mainRequestScheduler;
+    private ScheduledExecutorService exportPollingScheduler;
+    private ScheduledExecutorService serverPollingScheduler;
+
+    public static boolean stop;
+
+    private static BackgroundTask currentTask;
+
+    public static boolean isStop() {
+        return stop;
+    }
+
+    public static void setStop(boolean stop) {
+        BackgroundTask.stop = stop;
+
+        if(stop) {
+            try {
+                currentTask.halt();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public boolean stopSign;
+
+    public AtomicBoolean isHalted = new AtomicBoolean(false);
 
 
-    private static ScheduledExecutorService mainRequestScheduler;
-    private static ScheduledExecutorService exportPollingScheduler;
-    private static ScheduledExecutorService serverPollingScheduler;
-
-    public static ConfigurableApplicationContext applicationContext;
-
-    public static boolean needRestart;
-    public static boolean stopSign;
-
-    public static AtomicBoolean isHalted = new AtomicBoolean(false);
-
-
-    private static void shutdownExecutorService(ExecutorService service) {
+    private void shutdownExecutorService(ExecutorService service) {
         if(service != null) {
             service.shutdown();
             try {
@@ -73,7 +108,8 @@ public class BackgroundTask {
         }
     }
 
-    public static void halt() throws InterruptedException {
+    // probably should use a property changed handler? so that request handler don't need a backgrountask instance
+    public void halt() throws InterruptedException {
         if(isHalted.get()) return;
 
         backgroundThread.interrupt();
@@ -87,21 +123,21 @@ public class BackgroundTask {
     }
 
 
-    public static Runnable background = () -> {
+    public Runnable background = () -> {
         try {
             startBackgroundTask();
         } catch (IOException e) {
             e.printStackTrace();
         }
     };
-    public static Thread backgroundThread = new Thread(background);
+    public Thread backgroundThread = new Thread(background);
 
 
-    public static Thread heartbeatSignalThread;
+    public Thread heartbeatSignalThread;
 
 
-    private static boolean initialized;
-    private static void initCore() throws IOException {
+    private boolean initialized;
+    private void initCore() throws IOException {
         if(!initialized) {
 
             logController.populateLoadedPluginListView();
@@ -142,7 +178,9 @@ public class BackgroundTask {
     }
 
     // restart background task when connect is cut
-    public static void startBackgroundTask() throws IOException {
+    public void startBackgroundTask() throws IOException {
+
+        setStop(false);
 
         BackgroundTaskRestartObservable.invokeAll();
 
@@ -151,27 +189,27 @@ public class BackgroundTask {
         initCore();
 
         // dispose obsolete data if any
-        FLYABLE_UNIT_SERVICE.dispose();
-        PARKING_INFO_SERVICE.dispose();
-        EXPORT_OBJECT_SERVICE.dispose();
-        PLAYER_INFO_SERVICE.dispose();
+        flyableUnitService.dispose();
+        parkingInfoService.dispose();
+        exportObjectService.dispose();
+        playerInfoService.dispose();
 
         // load static data
-        FLYABLE_UNIT_SERVICE.loadData();
-        PARKING_INFO_SERVICE.loadData();
+        flyableUnitService.loadData();
+        parkingInfoService.loadData();
 
         isHalted.set(false);
 
         System.out.println("Starting background tasks");
 
-        EXPORT_POLL_HANDLER_SERVICE.init();
-        SERVER_POLL_HANDLER.init();
+        exportObjectPollService.init();
+        playerInfoPollService.init();
 
         MissionStartObservable.invokeAll();
 
         Runnable exportPolling = () -> {
             try {
-                EXPORT_POLL_HANDLER_SERVICE.poll();
+                exportObjectPollService.poll();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -179,7 +217,7 @@ public class BackgroundTask {
 
         Runnable serverPolling = () -> {
             try {
-                SERVER_POLL_HANDLER.poll();
+                playerInfoPollService.poll();
             } catch (IOException e) {
                 e.printStackTrace();
             }

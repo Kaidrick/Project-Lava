@@ -2,14 +2,13 @@ package moe.ofs.backend.request;
 
 import moe.ofs.backend.domain.BaseEntity;
 import moe.ofs.backend.services.UpdatableService;
+import moe.ofs.backend.util.ConnectionManager;
 import moe.ofs.backend.util.GenericClass;
 import moe.ofs.backend.util.LuaState;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static moe.ofs.backend.util.ConnectionManager.*;
 
 public abstract class AbstractPollHandlerService<T extends BaseEntity> implements PollHandlerService {
 
@@ -62,10 +61,10 @@ public abstract class AbstractPollHandlerService<T extends BaseEntity> implement
 
         }
 
-        String s = fastPackThenSendAndGet(request);
+        String s = ConnectionManager.fastPackThenSendAndGet(request);
 
-        List<JsonRpcResponse<List<T>>> jsonRpcResponseList = parseJsonResponse(s, generic.getType());
-        List<T> objectList = flattenResponse(jsonRpcResponseList);
+        List<JsonRpcResponse<List<T>>> jsonRpcResponseList = ConnectionManager.parseJsonResponse(s, generic.getType());
+        List<T> objectList = ConnectionManager.flattenResponse(jsonRpcResponseList);
         list.addAll(objectList);
 
         jsonRpcResponseList.stream()

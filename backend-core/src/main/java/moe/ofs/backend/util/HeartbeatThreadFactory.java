@@ -5,12 +5,12 @@ import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.request.FillerRequest;
 import moe.ofs.backend.request.Level;
 
-import static moe.ofs.backend.util.ConnectionManager.fastPackThenSendAndCheck;
-
 public final class HeartbeatThreadFactory {
     private static Thread heartbeat;
 
     private static boolean heartbeatStarted;
+
+    public static BackgroundTask task = ControlPanelApplication.applicationContext.getBean(BackgroundTask.class);
 
     public static synchronized boolean isHeartbeatStarted() {
         return heartbeatStarted;
@@ -28,7 +28,7 @@ public final class HeartbeatThreadFactory {
 
         FillerRequest filler = new FillerRequest(level);
 
-        return fastPackThenSendAndCheck(filler);
+        return ConnectionManager.fastPackThenSendAndCheck(filler);
 
     }
 
@@ -45,11 +45,12 @@ public final class HeartbeatThreadFactory {
                         ControlPanelApplication.logController.setConnectionStatusBarText("Connected"));
 
 
-                BackgroundTask.backgroundThread = new Thread(BackgroundTask.background);
-                BackgroundTask.backgroundThread.start();
+
+                task.backgroundThread = new Thread(task.background);
+                task.backgroundThread.start();
                 break;
             }
-            if(BackgroundTask.stopSign)
+            if(task.stopSign)
                 break;
         }
         heartbeatStarted = false;

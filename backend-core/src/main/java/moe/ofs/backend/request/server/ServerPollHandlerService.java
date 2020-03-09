@@ -5,9 +5,9 @@ import moe.ofs.backend.request.AbstractPollHandlerService;
 import moe.ofs.backend.services.UpdatableService;
 import moe.ofs.backend.util.GenericClass;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service("playerInfo")
 public final class ServerPollHandlerService extends AbstractPollHandlerService<PlayerInfo> {
 
     @Autowired

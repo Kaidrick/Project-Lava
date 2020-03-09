@@ -3,16 +3,16 @@ package moe.ofs.backend.services.map;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import moe.ofs.backend.object.FlyableUnit;
-import moe.ofs.backend.request.*;
+import moe.ofs.backend.request.JsonRpcResponse;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.services.FlyableUnitService;
+import moe.ofs.backend.util.ConnectionManager;
 import moe.ofs.backend.util.Logger;
 import moe.ofs.backend.util.LuaScripts;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,9 +32,6 @@ public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> imple
 
         // for shared cockpit aircraft such as Huey and Tomcat,
         // idString could be 1271 or 1271_n, where n is an integer
-
-        // TODO -- what's wrong with this code?
-
         int id;
         if(idString.contains("_")) {  // multi-seat aircraft slot
             id = Integer.parseInt(idString.substring(0, idString.indexOf("_")));
@@ -79,11 +76,9 @@ public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> imple
         try {
             ServerExecRequest serverExecRequest = new ServerExecRequest(wholeText);
 
-            ArrayList<JsonRpcRequest> wrapList = new ArrayList<>();
-            wrapList.add(serverExecRequest.toJsonRpcCall());
-            RequestHandler.sendAndGet(Level.SERVER.getPort(), new Gson().toJson(wrapList));
-            String playableJson = RequestHandler.sendAndGet(
-                    Level.SERVER.getPort(), "");  // TODO --> make proper jsonrpc
+            ConnectionManager.fastPackThenSendAndGet(serverExecRequest);
+            String playableJson = ConnectionManager.fastPackThenSendAndGet(serverExecRequest);
+            // TODO --> make proper jsonrpc
 
             parse(playableJson);
         } catch (IOException | RuntimeException e) {
@@ -93,7 +88,7 @@ public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> imple
 
     private void parse(String playableJsonString) {
         Gson gson = new Gson();
-        Type jsonRpcResponseListType = new TypeToken<ArrayList<JsonRpcResponse<String>>>(){}.getType();
+        Type jsonRpcResponseListType = new TypeToken<List<JsonRpcResponse<String>>>() {}.getType();
         List<JsonRpcResponse<String>> jsonRpcResponseList =
                 gson.fromJson(playableJsonString, jsonRpcResponseListType);
 

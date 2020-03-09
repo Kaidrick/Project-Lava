@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-
 public abstract class BaseRequest {
 
     protected int port;
