@@ -3,10 +3,7 @@ package moe.ofs.backend.services.map;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import moe.ofs.backend.object.FlyableUnit;
-import moe.ofs.backend.request.BaseRequest;
-import moe.ofs.backend.request.JsonRpcRequest;
-import moe.ofs.backend.request.JsonRpcResponse;
-import moe.ofs.backend.request.RequestHandler;
+import moe.ofs.backend.request.*;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.util.Logger;
@@ -84,9 +81,9 @@ public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> imple
 
             ArrayList<JsonRpcRequest> wrapList = new ArrayList<>();
             wrapList.add(serverExecRequest.toJsonRpcCall());
-            RequestHandler.sendAndGet(BaseRequest.Level.SERVER.getPort(), new Gson().toJson(wrapList));
+            RequestHandler.sendAndGet(Level.SERVER.getPort(), new Gson().toJson(wrapList));
             String playableJson = RequestHandler.sendAndGet(
-                    BaseRequest.Level.SERVER.getPort(), "");  // TODO --> make proper jsonrpc
+                    Level.SERVER.getPort(), "");  // TODO --> make proper jsonrpc
 
             parse(playableJson);
         } catch (IOException | RuntimeException e) {

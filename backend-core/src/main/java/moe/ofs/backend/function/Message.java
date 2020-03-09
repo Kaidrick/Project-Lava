@@ -1,6 +1,6 @@
-package moe.ofs.backend.plugin.greeting;
+package moe.ofs.backend.function;
 
-class Message {
+public class Message {
     private int duration;
     private String content;
     private String prefix;

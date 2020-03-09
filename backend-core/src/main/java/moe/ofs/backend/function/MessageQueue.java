@@ -1,7 +1,6 @@
-package moe.ofs.backend.plugin.greeting;
+package moe.ofs.backend.function;
 
 import moe.ofs.backend.domain.ExportObject;
-import moe.ofs.backend.function.TriggerMessage;
 import moe.ofs.backend.services.FlyableUnitService;
 
 import java.util.ArrayDeque;
@@ -11,7 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-class MessageQueue {
+public class MessageQueue {
     private int receiverGroupId;
     private Queue<Message> messageQueue = new ArrayDeque<>();
 

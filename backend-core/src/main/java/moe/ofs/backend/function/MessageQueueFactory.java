@@ -1,4 +1,4 @@
-package moe.ofs.backend.plugin.greeting;
+package moe.ofs.backend.function;
 
 import moe.ofs.backend.domain.ExportObject;
 import moe.ofs.backend.services.FlyableUnitService;

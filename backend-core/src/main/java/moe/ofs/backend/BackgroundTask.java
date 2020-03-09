@@ -1,11 +1,9 @@
 package moe.ofs.backend;
 
 import moe.ofs.backend.handlers.*;
-import moe.ofs.backend.request.BaseRequest;
-import moe.ofs.backend.request.ExportPollHandler;
-import moe.ofs.backend.request.RequestHandler;
-import moe.ofs.backend.request.ServerPollHandler;
-import moe.ofs.backend.request.server.ServerFillerRequest;
+import moe.ofs.backend.request.*;
+import moe.ofs.backend.request.export.ExportPollHandlerService;
+import moe.ofs.backend.request.server.ServerPollHandlerService;
 import moe.ofs.backend.services.ExportObjectService;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.services.ParkingInfoService;
@@ -32,10 +30,10 @@ import static moe.ofs.backend.ControlPanelApplication.logController;
 public class BackgroundTask {
     private static final RequestHandler<BaseRequest> requestHandler = RequestHandler.getInstance();
 
-    private static final ExportPollHandler exportPollHandler =
-            ControlPanelApplication.applicationContext.getBean(ExportPollHandler.class);
-    private static final ServerPollHandler serverPollHandler =
-            ControlPanelApplication.applicationContext.getBean(ServerPollHandler.class);
+    private static final ExportPollHandlerService EXPORT_POLL_HANDLER_SERVICE =
+            ControlPanelApplication.applicationContext.getBean(ExportPollHandlerService.class);
+    private static final ServerPollHandlerService SERVER_POLL_HANDLER =
+            ControlPanelApplication.applicationContext.getBean(ServerPollHandlerService.class);
 
     private static final ExportObjectService EXPORT_OBJECT_SERVICE =
             ControlPanelApplication.applicationContext.getBean(ExportObjectJpaService.class);
@@ -148,6 +146,8 @@ public class BackgroundTask {
 
         BackgroundTaskRestartObservable.invokeAll();
 
+        ConnectionManager.sanitizeDataPipeline(requestHandler);
+
         initCore();
 
         // dispose obsolete data if any
@@ -164,20 +164,22 @@ public class BackgroundTask {
 
         System.out.println("Starting background tasks");
 
-        ConnectionManager.sanitizeDataPipeline(requestHandler);
-
-
-        exportPollHandler.init();
-        serverPollHandler.init();
+        EXPORT_POLL_HANDLER_SERVICE.init();
+        SERVER_POLL_HANDLER.init();
 
         MissionStartObservable.invokeAll();
 
-        Runnable exportPolling = exportPollHandler::poll;
+        Runnable exportPolling = () -> {
+            try {
+                EXPORT_POLL_HANDLER_SERVICE.poll();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        };
 
         Runnable serverPolling = () -> {
             try {
-                serverPollHandler.poll();
-//              throw new IOException();
+                SERVER_POLL_HANDLER.poll();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -186,9 +188,7 @@ public class BackgroundTask {
         // main loop
 //         requests are sent and result are received in this thread only
         Runnable mainLoop = () -> {
-            new ServerFillerRequest() {
-                { handle = Handle.EMPTY; port = 3010; }
-            }.send();
+            new FillerRequest(Level.SERVER).send();
             try {
                 requestHandler.transmitAndReceive();
             } catch (Exception e) {

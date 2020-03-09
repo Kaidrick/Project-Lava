@@ -21,7 +21,7 @@ public class ParkingInfo extends BaseEntity {
     private double northCorrection;
     private int terminalType;
     private double initialHeading;
-    private ParkingInfo.Metadata metadata;
+    private Metadata metadata;
 
     private class Metadata implements Serializable {
         boolean TO_AC;

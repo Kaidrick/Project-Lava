@@ -36,7 +36,7 @@ public class PlayerListCell extends ListCell<String> {
         PlayerInfo playerInfo = PLAYER_INFO_REPOSITORY.findByName(getItem()).orElseThrow(
                 () -> new RuntimeException("Unable to find PlayerInfo by player name: " + getItem())
         );
-        long playerId = playerInfo.getId();
+        long playerId = playerInfo.getNetId();
         String playerUcid = playerInfo.getUcid();
         String playerIpaddr = playerInfo.getIpaddr();
         String playerLang = playerInfo.getLang();
@@ -150,7 +150,7 @@ public class PlayerListCell extends ListCell<String> {
                 showDetailItem.setOnAction(showPlayerDetail);
                 list.add(showDetailItem);
 
-                if(playerInfo.getId() != 1) {  // if not server
+                if(playerInfo.getNetId() != 1) {  // if not server
                     MenuItem kickPlayerItem = new MenuItem();
                     kickPlayerItem.setText("Kick");
                     kickPlayerItem.setOnAction(kickPlayer);

@@ -13,6 +13,7 @@ import jfxtras.styles.jmetro.JMetroStyleClass;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.gui.PlayerListCell;
 import moe.ofs.backend.gui.PluginListCell;
+import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.PlayerEnterServerObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 import moe.ofs.backend.request.RequestToServer;
@@ -133,6 +134,11 @@ public class MainController implements Initializable {
         Platform.runLater(() -> listViewConnectedPlayer.getItems().remove(playerInfo.getName()));
     }
 
+    @FXML public void removeAllPlayerFromListView() {
+        listViewConnectedPlayer.getItems().forEach(item ->
+                Platform.runLater(() -> listViewConnectedPlayer.getItems().remove(item)));
+    }
+
 
 
     @Override
@@ -149,6 +155,9 @@ public class MainController implements Initializable {
 
         PlayerLeaveServerObservable playerLeaveServerObservable = this::removePlayerFromListView;
         playerLeaveServerObservable.register();
+
+        BackgroundTaskRestartObservable backgroundTaskRestartObservable = this::removeAllPlayerFromListView;
+        backgroundTaskRestartObservable.register();
 
         listViewConnectedPlayer.setCellFactory(PlayerListCell::new);
     }

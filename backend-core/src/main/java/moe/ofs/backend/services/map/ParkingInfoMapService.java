@@ -6,10 +6,7 @@ import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.object.ParkingInfo;
-import moe.ofs.backend.request.BaseRequest;
-import moe.ofs.backend.request.JsonRpcRequest;
-import moe.ofs.backend.request.JsonRpcResponse;
-import moe.ofs.backend.request.RequestHandler;
+import moe.ofs.backend.request.*;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.services.ParkingInfoService;
 import moe.ofs.backend.util.LuaScripts;
@@ -22,6 +19,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static moe.ofs.backend.util.ConnectionManager.*;
 
 @Service
 public class ParkingInfoMapService extends AbstractMapService<ParkingInfo> implements ParkingInfoService {
@@ -41,6 +40,7 @@ public class ParkingInfoMapService extends AbstractMapService<ParkingInfo> imple
     }
 
     @Override
+    @SuppressWarnings("unchecked")  // de-serialized object cannot be anything other than List of ParkingInfo
     public void loadData() {
         // get theater name
         String luaString = LuaScripts.load("get_map_theater_name.lua");
@@ -48,11 +48,9 @@ public class ParkingInfoMapService extends AbstractMapService<ParkingInfo> imple
         try {
             ServerDataRequest serverExecRequest = new ServerDataRequest(luaString);
 
-            ArrayList<JsonRpcRequest> wrapList = new ArrayList<>();
-            wrapList.add(serverExecRequest.toJsonRpcCall());
-            RequestHandler.sendAndGet(BaseRequest.Level.SERVER.getPort(), new Gson().toJson(wrapList));
-            String theaterDataJson = RequestHandler.sendAndGet(
-                    BaseRequest.Level.SERVER.getPort(), "");  // TODO --> make proper jsonrpc
+
+            fastPackThenSendAndCheck(serverExecRequest);
+            String theaterDataJson = fastPackThenSendAndGet(serverExecRequest);
 
             Gson gson = new Gson();
             Type jsonRpcResponseListType = new TypeToken<ArrayList<JsonRpcResponse<String>>>(){}.getType();

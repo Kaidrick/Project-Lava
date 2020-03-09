@@ -2,6 +2,9 @@ package moe.ofs.backend.plugin.greeting;
 
 import moe.ofs.backend.Plugin;
 import moe.ofs.backend.PluginClassLoader;
+import moe.ofs.backend.function.Message;
+import moe.ofs.backend.function.MessageQueue;
+import moe.ofs.backend.function.MessageQueueFactory;
 import moe.ofs.backend.gui.PluginListCell;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
@@ -10,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
 
 /**
  * Greeting addon implements the functionality to send Message of the Day to players who just spawn into game

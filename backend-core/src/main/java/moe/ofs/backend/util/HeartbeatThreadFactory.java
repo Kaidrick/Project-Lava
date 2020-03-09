@@ -1,15 +1,11 @@
 package moe.ofs.backend.util;
 
-import com.google.gson.Gson;
-import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.BackgroundTask;
-import moe.ofs.backend.request.JsonRpcRequest;
-import moe.ofs.backend.request.RequestHandler;
-import moe.ofs.backend.request.server.ServerFillerRequest;
+import moe.ofs.backend.ControlPanelApplication;
+import moe.ofs.backend.request.FillerRequest;
+import moe.ofs.backend.request.Level;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import static moe.ofs.backend.util.ConnectionManager.fastPackThenSendAndCheck;
 
 public final class HeartbeatThreadFactory {
     private static Thread heartbeat;
@@ -21,28 +17,19 @@ public final class HeartbeatThreadFactory {
     }
 
     public static boolean isServerConnectionEstablished() {
-        return checkPortConnection(3011);
+        return checkPortConnection(Level.SERVER_POLL);
     }
 
     public static boolean isExportConnectionEstablished() {
-        return checkPortConnection(3013);
+        return checkPortConnection(Level.EXPORT_POLL);
     }
 
-    private static boolean checkPortConnection(int port) {
-        Gson gson = new Gson();
+    private static boolean checkPortConnection(Level level) {
 
-        List<JsonRpcRequest> container = new ArrayList<>();
-        ServerFillerRequest filler = new ServerFillerRequest();
+        FillerRequest filler = new FillerRequest(level);
 
-        container.add(filler.toJsonRpcCall());
-        String json = gson.toJson(container);
+        return fastPackThenSendAndCheck(filler);
 
-        try {
-            return RequestHandler.sendAndGet(port, json) != null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 
     private static final Runnable runnable = () -> {
