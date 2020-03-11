@@ -7,7 +7,7 @@ import moe.ofs.backend.request.JsonRpcResponse;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.util.ConnectionManager;
-import moe.ofs.backend.util.Logger;
+import moe.ofs.backend.logmanager.Logger;
 import moe.ofs.backend.util.LuaScripts;
 import org.springframework.stereotype.Service;
 

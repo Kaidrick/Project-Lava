@@ -2,6 +2,7 @@ package moe.ofs.backend.util;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.request.*;
 
 import java.io.IOException;
@@ -15,13 +16,15 @@ public class ConnectionManager {
 
     private static final Gson gson = new Gson();
 
-    public static void sanitizeDataPipeline(RequestHandler requestHandler) {
+    private static RequestHandler requestHandler = RequestHandler.getInstance();
+
+    public static void sanitizeDataPipeline() {
         new FillerRequest(Level.SERVER).send();
         new FillerRequest(Level.SERVER_POLL).send();
         new FillerRequest(Level.EXPORT).send();
         new FillerRequest(Level.EXPORT_POLL).send();
 
-        requestHandler.transmitAndReceive();
+        RequestHandler.getInstance().transmitAndReceive();
     }
 
     public static String fastPack(BaseRequest request) {
@@ -32,7 +35,7 @@ public class ConnectionManager {
 
     public static boolean fastPackThenSendAndCheck(BaseRequest request) {
         try {
-            return RequestHandler.sendAndGet(request.getPort(), fastPack(request)) != null;
+            return requestHandler.sendAndGet(request.getPort(), fastPack(request)) != null;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -40,7 +43,7 @@ public class ConnectionManager {
     }
 
     public static String fastPackThenSendAndGet(BaseRequest request) throws IOException {
-        return RequestHandler.sendAndGet(request.getPort(), fastPack(request));
+        return requestHandler.sendAndGet(request.getPort(), fastPack(request));
     }
 
     public static <T> List<T> flattenResponse(List<JsonRpcResponse<List<T>>> jsonRpcResponseList) {
@@ -54,6 +57,15 @@ public class ConnectionManager {
                 .flatMap(r -> r.getResult().getData().stream())
                 .map(mappingFunction)
                 .collect(Collectors.toList());
+    }
+
+    public static <T> List<JsonRpcResponse<T>> parseJsonResponseToRaw(String jsonString, Class<T> targetClass) {
+        // TODO --> this is so sad
+        Type jsonRpcResponseListType = TypeToken.getParameterized(List.class,
+                TypeToken.getParameterized(JsonRpcResponse.class, targetClass).getType()).getType();
+
+        // TODO -> why? java.lang.IllegalStateException: Expected a string but was BEGIN_ARRAY at line 1 column 81 path $[0].result.data
+        return gson.fromJson(jsonString, jsonRpcResponseListType);
     }
 
     public static <T> List<JsonRpcResponse<List<T>>> parseJsonResponse(String jsonString, Class<T> targetClass) {

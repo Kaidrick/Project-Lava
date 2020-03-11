@@ -3,7 +3,6 @@ package moe.ofs.backend.plugin.static_display;
 import moe.ofs.backend.Plugin;
 import moe.ofs.backend.PluginClassLoader;
 import moe.ofs.backend.domain.PlayerInfo;
-import moe.ofs.backend.gui.PluginListCell;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 import moe.ofs.backend.handlers.PlayerSlotChangeObservable;
@@ -11,29 +10,49 @@ import moe.ofs.backend.object.FlyableUnit;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.services.ParkingInfoService;
-import moe.ofs.backend.util.Logger;
+import moe.ofs.backend.logmanager.Logger;
 import moe.ofs.backend.util.LuaScripts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This addon class implements the functionality to place a static object matching the type and livery of
  * a flyable aircraft when the aircraft is idle (slot not occupied by a player)
 
  * TODO -> normal unit cannot replace static object because it occupies a parking in game
- * TODO -> therefore the only option to make it work for cold start flyable unit
- * TODO -> is to manually gather heading information for each parking position.
- * TODO -> get parking position from
  */
 
 @Component
 public class StaticDisplay implements Plugin {
+
+    // name
+    public final String name = "Static Aircraft Display";
+    public final String desc = "Display a flyable static aircraft";
+
+    private boolean isLoaded;
+
+    // handlers
+    PlayerSlotChangeObservable playerSlotChangeObservable;
+    MissionStartObservable missionStartObservable;
+    PlayerLeaveServerObservable playerLeaveServerObservable;
+
+    private static final List<String> excludedTypeList = Arrays.asList("SA342M", "SA342L",
+            "SA342Mistral", "SA342Minigun");
+
+    // slot id as string, runtimeId as string
+    private static final Map<String, String> mapSlotStaticId = new HashMap<>();
+
+    // predefined replacement map, used to force spawn with an old lockon models if an matching entry exists
+    private static final Map<String, String> replacement = new HashMap<>();
+
+    static {
+        replacement.put("FA-18C_hornet", "F/A-18C");
+        replacement.put("F-14B", "F-14A");
+    }
+
     private static final String luaStringAddStatic = LuaScripts.load("add_static_object.lua");
     private static final String luaStringRemoveObject = LuaScripts.load("remove_object_by_runtime_id.lua");
 
@@ -61,31 +80,6 @@ public class StaticDisplay implements Plugin {
      * Register to PlayerLeaveServer as well
      * when player leaves server, get the current slot of the player, check for matching unit
      */
-
-    // name
-    public final String name = "Static Aircraft Display";
-    public final String desc = "Display a flyable static aircraft";
-
-    private boolean isLoaded;
-
-    // handlers
-    PlayerSlotChangeObservable playerSlotChangeObservable;
-    MissionStartObservable missionStartObservable;
-    PlayerLeaveServerObservable playerLeaveServerObservable;
-
-    private PluginListCell pluginListCell;
-
-    @Override
-    public PluginListCell getPluginListCell() {
-        return pluginListCell;
-    }
-
-    @Override
-    public void setPluginListCell(PluginListCell cell) {
-        pluginListCell = cell;
-    }
-
-
     @Override
     public void register() {
         playerSlotChangeObservable = this::switchStaticDisplay;
@@ -105,6 +99,8 @@ public class StaticDisplay implements Plugin {
         playerLeaveServerObservable.unregister();
         missionStartObservable.unregister();
         playerLeaveServerObservable.unregister();
+
+        cleanStaticDisplay();
 
         isLoaded = false;
     }
@@ -132,15 +128,10 @@ public class StaticDisplay implements Plugin {
         flyableUnitService.findAll().forEach(this::spawnControl);
     }
 
-    private static final List<String> excludedTypeList = Arrays.asList("SA342M", "SA342L",
-            "SA342Mistral", "SA342Minigun");
-
-    // slot id as string, runtimeId as string
-    private static final Map<String, String> mapSlotStaticId = new HashMap<>();
-    private static final Map<String, String> replacement = new HashMap<>();
-    static {
-        replacement.put("FA-18C_hornet", "F/A-18C");
-        replacement.put("F-14B", "F-14A");
+    public void cleanStaticDisplay() {
+        // find flyable unit and pass to despawn control method
+        Logger.log("Disabling Static Display...removing existing static objects");
+        mapSlotStaticId.keySet().forEach(id -> flyableUnitService.findByUnitId(id).ifPresent(this::despawnControl));
     }
 
     private void spawnControl(FlyableUnit flyableUnit) {
@@ -158,6 +149,7 @@ public class StaticDisplay implements Plugin {
                 heading = parkingInfoService.getParking(flyableUnit.getAirdromeId(), flyableUnit.getParking()).get()
                         .getInitialHeading();
             } else return;
+
             String p = String.format(luaStringAddStatic,
                     "_StaticDisplay_" + flyableUnit.getUnit_name(), type,
                     flyableUnit.getX(), flyableUnit.getY(), flyableUnit.getLivery_id(),

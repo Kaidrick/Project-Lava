@@ -1,7 +1,5 @@
 package moe.ofs.backend;
 
-import moe.ofs.backend.gui.PluginListCell;
-
 import java.io.IOException;
 import java.util.Properties;
 
@@ -18,15 +16,12 @@ public interface Plugin {
         PluginClassLoader pluginClassLoader = new PluginClassLoader();
 
         Properties properties = new Properties();
-        properties.load(ControlPanelApplication.class.getResourceAsStream("/enabled_plugins.properties"));
+        properties.load(Plugin.class.getResourceAsStream("/enabled_plugins.properties"));
 
         properties.forEach((pluginName, pluginCoreClassName) ->
                 pluginClassLoader.invokeClassMethod(String.format("moe.ofs.backend.plugin.%s.%s",
                         pluginName, pluginCoreClassName)));
     }
-
-    PluginListCell getPluginListCell();
-    void setPluginListCell(PluginListCell cell);
 
     /**
      * Called once to initialize plugin or register a plugin to a handler

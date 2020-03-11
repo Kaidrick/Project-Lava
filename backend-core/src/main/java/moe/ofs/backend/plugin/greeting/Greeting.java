@@ -5,7 +5,6 @@ import moe.ofs.backend.PluginClassLoader;
 import moe.ofs.backend.function.Message;
 import moe.ofs.backend.function.MessageQueue;
 import moe.ofs.backend.function.MessageQueueFactory;
-import moe.ofs.backend.gui.PluginListCell;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 import moe.ofs.backend.domain.ExportObject;
@@ -31,8 +30,6 @@ public class Greeting implements Plugin {
     private ExportUnitSpawnObservable exportUnitSpawnObservable;
     private BackgroundTaskRestartObservable backgroundTaskRestartObservable;
 
-    private PluginListCell pluginListCell;
-
     private final MessageQueueFactory messageQueueFactory;
 
     @Autowired
@@ -45,16 +42,6 @@ public class Greeting implements Plugin {
         System.out.println("Greeting plugin bean constructed...register");
         register();
         PluginClassLoader.loadedPluginSet.add(this);
-    }
-
-    @Override
-    public PluginListCell getPluginListCell() {
-        return pluginListCell;
-    }
-
-    @Override
-    public void setPluginListCell(PluginListCell cell) {
-        pluginListCell = cell;
     }
 
     @Override

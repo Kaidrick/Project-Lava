@@ -1,6 +1,8 @@
 package moe.ofs.backend.request;
 
 import com.google.gson.Gson;
+import moe.ofs.backend.domain.Handle;
+import moe.ofs.backend.domain.Level;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -24,8 +26,6 @@ public abstract class BaseRequest {
             super("Request cannot be sent more than once.");
         }
     }
-
-
 
     public BaseRequest(Level level) {
         this.port = level.getPort();
@@ -92,7 +92,3 @@ public abstract class BaseRequest {
         return this;
     }
 }
-
-
-
-

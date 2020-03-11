@@ -1,6 +1,6 @@
 package moe.ofs.backend;
 
-import moe.ofs.backend.util.Logger;
+import moe.ofs.backend.logmanager.Logger;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

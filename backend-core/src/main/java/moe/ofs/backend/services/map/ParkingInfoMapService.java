@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
-import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.object.ParkingInfo;
 import moe.ofs.backend.request.JsonRpcResponse;
 import moe.ofs.backend.request.server.ServerDataRequest;
@@ -61,7 +60,7 @@ public class ParkingInfoMapService extends AbstractMapService<ParkingInfo> imple
                         String dataString = r.getResult().getData();
                         try {
                             theater = gson.fromJson(dataString, String.class);
-                            InputStream inputStream = ControlPanelApplication.class
+                            InputStream inputStream = ParkingInfoMapService.class
                                     .getResourceAsStream(String.format("/data/%s.data", theater));
                             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
                             Object object = objectInputStream.readObject();

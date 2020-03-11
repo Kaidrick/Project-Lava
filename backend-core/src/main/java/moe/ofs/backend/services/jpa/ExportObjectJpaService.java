@@ -6,7 +6,7 @@ import moe.ofs.backend.handlers.ExportUnitDespawnObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 import moe.ofs.backend.repositories.ExportObjectRepository;
 import moe.ofs.backend.services.ExportObjectService;
-import moe.ofs.backend.util.Logger;
+import moe.ofs.backend.logmanager.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;

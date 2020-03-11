@@ -1,10 +1,11 @@
 package moe.ofs.backend.request;
 
 import moe.ofs.backend.domain.BaseEntity;
+import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.services.UpdatableService;
 import moe.ofs.backend.util.ConnectionManager;
 import moe.ofs.backend.util.GenericClass;
-import moe.ofs.backend.util.LuaState;
+import moe.ofs.backend.domain.LuaState;
 
 import java.io.IOException;
 import java.util.ArrayList;

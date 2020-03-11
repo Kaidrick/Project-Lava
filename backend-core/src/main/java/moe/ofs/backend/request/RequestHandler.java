@@ -1,18 +1,18 @@
 package moe.ofs.backend.request;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import moe.ofs.backend.BackgroundTask;
-import moe.ofs.backend.util.HeartbeatThreadFactory;
+import moe.ofs.backend.util.ConnectionManager;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.*;
-import java.lang.reflect.Type;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /** RequestHandler class
@@ -32,11 +32,17 @@ public final class RequestHandler {
     private Map<String, BaseRequest> waitMap = new HashMap<>();
     private volatile BlockingQueue<BaseRequest> sendQueue = new LinkedBlockingQueue<>();
 
+    private AtomicBoolean trouble = new AtomicBoolean(true);
+
+    private PropertyChangeSupport support;
+
     private static final Gson gson = new Gson();
 
     private static RequestHandler instance;
 
-    private RequestHandler() { }
+    private RequestHandler() {
+        support = new PropertyChangeSupport(this);
+    }
 
     public static synchronized RequestHandler getInstance() {
         // singleton
@@ -48,13 +54,34 @@ public final class RequestHandler {
     }
 
     public void dispose() {
+        waitMap.clear();
         sendQueue.clear();
     }
 
+    // property change listener
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        support.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        support.removePropertyChangeListener(listener);
+    }
+
+    public boolean isTrouble() {
+        return trouble.get();
+    }
+
+    public void setTrouble(boolean trouble) {
+
+        support.firePropertyChange("trouble", this.trouble, trouble);
+
+        this.trouble.set(trouble);
+
+    }
 
     // if exception is thrown here, try reconnect: check if connection can be made
     // if so, restart backend
-    public static String sendAndGet(int port, String jsonString) throws IOException {
+    public String sendAndGet(int port, String jsonString) throws IOException {
 
         String s = null;
         try (Socket socket = new Socket("127.0.0.1", port);
@@ -70,14 +97,11 @@ public final class RequestHandler {
                     new InputStreamReader(dataInputStream, StandardCharsets.UTF_8));
             s = bufferedReader.readLine();
         } catch (SocketException e) {
-            if(HeartbeatThreadFactory.isHeartbeatStarted()) {
-                System.out.println("heartbeat already exists");
-            } else {
-                System.out.println(port + " Connection Lost -> Stopping Background Task");
-                BackgroundTask.setStop(true);
-                Thread heartbeat = HeartbeatThreadFactory.getHeartbeatThread();
-                Objects.requireNonNull(heartbeat).start();
-            }
+
+            // triggers background task stop
+            setTrouble(true);
+            System.out.println("Trouble in RequestHandler");
+
         }
         return s;
     }
@@ -95,7 +119,7 @@ public final class RequestHandler {
      */
     public void transmitAndReceive() {
 
-        if(BackgroundTask.isStop()) {
+        if(trouble.get()) {
             return;
         }
 
@@ -111,14 +135,6 @@ public final class RequestHandler {
         Map<Integer, List<JsonRpcRequest>> splitQueue = transmissionQueue.stream()
                 .collect(Collectors.groupingBy(BaseRequest::getPort,
                         Collectors.mapping(BaseRequest::toJsonRpcCall, Collectors.toList())));
-
-//        splitQueue.get(3010).stream().filter(e -> e.toString().contains("EXEC")).forEach(System.out::println);
-
-//        if(!transmissionQueue.toString().equals("[]"))
-//        System.out.println(transmissionQueue);
-
-//        if(!splitQueue.toString().equals("{}"))
-//        System.out.println(splitQueue);
 
         // only add to wait map if result is definitely needed
         splitQueue.forEach((port, queue) -> {
@@ -138,8 +154,9 @@ public final class RequestHandler {
                 // parse as a list of object, and each object is a subresult of a request
                 // with a tag attribute with uuid of the result
 
-                Type jsonRpcResponseListType = new TypeToken<List<JsonRpcResponse<String>>>() {}.getType();
-                List<JsonRpcResponse<String>> jsonRpcResponseList = gson.fromJson(s, jsonRpcResponseListType);
+                List<JsonRpcResponse<String>> jsonRpcResponseList =
+                        ConnectionManager.parseJsonResponseToRaw(s, String.class);
+
 
                 // what is the use of wait map here?
                 // json rpc response list contains elements

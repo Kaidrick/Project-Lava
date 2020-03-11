@@ -7,7 +7,7 @@ import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 import moe.ofs.backend.handlers.PlayerSlotChangeObservable;
 import moe.ofs.backend.repositories.PlayerInfoRepository;
 import moe.ofs.backend.services.PlayerInfoService;
-import moe.ofs.backend.util.Logger;
+import moe.ofs.backend.logmanager.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;

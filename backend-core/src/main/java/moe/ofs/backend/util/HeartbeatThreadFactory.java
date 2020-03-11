@@ -1,30 +1,58 @@
 package moe.ofs.backend.util;
 
-import moe.ofs.backend.BackgroundTask;
-import moe.ofs.backend.ControlPanelApplication;
+import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.request.FillerRequest;
-import moe.ofs.backend.request.Level;
+import moe.ofs.backend.request.RequestHandler;
+import org.springframework.stereotype.Component;
 
-public final class HeartbeatThreadFactory {
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Objects;
+
+@Component
+public final class HeartbeatThreadFactory implements PropertyChangeListener {
+
+    public static boolean heartbeatActive;
+
     private static Thread heartbeat;
 
-    private static boolean heartbeatStarted;
+    public HeartbeatThreadFactory() {
 
-    public static BackgroundTask task = ControlPanelApplication.applicationContext.getBean(BackgroundTask.class);
+        // listen to RequestHandler property changes
+        RequestHandler.getInstance().addPropertyChangeListener(this);
 
-    public static synchronized boolean isHeartbeatStarted() {
-        return heartbeatStarted;
+        runnable = () -> {
+
+            heartbeatActive = true;
+
+            while(true) {
+
+                if(isExportConnectionEstablished() && isServerConnectionEstablished()) {
+                    // can connect, clear request handler trouble
+                    // this also triggers background task start
+                    RequestHandler.getInstance().setTrouble(false);
+
+                    break;
+
+                }
+            }
+
+            heartbeatActive = false;
+
+        };
     }
 
-    public static boolean isServerConnectionEstablished() {
+    private final Runnable runnable;
+
+    private boolean isServerConnectionEstablished() {
         return checkPortConnection(Level.SERVER_POLL);
     }
 
-    public static boolean isExportConnectionEstablished() {
+    private boolean isExportConnectionEstablished() {
         return checkPortConnection(Level.EXPORT_POLL);
     }
 
-    private static boolean checkPortConnection(Level level) {
+    private boolean checkPortConnection(Level level) {
 
         FillerRequest filler = new FillerRequest(level);
 
@@ -32,32 +60,7 @@ public final class HeartbeatThreadFactory {
 
     }
 
-    private static final Runnable runnable = () -> {
-        heartbeatStarted = true;
-        System.out.println("Heartbeat started");
-        javafx.application.Platform.runLater(() ->
-                ControlPanelApplication.logController.setConnectionStatusBarText("Waiting for connection..."));
-
-        while(true) {
-            if(isExportConnectionEstablished() && isServerConnectionEstablished()) {
-
-                javafx.application.Platform.runLater(() ->
-                        ControlPanelApplication.logController.setConnectionStatusBarText("Connected"));
-
-
-
-                task.backgroundThread = new Thread(task.background);
-                task.backgroundThread.start();
-                break;
-            }
-            if(task.stopSign)
-                break;
-        }
-        heartbeatStarted = false;
-        System.out.println("Heartbeat stopped");
-    };
-
-    public synchronized static Thread getHeartbeatThread() {
+    public synchronized Thread getHeartbeatThread() {
         // if heartbeat is null, make new heartbeat
         // if heartbeat is not null, check if it is start
 
@@ -70,6 +73,23 @@ public final class HeartbeatThreadFactory {
                 return heartbeat;
             } else {
                 return null;
+            }
+        }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        if(propertyChangeEvent.getPropertyName().equals("trouble")) {
+            if((boolean) propertyChangeEvent.getNewValue()) {
+                // trouble, start heartbeat
+                if(!heartbeatActive) {
+                    System.out.println("Starting heartbeat check...");
+                    Objects.requireNonNull(getHeartbeatThread()).start();
+                }
+            } else {
+                // no trouble, stop heartbeat
+                System.out.println("Stopping heartbeat check...");
+                heartbeat.interrupt();
             }
         }
     }

@@ -1,8 +1,9 @@
 package moe.ofs.backend;
 
+import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.handlers.*;
+import moe.ofs.backend.logmanager.Logger;
 import moe.ofs.backend.request.FillerRequest;
-import moe.ofs.backend.request.Level;
 import moe.ofs.backend.request.PollHandlerService;
 import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.services.ExportObjectService;
@@ -10,11 +11,13 @@ import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.services.ParkingInfoService;
 import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.util.ConnectionManager;
-import moe.ofs.backend.util.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
@@ -25,12 +28,20 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static moe.ofs.backend.ControlPanelApplication.logController;
-
 @Component
-public class BackgroundTask {
+public class BackgroundTask implements PropertyChangeListener {
 
     private final RequestHandler requestHandler = RequestHandler.getInstance();
+
+    private boolean started;
+
+    private PropertyChangeSupport support;
+
+    // why does background task need a instance of heartbeat factory?
+    // because it wants to spawn a thread from factory
+    // let factory listen to background started property change
+
+    // services
 
     private final PollHandlerService exportObjectPollService;
 
@@ -64,28 +75,71 @@ public class BackgroundTask {
         this.parkingInfoService = parkingInfoService;
 
         currentTask = this;
+        support = new PropertyChangeSupport(this);
+
+        // listen to property change of "trouble"
+        requestHandler.addPropertyChangeListener(this);
     }
 
     private ScheduledExecutorService mainRequestScheduler;
     private ScheduledExecutorService exportPollingScheduler;
     private ScheduledExecutorService serverPollingScheduler;
 
-    public static boolean stop;
-
     private static BackgroundTask currentTask;
 
-    public static boolean isStop() {
-        return stop;
+    // property change listener
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        support.addPropertyChangeListener(listener);
     }
 
-    public static void setStop(boolean stop) {
-        BackgroundTask.stop = stop;
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        support.removePropertyChangeListener(listener);
+    }
 
-        if(stop) {
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+
+        // fire property change iff value changed
+        if(this.started != started)
+            support.firePropertyChange("started", this.started, started);
+
+        // set value anyway
+        this.started = started;
+
+        if(started) {
             try {
-                currentTask.halt();
+                System.out.println("Starting Background Task...");
+                this.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                System.out.println("Stopping Background Task...");
+                this.stop();
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+
+    @Override
+    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+
+        System.out.println(propertyChangeEvent);
+
+        if(propertyChangeEvent.getPropertyName().equals("trouble")) {
+
+            if((boolean) propertyChangeEvent.getNewValue()) {
+                // trouble, stop background task
+                setStarted(false);
+            } else {
+                // no trouble, start background task
+                setStarted(true);
             }
         }
     }
@@ -109,7 +163,7 @@ public class BackgroundTask {
     }
 
     // probably should use a property changed handler? so that request handler don't need a backgrountask instance
-    public void halt() throws InterruptedException {
+    public void stop() throws InterruptedException {
         if(isHalted.get()) return;
 
         backgroundThread.interrupt();
@@ -125,7 +179,7 @@ public class BackgroundTask {
 
     public Runnable background = () -> {
         try {
-            startBackgroundTask();
+            start();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -139,8 +193,6 @@ public class BackgroundTask {
     private boolean initialized;
     private void initCore() throws IOException {
         if(!initialized) {
-
-            logController.populateLoadedPluginListView();
 
             // TODO --> VERY BAD IMPLEMENTATION! REFACTOR!
             PlayerEnterServerObservable playerEnterServerObservable =
@@ -178,13 +230,11 @@ public class BackgroundTask {
     }
 
     // restart background task when connect is cut
-    public void startBackgroundTask() throws IOException {
-
-        setStop(false);
+    public void start() throws IOException {
 
         BackgroundTaskRestartObservable.invokeAll();
 
-        ConnectionManager.sanitizeDataPipeline(requestHandler);
+        ConnectionManager.sanitizeDataPipeline();
 
         initCore();
 

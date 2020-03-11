@@ -1,9 +1,9 @@
 package moe.ofs.backend.request.server;
 
-import moe.ofs.backend.request.Handle;
-import moe.ofs.backend.request.Level;
+import moe.ofs.backend.domain.Handle;
+import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.request.Resolvable;
-import moe.ofs.backend.util.Logger;
+import moe.ofs.backend.logmanager.Logger;
 import moe.ofs.backend.request.RequestToServer;
 
 /**
