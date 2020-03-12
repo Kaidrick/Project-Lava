@@ -66,6 +66,7 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
 
         if(heartbeat == null) {
             heartbeat = new Thread(runnable);
+            heartbeat.setName("Heartbeat Signal Checker Thread");
             return heartbeat;
         } else {
             if(heartbeat.getState() == Thread.State.TERMINATED) {
