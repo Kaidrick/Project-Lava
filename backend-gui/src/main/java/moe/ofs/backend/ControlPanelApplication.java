@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import moe.ofs.backend.handlers.*;
+import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.util.HeartbeatThreadFactory;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -65,6 +66,8 @@ public class ControlPanelApplication extends Application {
         primaryStage.show();
 
 //         start background thread only if connect can be made
+//        RequestHandler.getInstance().setTrouble(true);
+
         Thread heartbeat = heartbeatThreadFactory.getHeartbeatThread();
         if(heartbeat != null) {
             heartbeat.start();
@@ -74,11 +77,6 @@ public class ControlPanelApplication extends Application {
     @Override
     public void stop() throws Exception {
         task.stop();
-        if(task.heartbeatSignalThread != null)
-            task.heartbeatSignalThread.interrupt();
-
-        // global stop flag
-        task.stopSign = true;
 
         ControlPanelShutdownObservable.invokeAll();
     }

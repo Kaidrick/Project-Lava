@@ -144,8 +144,6 @@ public class BackgroundTask implements PropertyChangeListener {
         }
     }
 
-    public boolean stopSign;
-
     public AtomicBoolean isHalted = new AtomicBoolean(false);
 
 
@@ -186,11 +184,8 @@ public class BackgroundTask implements PropertyChangeListener {
     };
     public Thread backgroundThread = new Thread(background);
 
-
-    public Thread heartbeatSignalThread;
-
-
     private boolean initialized;
+
     private void initCore() throws IOException {
         if(!initialized) {
 
@@ -220,8 +215,6 @@ public class BackgroundTask implements PropertyChangeListener {
                     unit -> Logger.log(String.format("Unit Despawn: %s (RuntimeID: %s) - %s Type",
                             unit.getUnitName(), unit.getRuntimeID(), unit.getName()));
             exportUnitDespawnObservable.register();
-
-
 
             initialized = true;
         } else {

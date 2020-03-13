@@ -1,6 +1,7 @@
 package moe.ofs.backend.util;
 
 import moe.ofs.backend.domain.Level;
+import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
 import moe.ofs.backend.request.FillerRequest;
 import moe.ofs.backend.request.RequestHandler;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,12 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
 
     private static Thread heartbeat;
 
+    private static boolean masterShutDown = false;
+
     public HeartbeatThreadFactory() {
+
+        ControlPanelShutdownObservable observable = () -> masterShutDown = true;
+        observable.register();
 
         // listen to RequestHandler property changes
         RequestHandler.getInstance().addPropertyChangeListener(this);
@@ -26,6 +32,10 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
             heartbeatActive = true;
 
             while(true) {
+
+                if(masterShutDown) {
+                    return;
+                }
 
                 if(isExportConnectionEstablished() && isServerConnectionEstablished()) {
                     // can connect, clear request handler trouble

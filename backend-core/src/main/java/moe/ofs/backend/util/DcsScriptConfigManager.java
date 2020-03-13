@@ -1,5 +1,9 @@
 package moe.ofs.backend.util;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import lombok.SneakyThrows;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,21 +24,26 @@ public class DcsScriptConfigManager {
     private static final Path TEST_DCS_VARIANT_PATH = Paths.get("DCS.openbeta_server");
     private static final Path SAVED_GAMES_PATH = Paths.get(System.getProperty("user.home")).resolve("Saved Games");
 
-    private static final Path HOOK_PATH = Paths.get("Scripts/Looks");
-    private static final Path TARGET_HOOK = Paths.get("ofsmizzzzz.lua");
+    private static final Path HOOK_PATH = Paths.get("Scripts/Hooks");
+    private static final Path TARGET_HOOK = Paths.get("ofsmiz.lua");
 
-    private static final Path TARGET_EXPORT = Paths.get("Scripts/Fxport.lua");
-    private static final Path TARGET_LAVA = Paths.get("Scripts/DCS-Kava.lua");
+    private static final Path TARGET_EXPORT = Paths.get("Scripts/Export.lua");
+    private static final Path TARGET_LAVA = Paths.get("Scripts/DCS-Lava.lua");
 
-    public void checkUserDcsWritePaths() throws IOException {
+    @SneakyThrows
+    public ObservableList<Path> getUserDcsWritePaths() {
+        ObservableList<Path> list = FXCollections.observableArrayList();
+
         Files.walk(SAVED_GAMES_PATH, 1)
-                .filter(p -> p.getFileName().toString().contains("DCS"))
+                .filter(p -> p.getFileName().toString().startsWith("DCS"))
+                // for populating gui drop menu
+                .forEach(list::add);
 
-                // populate gui drop menu
-                .forEach(System.out::println);
+        return list;
     }
 
-    public void injectIntoHooks(Path aWritePath) throws IOException {
+    @SneakyThrows
+    public void injectIntoHooks(Path aWritePath) {
         // check for Scripts/Hooks folder
         Path hooksPath = SAVED_GAMES_PATH.resolve(aWritePath).resolve(HOOK_PATH);
         Path target = Files.createDirectories(hooksPath).resolve(TARGET_HOOK);
@@ -48,17 +57,36 @@ public class DcsScriptConfigManager {
         }
     }
 
+    @SneakyThrows
     public boolean injectionConfigured(Path path) {
-        // check for existence of
-        return false;
+        // check for existence of Export.lua entry and hooks
+        Path hook = SAVED_GAMES_PATH.resolve(path).resolve(HOOK_PATH).resolve(TARGET_HOOK);
+        Path lava = SAVED_GAMES_PATH.resolve(path).resolve(TARGET_LAVA);
+        Path export = SAVED_GAMES_PATH.resolve(path).resolve(TARGET_EXPORT);
+
+        String hookRef = LuaScripts.load("inject/ofsmiz.lua");
+        String lavaRef = LuaScripts.load("inject/DCS-Lava.lua");
+        String exportRef = LuaScripts.load("inject/lava_decl.lua");
+
+        if(Files.exists(export) && Files.exists(lava) && Files.exists(hook)) {
+            String hookContent = String.join("\n", Files.readAllLines(hook));
+            String lavaContent = String.join("\n", Files.readAllLines(lava));
+            String exportContent = String.join("\n", Files.readAllLines(export));
+
+            return hookContent.equals(hookRef) && lavaContent.equals(lavaRef) && exportContent.contains(exportRef);
+        } else {
+            return false;
+        }
     }
 
-    public void backupOriginal(Path path) throws IOException {
+    @SneakyThrows
+    public void backupOriginal(Path path) {
         Path backupTarget = path.resolveSibling(path.getFileName() + ".bkp");
         Files.copy(path, backupTarget);
     }
 
-    public void removeInjection(Path path) throws IOException {
+    @SneakyThrows
+    public void removeInjection(Path path) {
         Path exportTarget = SAVED_GAMES_PATH.resolve(path).resolve(TARGET_EXPORT);
 
         List<String> lines = Files.readAllLines(exportTarget);
@@ -81,7 +109,8 @@ public class DcsScriptConfigManager {
             Files.delete(SAVED_GAMES_PATH.resolve(path).resolve(TARGET_LAVA));
     }
 
-    public void injectIntoExport(Path aWritePath) throws IOException {
+    @SneakyThrows
+    public void injectIntoExport(Path aWritePath) {
         // check if Export.lua exists
         Path exportTarget = SAVED_GAMES_PATH.resolve(aWritePath).resolve(TARGET_EXPORT);
         Path lavaTarget = SAVED_GAMES_PATH.resolve(aWritePath).resolve(TARGET_LAVA);
@@ -117,10 +146,14 @@ public class DcsScriptConfigManager {
 
     public static void main(String[] args) throws IOException {
         DcsScriptConfigManager manager = new DcsScriptConfigManager();
-//        manager.injectIntoHooks(TEST_DCS_VARIANT_PATH);
+        manager.injectIntoHooks(TEST_DCS_VARIANT_PATH);
 
-//        manager.injectIntoExport(TEST_DCS_VARIANT_PATH);
+        manager.injectIntoExport(TEST_DCS_VARIANT_PATH);
 
-        manager.removeInjection(TEST_DCS_VARIANT_PATH);
+        System.out.println(manager.injectionConfigured(TEST_DCS_VARIANT_PATH));
+
+//        manager.removeInjection(TEST_DCS_VARIANT_PATH);
+
+//        System.out.println(manager.injectionConfigured(TEST_DCS_VARIANT_PATH));
     }
 }

@@ -17,16 +17,20 @@ import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.PlayerEnterServerObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 import moe.ofs.backend.logmanager.LogAppendedEventHandler;
+import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.util.AirdromeDataCollector;
+import moe.ofs.backend.util.DcsScriptConfigManager;
 import moe.ofs.backend.util.LuaScripts;
 import org.controlsfx.control.StatusBar;
 import org.controlsfx.control.ToggleSwitch;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -52,6 +56,11 @@ public class MainController implements Initializable, PropertyChangeListener {
 
     @FXML private Label labelDebugInfo1;
     @FXML private Label labelDebugInfo2;
+
+    private Path selectedBranchPath;
+    @FXML private ComboBox<Path> comboBoxDcsBranchSelection;
+    @FXML private Button buttonExportAndHookConfig;
+    @FXML private Button buttonRemoveBackendConfigFile;
 
     private BackgroundTask backgroundTask;
 
@@ -111,13 +120,9 @@ public class MainController implements Initializable, PropertyChangeListener {
         radioLoadstringState.setSelected(true);
     }
 
-    @FXML public void setConnectionStatusBarText(String status) {
-        statusBar_Connection.setText(status);
-    }
-
-    // listen to property change of "started" in BackgrounTask
-    @FXML public void connectionStatusBarTextSwitch(boolean isStarted) {
-        if(isStarted) {
+    // listen to property change of "started" in BackgroundTask
+    @FXML public void connectionStatusBarTextSwitch(boolean trouble) {
+        if(!trouble) {
             Platform.runLater(() -> statusBar_Connection.setText("Connected"));
         } else {
             Platform.runLater(() -> statusBar_Connection.setText("Waiting for connection..."));
@@ -141,7 +146,6 @@ public class MainController implements Initializable, PropertyChangeListener {
     @FXML public void addPlayerToListView(PlayerInfo playerInfo) {
 //        if(playerInfo.getId() != 1)
         Platform.runLater(() -> listViewConnectedPlayer.getItems().addAll(playerInfo.getName()));
-
     }
 
     @FXML public void removePlayerFromListView(PlayerInfo playerInfo) {
@@ -158,8 +162,10 @@ public class MainController implements Initializable, PropertyChangeListener {
     public void initialize(URL location, ResourceBundle resources) {
         bundle = resources;
 
-        backgroundTask =  ControlPanelApplication.applicationContext.getBean(BackgroundTask.class);
-        backgroundTask.addPropertyChangeListener(this);
+//        backgroundTask =  ControlPanelApplication.applicationContext.getBean(BackgroundTask.class);
+//        backgroundTask.addPropertyChangeListener(this);
+
+        RequestHandler.getInstance().addPropertyChangeListener(this);
 
         // attach appendLog() to log append event handler
         LogAppendedEventHandler handler = this::appendLog;
@@ -185,11 +191,46 @@ public class MainController implements Initializable, PropertyChangeListener {
         listViewConnectedPlayer.setCellFactory(lv -> factory.listView(lv).getObject());
 
         populateLoadedPluginListView();
+
+        // populate dcs branch combobox
+        DcsScriptConfigManager manager = new DcsScriptConfigManager();
+        comboBoxDcsBranchSelection.setItems(manager.getUserDcsWritePaths());
+        comboBoxDcsBranchSelection.getSelectionModel().selectedItemProperty().addListener
+                ((observable, oldValue, newValue) -> {
+                    if(newValue != null) {
+                        buttonExportAndHookConfig.setDisable(false);
+                        // check if correctly configured
+                        if(manager.injectionConfigured(newValue.getFileName())) {
+                            buttonExportAndHookConfig.setText("Uninstall Scripts");
+                        } else {
+                            buttonExportAndHookConfig.setText("Install Scripts");
+                        }
+                    }
+                });
+
+        // config button
+        buttonExportAndHookConfig.setOnAction(event -> {
+            // get combobox selected item
+            Path branch = comboBoxDcsBranchSelection.getValue().getFileName();
+            System.out.println(branch.toString());
+            if(manager.injectionConfigured(branch)) {  // if configured, remove
+                manager.removeInjection(branch);
+            } else {  // if not configured, install
+                manager.injectIntoHooks(branch);
+                manager.injectIntoExport(branch);
+            }
+            // reset button text based on whether scripts are configured
+            if(manager.injectionConfigured(branch)) {
+                buttonExportAndHookConfig.setText("Uninstall Scripts");
+            } else {
+                buttonExportAndHookConfig.setText("Install Scripts");
+            }
+        });
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        if(propertyChangeEvent.getPropertyName().equals("started")) {
+        if(propertyChangeEvent.getPropertyName().equals("trouble")) {
             connectionStatusBarTextSwitch((boolean) propertyChangeEvent.getNewValue());
         }
     }
