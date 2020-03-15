@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Properties;
@@ -68,7 +69,12 @@ public interface Plugin {
         return strings[strings.length - 2];
     }
 
-    // read configuration xml from Saved Games Lava folder
+    /**
+     * Read configuration xml from Saved Games Lava folder
+     * If such xml config file does not exist for this addon, throw a new NoSuchFileException
+     * @param key config key
+     * @return value corresponding to the config key
+     */
     @SneakyThrows
     default String readConfiguration(String key) {
         Path configXmlPath = configPath.resolve(getName() + ".xml");
@@ -81,7 +87,7 @@ public interface Plugin {
                 return properties.getProperty(key);
             }
         } else {  // else write to file directly
-            throw new RuntimeException("Unable to locale XML config file for addon \"" + getName() + "\"");
+            throw new NoSuchFileException("Unable to locale XML config file for addon \"" + getName() + "\"");
         }
     }
 
@@ -147,6 +153,26 @@ public interface Plugin {
         }
     }
 
+    /**
+     * Read enabled property from the config xml for the this addon.
+     * If there is no config xml file for this plugin, create new xml and write property enabled to with value of false.
+     * If there is no such property as "enabled", write this property with value of "false" to initialize its state.
+     * @return boolean value indicating whether enabled property string is set to true
+     */
+    default boolean isEnabled() {
+        if(xmlConfigExists()) {
+            String value = readConfiguration("enabled");
+            if(value == null) {
+                writeConfiguration("enabled", "false");
+                return false;
+            } else {
+                return Boolean.parseBoolean(value);
+            }
+        } else {
+            writeConfiguration("enabled", "false");
+            return false;
+        }
+    }
 
     /**
      * Used to check whether a xml file corresponding to this plugin exists.

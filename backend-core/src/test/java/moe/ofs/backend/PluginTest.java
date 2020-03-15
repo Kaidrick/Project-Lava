@@ -13,7 +13,7 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PluginTest {
 
@@ -126,5 +126,12 @@ class PluginTest {
     @Test
     void xmlConfigExists() {
         assertEquals(Files.exists(Plugin.configPath.resolve(testPlugin.getName())), testPlugin.xmlConfigExists());
+    }
+
+    @Test
+    void testIsEnabled() {
+        assertFalse(testPlugin.isEnabled());
+        testPlugin.writeConfiguration("enabled", "true");
+        assertTrue(testPlugin.isEnabled());
     }
 }
