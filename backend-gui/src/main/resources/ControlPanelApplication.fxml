@@ -19,7 +19,7 @@
 <?import org.controlsfx.control.StatusBar?>
 <?import org.controlsfx.control.ToggleSwitch?>
 
-<VBox prefHeight="800.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="moe.ofs.backend.MainController">
+<VBox prefHeight="800.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="moe.ofs.backend.controllers.MainController">
   <children>
       <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <tabs>

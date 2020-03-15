@@ -1,4 +1,4 @@
-package moe.ofs.backend;
+package moe.ofs.backend.controllers;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -10,6 +10,10 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import jfxtras.styles.jmetro.JMetroStyleClass;
+import moe.ofs.backend.BackgroundTask;
+import moe.ofs.backend.ControlPanelApplication;
+import moe.ofs.backend.Plugin;
+import moe.ofs.backend.PluginClassLoader;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.gui.PlayerListCellFactory;
 import moe.ofs.backend.gui.PluginListCell;
@@ -28,7 +32,6 @@ import org.controlsfx.control.ToggleSwitch;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.HashSet;

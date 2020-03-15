@@ -21,8 +21,9 @@ import java.util.stream.Collectors;
  */
 public class DcsScriptConfigManager {
 
-    private static final Path TEST_DCS_VARIANT_PATH = Paths.get("DCS.openbeta_server");
-    private static final Path SAVED_GAMES_PATH = Paths.get(System.getProperty("user.home")).resolve("Saved Games");
+    public static final Path TEST_DCS_VARIANT_PATH = Paths.get("DCS.openbeta_server");
+    public static final Path SAVED_GAMES_PATH = Paths.get(System.getProperty("user.home")).resolve("Saved Games");
+    public static final Path LAVA_DATA_PATH = SAVED_GAMES_PATH.resolve("Lava");
 
     private static final Path HOOK_PATH = Paths.get("Scripts/Hooks");
     private static final Path TARGET_HOOK = Paths.get("ofsmiz.lua");

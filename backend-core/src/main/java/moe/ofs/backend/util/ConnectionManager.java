@@ -12,12 +12,19 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Connection Manager class represents a collection of methods that can be used to deal with connection with dcs server.
+ * It also holds a reference to singleton RequestHandler which handles all request sent to server
+ */
 public class ConnectionManager {
 
     private static final Gson gson = new Gson();
 
     private static RequestHandler requestHandler = RequestHandler.getInstance();
 
+    /**
+     * use to sanitize remaining data on lua side after backend restart
+     */
     public static void sanitizeDataPipeline() {
         new FillerRequest(Level.SERVER).send();
         new FillerRequest(Level.SERVER_POLL).send();
@@ -27,12 +34,22 @@ public class ConnectionManager {
         RequestHandler.getInstance().transmitAndReceive();
     }
 
+    /**
+     * pack a single base request into a container ready to sent to dcs server as a json data array.
+     * @param request an instance of BaseRequest.
+     * @return String value of the final json string to be sent.
+     */
     public static String fastPack(BaseRequest request) {
         List<JsonRpcRequest> container = new ArrayList<>();
         container.add(request.toJsonRpcCall());
         return gson.toJson(container);
     }
 
+    /**
+     * pack a single BaseRequest into a container and check if is request has a response from server.
+     * @param request an instance of BaseRequest.
+     * @return boolean value indicating whether server responds to this request.
+     */
     public static boolean fastPackThenSendAndCheck(BaseRequest request) {
         try {
             return requestHandler.sendAndGet(request.getPort(), fastPack(request)) != null;
@@ -42,10 +59,22 @@ public class ConnectionManager {
         }
     }
 
+    /**
+     * pack a single BaseRequest into a container and get result from dcs lua server.
+     * @param request an instance of BaseRequest
+     * @return A JSON string representing the result of this request
+     * @throws IOException if tcp connection fails
+     */
     public static String fastPackThenSendAndGet(BaseRequest request) throws IOException {
         return requestHandler.sendAndGet(request.getPort(), fastPack(request));
     }
 
+    /**
+     * This method extract a List of Response result from parsed Json String object
+     * @param jsonRpcResponseList an instance of JsonPrcResponse class.
+     * @param <T> Generic Type of the object the result data to be convert into.
+     * @return List of said generic type.
+     */
     public static <T> List<T> flattenResponse(List<JsonRpcResponse<List<T>>> jsonRpcResponseList) {
         return jsonRpcResponseList.stream()
                 .flatMap(r -> r.getResult().getData().stream()).collect(Collectors.toList());

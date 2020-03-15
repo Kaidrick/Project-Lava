@@ -8,11 +8,9 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
-import moe.ofs.backend.handlers.*;
-import moe.ofs.backend.request.RequestHandler;
+import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
 import moe.ofs.backend.util.HeartbeatThreadFactory;
 import org.springframework.context.ConfigurableApplicationContext;
-
 
 import java.util.Locale;
 import java.util.Objects;
