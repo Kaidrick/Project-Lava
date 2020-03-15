@@ -68,7 +68,7 @@ public class StaticDisplay implements Plugin {
     @PostConstruct
     public void init() {
         System.out.println("Static Display plugin bean constructed..register");
-        register();
+        Plugin.super.init();
         PluginClassLoader.loadedPluginSet.add(this);
     }
 
@@ -92,6 +92,8 @@ public class StaticDisplay implements Plugin {
         playerLeaveServerObservable.register();
 
         isLoaded = true;
+
+        writeConfiguration("enabled", "true");
     }
 
     @Override
@@ -103,6 +105,8 @@ public class StaticDisplay implements Plugin {
         cleanStaticDisplay();
 
         isLoaded = false;
+
+        writeConfiguration("enabled", "false");
     }
 
     @Override

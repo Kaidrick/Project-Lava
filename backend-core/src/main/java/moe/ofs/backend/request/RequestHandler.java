@@ -1,6 +1,7 @@
 package moe.ofs.backend.request;
 
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.util.ConnectionManager;
 
 import java.beans.PropertyChangeListener;
@@ -9,6 +10,7 @@ import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
  *
  */
 
+@Slf4j
 public final class RequestHandler {
     //
 //    private List<BaseRequest> waitList = new CopyOnWriteArrayList<>();
@@ -71,12 +74,19 @@ public final class RequestHandler {
         return trouble.get();
     }
 
-    public void setTrouble(boolean trouble) {
 
-        support.firePropertyChange("trouble", this.trouble, trouble);
+    /**
+     * Trigger property change if and only if value changes.
+     * @param trouble a boolean value indicating whether there is a trouble in connecting to DCS lua server.
+     */
+    public synchronized void setTrouble(boolean trouble) {
+        if(this.trouble.get() != trouble) {
+            log.warn(trouble ? "SocketException occurs: Failed to send request(s); set trouble flag to true"
+                    : "Connection Established: set trouble flag to false");
+            support.firePropertyChange("trouble", this.trouble, trouble);
+        }
 
         this.trouble.set(trouble);
-
     }
 
     // if exception is thrown here, try reconnect: check if connection can be made
@@ -100,7 +110,7 @@ public final class RequestHandler {
 
             // triggers background task stop
             setTrouble(true);
-            System.out.println("Trouble in RequestHandler");
+            System.out.println("Trouble in RequestHandler " + LocalDateTime.now());
 
         }
         return s;

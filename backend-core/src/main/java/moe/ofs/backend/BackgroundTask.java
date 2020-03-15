@@ -1,5 +1,6 @@
 package moe.ofs.backend;
 
+import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.handlers.*;
 import moe.ofs.backend.logmanager.Logger;
@@ -28,6 +29,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
 @Component
 public class BackgroundTask implements PropertyChangeListener {
 
@@ -129,9 +131,6 @@ public class BackgroundTask implements PropertyChangeListener {
 
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-
-        System.out.println(propertyChangeEvent);
-
         if(propertyChangeEvent.getPropertyName().equals("trouble")) {
 
             if((boolean) propertyChangeEvent.getNewValue()) {
@@ -218,7 +217,7 @@ public class BackgroundTask implements PropertyChangeListener {
 
             initialized = true;
         } else {
-            System.out.println("Already Initialized in last session");
+            log.info("TODO --> Already Initialized in last session");
         }
     }
 
@@ -231,6 +230,7 @@ public class BackgroundTask implements PropertyChangeListener {
 
         initCore();
 
+        log.info("Initializing data services");
         // dispose obsolete data if any
         flyableUnitService.dispose();
         parkingInfoService.dispose();
@@ -243,7 +243,7 @@ public class BackgroundTask implements PropertyChangeListener {
 
         isHalted.set(false);
 
-        System.out.println("Starting background tasks");
+        log.info("Starting background tasks and services");
 
         exportObjectPollService.init();
         playerInfoPollService.init();

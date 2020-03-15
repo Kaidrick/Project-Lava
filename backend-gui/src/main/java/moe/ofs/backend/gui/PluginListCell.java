@@ -27,7 +27,7 @@ public class PluginListCell extends ListCell<String> {
 
     private void switchPluginLoadState() {
         // get the loaded instance of the plugin
-        if(plugin.isLoaded()) {
+        if(plugin.isEnabled()) {
             plugin.unregister();
             System.out.println(getItem() + " unregistered");
             controlButton.setText("Enable");
@@ -61,7 +61,7 @@ public class PluginListCell extends ListCell<String> {
                     .orElseThrow(() -> new RuntimeException("Plugin Does Not Exist"));
 
             label.setText(item);
-            controlButton.setText(plugin.isLoaded() ? "Disable" : "Enable");
+            controlButton.setText(plugin.isEnabled() ? "Disable" : "Enable");
             desc.setText(plugin.getDescription());
             setGraphic(hbox);
         }

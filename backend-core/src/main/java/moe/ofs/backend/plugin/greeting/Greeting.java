@@ -38,9 +38,10 @@ public class Greeting implements Plugin {
     }
 
     @PostConstruct
+    @Override
     public void init() {
         System.out.println("Greeting plugin bean constructed...register");
-        register();
+        Plugin.super.init();
         PluginClassLoader.loadedPluginSet.add(this);
     }
 
@@ -49,12 +50,14 @@ public class Greeting implements Plugin {
         exportUnitSpawnObservable = this::greet;
         exportUnitSpawnObservable.register();
         isLoaded = true;
+        writeConfiguration("enabled", "true");
     }
 
     @Override
     public void unregister() {
         exportUnitSpawnObservable.unregister();
         isLoaded = false;
+        writeConfiguration("enabled", "false");
     }
 
     @Override

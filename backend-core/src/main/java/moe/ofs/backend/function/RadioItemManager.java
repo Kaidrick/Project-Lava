@@ -2,6 +2,7 @@ package moe.ofs.backend.function;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
@@ -19,6 +20,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class RadioItemManager {
 
@@ -58,8 +60,6 @@ public class RadioItemManager {
 
     @PostConstruct
     public void init() {
-        System.out.println("Init RadioItemManager instance...");
-
         missionStartObservable = this::setUp;
         missionStartObservable.register();
 
@@ -68,6 +68,8 @@ public class RadioItemManager {
 
         controlPanelShutdownObservable = this::tearDown;
         controlPanelShutdownObservable.register();
+
+        log.info("Initialized RadioItemManager");
     }
 
     // should only be set up once

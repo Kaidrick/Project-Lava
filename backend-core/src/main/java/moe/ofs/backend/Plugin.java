@@ -9,13 +9,17 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Marking interface
  */
 public interface Plugin {
+
+    Set<Plugin> loadedPlugins = new HashSet<>();
 
     Path configPath = DcsScriptConfigManager.LAVA_DATA_PATH.resolve("config");
 
@@ -67,6 +71,19 @@ public interface Plugin {
     default String getIdent() {
         String[] strings = getClass().getCanonicalName().split("\\.");
         return strings[strings.length - 2];
+    }
+
+    /**
+     * Load the addon. If addon needs to save config xml and add additional data loading behaviors,
+     * it should override this method and call Plugin.super.init() method.
+     * If
+     */
+    default void init() {
+        if(isEnabled()) {
+            register();
+            writeConfiguration("enabled", "true");
+        }
+        loadedPlugins.add(this);
     }
 
     /**

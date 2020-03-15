@@ -36,7 +36,7 @@ public class DcsScriptConfigManager {
         ObservableList<Path> list = FXCollections.observableArrayList();
 
         Files.walk(SAVED_GAMES_PATH, 1)
-                .filter(p -> p.getFileName().toString().startsWith("DCS"))
+                .filter(p -> p.getFileName().toString().startsWith("DCS.") || p.getFileName().toString().equals("DCS"))
                 // for populating gui drop menu
                 .forEach(list::add);
 

@@ -1,5 +1,6 @@
 package moe.ofs.backend.util;
 
+import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
 import moe.ofs.backend.request.FillerRequest;
@@ -9,17 +10,21 @@ import org.springframework.stereotype.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
 @Component
 public final class HeartbeatThreadFactory implements PropertyChangeListener {
 
-    public static boolean heartbeatActive;
+    public static AtomicBoolean heartbeatActive;
 
     private static Thread heartbeat;
 
     private static boolean masterShutDown = false;
 
     public HeartbeatThreadFactory() {
+
+        heartbeatActive = new AtomicBoolean(false);
 
         ControlPanelShutdownObservable observable = () -> masterShutDown = true;
         observable.register();
@@ -29,7 +34,7 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
 
         runnable = () -> {
 
-            heartbeatActive = true;
+            heartbeatActive.set(true);
 
             while(true) {
 
@@ -47,7 +52,7 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
                 }
             }
 
-            heartbeatActive = false;
+            heartbeatActive.set(false);
 
         };
     }
@@ -76,7 +81,7 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
 
         if(heartbeat == null) {
             heartbeat = new Thread(runnable);
-            heartbeat.setName("Heartbeat Signal Checker Thread");
+            heartbeat.setName("conn checker");
             return heartbeat;
         } else {
             if(heartbeat.getState() == Thread.State.TERMINATED) {
@@ -93,14 +98,14 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
         if(propertyChangeEvent.getPropertyName().equals("trouble")) {
             if((boolean) propertyChangeEvent.getNewValue()) {
                 // trouble, start heartbeat
-                if(!heartbeatActive) {
-                    System.out.println("Starting heartbeat check...");
+                if(!heartbeatActive.get()) {
                     Objects.requireNonNull(getHeartbeatThread()).start();
+                    log.info("Started Heartbeat Signal check thread");
                 }
             } else {
                 // no trouble, stop heartbeat
-                System.out.println("Stopping heartbeat check...");
                 heartbeat.interrupt();
+                log.info("Interrupted Heartbeat Signal check thread");
             }
         }
     }

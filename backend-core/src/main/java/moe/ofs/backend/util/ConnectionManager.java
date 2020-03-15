@@ -94,7 +94,17 @@ public class ConnectionManager {
                 TypeToken.getParameterized(JsonRpcResponse.class, targetClass).getType()).getType();
 
         // TODO -> why? java.lang.IllegalStateException: Expected a string but was BEGIN_ARRAY at line 1 column 81 path $[0].result.data
-        return gson.fromJson(jsonString, jsonRpcResponseListType);
+
+        List<JsonRpcResponse<T>> test;
+        try {
+            test = gson.fromJson(jsonString, jsonRpcResponseListType);
+            return test;
+        } catch (IllegalStateException e) {
+            System.err.println("jsonString = " + jsonString);
+            e.printStackTrace();
+
+            return null;
+        }
     }
 
     public static <T> List<JsonRpcResponse<List<T>>> parseJsonResponse(String jsonString, Class<T> targetClass) {
