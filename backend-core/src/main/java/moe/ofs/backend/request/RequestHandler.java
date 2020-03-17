@@ -58,6 +58,7 @@ public final class RequestHandler implements PropertyChangeListener {
         if(instance == null) {
             instance = new RequestHandler();
 
+            instance.portMap = ConnectionManager.getInstance().getPortOverrideMap();
             ConnectionManager.getInstance().addPropertyChangeListener(instance);
         }
         return instance;
@@ -109,6 +110,11 @@ public final class RequestHandler implements PropertyChangeListener {
      */
     public String sendAndGet(int port, String jsonString) throws IOException {
 
+        if(port == 3011 || port == 3010 || port == 3012 || port == 3013) {
+            System.out.println(ConnectionManager.getInstance().getPortOverrideMap());
+            System.out.println(jsonString);
+        }
+
         String s = null;
         try (Socket socket = new Socket("127.0.0.1", port);
              DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
@@ -125,6 +131,7 @@ public final class RequestHandler implements PropertyChangeListener {
         } catch (SocketException e) {
 
             // triggers background task stop
+            System.out.println("trouble port -> " + port);
             setTrouble(true);
             System.out.println("Trouble in RequestHandler " + LocalDateTime.now());
 
@@ -170,6 +177,7 @@ public final class RequestHandler implements PropertyChangeListener {
                 String json = gson.toJson(queue);
 //                if(!json.equals("[]"))
 //                    System.out.println(json);
+
 
                 String responseJsonString;
                 if(portMap.get(level) != null) {
