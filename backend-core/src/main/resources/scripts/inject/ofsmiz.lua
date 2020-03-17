@@ -10,8 +10,8 @@ local JSON = require("JSON")
 local ofsmiz = {}
 
 -- Constants
-local PORT = PORT or 3010
-local POLL_PORT = POLL_PORT or 3011
+local PORT = PORT or %d
+local POLL_PORT = POLL_PORT or %d
 local REACT_PORT = REACT_PORT or 3009  -- dedicated for radio command pulling
 
 local DATA_TIMEOUT_SEC = 0.001

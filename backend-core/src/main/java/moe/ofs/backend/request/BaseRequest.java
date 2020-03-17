@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 public abstract class BaseRequest {
 
     protected int port;
+    protected Level level;
     protected Handle handle;
     protected List<Object> params = new ArrayList<>();
     protected UUID uuid;
@@ -28,12 +29,17 @@ public abstract class BaseRequest {
     }
 
     public BaseRequest(Level level) {
+        this.level = level;
         this.port = level.getPort();
         this.uuid = UUID.randomUUID();
     }
 
     public int getPort() {
         return port;
+    }
+
+    public Level getLevel() {
+        return level;
     }
 
     public String getUuid() {

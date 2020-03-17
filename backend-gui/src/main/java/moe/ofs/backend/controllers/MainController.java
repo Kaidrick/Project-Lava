@@ -60,11 +60,6 @@ public class MainController implements Initializable, PropertyChangeListener {
     @FXML private Label labelDebugInfo1;
     @FXML private Label labelDebugInfo2;
 
-    private Path selectedBranchPath;
-    @FXML private ComboBox<Path> comboBoxDcsBranchSelection;
-    @FXML private Button buttonExportAndHookConfig;
-    @FXML private Button buttonRemoveBackendConfigFile;
-
     private BackgroundTask backgroundTask;
 
     @FXML public void setDebugLabelTextOne(String info) {
@@ -165,8 +160,6 @@ public class MainController implements Initializable, PropertyChangeListener {
     public void initialize(URL location, ResourceBundle resources) {
         bundle = resources;
 
-//        backgroundTask =  ControlPanelApplication.applicationContext.getBean(BackgroundTask.class);
-//        backgroundTask.addPropertyChangeListener(this);
 
         RequestHandler.getInstance().addPropertyChangeListener(this);
 
@@ -194,41 +187,6 @@ public class MainController implements Initializable, PropertyChangeListener {
         listViewConnectedPlayer.setCellFactory(lv -> factory.listView(lv).getObject());
 
         populateLoadedPluginListView();
-
-        // populate dcs branch combobox
-        DcsScriptConfigManager manager = new DcsScriptConfigManager();
-        comboBoxDcsBranchSelection.setItems(manager.getUserDcsWritePaths());
-        comboBoxDcsBranchSelection.getSelectionModel().selectedItemProperty().addListener
-                ((observable, oldValue, newValue) -> {
-                    if(newValue != null) {
-                        buttonExportAndHookConfig.setDisable(false);
-                        // check if correctly configured
-                        if(manager.injectionConfigured(newValue.getFileName())) {
-                            buttonExportAndHookConfig.setText("Uninstall Scripts");
-                        } else {
-                            buttonExportAndHookConfig.setText("Install Scripts");
-                        }
-                    }
-                });
-
-        // config button
-        buttonExportAndHookConfig.setOnAction(event -> {
-            // get combobox selected item
-            Path branch = comboBoxDcsBranchSelection.getValue().getFileName();
-            System.out.println(branch.toString());
-            if(manager.injectionConfigured(branch)) {  // if configured, remove
-                manager.removeInjection(branch);
-            } else {  // if not configured, install
-                manager.injectIntoHooks(branch);
-                manager.injectIntoExport(branch);
-            }
-            // reset button text based on whether scripts are configured
-            if(manager.injectionConfigured(branch)) {
-                buttonExportAndHookConfig.setText("Uninstall Scripts");
-            } else {
-                buttonExportAndHookConfig.setText("Install Scripts");
-            }
-        });
     }
 
     @Override

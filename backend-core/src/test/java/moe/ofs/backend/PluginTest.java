@@ -58,7 +58,7 @@ class PluginTest {
                 return false;
             }
         };
-        testPluginXmlPath = Plugin.configPath.resolve(testPlugin.getName() + ".xml");
+        testPluginXmlPath = Configurable.configPath.resolve(testPlugin.getName() + ".xml");
     }
 
     @AfterEach
@@ -83,7 +83,7 @@ class PluginTest {
 
         testPlugin.writeConfiguration(configKeyValueMap);
         // check size
-        try(InputStream inputStream = Files.newInputStream(Plugin.configPath.resolve(testPluginXmlPath))) {
+        try(InputStream inputStream = Files.newInputStream(Configurable.configPath.resolve(testPluginXmlPath))) {
             Properties properties = new Properties();
             properties.loadFromXML(inputStream);
             assertEquals(3, properties.size());
@@ -125,7 +125,7 @@ class PluginTest {
 
     @Test
     void xmlConfigExists() {
-        assertEquals(Files.exists(Plugin.configPath.resolve(testPlugin.getName())), testPlugin.xmlConfigExists());
+        assertEquals(Files.exists(Configurable.configPath.resolve(testPlugin.getName())), testPlugin.xmlConfigExists());
     }
 
     @Test

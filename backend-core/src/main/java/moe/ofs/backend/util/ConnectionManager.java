@@ -2,30 +2,98 @@ package moe.ofs.backend.util;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.Configurable;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.request.*;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
  * Connection Manager class represents a collection of methods that can be used to deal with connection with dcs server.
- * It also holds a reference to singleton RequestHandler which handles all request sent to server
+ * It also holds a reference to singleton RequestHandler which handles all request sent to server.
+ *
+ * TCP ports used to make connections to DCS Lua server can be changed and saved to an XML file
+ * utilizing Configurable interface.
  */
-public class ConnectionManager {
+
+@Slf4j
+public class ConnectionManager implements Configurable {
 
     private static final Gson gson = new Gson();
 
     private static RequestHandler requestHandler = RequestHandler.getInstance();
 
+    private static ConnectionManager instance;
+
+    private Map<Level, Integer> portOverrideMap = new HashMap<>();
+
+    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
+    public Map<Level, Integer> getPortOverrideMap() {
+        return portOverrideMap;
+    }
+
+    public void setPortOverrideMap(Map<Level, Integer> portOverrideMap) {
+        this.portOverrideMap = portOverrideMap;
+    }
+
+    public static synchronized ConnectionManager getInstance() {
+        if(instance == null) {
+            instance = new ConnectionManager();
+            instance.refreshConfig();
+        }
+        return instance;
+    }
+
+    // property change listener
+    public void addPropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
+        propertyChangeSupport.removePropertyChangeListener(listener);
+    }
+
+    public void refreshConfig() {
+        if(xmlConfigExists()) {
+            portOverrideMap
+                    .put(Level.EXPORT, Integer.parseInt(readConfiguration("EXPORT")));
+            portOverrideMap
+                    .put(Level.EXPORT_POLL, Integer.parseInt(readConfiguration("EXPORT_POLL")));
+            portOverrideMap
+                    .put(Level.SERVER, Integer.parseInt(readConfiguration("SERVER")));
+            portOverrideMap
+                    .put(Level.SERVER_POLL, Integer.parseInt(readConfiguration("SERVER_POLL")));
+        }
+    }
+
+    @Override
+    public void writeConfiguration(Map<String, String> map) {
+        Configurable.super.writeConfiguration(map);
+
+        refreshConfig();
+        Map<Level, Integer> newValue = portOverrideMap;
+        propertyChangeSupport.firePropertyChange("portOverrideMap", null, newValue);
+    }
+
+    @Override
+    public String getName() {
+        return "tcp_ports";
+    }
+
     /**
      * use to sanitize remaining data on lua side after backend restart
      */
     public static void sanitizeDataPipeline() {
+
         new FillerRequest(Level.SERVER).send();
         new FillerRequest(Level.SERVER_POLL).send();
         new FillerRequest(Level.EXPORT).send();
@@ -51,8 +119,16 @@ public class ConnectionManager {
      * @return boolean value indicating whether server responds to this request.
      */
     public static boolean fastPackThenSendAndCheck(BaseRequest request) {
+        int port;
+        Integer portOverridden = ConnectionManager.getInstance().portOverrideMap.get(request.getLevel());
+        if(portOverridden != null) {
+            port = portOverridden;
+        } else {
+            port = request.getPort();
+        }
+
         try {
-            return requestHandler.sendAndGet(request.getPort(), fastPack(request)) != null;
+            return requestHandler.sendAndGet(port, fastPack(request)) != null;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -66,7 +142,15 @@ public class ConnectionManager {
      * @throws IOException if tcp connection fails
      */
     public static String fastPackThenSendAndGet(BaseRequest request) throws IOException {
-        return requestHandler.sendAndGet(request.getPort(), fastPack(request));
+        int port;
+        Integer portOverridden = ConnectionManager.getInstance().portOverrideMap.get(request.getLevel());
+        if(portOverridden != null) {
+            port = portOverridden;
+        } else {
+            port = request.getPort();
+        }
+
+        return requestHandler.sendAndGet(port, fastPack(request));
     }
 
     /**
@@ -99,8 +183,8 @@ public class ConnectionManager {
         try {
             test = gson.fromJson(jsonString, jsonRpcResponseListType);
             return test;
-        } catch (IllegalStateException e) {
-            System.err.println("jsonString = " + jsonString);
+        } catch (Exception e) {
+            log.error("jsonString = " + jsonString);
             e.printStackTrace();
 
             return null;
@@ -123,4 +207,6 @@ public class ConnectionManager {
 //
 //        return gson.fromJson(jsonString, jsonRpcResponseListType);
     }
+
+
 }

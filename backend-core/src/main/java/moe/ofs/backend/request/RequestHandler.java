@@ -2,8 +2,10 @@ package moe.ofs.backend.request;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.util.ConnectionManager;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.*;
@@ -29,9 +31,12 @@ import java.util.stream.Collectors;
  */
 
 @Slf4j
-public final class RequestHandler {
+public final class RequestHandler implements PropertyChangeListener {
     //
 //    private List<BaseRequest> waitList = new CopyOnWriteArrayList<>();
+
+    private Map<Level, Integer> portMap = new HashMap<>();
+
     private Map<String, BaseRequest> waitMap = new HashMap<>();
     private volatile BlockingQueue<BaseRequest> sendQueue = new LinkedBlockingQueue<>();
 
@@ -52,6 +57,8 @@ public final class RequestHandler {
         // check if exists
         if(instance == null) {
             instance = new RequestHandler();
+
+            ConnectionManager.getInstance().addPropertyChangeListener(instance);
         }
         return instance;
     }
@@ -91,6 +98,15 @@ public final class RequestHandler {
 
     // if exception is thrown here, try reconnect: check if connection can be made
     // if so, restart backend
+
+    /**
+     * If directly calling sendAndGet() method without going through standard transmission cycle,
+     * the caller should check port overridden before send json to comply with potential port changes by user
+     * @param port number of tcp port on which json string will be sent
+     * @param jsonString the Json String to be sent to DCS Lua server
+     * @return a response json string from DCS Lua server
+     * @throws IOException if connection cannot be established with server
+     */
     public String sendAndGet(int port, String jsonString) throws IOException {
 
         String s = null;
@@ -142,12 +158,12 @@ public final class RequestHandler {
             sendQueue.poll();
         }
 
-        Map<Integer, List<JsonRpcRequest>> splitQueue = transmissionQueue.stream()
-                .collect(Collectors.groupingBy(BaseRequest::getPort,
+        Map<Level, List<JsonRpcRequest>> splitQueue = transmissionQueue.stream()
+                .collect(Collectors.groupingBy(BaseRequest::getLevel,
                         Collectors.mapping(BaseRequest::toJsonRpcCall, Collectors.toList())));
 
         // only add to wait map if result is definitely needed
-        splitQueue.forEach((port, queue) -> {
+        splitQueue.forEach((level, queue) -> {
             transmissionQueue.stream().filter(r -> r instanceof Resolvable).forEach(r -> waitMap.put(r.getUuid(), r));
 
             try {
@@ -155,7 +171,12 @@ public final class RequestHandler {
 //                if(!json.equals("[]"))
 //                    System.out.println(json);
 
-                String s = sendAndGet(port, json);
+                String responseJsonString;
+                if(portMap.get(level) != null) {
+                    responseJsonString = sendAndGet(portMap.get(level), json);
+                } else {
+                    responseJsonString = sendAndGet(level.getPort(), json);
+                }
 
 //                if(!s.equals("[]"))
 //                    System.out.println(s);
@@ -165,7 +186,7 @@ public final class RequestHandler {
                 // with a tag attribute with uuid of the result
 
                 List<JsonRpcResponse<String>> jsonRpcResponseList =
-                        ConnectionManager.parseJsonResponseToRaw(s, String.class);
+                        ConnectionManager.parseJsonResponseToRaw(responseJsonString, String.class);
 
 
                 // what is the use of wait map here?
@@ -194,4 +215,15 @@ public final class RequestHandler {
 
     }
 
+    /**
+     * Listen to property change of "portOverrideMap" in ConnectionManager
+     * @param propertyChangeEvent
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
+        if(propertyChangeEvent.getPropertyName().equals("portOverrideMap")) {
+            portMap = (Map<Level, Integer>) propertyChangeEvent.getNewValue();
+        }
+    }
 }

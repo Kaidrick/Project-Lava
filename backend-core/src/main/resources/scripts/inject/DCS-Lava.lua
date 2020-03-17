@@ -9,8 +9,8 @@ local socket = require("socket")
 local JSON = require("JSON")
 
 -- Constants
-local PORT = PORT or 3012
-local POLL_PORT = POLL_PORT or 3013
+local PORT = PORT or %d
+local POLL_PORT = POLL_PORT or %d
 
 local DATA_TIMEOUT_SEC = 0.001
 
