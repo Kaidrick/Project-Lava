@@ -30,4 +30,8 @@ public class Message {
     public int getWaitNextMessage() {
         return interval + duration;
     }
+
+    public String toString() {
+        return content;
+    }
 }

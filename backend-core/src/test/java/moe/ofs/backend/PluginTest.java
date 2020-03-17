@@ -27,7 +27,7 @@ class PluginTest {
     void setUp() {
         // init map
         configKeyValueMap = Stream.of(new String[][] {
-                { "motd_ge", "Guten tag!" },
+                { "motd_de", "Guten tag!" },
                 { "motd_cn", "中文字符测试！" },
         }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 

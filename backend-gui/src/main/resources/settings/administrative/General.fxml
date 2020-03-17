@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="moe.ofs.backend.controllers.settings.administrative.General">
+    <VBox spacing="10.0">
+        <children>
+            <Label text="Administrative Information" underline="true" />
+            <TabPane tabClosingPolicy="UNAVAILABLE">
+                <tabs>
+                    <Tab text="Server Admin">
+                        <content>
+                            <AnchorPane>
+                                <children>
+                                    <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                        <children>
+                                            <ListView />
+                                            <VBox spacing="5.0">
+                                                <children>
+                                                    <Button mnemonicParsing="false" text="Add" />
+                                                    <Button mnemonicParsing="false" text="Remove" />
+                                                </children>
+                                            </VBox>
+                                        </children>
+                                    </HBox>
+                                </children>
+                            </AnchorPane>
+                        </content>
+                    </Tab>
+                    <Tab text="General Information">
+                        <content>
+                            <AnchorPane>
+                                <children>
+                                    <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                        <children>
+                                            <ListView fx:id="listViewGeneralInfo" />
+                                            <VBox spacing="5.0">
+                                                <children>
+                                                    <Button fx:id="buttonGeneralAdd" mnemonicParsing="false" onAction="#addGeneralMessageOnClick" text="Add" />
+                                                    <Button fx:id="buttonGeneralRemove" mnemonicParsing="false" onAction="#removeGeneralMessageOnClick" text="Remove" />
+                                                    <Button fx:id="buttonGeneralMoveUp" mnemonicParsing="false" onAction="#moveUpGeneralMessageOnClick" text="Move Up" />
+                                                    <Button fx:id="buttonGeneralMoveDown" mnemonicParsing="false" onAction="#moveDownGeneralMessageOnClick" text="Move Down" />
+                                                </children>
+                                            </VBox>
+                                        </children>
+                                    </HBox>
+                                </children>
+                            </AnchorPane>
+                        </content>
+                    </Tab>
+                </tabs>
+            </TabPane>
+        </children>
+    </VBox>
+</AnchorPane>
