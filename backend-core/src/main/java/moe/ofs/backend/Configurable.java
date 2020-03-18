@@ -3,8 +3,7 @@ package moe.ofs.backend;
 import lombok.SneakyThrows;
 import moe.ofs.backend.util.DcsScriptConfigManager;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -128,5 +127,27 @@ public interface Configurable {
      */
     default boolean xmlConfigExists() {
         return Files.exists(configPath.resolve(getName() + ".xml"));
+    }
+
+    @SneakyThrows
+    default <T extends Serializable> void writeFile(T object) {
+        Path configFilePath = configPath.resolve(getName() + ".data");
+        FileOutputStream fileOutputStream = new FileOutputStream(configFilePath.toFile());
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+        objectOutputStream.writeObject(object);
+        objectOutputStream.close();
+    }
+
+    @SneakyThrows
+    @SuppressWarnings("unchecked")
+    default <T extends Serializable> T readFile() {
+        Path configFilePath = configPath.resolve(getName() + ".data");
+        FileInputStream fileInputStream = new FileInputStream(configFilePath.toFile());
+        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+        return (T) objectInputStream.readObject();
+    }
+
+    default boolean dataFileExists() {
+        return Files.exists(configPath.resolve(getName() + ".data"));
     }
 }

@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Greeting addon implements the functionality to send Message of the Day to players who just spawn into game
@@ -27,6 +29,16 @@ public class Greeting implements Plugin {
 
     private boolean isLoaded;
 
+    private List<Message> list;
+
+    public List<Message> getList() {
+        return list;
+    }
+
+    public void setList(List<Message> list) {
+        this.list = list;
+    }
+
     private ExportUnitSpawnObservable exportUnitSpawnObservable;
     private BackgroundTaskRestartObservable backgroundTaskRestartObservable;
 
@@ -35,6 +47,9 @@ public class Greeting implements Plugin {
     @Autowired
     public Greeting(MessageQueueFactory messageQueueFactory) {
         this.messageQueueFactory = messageQueueFactory;
+
+        // or load from xml file?
+        list = new ArrayList<>();
     }
 
     @PostConstruct
@@ -84,11 +99,7 @@ public class Greeting implements Plugin {
             messageQueueFactory.setExportObject(object);
             MessageQueue messageQueue = messageQueueFactory.getObject();
             if (messageQueue != null) {
-                messageQueue.pend(new Message("Hello from 422d Backend Powered By Java 8", 3));
-                messageQueue.pend(new Message("We (I mean, \"I\") are still working on " +
-                        "some of the very fundamental" +
-                        " features of the server.", 8));
-                messageQueue.pend(new Message("Enjoy your stay here and fly safe!", 10));
+                list.forEach(messageQueue::pend);
 
                 messageQueue.send();
             } else {

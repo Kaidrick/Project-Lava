@@ -1,6 +1,8 @@
 package moe.ofs.backend.function;
 
-public class Message {
+import java.io.Serializable;
+
+public class Message implements Serializable {
     private int duration;
     private String content;
     private String prefix;
