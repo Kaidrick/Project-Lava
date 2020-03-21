@@ -119,7 +119,7 @@ class PluginTest {
             assertEquals(2, properties.size());
         }
 
-        assertEquals("Guten tag!", testPlugin.readConfiguration("motd_ge"));
+        assertEquals("Guten tag!", testPlugin.readConfiguration("motd_de"));
         assertEquals("中文字符测试！", testPlugin.readConfiguration("motd_cn"));
     }
 
