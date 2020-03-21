@@ -7,7 +7,7 @@ public interface LogAppendedEventHandler {
 
     List<LogAppendedEventHandler> list = new ArrayList<>();
 
-    void update(String logText);
+    void update(LogEntry logEntry);
 
     default void attach() {
         list.add(this);
@@ -17,8 +17,8 @@ public interface LogAppendedEventHandler {
         list.remove(this);
     }
 
-    static void invokeAll(String logText) {
-        list.forEach(h -> h.update(logText));
+    static void invokeAll(LogEntry logEntry) {
+        list.forEach(h -> h.update(logEntry));
     }
 
 }

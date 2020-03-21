@@ -11,3 +11,39 @@
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
 }
+
+.log-message-selected {
+    -fx-text-fill: #fff;
+    -fx-font-weight: bold;
+}
+
+.log-message-info {
+    -fx-text-fill: #a1b887;
+    -fx-font-weight: bold;
+}
+
+.log-message-warn {
+    -fx-text-fill: #d3b77e;
+    -fx-font-weight: bold;
+}
+
+.log-message-error {
+    -fx-text-fill: #b85b63;
+    -fx-font-weight: bold;
+}
+
+.log-message-event {
+    -fx-text-fill: #727272;
+    -fx-font-weight: bold;
+}
+
+.log-message-addon {
+    -fx-text-fill: #77bea7;
+    -fx-font-weight: bold;
+}
+
+.log-message-debug {
+    -fx-text-fill: chocolate;
+    -fx-font-weight: bold;
+}
+

@@ -8,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TabPane;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.Plugin;
 import moe.ofs.backend.PluginClassLoader;
@@ -33,6 +35,8 @@ import java.util.stream.Collectors;
 public class MainController implements Initializable, PropertyChangeListener {
 
     private ResourceBundle bundle;
+
+    @FXML private TabPane baseTabPane;
 
     @FXML private StatusBar statusBar_Connection;
     @FXML private ListView<String> listViewAddons;
@@ -97,7 +101,7 @@ public class MainController implements Initializable, PropertyChangeListener {
 
         RequestHandler.getInstance().addPropertyChangeListener(this);
 
-//        anchorPane.getStyleClass().add(JMetroStyleClass.BACKGROUND);
+        baseTabPane.getStyleClass().add(JMetroStyleClass.BACKGROUND);
 
         PlayerEnterServerObservable playerEnterServerObservable = this::addPlayerToListView;
         playerEnterServerObservable.register();

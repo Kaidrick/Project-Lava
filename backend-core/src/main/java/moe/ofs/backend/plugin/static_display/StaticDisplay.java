@@ -6,6 +6,7 @@ import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 import moe.ofs.backend.handlers.PlayerSlotChangeObservable;
+import moe.ofs.backend.logmanager.Level;
 import moe.ofs.backend.object.FlyableUnit;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.services.FlyableUnitService;
@@ -161,9 +162,9 @@ public class StaticDisplay implements Plugin {
 
             new ServerDataRequest(p)
                     .addProcessable(s -> mapSlotStaticId.put(String.valueOf(flyableUnit.getUnit_id()), s))
-                    .addProcessable(s -> Logger.log(
+                    .addProcessable(s -> Logger.addon(
                             String.format("Static Object [%s] spawned for %s with livery [%s]",
-                                    s, flyableUnit.getUnit_name(), flyableUnit.getLivery_id()), Logger.Level.ADDON
+                                    s, flyableUnit.getUnit_name(), flyableUnit.getLivery_id())
                     ))
                     .send();
         }  // else no spawn
@@ -172,7 +173,7 @@ public class StaticDisplay implements Plugin {
     private void despawnControl(FlyableUnit flyableUnit) {
         String runtimeId = mapSlotStaticId.get(String.valueOf(flyableUnit.getUnit_id()));
         new ServerDataRequest(String.format(luaStringRemoveObject, runtimeId))
-                .addProcessable(s -> Logger.log(runtimeId + " -> static object removed", Logger.Level.ADDON))
+                .addProcessable(s -> Logger.addon(runtimeId + " -> static object removed"))
                 .send();
     }
 

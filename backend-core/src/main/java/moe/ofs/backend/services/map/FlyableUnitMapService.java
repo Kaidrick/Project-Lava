@@ -100,7 +100,7 @@ public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> imple
                     flyableUnitMap.values().forEach(this::save);
 
                     Logger.log(this.findAll().size() + " flyable units data collected from DCS mission env.");
-                    flyableUnitMap.forEach((name, data) -> System.out.println(data));
+                    flyableUnitMap.forEach((name, data) -> Logger.debug(data.toString()));
                 }
         );
     }

@@ -48,6 +48,7 @@ public class PluginListCell extends ListCell<String> {
         controlButton.setOnAction(event -> switchPluginLoadState());
         configButton.setOnAction(event -> System.out.println("disable " + getItem()));
     }
+
     @Override
     protected void updateItem(String item, boolean empty) {
         super.updateItem(item, empty);

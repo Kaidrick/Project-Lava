@@ -50,6 +50,11 @@ public class ControlPanelApplication extends Application {
         JMetro jMetro = new JMetro(Style.LIGHT);
         jMetro.setScene(scene);
 
+        scene.getStylesheets().clear();
+        scene.getStylesheets().addAll("base.css", "base_extras.css", "base_other_libraries.css", "light_theme.css");
+
+        root.setStyle("accent_color: purple");
+
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(555);
         primaryStage.setMinHeight(260);

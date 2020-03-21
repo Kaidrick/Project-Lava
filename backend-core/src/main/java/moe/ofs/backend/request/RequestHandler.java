@@ -3,6 +3,7 @@ package moe.ofs.backend.request;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
+import moe.ofs.backend.logmanager.Logger;
 import moe.ofs.backend.util.ConnectionManager;
 
 import java.beans.PropertyChangeEvent;
@@ -91,6 +92,7 @@ public final class RequestHandler implements PropertyChangeListener {
         if(this.trouble.get() != trouble) {
             log.warn(trouble ? "SocketException occurs: Failed to send request(s); set trouble flag to true"
                     : "Connection Established: set trouble flag to false");
+            Logger.warn(trouble ? "Trying to connect to DCS Lua server" : "Successfully connected to DCS Lua server");
             support.firePropertyChange("trouble", this.trouble, trouble);
         }
 
@@ -131,7 +133,6 @@ public final class RequestHandler implements PropertyChangeListener {
         } catch (SocketException e) {
 
             // triggers background task stop
-            System.out.println("trouble port -> " + port);
             setTrouble(true);
             System.out.println("Trouble in RequestHandler " + LocalDateTime.now());
 

@@ -36,7 +36,7 @@ public class ServerExecRequest extends RequestToServer implements Resolvable {
     @Override
     public void resolve(String object) {
         String logMessage = luaString + "\nReturns: " + object;
-        Logger.log(logMessage, Logger.Level.DEBUG);
+        Logger.debug(logMessage);
     }
 }
 

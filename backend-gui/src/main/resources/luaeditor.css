@@ -1,0 +1,26 @@
+/* for lua editor code area */
+.overridden-code-area {
+    /*-fx-font-family: "Courier New";*/
+    /*-fx-font-family: "Courier New";*/
+    /*-fx-font-size: 20px;*/
+    -fx-font-family: monospace;
+    -fx-base: rgb(132, 145, 47);
+    -fx-background: rgb(0, 0, 0);
+}
+
+.overridden-styled-text-area {
+    -fx-cursor: text;
+}
+
+.overridden-styled-text-area .paragraph-box {
+    -fx-padding: -0.5 0 -0.5 0;
+}
+
+.overridden-styled-text-area .paragraph-box .paragraph-text {
+    -fx-line-spacing: 1;
+}
+
+.overridden-styled-text-area .caret {
+    -rtfx-blink-rate: 500ms;
+    -fx-stroke-width: 1.0;
+}
