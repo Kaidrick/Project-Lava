@@ -38,6 +38,12 @@
         </dependency>
 
         <dependency>
+            <groupId>moe.ofs</groupId>
+            <artifactId>backend-web</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.jfxtras</groupId>
             <artifactId>jmetro</artifactId>
             <version>8.6.8</version>
