@@ -92,14 +92,17 @@ public class ConnectionManager implements Configurable {
     /**
      * use to sanitize remaining data on lua side after backend restart
      */
-    public static void sanitizeDataPipeline() {
+    public static void sanitizeDataPipeline() throws IOException {
 
         new FillerRequest(Level.SERVER).send();
         new FillerRequest(Level.SERVER_POLL).send();
-        new FillerRequest(Level.EXPORT).send();
-        new FillerRequest(Level.EXPORT_POLL).send();
+//        new FillerRequest(Level.EXPORT).send();
+//        new FillerRequest(Level.EXPORT_POLL).send();
 
         RequestHandler.getInstance().transmitAndReceive();
+
+        fastPackThenSendAndGet(new FillerRequest(Level.EXPORT));
+        fastPackThenSendAndGet(new FillerRequest(Level.EXPORT_POLL));
     }
 
     /**
@@ -178,17 +181,8 @@ public class ConnectionManager implements Configurable {
                 TypeToken.getParameterized(JsonRpcResponse.class, targetClass).getType()).getType();
 
         // TODO -> why? java.lang.IllegalStateException: Expected a string but was BEGIN_ARRAY at line 1 column 81 path $[0].result.data
-
-        List<JsonRpcResponse<T>> test;
-        try {
-            test = gson.fromJson(jsonString, jsonRpcResponseListType);
-            return test;
-        } catch (Exception e) {
-            log.error("jsonString = " + jsonString);
-            e.printStackTrace();
-
-            return null;
-        }
+        // polling and query should have been separated completely
+        return gson.fromJson(jsonString, jsonRpcResponseListType);
     }
 
     public static <T> List<JsonRpcResponse<List<T>>> parseJsonResponse(String jsonString, Class<T> targetClass) {

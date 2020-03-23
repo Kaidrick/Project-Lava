@@ -1,6 +1,7 @@
 package moe.ofs.backend.request;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.logmanager.Logger;
@@ -112,11 +113,6 @@ public final class RequestHandler implements PropertyChangeListener {
      */
     public String sendAndGet(int port, String jsonString) throws IOException {
 
-        if(port == 3011 || port == 3010 || port == 3012 || port == 3013) {
-            System.out.println(ConnectionManager.getInstance().getPortOverrideMap());
-            System.out.println(jsonString);
-        }
-
         String s = null;
         try (Socket socket = new Socket("127.0.0.1", port);
              DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
@@ -194,34 +190,31 @@ public final class RequestHandler implements PropertyChangeListener {
                 // parse as a list of object, and each object is a subresult of a request
                 // with a tag attribute with uuid of the result
 
-                List<JsonRpcResponse<String>> jsonRpcResponseList =
-                        ConnectionManager.parseJsonResponseToRaw(responseJsonString, String.class);
+                try {
+                    List<JsonRpcResponse<String>> jsonRpcResponseList =
+                            ConnectionManager.parseJsonResponseToRaw(responseJsonString, String.class);
 
+                    if(jsonRpcResponseList != null) {
+                        jsonRpcResponseList.forEach(
+                                response -> {
+                                    BaseRequest request = waitMap.remove(response.getId());
 
-                // what is the use of wait map here?
-                // json rpc response list contains elements
-                // each element is a response
-                // we need to remove
-
-                if(jsonRpcResponseList != null) {
-                    jsonRpcResponseList.forEach(
-                            response -> {
-                                BaseRequest request = waitMap.remove(response.getId());
-
-                                // resolve Resolvable only
-                                if(request instanceof Resolvable) {
-                                    ((Resolvable) request).resolve(response.getResult().getData());
+                                    // resolve Resolvable only
+                                    if(request instanceof Resolvable) {
+                                        ((Resolvable) request).resolve(response.getResult().getData());
+                                    }
                                 }
-                            }
-                    );
+                        );
+                    }
+                } catch (JsonSyntaxException | IllegalStateException e) {
+                    e.printStackTrace();
+                    log.error(responseJsonString);
+                    log.error(level + ": " + portMap.get(level) + "; " + level.getPort());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
-
-
-
     }
 
     /**
