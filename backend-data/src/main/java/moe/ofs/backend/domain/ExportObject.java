@@ -19,7 +19,7 @@ import java.util.Objects;
 public final class ExportObject extends BaseEntity {
     @Column(name = "own_bank")
     @SerializedName("Bank")
-    private double bank;
+    private Double bank;
 
     @Column(name = "coalition")
     @SerializedName("Coalition")
@@ -39,7 +39,7 @@ public final class ExportObject extends BaseEntity {
 
     @Column(name = "own_heading")
     @SerializedName("Heading")
-    private double heading;
+    private Double heading;
 
     @Column(name = "own_name")
     @SerializedName("Name")
@@ -47,7 +47,7 @@ public final class ExportObject extends BaseEntity {
 
     @Column(name = "own_pitch")
     @SerializedName("Pitch")
-    private double pitch;
+    private Double pitch;
 
     @Column(name = "runtime_id")
     @SerializedName("RuntimeID")
@@ -107,10 +107,6 @@ public final class ExportObject extends BaseEntity {
         this.position = position;
         this.type = type;
     }
-
-
-
-
 
     /**
      * Two ExportObject is consider equal if runtime id and unitName is the same.

@@ -15,10 +15,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class ExportObjectJpaService extends AbstractJpaService<ExportObject, ExportObjectRepository>
+public class ExportObjectBulkJpaService extends AbstractJpaService<ExportObject, ExportObjectRepository>
         implements ExportObjectService {
 
-    public ExportObjectJpaService(ExportObjectRepository repository) {
+    public ExportObjectBulkJpaService(ExportObjectRepository repository) {
         super(repository);
     }
 
