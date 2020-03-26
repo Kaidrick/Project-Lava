@@ -1,5 +1,5 @@
 package moe.ofs.backend.domain;
 
 public enum Handle {
-    MESSAGE, QUERY, DEBUG, EXEC, EMPTY
+    MESSAGE, QUERY, DEBUG, EXEC, RESET, EMPTY
 }

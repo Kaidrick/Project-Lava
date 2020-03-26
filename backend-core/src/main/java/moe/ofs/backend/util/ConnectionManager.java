@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.Configurable;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.request.*;
+import moe.ofs.backend.request.export.ExportResetRequest;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -98,11 +99,11 @@ public class ConnectionManager implements Configurable {
         new FillerRequest(Level.SERVER_POLL).send();
 //        new FillerRequest(Level.EXPORT).send();
 //        new FillerRequest(Level.EXPORT_POLL).send();
-
         RequestHandler.getInstance().transmitAndReceive();
 
         fastPackThenSendAndGet(new FillerRequest(Level.EXPORT));
         fastPackThenSendAndGet(new FillerRequest(Level.EXPORT_POLL));
+        fastPackThenSendAndCheck(new ExportResetRequest());
     }
 
     /**

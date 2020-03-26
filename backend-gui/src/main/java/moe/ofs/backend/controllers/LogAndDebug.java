@@ -1,6 +1,5 @@
 package moe.ofs.backend.controllers;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -11,6 +10,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -21,6 +21,7 @@ import moe.ofs.backend.logmanager.Level;
 import moe.ofs.backend.logmanager.LogAppendedEventHandler;
 import moe.ofs.backend.logmanager.LogEntry;
 import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.export.ExportExecRequest;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.util.LuaScripts;
 import org.controlsfx.control.CheckComboBox;
@@ -42,8 +43,12 @@ public class LogAndDebug implements Initializable {
     @FXML private HBox lowerMainHBox;
     @FXML private ListView<LogEntry> listViewLogDebugInfo;
 //    @FXML private TextArea textArea_LuaDebugString;
-    @FXML private RadioButton radioLoadstringAPI;
-    @FXML private RadioButton radioLoadstringState;
+    @FXML private RadioButton loadStringInMission;
+    @FXML private RadioButton loadStringInApi;
+    @FXML private RadioButton loadStringInExport;
+
+    ToggleGroup loadStringState = new ToggleGroup();
+
     @FXML private ToggleSwitch toggleSwitch_LuaDebugInteractive;
 
     @FXML private CheckComboBox<Level> levelFilterSelection;
@@ -67,28 +72,23 @@ public class LogAndDebug implements Initializable {
     }
 
     @FXML public void debugLuaString(ActionEvent actionEvent) {
-        if (radioLoadstringState.isSelected()) {
-            ServerExecRequest serverExecRequest =
-                    new ServerExecRequest(luaEditor.readEditorContent());
-            serverExecRequest.send();
-        } else if (radioLoadstringAPI.isSelected()) {
+        RadioButton radioButton = (RadioButton) loadStringState.getSelectedToggle();
+        if(radioButton.equals(loadStringInApi)) {
             ServerExecRequest serverExecRequest =
                     new ServerExecRequest(RequestToServer.State.DEBUG,
                             luaEditor.readEditorContent());
             serverExecRequest.send();
+        } else if(radioButton.equals(loadStringInExport)) {
+            ExportExecRequest exportExecRequest =
+                    new ExportExecRequest(luaEditor.readEditorContent());
+            exportExecRequest.send();
+        } else if(radioButton.equals(loadStringInMission)) {
+            ServerExecRequest serverExecRequest =
+                    new ServerExecRequest(luaEditor.readEditorContent());
+            serverExecRequest.send();
         }
     }
 
-    @FXML public void selectLoadstringApi(ActionEvent actionEvent) {
-        radioLoadstringAPI.setSelected(true);
-        radioLoadstringState.setSelected(false);
-
-//        radioLoadstringAPI.setSelected(radioLoadstringAPI.isSelected());
-    }
-    @FXML public void selectLoadstringLuaState(ActionEvent actionEvent) {
-        radioLoadstringAPI.setSelected(false);
-        radioLoadstringState.setSelected(true);
-    }
 
     @FXML public void reloadCurrentMission(ActionEvent actionEvent) {
         new ServerExecRequest(RequestToServer.State.DEBUG,
@@ -115,6 +115,11 @@ public class LogAndDebug implements Initializable {
         } catch (IOException iex) {
             System.out.println("File not found");
         }
+
+
+        loadStringInApi.setToggleGroup(loadStringState);
+        loadStringInExport.setToggleGroup(loadStringState);
+        loadStringInMission.setToggleGroup(loadStringState);
 
 
         LogAppendedEventHandler handler = this::appendLog;

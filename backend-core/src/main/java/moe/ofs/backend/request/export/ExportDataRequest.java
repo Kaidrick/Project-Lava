@@ -1,34 +1,27 @@
-package moe.ofs.backend.request.server;
+package moe.ofs.backend.request.export;
 
 import moe.ofs.backend.domain.Handle;
 import moe.ofs.backend.domain.Level;
+import moe.ofs.backend.request.BaseRequest;
 import moe.ofs.backend.request.Processable;
-import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.Resolvable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerDataRequest extends RequestToServer implements Resolvable {
+public class ExportDataRequest extends BaseRequest implements Resolvable {
 
-    {
-        handle = Handle.EXEC;
-        port = 3010;
-        state = State.SERVER;
-    }
+    private transient String luaString;
 
     private volatile String result;
     private List<Processable> list = new ArrayList<>();
 
-    private transient String env;
-    private transient String luaString;
-
-
-    public ServerDataRequest(String luaString) {
-        super(Level.SERVER);
+    public ExportDataRequest(String luaString) {
+        super(Level.EXPORT);
+        port = Level.EXPORT.getPort();
+        handle = Handle.EXEC;
 
         this.luaString = luaString;
-        this.env = this.state.name().toLowerCase();
     }
 
     @Override
@@ -58,7 +51,7 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
     }
 
 
-    public ServerDataRequest addProcessable(Processable processable) {
+    public ExportDataRequest addProcessable(Processable processable) {
         list.add(processable);
         return this;
     }
