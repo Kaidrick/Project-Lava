@@ -1,12 +1,14 @@
 package moe.ofs.backend.gui;
 
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
+import javafx.scene.control.*;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import moe.ofs.backend.logmanager.LogEntry;
 
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 
 public class LogMessageListViewCell extends ListCell<LogEntry> {
     private final HBox hBox;
@@ -16,7 +18,7 @@ public class LogMessageListViewCell extends ListCell<LogEntry> {
 
     private ContextMenu contextMenu;
 
-    public LogMessageListViewCell() {
+    public LogMessageListViewCell(ListView<LogEntry> listView) {
         super();
 
         hBox = new HBox();
@@ -31,10 +33,24 @@ public class LogMessageListViewCell extends ListCell<LogEntry> {
         hBox.getChildren().addAll(time, level, message);
 
         setOnMouseClicked(event -> {
-            if(event.getClickCount() >= 2) {
+            if(event.getClickCount() >= 2 && event.getButton() == MouseButton.PRIMARY) {
                 new LogEntryDetailDialog(getItem()).show();
             }
         });
+
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem copyLogText = new MenuItem();
+        copyLogText.setText("Copy selected log message(s)");
+        copyLogText.setOnAction(event -> {
+            ClipboardContent content = new ClipboardContent();
+            String messages = listView.getSelectionModel().getSelectedItems().stream()
+                    .map(LogEntry::toString)
+                    .collect(Collectors.joining("\n"));
+            content.putString(messages);
+            Clipboard.getSystemClipboard().setContent(content);
+        });
+        contextMenu.getItems().setAll(copyLogText);
+        setContextMenu(contextMenu);
     }
 
     @Override

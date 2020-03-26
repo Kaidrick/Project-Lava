@@ -7,6 +7,7 @@
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -35,6 +36,13 @@
                                  <children>
                                     <Label text="Filter Log Level" />
                                     <CheckComboBox fx:id="levelFilterSelection" />
+                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                                       <children>
+                                          <TextField fx:id="searchLogMessage" promptText="Search Log" />
+                                          <Button fx:id="logSearchButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0" />
+                                          <Button fx:id="logSearchClearButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0" />
+                                       </children>
+                                    </HBox>
                                  </children>
                                  <VBox.margin>
                                     <Insets />

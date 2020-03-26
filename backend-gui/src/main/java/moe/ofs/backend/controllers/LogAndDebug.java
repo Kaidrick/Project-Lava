@@ -7,10 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -48,6 +45,10 @@ public class LogAndDebug implements Initializable {
     @FXML private RadioButton loadStringInExport;
 
     ToggleGroup loadStringState = new ToggleGroup();
+
+    @FXML private TextField searchLogMessage;
+    @FXML private Button logSearchButton;
+    @FXML private Button logSearchClearButton;
 
     @FXML private ToggleSwitch toggleSwitch_LuaDebugInteractive;
 
@@ -121,6 +122,28 @@ public class LogAndDebug implements Initializable {
         loadStringInExport.setToggleGroup(loadStringState);
         loadStringInMission.setToggleGroup(loadStringState);
 
+        // use a timer here so that it searches only after input stops
+        // or just make a button...
+//        searchLogMessage.textProperty().addListener(((observable, oldValue, newValue) -> {
+//            System.out.println(newValue);
+//        }));
+
+        logSearchButton.setOnAction(event -> {
+            if(!searchLogMessage.getText().equals("")) {
+                listViewLogDebugInfo.getItems().clear();
+                logEntryList.stream()
+                        .filter(logEntry -> logEntry.getMessage().toLowerCase()
+                                .contains(searchLogMessage.getText().toLowerCase()))
+                        .forEach(logEntry -> listViewLogDebugInfo.getItems().add(logEntry));
+            }
+        });
+
+        logSearchClearButton.setOnAction(event -> {
+            listViewLogDebugInfo.getItems().clear();
+            logSearchClearButton.setText("");
+            listViewLogDebugInfo.getItems().addAll(logEntryList);
+        });
+
 
         LogAppendedEventHandler handler = this::appendLog;
         handler.attach();
@@ -135,8 +158,10 @@ public class LogAndDebug implements Initializable {
 //            System.out.println(textArea_LuaDebugString.getStylesheets());
 //            System.out.println(textArea_LuaDebugString.getStyleClass());
 //        }));
+
+        listViewLogDebugInfo.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         
-        listViewLogDebugInfo.setCellFactory(p -> new LogMessageListViewCell());
+        listViewLogDebugInfo.setCellFactory(LogMessageListViewCell::new);
 
         upperAnchorPane.setOnMouseEntered(event -> scrollToBottom.setVisible(true));
         upperAnchorPane.setOnMouseExited(event -> scrollToBottom.setVisible(false));
