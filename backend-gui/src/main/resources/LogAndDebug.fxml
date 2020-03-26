@@ -48,6 +48,7 @@
                                     <Button mnemonicParsing="false" onAction="#reloadCurrentMission" text="%restart" />
                                       <RadioButton fx:id="radioLoadstringState" mnemonicParsing="false" onAction="#selectLoadstringLuaState" selected="true" text="%do_string_in_mission" />
                                       <RadioButton fx:id="radioLoadstringAPI" mnemonicParsing="false" onAction="#selectLoadstringApi" text="%do_string_in_api" />
+                              <RadioButton fx:id="radioLoadstringExport" mnemonicParsing="false" text="Export" />
                               <ToggleSwitch fx:id="toggleSwitch_LuaDebugInteractive" nodeOrientation="RIGHT_TO_LEFT" />
                               <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                  <children>

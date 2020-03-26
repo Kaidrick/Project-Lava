@@ -29,6 +29,12 @@ public class LogMessageListViewCell extends ListCell<LogEntry> {
         message = new Label();
 
         hBox.getChildren().addAll(time, level, message);
+
+        setOnMouseClicked(event -> {
+            if(event.getClickCount() >= 2) {
+                new LogEntryDetailDialog(getItem()).show();
+            }
+        });
     }
 
     @Override

@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class DcsScriptConfigManager {
+    public static boolean objectDeltaValueMode;
 
     public static final Path TEST_DCS_VARIANT_PATH = Paths.get("DCS.openbeta_server");
     public static final Path SAVED_GAMES_PATH = Paths.get(System.getProperty("user.home")).resolve("Saved Games");
@@ -57,7 +58,7 @@ public class DcsScriptConfigManager {
         Path hooksPath = SAVED_GAMES_PATH.resolve(aWritePath).resolve(HOOK_PATH);
         Path target = Files.createDirectories(hooksPath).resolve(TARGET_HOOK);
 
-        try(InputStream in = LuaScripts.class.getClassLoader().getResourceAsStream("scripts/inject/ofsmiz.lua")) {
+        try(InputStream in = LuaScripts.class.getClassLoader().getResourceAsStream("scripts/inject/delta/ofsmiz.lua")) {
             if(in != null) {
 
                 Integer overriddenDataPort =
@@ -88,7 +89,7 @@ public class DcsScriptConfigManager {
         Path lavaTarget = SAVED_GAMES_PATH.resolve(aWritePath).resolve(TARGET_LAVA);
 
         // copy DCS-Lava.lua anyway
-        try(InputStream in = LuaScripts.class.getClassLoader().getResourceAsStream("scripts/inject/DCS-Lava.lua")) {
+        try(InputStream in = LuaScripts.class.getClassLoader().getResourceAsStream("scripts/inject/delta/DCS-Lava.lua")) {
             if(in != null) {
                 Integer overriddenDataPort =
                         ConnectionManager.getInstance().getPortOverrideMap().get(Level.EXPORT_POLL);
@@ -115,7 +116,7 @@ public class DcsScriptConfigManager {
             String injectDeclaration = LuaScripts.load("inject/lava_decl.lua");
             String exportContent = String.join("\n", Files.readAllLines(exportTarget));
 
-            if(!exportContent.contains("DCS-Lava.lua")) {  // does contain this declaration, do nothing
+            if(!exportContent.contains("DCS-Lava.lua")) {  // does not contain this declaration
                 BufferedWriter writer = Files.newBufferedWriter(exportTarget, StandardCharsets.UTF_8);
                 writer.append(exportContent).append("\n\n").append(injectDeclaration);
                 writer.close();
@@ -139,8 +140,8 @@ public class DcsScriptConfigManager {
         Path lava = SAVED_GAMES_PATH.resolve(path).resolve(TARGET_LAVA);
         Path export = SAVED_GAMES_PATH.resolve(path).resolve(TARGET_EXPORT);
 
-        String hookRef = LuaScripts.load("inject/ofsmiz.lua");
-        String lavaRef = LuaScripts.load("inject/DCS-Lava.lua");
+        String hookRef = LuaScripts.load("inject/delta/ofsmiz.lua");
+        String lavaRef = LuaScripts.load("inject/delta/DCS-Lava.lua");
         String exportRef = LuaScripts.load("inject/lava_decl.lua");
 
         Integer serverOverriddenDataPort =

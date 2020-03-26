@@ -60,8 +60,8 @@ public class BackgroundTask implements PropertyChangeListener {
     @Autowired
     public BackgroundTask(
 
-            @Qualifier("exportObject") PollHandlerService exportObjectPollService,
-            @Qualifier("playerInfo") PollHandlerService playerInfoPollService,
+            @Qualifier("exportObjectDelta") PollHandlerService exportObjectPollService,
+            @Qualifier("playerInfoBulk") PollHandlerService playerInfoPollService,
 
             ExportObjectService exportObjectService,
             PlayerInfoService playerInfoService,

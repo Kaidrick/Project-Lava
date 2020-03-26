@@ -164,7 +164,9 @@ public class ConnectionManager implements Configurable {
      */
     public static <T> List<T> flattenResponse(List<JsonRpcResponse<List<T>>> jsonRpcResponseList) {
         return jsonRpcResponseList.stream()
-                .flatMap(r -> r.getResult().getData().stream()).collect(Collectors.toList());
+                .filter(r -> r.getResult().getData() != null)
+                .flatMap(r -> r.getResult().getData().stream())
+                .collect(Collectors.toList());
     }
 
     public static <T, R> List<R> flattenResponse(List<JsonRpcResponse<List<T>>> jsonRpcResponseList,
@@ -186,7 +188,6 @@ public class ConnectionManager implements Configurable {
     }
 
     public static <T> List<JsonRpcResponse<List<T>>> parseJsonResponse(String jsonString, Class<T> targetClass) {
-
         // TODO --> this is so sad
         Type jsonRpcResponseListType = TypeToken.getParameterized(List.class,
                 TypeToken.getParameterized(JsonRpcResponse.class,
