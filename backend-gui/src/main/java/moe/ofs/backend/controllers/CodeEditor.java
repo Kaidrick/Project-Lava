@@ -198,8 +198,6 @@ public class CodeEditor implements Initializable {
         executorShutdown.register();
 
         codeArea.replaceText(0, 0, sampleCode);
-
-//        System.out.println("codeArea.getContent() = " + codeArea.getContent().getText());
     }
 
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync() {
