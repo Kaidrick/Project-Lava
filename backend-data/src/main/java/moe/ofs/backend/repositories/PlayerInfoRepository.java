@@ -10,6 +10,8 @@ public interface PlayerInfoRepository extends JpaRepository<PlayerInfo, Long> {
 
     Optional<PlayerInfo> findByName(String playerName);
 
+    Optional<PlayerInfo> findByNetId(int netId);
+
     List<PlayerInfo> findAllByLang(String lang);
 
     Optional<PlayerInfo> findByUcid(String ucid);

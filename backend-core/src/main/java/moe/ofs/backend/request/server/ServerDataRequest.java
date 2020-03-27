@@ -31,6 +31,12 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
         this.env = this.state.name().toLowerCase();
     }
 
+    public ServerDataRequest(State state, String luaString) {
+        this(luaString);
+
+        this.env = state.name().toLowerCase();
+    }
+
     @Override
     public void resolve(String object) {
         this.result = object;

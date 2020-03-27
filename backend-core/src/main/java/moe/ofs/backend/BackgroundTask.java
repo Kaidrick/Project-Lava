@@ -270,7 +270,7 @@ public class BackgroundTask implements PropertyChangeListener {
 //         requests are sent and result are received in this thread only
         Runnable mainLoop = () -> {
             new FillerRequest(Level.SERVER).send();
-            new FillerRequest(Level.EXPORT).send();
+//            new FillerRequest(Level.EXPORT).send();
             try {
                 requestHandler.transmitAndReceive();
             } catch (Exception e) {

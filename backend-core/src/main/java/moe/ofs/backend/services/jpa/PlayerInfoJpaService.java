@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,16 @@ public class PlayerInfoJpaService extends AbstractJpaService<PlayerInfo, PlayerI
     public void dispose() {
         repository.deleteAll();
         Logger.log("PlayerInfoRepository data discarded.");
+    }
+
+    @Override
+    public Optional<PlayerInfo> findByUcid(String ucid) {
+        return repository.findByUcid(ucid);
+    }
+
+    @Override
+    public Optional<PlayerInfo> findByNetId(int netId) {
+        return repository.findByNetId(netId);
     }
 
     @Override
