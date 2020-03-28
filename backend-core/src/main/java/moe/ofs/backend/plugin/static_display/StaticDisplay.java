@@ -3,21 +3,25 @@ package moe.ofs.backend.plugin.static_display;
 import moe.ofs.backend.Plugin;
 import moe.ofs.backend.PluginClassLoader;
 import moe.ofs.backend.domain.PlayerInfo;
+import moe.ofs.backend.function.SlotChangeRequest;
+import moe.ofs.backend.function.SlotChangeResult;
+import moe.ofs.backend.function.SlotValidator;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
-import moe.ofs.backend.handlers.PlayerSlotChangeObservable;
-import moe.ofs.backend.logmanager.Level;
+import moe.ofs.backend.logmanager.Logger;
 import moe.ofs.backend.object.FlyableUnit;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.services.ParkingInfoService;
-import moe.ofs.backend.logmanager.Logger;
 import moe.ofs.backend.util.LuaScripts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This addon class implements the functionality to place a static object matching the type and livery of
@@ -36,7 +40,6 @@ public class StaticDisplay implements Plugin {
     private boolean isLoaded;
 
     // handlers
-    PlayerSlotChangeObservable playerSlotChangeObservable;
     MissionStartObservable missionStartObservable;
     PlayerLeaveServerObservable playerLeaveServerObservable;
 
@@ -60,10 +63,13 @@ public class StaticDisplay implements Plugin {
     private final FlyableUnitService flyableUnitService;
     private final ParkingInfoService parkingInfoService;
 
+    private final SlotValidator slotValidator;
+
     @Autowired
-    public StaticDisplay(FlyableUnitService flyableUnitService, ParkingInfoService parkingInfoService) {
+    public StaticDisplay(FlyableUnitService flyableUnitService, ParkingInfoService parkingInfoService, SlotValidator slotValidator) {
         this.flyableUnitService = flyableUnitService;
         this.parkingInfoService = parkingInfoService;
+        this.slotValidator = slotValidator;
     }
 
     @PostConstruct
@@ -83,8 +89,7 @@ public class StaticDisplay implements Plugin {
      */
     @Override
     public void register() {
-        playerSlotChangeObservable = this::switchStaticDisplay;
-        playerSlotChangeObservable.register();
+        slotValidator.getPlayerSlotControls().add(this::switchStaticDisplay);
 
         missionStartObservable = this::initStaticDisplay;
         missionStartObservable.register();
@@ -130,6 +135,8 @@ public class StaticDisplay implements Plugin {
     // if connection is already established, init immediately?
     public void initStaticDisplay() {
         // for each playable, spawn static object if TakeOffGround or TakeOffParking
+
+        System.out.println("initStaticDisplay called");
         flyableUnitService.findAll().forEach(this::spawnControl);
     }
 
@@ -153,7 +160,9 @@ public class StaticDisplay implements Plugin {
             } else if (startType.equals("TakeOffParking")) {
                 heading = parkingInfoService.getParking(flyableUnit.getAirdromeId(), flyableUnit.getParking()).get()
                         .getInitialHeading();
-            } else return;
+            } else {
+                return;
+            }
 
             String p = String.format(luaStringAddStatic,
                     "_StaticDisplay_" + flyableUnit.getUnit_name(), type,
@@ -165,8 +174,7 @@ public class StaticDisplay implements Plugin {
                     .addProcessable(s -> Logger.addon(
                             String.format("Static Object [%s] spawned for %s with livery [%s]",
                                     s, flyableUnit.getUnit_name(), flyableUnit.getLivery_id())
-                    ))
-                    .send();
+                    )).send();
         }  // else no spawn
     }
 
@@ -182,12 +190,10 @@ public class StaticDisplay implements Plugin {
         flyableUnitService.findByUnitId(playerInfo.getSlot()).ifPresent(this::spawnControl);
     }
 
-    // TODO --> redundant code, see above
+    private SlotChangeResult switchStaticDisplay(SlotChangeRequest request) {
+        flyableUnitService.findByUnitId(request.getCurrentSlotId()).ifPresent(this::spawnControl);
+        flyableUnitService.findByUnitId(request.getSlotId()).ifPresent(this::despawnControl);
 
-    private void switchStaticDisplay(PlayerInfo previous, PlayerInfo current) {
-
-        flyableUnitService.findByUnitId(previous.getSlot()).ifPresent(this::spawnControl);
-        flyableUnitService.findByUnitId(current.getSlot()).ifPresent(this::despawnControl);
-
+        return new SlotChangeResult(true);
     }
 }

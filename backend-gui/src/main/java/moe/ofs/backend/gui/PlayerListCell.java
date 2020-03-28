@@ -92,7 +92,7 @@ public class PlayerListCell extends ListCell<String> {
                 String reason = kickReasonOptional.get();
                 System.out.println("kick " + playerInfo.getName() + " -> " + reason);
                 String luaString = LuaScripts.loadAndPrepare("api/kick_net_player.lua",
-                        playerInfo.getId(), !reason.equals("") ? reason : "Server specifies no kick reason.");
+                        playerInfo.getNetId(), !reason.equals("") ? reason : "Server specifies no kick reason.");
                 new ServerExecRequest(RequestToServer.State.DEBUG, luaString).send();
             }
         };
@@ -136,7 +136,7 @@ public class PlayerListCell extends ListCell<String> {
                 System.out.println("Ban " + playerInfo.getName() +
                         " for " + banSeconds + " seconds due to " + banDescription);
                 String luaString = LuaScripts.loadAndPrepare("api/ban_net_player.lua",
-                        playerInfo.getId(), banSeconds, banDescription);
+                        playerInfo.getNetId(), banSeconds, banDescription);
                 new ServerExecRequest(RequestToServer.State.DEBUG, luaString).send();
             }
         };

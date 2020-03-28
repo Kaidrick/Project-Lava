@@ -12,7 +12,9 @@ slot_validator.get_request_list = function()
         local data = {
             player_id = playerID,  -- number
             side = attr[1],        -- number
-            slot_id = attr[2]      -- string
+            cur_side = attr[2],    -- number
+            slot_id = attr[3],     -- string
+            cur_slot_id = attr[4]  -- string
         }
         table.insert(array, data)
     end
@@ -21,7 +23,8 @@ slot_validator.get_request_list = function()
 end
 
 slot_validator.onPlayerTryChangeSlot = function(playerID, side, slotID) -- -> true | false
-    slot_validator._request[playerID] = { side, slotID }  -- array
+    local current_side, current_slotID = net.get_slot(playerID)
+    slot_validator._request[playerID] = { side, current_side, slotID, current_slotID }  -- array
     return false  -- always reject
 end
 

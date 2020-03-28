@@ -5,6 +5,7 @@ import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.logmanager.Logger;
+import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.util.ConnectionManager;
 
 import java.beans.PropertyChangeEvent;
@@ -170,7 +171,6 @@ public final class RequestHandler implements PropertyChangeListener {
         // only add to wait map if result is definitely needed
         splitQueue.forEach((level, queue) -> {
             transmissionQueue.stream().filter(r -> r instanceof Resolvable).forEach(r -> waitMap.put(r.getUuid(), r));
-
             try {
                 String json = gson.toJson(queue);
 //                if(!json.equals("[]"))
@@ -183,9 +183,6 @@ public final class RequestHandler implements PropertyChangeListener {
                 } else {
                     responseJsonString = sendAndGet(level.getPort(), json);
                 }
-
-//                if(!s.equals("[]"))
-//                    System.out.println(s);
 
                 // received json string is a list-type
                 // parse as a list of object, and each object is a subresult of a request

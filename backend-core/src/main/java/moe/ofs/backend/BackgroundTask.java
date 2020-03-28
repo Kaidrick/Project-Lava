@@ -22,6 +22,8 @@ import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -56,6 +58,28 @@ public class BackgroundTask implements PropertyChangeListener {
     private final FlyableUnitService flyableUnitService;
 
     private final ParkingInfoService parkingInfoService;
+
+
+
+    // TEST
+    private long mainConnections;
+    private long serverPollConnections;
+    private long exportPollConnections;
+    private LocalDateTime startTime;
+
+    public void countConnections() {
+        LocalDateTime stopTime = LocalDateTime.now();
+        long totalCount = mainConnections + serverPollConnections + exportPollConnections;
+        Duration duration = Duration.between(startTime, stopTime);
+        System.out.println("startTime = " + startTime);
+        System.out.println("stopTime = " + stopTime);
+        System.out.println("Duration.between(startTime, stopTime) = " + duration);
+        System.out.println("totalCount = " + totalCount);
+        System.out.println("duration.getSeconds() = " + duration.getSeconds());
+        System.out.println("avg conn per sec = " + totalCount/duration.getSeconds());
+    }
+
+
 
     @Autowired
     public BackgroundTask(
@@ -224,6 +248,8 @@ public class BackgroundTask implements PropertyChangeListener {
     // restart background task when connect is cut
     public void start() throws IOException {
 
+        startTime = LocalDateTime.now();
+
         BackgroundTaskRestartObservable.invokeAll();
 
         ConnectionManager.sanitizeDataPipeline();
@@ -256,6 +282,8 @@ public class BackgroundTask implements PropertyChangeListener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            exportPollConnections++;
         };
 
         Runnable serverPolling = () -> {
@@ -264,32 +292,36 @@ public class BackgroundTask implements PropertyChangeListener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            serverPollConnections++;
         };
 
         // main loop
 //         requests are sent and result are received in this thread only
         Runnable mainLoop = () -> {
             new FillerRequest(Level.SERVER).send();
-//            new FillerRequest(Level.EXPORT).send();
+            new FillerRequest(Level.EXPORT).send();
             try {
                 requestHandler.transmitAndReceive();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            mainConnections += 2;
         };
 
 //         dedicated polling thread
 //         polling and receive data only in this thread
         mainRequestScheduler = Executors.newSingleThreadScheduledExecutor();
-        mainRequestScheduler.scheduleWithFixedDelay(mainLoop, 0, 1, TimeUnit.MILLISECONDS);
+        mainRequestScheduler.scheduleWithFixedDelay(mainLoop, 0, 200, TimeUnit.MILLISECONDS);
 
         exportPollingScheduler = Executors.newSingleThreadScheduledExecutor();
         exportPollingScheduler.scheduleWithFixedDelay(exportPolling,
-                0, 1, TimeUnit.MILLISECONDS);
+                0, 200, TimeUnit.MILLISECONDS);
 
         serverPollingScheduler = Executors.newSingleThreadScheduledExecutor();
         serverPollingScheduler.scheduleWithFixedDelay(serverPolling,
-                0, 1, TimeUnit.MILLISECONDS);
+                0, 200, TimeUnit.MILLISECONDS);
     }
 
 
