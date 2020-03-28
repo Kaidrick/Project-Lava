@@ -81,8 +81,6 @@ public class ControlPanelApplication extends Application {
     public void stop() throws Exception {
         task.stop();
 
-        task.countConnections();
-
         ControlPanelShutdownObservable.invokeAll();
     }
 

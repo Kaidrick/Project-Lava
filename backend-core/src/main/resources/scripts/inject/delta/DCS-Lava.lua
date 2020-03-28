@@ -31,6 +31,8 @@ local poll_server = nil
 local HANDLE = {}
 HANDLE.QUERY = "QUERY"
 HANDLE.DEBUG = "DEBUG"
+HANDLE.EXEC = "EXEC"
+HANDLE.RESET = "RESET"
 
 -- Flags
 local coroutine_flip = 0
@@ -49,6 +51,13 @@ _prevExport.LuaExportActivityNextEvent = LuaExportActivityNextEvent
 _prevExport.LuaExportBeforeNextFrame = LuaExportBeforeNextFrame
 _prevExport.LuaExportStart = LuaExportStart
 _prevExport.LuaExportStop = LuaExportStop
+
+
+
+local previous_export_data = {}
+
+local next = next
+
 
 
 local PULL = {}
@@ -86,7 +95,6 @@ PULL.bake_result = function(uuid, processed_data)
 	table.insert(PULL.result, json_response)
 end
 
-local next = next
 
 PULL.roast_result = function(uuid, processed_data, tail)
 	if tail then  -- if it is tail, then can send empty response with tail tag
@@ -116,8 +124,8 @@ PULL.roast_result = function(uuid, processed_data, tail)
 
 end
 
-PULL.prepared_result = function() 
-	
+PULL.prepared_result = function()
+
 	local result = PULL.result
 	PULL.result = {}
 	return result
@@ -130,7 +138,6 @@ PULL.brew_result = function()
 end
 
 
-local previous_export_data = {}
 
 
 
@@ -184,8 +191,8 @@ local function get_delta_export_data(current_data, ...)
 	local batch_delta = {}  -- list of data, and each contains a tag of create, update or delete
 	local count = 0
 	local batch_size = ... or 20
-	
-	
+
+
 	-- we can ignore static object update because they are unlikely to move
 	-- and if they are move then they must be despawned and respawn with a different runtime id
 	-- whether an object is static can be determined by accessing Flags.Static
@@ -194,16 +201,16 @@ local function get_delta_export_data(current_data, ...)
 			-- we can ignore static object update because they are unlikely to move
 			-- and if they are move then they must be despawned and respawn with a different runtime id
 			-- whether an object is static can be determined by accessing Flags.Static
-			
+
 			-- also, some fields are highly unlikely to change, so we can ignore that as well
-			
+
 			--[[
 			[16777473] = {											can change?
 				Bank = 0,											true
 				Coalition = "Allies",								false
 				CoalitionID = 1,									false
 				Country = 7,										false
-				Flags = {								
+				Flags = {
 				  AI_ON = true,										true
 				  Born = true,										true? not sure, if it is not born then it should not even be in the export data
 				  Human = false,									true? not sure, if you enter a combined arms unit then maybe it will change?
@@ -222,12 +229,12 @@ local function get_delta_export_data(current_data, ...)
 				},
 				Name = "f_bar_cargo",								false
 				Pitch = 0,											true
-				Position = {							
+				Position = {
 				  x = -270389.5,									true
 				  y = 1654.9458007813,								true
 				  z = -126577.671875								true
 				},
-				Type = {								
+				Type = {
 				  level1 = 0,										false
 				  level2 = 0,										false
 				  level3 = 0,										false
@@ -236,7 +243,7 @@ local function get_delta_export_data(current_data, ...)
 				UnitName = "ATIS MCCARRAN INTERNATIONAL"			false
 			}
 			--]]
-			
+
 			if not current_data[runtime_id].Flags.Static then  -- check for update only if this data is not flagged as static object
 				for attribute_name, attribute_value in pairs(object_data) do  -- for each key value pairs
 					if type(attribute_value) ~= 'table' then  -- if value is not a table
@@ -245,7 +252,7 @@ local function get_delta_export_data(current_data, ...)
 								if type(attribute_value) == 'number' then  -- if value is number, we can compare its value to the previous value
 									if previous_data[runtime_id][attribute_name] then  -- if previous value exists --> is this check necessary?
 										local value_delta = math.abs(previous_data[runtime_id][attribute_name] - attribute_value)  -- calculate delta
-										
+
 										if value_delta > 0.001 then  -- publish change only if delta is larger than 0.001 to avoid frequent update by some weird object position jingling
 											log("publish change because " .. value_delta .. " > 0.001")
 											-- change
@@ -285,10 +292,10 @@ local function get_delta_export_data(current_data, ...)
 								if previous_data[runtime_id][attribute_name][subkey] ~= subvalue then
 									-- if the value is a number, then if the difference is less than 0.0001, we should ignore the change
 									if type(subvalue) == 'number' then
-										if math.abs(previous_data[runtime_id][attribute_name][subkey] - subvalue) > 0.001 then 
+										if math.abs(previous_data[runtime_id][attribute_name][subkey] - subvalue) > 0.001 then
 											-- change
 											new_sub_data[subkey] = subvalue
-									
+
 											batch_delta[runtime_id] = batch_delta[runtime_id] or {}  -- new table if none
 											batch_delta[runtime_id]["data"] = batch_delta[runtime_id]["data"] or {}
 											batch_delta[runtime_id]["data"][attribute_name] = attribute_value
@@ -298,7 +305,7 @@ local function get_delta_export_data(current_data, ...)
 										end
 									else  -- not a number, if value not equal then it is changed
 										new_sub_data[subkey] = subvalue
-									
+
 										batch_delta[runtime_id] = batch_delta[runtime_id] or {}  -- new table if none
 										batch_delta[runtime_id]["data"] = batch_delta[runtime_id]["data"] or {}
 										batch_delta[runtime_id]["data"][attribute_name] = attribute_value
@@ -317,14 +324,14 @@ local function get_delta_export_data(current_data, ...)
 					end
 				end
 			end
-			
+
 		else  -- if previous data does not contain this runtime id --> create data
 			batch_delta[runtime_id] = {
 				data = object_data,
 				action = "create"
 			}
 		end
-		
+
 		-- split batch
 		count = count + 1
 		if count == batch_size then
@@ -335,10 +342,10 @@ local function get_delta_export_data(current_data, ...)
 				-- map to list and add runtime_id
 				for runtime_id, diff in pairs(batch_delta) do
 					diff["data"]["RuntimeID"] = runtime_id
-					
+
 					table.insert(de, diff)
 				end
-				
+
 				batch_delta = {}
 				count = 0
 				coroutine.yield(de, false)
@@ -365,17 +372,17 @@ local function get_delta_export_data(current_data, ...)
 		batch_delta_size = batch_delta_size + 1
 	end
 
-	if batch_delta_size < 1 then 
+	if batch_delta_size < 1 then
 		return nil, true
-	else 
+	else
 		local de = {}
 		-- map to list and add runtime_id
 		for runtime_id, diff in pairs(batch_delta) do
 			diff["data"]["RuntimeID"] = runtime_id
-			
+
 			table.insert(de, diff)
 		end
-	
+
 		return de, true
 	end   -- return last batch
 end
@@ -386,9 +393,9 @@ local function process_request(requests)  -- runs request from Export Request
 		if request.method == HANDLE.QUERY then
 			local all_objects = LoGetWorldObjects("units")
 			local all_ballistics = LoGetWorldObjects("ballistic")
-			
+
 			local current_export_data = table_combine(all_objects, all_ballistics)
-						
+
 			local data_size = 0
 			-- get size of key value pair table
 			for _,_ in pairs(current_export_data) do
@@ -400,7 +407,7 @@ local function process_request(requests)  -- runs request from Export Request
 			-- local batch_size = math.ceil(total_data_num * DATA_TIMEOUT_SEC * 10) -- 10  -- num count of all data divided by 100 (each step)
 			local batch_size = 10
 			local total_batch_num = math.ceil(total_data_num / batch_size)
-			
+
 			local co = coroutine.create(get_delta_export_data)
 
 			PULL.wait_list[request.id] = {
@@ -410,20 +417,18 @@ local function process_request(requests)  -- runs request from Export Request
 				["batch_size"] = batch_size,
 				["total"] = total_data_num
 			}  -- function get_delta_export_data()
-			
-		elseif request.method == HANDLE.DEBUG then
-			if request.type == "mem" then
-				local mem = {}
-				mem.size = collectgarbage('count')
-				mem.time = os.time()
-				
-				return mem
-			
-			elseif request.type == "export_loadstring" then
-				local returned, result = dostring_export_env(request.content)
-				return result
-			
-			end
+
+		elseif request.method == HANDLE.EXEC then
+			local lua_string = request.params[1]
+
+			local success, returned, res = pcall(dostring_export_env, lua_string)
+
+			PULL.bake_result(request.id, res, 0)
+
+		elseif request.method == HANDLE.RESET then
+			-- reset diff comp table
+			initData()
+			log("data reset complete")
 		end
 
 	end

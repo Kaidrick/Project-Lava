@@ -75,7 +75,7 @@ public class CodeEditor implements Initializable {
     private static final String STRING_PATTERN = "\\[(?<ls>=*)\\[(.|\\R)*?]\\k<ls>]" + "|" + "\\[\\=*\\[(.|\\R)*$" + "|" + "\\[{2,}(.|\\R)*?" + "|" + "\"([^\"\\\\]|\\\\.)*\"" + "|" + "\'([^\'\\\\]|\\\\.)*\'";
     private static final String COMMENT_PATTERN = "--\\[(?<lc>=*)\\[(.|\\R)*?--]\\k<lc>]" + "|" + "--[^\\n]*";
     private static final String OPERATOR_PATTERN = "\\+|\\-|\\*|\\/|\\%|\\#|\\^|\\~|\\<|\\>|\\<\\=|\\=\\>|\\=\\=|\\~\\=|\\=|\\:";
-    private static final String NUMERIC_PATTERN = "[1-9][\\.\\d]*";
+    private static final String NUMERIC_PATTERN = "((?<!\\w)[\\d]+(?:[\\.]\\d+)?)";
 
 
     private static final Pattern PATTERN = Pattern.compile(
@@ -107,7 +107,7 @@ public class CodeEditor implements Initializable {
             "\n" +
             "local mission_name = \"高加索 波斯湾 DCS可能不支持的字符( ఠൠఠ )ﾉ\"\n" +
             "\n" +
-            "local string = [==[\n" +
+            "local string233 = [==[\n" +
             "This is a multi-line long string.\n" +
             "This is the second line of the string.\n" +
             "Notice the \\\\r\\\\n in the front and the end of the string.\n" +

@@ -60,27 +60,6 @@ public class BackgroundTask implements PropertyChangeListener {
     private final ParkingInfoService parkingInfoService;
 
 
-
-    // TEST
-    private long mainConnections;
-    private long serverPollConnections;
-    private long exportPollConnections;
-    private LocalDateTime startTime;
-
-    public void countConnections() {
-        LocalDateTime stopTime = LocalDateTime.now();
-        long totalCount = mainConnections + serverPollConnections + exportPollConnections;
-        Duration duration = Duration.between(startTime, stopTime);
-        System.out.println("startTime = " + startTime);
-        System.out.println("stopTime = " + stopTime);
-        System.out.println("Duration.between(startTime, stopTime) = " + duration);
-        System.out.println("totalCount = " + totalCount);
-        System.out.println("duration.getSeconds() = " + duration.getSeconds());
-        System.out.println("avg conn per sec = " + totalCount/duration.getSeconds());
-    }
-
-
-
     @Autowired
     public BackgroundTask(
 
@@ -248,8 +227,6 @@ public class BackgroundTask implements PropertyChangeListener {
     // restart background task when connect is cut
     public void start() throws IOException {
 
-        startTime = LocalDateTime.now();
-
         BackgroundTaskRestartObservable.invokeAll();
 
         ConnectionManager.sanitizeDataPipeline();
@@ -282,8 +259,6 @@ public class BackgroundTask implements PropertyChangeListener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            exportPollConnections++;
         };
 
         Runnable serverPolling = () -> {
@@ -292,8 +267,6 @@ public class BackgroundTask implements PropertyChangeListener {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            serverPollConnections++;
         };
 
         // main loop
@@ -306,8 +279,6 @@ public class BackgroundTask implements PropertyChangeListener {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            mainConnections += 2;
         };
 
 //         dedicated polling thread
