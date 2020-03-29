@@ -56,6 +56,8 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
         }
     }
 
+    // TODO --> generify server data request, see ConnectionManager for detail
+
     public int getAsInt() {
         return Integer.parseInt(get());
     }
@@ -63,7 +65,6 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
     public double getAsDouble() {
         return Double.parseDouble(get());
     }
-
 
     public ServerDataRequest addProcessable(Processable processable) {
         list.add(processable);

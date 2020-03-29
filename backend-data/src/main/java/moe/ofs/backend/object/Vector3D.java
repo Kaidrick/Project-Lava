@@ -1,7 +1,14 @@
 package moe.ofs.backend.object;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.io.Serializable;
 
+@Getter
+@Setter
+@AllArgsConstructor
 public class Vector3D implements Serializable {
     double x;
     double y;
@@ -10,17 +17,5 @@ public class Vector3D implements Serializable {
     @Override
     public String toString() {
         return getX() + ", " + getY() + ", " + getZ();
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public double getZ() {
-        return z;
     }
 }

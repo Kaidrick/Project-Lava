@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TabPane;
@@ -14,11 +15,13 @@ import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.Plugin;
 import moe.ofs.backend.PluginClassLoader;
 import moe.ofs.backend.domain.PlayerInfo;
+import moe.ofs.backend.function.MarkPanelManager;
 import moe.ofs.backend.gui.PlayerListCellFactory;
 import moe.ofs.backend.gui.PluginListCell;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.PlayerEnterServerObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
+import moe.ofs.backend.interaction.TestButtonCommand;
 import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.util.AirdromeDataCollector;
 import org.controlsfx.control.StatusBar;
@@ -44,6 +47,9 @@ public class MainController implements Initializable, PropertyChangeListener {
 
     @FXML private Label labelDebugInfo1;
     @FXML private Label labelDebugInfo2;
+
+    @FXML private Button devTestButton;
+
 
     @FXML public void setDebugLabelTextOne(String info) {
         labelDebugInfo1.setText(info);
@@ -118,6 +124,11 @@ public class MainController implements Initializable, PropertyChangeListener {
         listViewConnectedPlayer.setCellFactory(lv -> factory.listView(lv).getObject());
 
         populateLoadedPluginListView();
+
+
+        // TEST
+        devTestButton.setOnAction(event -> TestButtonCommand.invokeAll());
+
     }
 
     @Override

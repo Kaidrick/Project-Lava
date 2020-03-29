@@ -2,6 +2,7 @@ package moe.ofs.backend.util;
 
 import com.google.gson.Gson;
 import moe.ofs.backend.object.Group;
+import moe.ofs.backend.object.ParkingInfo;
 import moe.ofs.backend.object.Unit;
 import moe.ofs.backend.object.Parking;
 import moe.ofs.backend.request.server.ServerDataRequest;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  */
 
 public class AirdromeDataCollector {
-    private static List<Parking> parkingList = new ArrayList<>();
+    private static List<ParkingInfo> parkingList = new ArrayList<>();
 
     private static final String sampleAirplaneType = "Christen Eagle II";
     private static final String sampleHelicopterType = "OH-58D";
@@ -66,17 +67,20 @@ public class AirdromeDataCollector {
                         String.format(getParkingLua, airbaseListIndex, parkingListIndex);
                 String res = ((ServerDataRequest) new ServerDataRequest(prepGetParkingLua).send()).get();
 
-                Parking parking = gson.fromJson(res, Parking.class);
+                ParkingInfo parking = gson.fromJson(res, ParkingInfo.class);
 
                 int typeConst = parking.getTerminalType();
-                int termIndex = parking.getId();
+                int termIndex = parking.getParkingId();
 
                 // avoid using airbaseListIndex because airdromeId is messed up in Caucasus map
                 // TODO --> deal with caucasus mess-up
                 int airdromeIdOfParking = parking.getAirdromeId();
 
-                airdromeIdOfParking = airbaseListIndex;
-
+                if(mapTheater.equals("Caucasus")) {
+                    airdromeIdOfParking = airbaseListIndex + 11;
+                } else {
+                    airdromeIdOfParking = airbaseListIndex;
+                }
 
                 Group.GroupBuilder groupBuilder;
                 if(typeConst == 40) {  // Helicopter only spawn
@@ -109,9 +113,9 @@ public class AirdromeDataCollector {
 
         // after filling parkingList
         System.out.println(parkingList.stream()
-                .collect(Collectors.groupingBy(Parking::getAirdromeName, Collectors.counting())));
+                .collect(Collectors.groupingBy(ParkingInfo::getAirdromeName, Collectors.counting())));
 
-        // serialization to file
+        // serialize to file
         try {
             Path path = Paths.get( "backend-core/src/main/resources/data").resolve(mapTheater + ".apron");
 

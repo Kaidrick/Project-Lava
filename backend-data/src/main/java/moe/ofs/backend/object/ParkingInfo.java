@@ -1,5 +1,6 @@
 package moe.ofs.backend.object;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,13 +15,22 @@ public class ParkingInfo extends BaseEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @SerializedName("id")
     private int parkingId;
+
     private String airdromeName;
+
     private int airdromeId;
+
     private Vector3D position;
+
     private double northCorrection;
+
     private int terminalType;
+
     private double initialHeading;
+
+    @SerializedName("metadata")
     private Metadata metadata;
 
     private class Metadata implements Serializable {

@@ -1,0 +1,1 @@
+trigger.action.removeMark(%d)

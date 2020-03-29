@@ -61,7 +61,7 @@ public class ParkingInfoMapService extends AbstractMapService<ParkingInfo> imple
                         try {
                             theater = gson.fromJson(dataString, String.class);
                             InputStream inputStream = ParkingInfoMapService.class
-                                    .getResourceAsStream(String.format("/data/%s.data", theater));
+                                    .getResourceAsStream(String.format("/data/%s.apron", theater));
                             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
                             Object object = objectInputStream.readObject();
                             objectInputStream.close();
