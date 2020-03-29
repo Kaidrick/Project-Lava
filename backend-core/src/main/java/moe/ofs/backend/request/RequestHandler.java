@@ -35,9 +35,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public final class RequestHandler implements PropertyChangeListener {
-    //
-//    private List<BaseRequest> waitList = new CopyOnWriteArrayList<>();
-
     private Map<Level, Integer> portMap = new HashMap<>();
 
     private Map<String, BaseRequest> waitMap = new HashMap<>();
@@ -65,6 +62,19 @@ public final class RequestHandler implements PropertyChangeListener {
             ConnectionManager.getInstance().addPropertyChangeListener(instance);
         }
         return instance;
+    }
+
+    /**
+     * if wait map has entry in it, query is needed
+     * if wait map does not has entry in it, there is no need to send any filler request
+     * @return
+     */
+    public boolean hasPendingServerRequest() {
+        return waitMap.values().stream().anyMatch(r -> r.getLevel() == Level.SERVER);
+    }
+
+    public boolean hasPendingExportRequest() {
+        return waitMap.values().stream().anyMatch(r -> r.getLevel() == Level.EXPORT);
     }
 
     public void dispose() {

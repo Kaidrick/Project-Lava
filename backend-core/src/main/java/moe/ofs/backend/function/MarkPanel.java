@@ -19,7 +19,7 @@ public class MarkPanel {
     private long index;
 
     @SerializedName("groupID")
-    private int groupId;
+    private long groupId;
 
     @SerializedName("pos")
     private Vector3D position;
@@ -36,5 +36,5 @@ public class MarkPanel {
     @SerializedName("time")
     private transient long creationTime;
 
-    private transient int coalition;
+    private transient long coalition;
 }

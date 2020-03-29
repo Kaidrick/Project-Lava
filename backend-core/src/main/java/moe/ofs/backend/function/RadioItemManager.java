@@ -80,7 +80,7 @@ public class RadioItemManager {
         new ServerDataRequest(LuaScripts.load("radio/radio_commands_init.lua")).send();
 
         radioPullExecutorService = Executors.newSingleThreadScheduledExecutor();
-        radioPullExecutorService.scheduleWithFixedDelay(getRadioPulls, 0, 100, TimeUnit.MILLISECONDS);
+        radioPullExecutorService.scheduleWithFixedDelay(getRadioPulls, 0, 1000, TimeUnit.MILLISECONDS);
 
         ExportUnitSpawnObservable exportUnitSpawnObservable = unit -> {
             Optional<Integer> optional = flyableUnitService.findGroupIdByName(unit.getGroupName());

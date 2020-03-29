@@ -74,7 +74,12 @@ public class AirdromeDataCollector {
 
                 // avoid using airbaseListIndex because airdromeId is messed up in Caucasus map
                 // TODO --> deal with caucasus mess-up
-                int airdromeIdOfParking = parking.getAirdromeId();
+//                int airdromeIdOfParking = parking.getAirdromeId();
+                int airdromeIdOfParking;
+
+                // this value is independent on the actual id (runtime id rather than airdromeId) of the airbase
+                // it's risky but probably is the only way out of this mess
+                parking.setAirdromeId(airbaseListIndex);
 
                 if(mapTheater.equals("Caucasus")) {
                     airdromeIdOfParking = airbaseListIndex + 11;

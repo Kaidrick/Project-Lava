@@ -19,6 +19,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ParkingInfoMapService extends AbstractMapService<ParkingInfo> implements ParkingInfoService {
@@ -30,6 +31,11 @@ public class ParkingInfoMapService extends AbstractMapService<ParkingInfo> imple
         return map.values().parallelStream()
                 .filter(p -> p.getAirdromeId() == airdromeId && p.getParkingId() == parkingId)
                 .findAny();
+    }
+
+    @Override
+    public List<ParkingInfo> getAllParking() {
+        return new ArrayList<>(map.values());
     }
 
     @Override

@@ -10,6 +10,7 @@ import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 import moe.ofs.backend.logmanager.Logger;
 import moe.ofs.backend.object.FlyableUnit;
+import moe.ofs.backend.object.ParkingInfo;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.services.ParkingInfoService;
@@ -18,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This addon class implements the functionality to place a static object matching the type and livery of
@@ -158,6 +156,18 @@ public class StaticDisplay implements Plugin {
             if (startType.equals("TakeOffGround")) {
                 heading = flyableUnit.getHeading();
             } else if (startType.equals("TakeOffParking")) {
+                Optional<ParkingInfo> optional = parkingInfoService.getParking(flyableUnit.getAirdromeId(),
+                        flyableUnit.getParking());
+
+                if(!optional.isPresent()) {
+                    System.out.println("flyableUnit.getAirdromeId() = " + flyableUnit.getAirdromeId());
+                    System.out.println("flyableUnit.getParking() = " + flyableUnit.getParking());
+                    parkingInfoService.getAllParking().stream()
+                            .filter(p -> p.getAirdromeName().equals("Nellis AFB"))
+                            .findAny().ifPresent(p -> System.out.println(p.getAirdromeName() + ", " +
+                            p.getAirdromeId() + ", " + p.getParkingId()));
+                }
+
                 heading = parkingInfoService.getParking(flyableUnit.getAirdromeId(), flyableUnit.getParking()).get()
                         .getInitialHeading();
             } else {

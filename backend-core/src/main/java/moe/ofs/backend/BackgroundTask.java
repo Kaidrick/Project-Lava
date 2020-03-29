@@ -22,8 +22,6 @@ import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -272,8 +270,12 @@ public class BackgroundTask implements PropertyChangeListener {
         // main loop
 //         requests are sent and result are received in this thread only
         Runnable mainLoop = () -> {
-            new FillerRequest(Level.SERVER).send();
-            new FillerRequest(Level.EXPORT).send();
+            if(requestHandler.hasPendingServerRequest())
+                new FillerRequest(Level.SERVER).send();
+
+            if(requestHandler.hasPendingExportRequest())
+                new FillerRequest(Level.EXPORT).send();
+
             try {
                 requestHandler.transmitAndReceive();
             } catch (Exception e) {
@@ -284,7 +286,7 @@ public class BackgroundTask implements PropertyChangeListener {
 //         dedicated polling thread
 //         polling and receive data only in this thread
         mainRequestScheduler = Executors.newSingleThreadScheduledExecutor();
-        mainRequestScheduler.scheduleWithFixedDelay(mainLoop, 0, 200, TimeUnit.MILLISECONDS);
+        mainRequestScheduler.scheduleWithFixedDelay(mainLoop, 0, 1, TimeUnit.MILLISECONDS);
 
         exportPollingScheduler = Executors.newSingleThreadScheduledExecutor();
         exportPollingScheduler.scheduleWithFixedDelay(exportPolling,
