@@ -57,7 +57,7 @@ public class SlotValidator {
     // setUp on mission start
     @PostConstruct
     public void init() {
-        missionStartObservable = this::setUp;
+        missionStartObservable = theaterName -> setUp();
         missionStartObservable.register();
 //
 //        backgroundTaskRestartObservable = this::tearDown;

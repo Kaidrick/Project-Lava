@@ -6,7 +6,7 @@ import java.util.List;
 public interface MissionStartObservable {
     List<MissionStartObservable> list = new ArrayList<>();
 
-    void observe();
+    void observe(String theaterName);
 
     default void register() {
         list.add(this);
@@ -15,7 +15,7 @@ public interface MissionStartObservable {
         list.remove(this);
     }
 
-    static void invokeAll() {
-        list.forEach(MissionStartObservable::observe);
+    static void invokeAll(String theaterName) {
+        list.forEach(o -> o.observe(theaterName));
     }
 }

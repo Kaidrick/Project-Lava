@@ -1,1 +1,1 @@
-trigger.action.markToGroup(%d, '%s', { x = %d, y = %d, z = %d }, %d, %b, '%s')
+trigger.action.markToGroup(%d, [=====[%s]=====], { x = %d, y = %d, z = %d }, %d, %b, '%s')

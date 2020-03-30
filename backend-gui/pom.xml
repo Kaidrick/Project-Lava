@@ -30,7 +30,10 @@
         </repository>
     </repositories>
 
+
+
     <dependencies>
+
         <dependency>
             <groupId>moe.ofs</groupId>
             <artifactId>backend-core</artifactId>

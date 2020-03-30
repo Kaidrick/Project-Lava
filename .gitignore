@@ -33,3 +33,4 @@ build/
 .idea/workspace.xml
 
 /.idea/
+/hs_err_pid14688.log

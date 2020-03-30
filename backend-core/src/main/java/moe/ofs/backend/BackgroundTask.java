@@ -7,6 +7,7 @@ import moe.ofs.backend.logmanager.Logger;
 import moe.ofs.backend.request.FillerRequest;
 import moe.ofs.backend.request.PollHandlerService;
 import moe.ofs.backend.request.RequestHandler;
+import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.services.ExportObjectService;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.services.ParkingInfoService;
@@ -249,7 +250,7 @@ public class BackgroundTask implements PropertyChangeListener {
         exportObjectPollService.init();
         playerInfoPollService.init();
 
-        MissionStartObservable.invokeAll();
+
 
         Runnable exportPolling = () -> {
             try {
@@ -295,8 +296,14 @@ public class BackgroundTask implements PropertyChangeListener {
         serverPollingScheduler = Executors.newSingleThreadScheduledExecutor();
         serverPollingScheduler.scheduleWithFixedDelay(serverPolling,
                 0, 200, TimeUnit.MILLISECONDS);
-    }
 
+        log.info("Scheduler running, backgroundTask ready, mission data initialized");
+        new ServerDataRequest("return env.mission.theatre")
+                .addProcessable(theater -> {
+                    MissionStartObservable.invokeAll(theater);
+                    log.info("Mission started in " + theater);
+                }).send();
+    }
 
     interface IOConsumer<T> {
         void accept(T t) throws IOException;

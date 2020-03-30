@@ -10,12 +10,14 @@
         <module name="backend-log" />
         <module name="plugin-builder-maven-plugin" />
         <module name="backend-data" />
+        <module name="backend-addon" />
         <module name="backend-gui" />
         <module name="backend-web" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="422d-backend-ui" target="1.8" />
+      <module name="backend-addon" target="1.8" />
       <module name="backend-core" target="1.8" />
       <module name="backend-data" target="1.8" />
       <module name="backend-gui" target="1.8" />
@@ -27,6 +29,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="422d-backend-ui" options="-parameters" />
+      <module name="backend-addon" options="-parameters" />
       <module name="backend-core" options="-parameters" />
       <module name="backend-data" options="-parameters" />
       <module name="backend-gui" options="-parameters" />

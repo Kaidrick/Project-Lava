@@ -57,7 +57,7 @@ public class PluginListCell extends ListCell<String> {
 
         if (item != null && !empty) {
             plugin = PluginClassLoader.loadedPluginSet.stream()
-                    .filter(p -> p.getName().equals(getItem()))
+                    .filter(p -> p.getName() != null && p.getName().equals(getItem()))
                     .findAny()
                     .orElseThrow(() -> new RuntimeException("Plugin Does Not Exist"));
 

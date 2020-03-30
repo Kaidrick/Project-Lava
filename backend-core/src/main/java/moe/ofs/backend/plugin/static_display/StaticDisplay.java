@@ -89,7 +89,7 @@ public class StaticDisplay implements Plugin {
     public void register() {
         slotValidator.getPlayerSlotControls().add(this::switchStaticDisplay);
 
-        missionStartObservable = this::initStaticDisplay;
+        missionStartObservable = theaterName -> initStaticDisplay();
         missionStartObservable.register();
 
         playerLeaveServerObservable = this::respawnOnPlayerLeaveServer;
