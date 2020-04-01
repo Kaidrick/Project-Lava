@@ -16,6 +16,6 @@ public interface MissionStartObservable {
     }
 
     static void invokeAll(String theaterName) {
-        list.forEach(o -> o.observe(theaterName));
+        list.forEach(o -> new Thread(() -> o.observe(theaterName)).start());
     }
 }

@@ -1,5 +1,6 @@
 package moe.ofs.backend.request.server;
 
+import com.google.gson.Gson;
 import moe.ofs.backend.domain.Handle;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.request.Processable;
@@ -49,6 +50,9 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
      * @return result
      */
     public String get() {
+        if(!isSent()) {
+            send();
+        }
         while(true) {
             if(result != null) {
                 return result;
@@ -57,12 +61,32 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
     }
 
     // TODO --> generify server data request, see ConnectionManager for detail
+    public <T> T getAs(Class<T> type) {
+        Gson gson = new Gson();
+        if(!isSent()) {
+            send();
+        }
+        return gson.fromJson(get(), type);
+    }
+
+    public long getAsLong() {
+        if(!isSent()) {
+            send();
+        }
+        return Long.parseLong(get());
+    }
 
     public int getAsInt() {
+        if(!isSent()) {
+            send();
+        }
         return Integer.parseInt(get());
     }
 
     public double getAsDouble() {
+        if(!isSent()) {
+            send();
+        }
         return Double.parseDouble(get());
     }
 

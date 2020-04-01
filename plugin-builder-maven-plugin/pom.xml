@@ -36,7 +36,11 @@
             <version>3.0-alpha-2</version>
         </dependency>
 
-
+<!--        <dependency>-->
+<!--            <groupId>moe.ofs</groupId>-->
+<!--            <artifactId>backend-core</artifactId>-->
+<!--            <version>0.0.1-SNAPSHOT</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

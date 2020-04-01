@@ -32,5 +32,6 @@ build/
 
 .idea/workspace.xml
 
-/.idea/
-/hs_err_pid14688.log
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*

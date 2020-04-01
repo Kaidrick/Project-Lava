@@ -1,5 +1,9 @@
 package moe.ofs.backend;
 
+import javafx.scene.Parent;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Properties;
@@ -33,12 +37,37 @@ public interface Plugin extends Configurable {
     }
 
     /**
-     * Called once to initialize plugin or register a plugin to a handler
+     * Enable a plugin so that it is automatically initialized when background task is started
+     * If background task is already running, register immediately
+     */
+    default void enable() {
+        if(BackgroundTask.getCurrentTask().isStarted()) {
+            System.out.println("Background Task is running. Init plugin " + getName());
+            init();
+        } else {
+            System.out.println("Background Task is pending. Postpone initialization of " + getName());
+        }
+        writeConfiguration("enabled", "true");
+    }
+
+    /**
+     * Disable a plugin so that it is not initialized when background task is started
+     * If background task is already running, unregister immediately
+     */
+    default void disable() {
+        if(BackgroundTask.getCurrentTask().isStarted()) {
+            unregister();
+        }
+        writeConfiguration("enabled", "false");
+    }
+
+    /**
+     * Register a plugin to a handler
      */
     void register();
 
     /**
-     * Unload a plugin or unregister a plugin from a handler
+     * Unregister a plugin from a handler
      */
     void unregister();
 
@@ -61,6 +90,10 @@ public interface Plugin extends Configurable {
      */
     boolean isLoaded();
 
+    default Parent getPluginGui() throws IOException {
+        return null;
+    }
+
     /**
      * Load the addon. If addon needs to save config xml and add additional data loading behaviors,
      * it should override this method and call Plugin.super.init() method.
@@ -68,6 +101,7 @@ public interface Plugin extends Configurable {
      */
     default void init() {
         if(isEnabled()) {
+            System.out.println("registering " + getName());
             register();
             writeConfiguration("enabled", "true");
         }

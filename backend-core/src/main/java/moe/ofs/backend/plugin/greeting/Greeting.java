@@ -1,5 +1,6 @@
 package moe.ofs.backend.plugin.greeting;
 
+import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.Plugin;
 import moe.ofs.backend.PluginClassLoader;
 import moe.ofs.backend.function.Message;
@@ -20,7 +21,7 @@ import java.util.List;
  * The message to be send should be read from a file? external or internal?
  * If there are multiple message to be sent, user should be able to specify the delay between each message
  */
-
+@Slf4j
 @Component
 public class Greeting implements Plugin {
 
@@ -40,6 +41,7 @@ public class Greeting implements Plugin {
     }
 
     private ExportUnitSpawnObservable exportUnitSpawnObservable;
+
     private BackgroundTaskRestartObservable backgroundTaskRestartObservable;
 
     private final MessageQueueFactory messageQueueFactory;
@@ -50,14 +52,6 @@ public class Greeting implements Plugin {
 
         // or load from xml file?
         list = new ArrayList<>();
-    }
-
-    @PostConstruct
-    @Override
-    public void init() {
-        System.out.println("Greeting plugin bean constructed...register");
-        Plugin.super.init();
-        PluginClassLoader.loadedPluginSet.add(this);
     }
 
     @Override

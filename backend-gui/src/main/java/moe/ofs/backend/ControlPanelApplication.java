@@ -53,7 +53,7 @@ public class ControlPanelApplication extends Application {
         scene.getStylesheets().clear();
         scene.getStylesheets().addAll("base.css", "base_extras.css", "base_other_libraries.css", "light_theme.css");
 
-        root.setStyle("accent_color: purple");
+        root.setStyle("accent_color: #854188");
 
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(555);

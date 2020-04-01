@@ -20,7 +20,11 @@ public abstract class BaseRequest {
     protected List<Object> params = new ArrayList<>();
     protected UUID uuid;
 
-    private transient boolean isSent = false;
+    private transient boolean sent = false;
+
+    protected boolean isSent() {
+        return sent;
+    }
 
     private static class RequestBadStateException extends RuntimeException {
         RequestBadStateException() {
@@ -53,7 +57,7 @@ public abstract class BaseRequest {
 
 
     public void prepareParameters() {
-        if(isSent) {
+        if(sent) {
             return;
         }
 
@@ -88,12 +92,12 @@ public abstract class BaseRequest {
     }
 
     public BaseRequest send() {
-        if(isSent) {
+        if(sent) {
             throw new RequestBadStateException();
         } else {
             prepareParameters();
             RequestHandler.getInstance().take(this);
-            isSent = true;
+            sent = true;
         }
         return this;
     }

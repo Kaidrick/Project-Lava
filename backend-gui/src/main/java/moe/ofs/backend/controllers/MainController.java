@@ -11,11 +11,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TabPane;
 import jfxtras.styles.jmetro.JMetroStyleClass;
+import moe.ofs.backend.BackgroundTask;
 import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.Plugin;
 import moe.ofs.backend.PluginClassLoader;
 import moe.ofs.backend.domain.PlayerInfo;
-import moe.ofs.backend.function.MarkPanelManager;
 import moe.ofs.backend.gui.PlayerListCellFactory;
 import moe.ofs.backend.gui.PluginListCell;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
@@ -25,15 +25,14 @@ import moe.ofs.backend.interaction.TestButtonCommand;
 import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.util.AirdromeDataCollector;
 import org.controlsfx.control.StatusBar;
+import org.springframework.stereotype.Component;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
 import java.util.HashSet;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class MainController implements Initializable, PropertyChangeListener {
 
@@ -42,7 +41,7 @@ public class MainController implements Initializable, PropertyChangeListener {
     @FXML private TabPane baseTabPane;
 
     @FXML private StatusBar statusBar_Connection;
-    @FXML private ListView<String> listViewAddons;
+    @FXML private ListView<Plugin> listViewAddons;
     @FXML private ListView<String> listViewConnectedPlayer;
 
     @FXML private Label labelDebugInfo1;
@@ -73,15 +72,16 @@ public class MainController implements Initializable, PropertyChangeListener {
 
     // should be populated on application start, and there is no need to modify the list after start
     @FXML public void populateLoadedPluginListView() {
-        Set<Plugin> pluginSet = new HashSet<>(PluginClassLoader.loadedPluginSet);
-        List<String> pluginNameList = pluginSet.stream().map(Plugin::getName).collect(Collectors.toList());
+        System.out.println("populateLoadedPluginListView");
 
-        ObservableList<String> list = FXCollections.observableArrayList(pluginNameList);
+//        Set<Plugin> pluginSet = new HashSet<>(PluginClassLoader.loadedPluginSet);
+
+        Set<Plugin> plugins = new HashSet<>(Plugin.loadedPlugins);
+
+        ObservableList<Plugin> list = FXCollections.observableArrayList(plugins);
 
         listViewAddons.setItems(list);
-        listViewAddons.setCellFactory(param -> new PluginListCell());
-
-        System.out.println("populateLoadedPluginListView");
+        listViewAddons.setCellFactory(PluginListCell::new);
     }
 
     // registered to PlayerEnterServerObservable
@@ -122,7 +122,6 @@ public class MainController implements Initializable, PropertyChangeListener {
                 ControlPanelApplication.applicationContext.getBean(PlayerListCellFactory.class);
 
         listViewConnectedPlayer.setCellFactory(lv -> factory.listView(lv).getObject());
-
         populateLoadedPluginListView();
 
 

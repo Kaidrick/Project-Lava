@@ -1,19 +1,32 @@
 package moe.ofs.backend.gui;
 
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 import moe.ofs.backend.Plugin;
 import moe.ofs.backend.PluginClassLoader;
 
-public class PluginListCell extends ListCell<String> {
-    HBox hbox = new HBox();
-    Label label = new Label();
+import java.io.IOException;
+
+public class PluginListCell extends ListCell<Plugin> {
+    VBox mainVBox = new VBox(5);
+    HBox title = new HBox(10);
+    HBox control = new HBox(5);
     Pane pane = new Pane();
-    Pane pane2 = new Pane();
+
+    Label label = new Label();
+    Label author = new Label();
+    Label version = new Label();
     Label desc = new Label();
 
     Plugin plugin;
@@ -21,50 +34,101 @@ public class PluginListCell extends ListCell<String> {
     Button controlButton = new Button();
     Button configButton = new Button("Config");
 
-    public Button getControlButton() {
-        return controlButton;
-    }
-
-    private void switchPluginLoadState() {
+    private void switchPluginLoadState(Plugin plugin) {
         // get the loaded instance of the plugin
         if(plugin.isEnabled()) {
-            plugin.unregister();
-            System.out.println(getItem() + " unregistered");
+            plugin.disable();
             controlButton.setText("Enable");
         } else {
-            plugin.register();
-            System.out.println(getItem() + " registered");
+            plugin.enable();
             controlButton.setText("Disable");
         }
     }
 
-    public PluginListCell() {
+    public PluginListCell(ListView<Plugin> listView) {
         super();
 
-        hbox.getChildren().addAll(label, pane, desc, pane2, controlButton);
+        title.getChildren().addAll(label, version, pane, author);
         HBox.setHgrow(pane, Priority.ALWAYS);
-        HBox.setHgrow(pane2, Priority.ALWAYS);
+        mainVBox.getChildren().addAll(title, desc, control);
+        control.getChildren().addAll(controlButton);
 
-        controlButton.setOnAction(event -> switchPluginLoadState());
-        configButton.setOnAction(event -> System.out.println("disable " + getItem()));
+        itemProperty().addListener(((observable, oldValue, newValue) -> {
+            if(newValue != null) {
+                System.out.println("listener -> " + newValue);
+                plugin = Plugin.loadedPlugins.stream()
+                        .filter(p -> p.equals(getItem()))
+                        .findAny()
+                        .orElseThrow(() -> new RuntimeException("Plugin Does Not Exist"));
+
+                try {
+                    if(plugin.getPluginGui() != null)
+                        control.getChildren().add(configButton);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                label.setText(plugin.getName());
+                label.setStyle("-fx-font-weight: bold;");
+
+                version.setText("version placeholder");
+                author.setText("author placeholder");
+                controlButton.setText(plugin.isEnabled() ? "Disable" : "Enable");
+                desc.setText(plugin.getDescription());
+
+                System.out.println("pass plugin var -> " + plugin);
+
+                controlButton.setOnAction(event -> switchPluginLoadState(plugin));
+                configButton.setOnAction(event -> {
+                    try {
+                        if(plugin.getPluginGui() != null) {
+                            Parent root = plugin.getPluginGui();
+                            Scene scene = new Scene(root);
+                            JMetro jMetro = new JMetro(Style.LIGHT);
+                            jMetro.setScene(scene);
+
+                            Stage pluginStage = new Stage();
+                            pluginStage.setScene(scene);
+                            pluginStage.show();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+                setGraphic(mainVBox);
+            }
+        }));
+
     }
 
-    @Override
-    protected void updateItem(String item, boolean empty) {
-        super.updateItem(item, empty);
-        setText(null);
-        setGraphic(null);
-
-        if (item != null && !empty) {
-            plugin = PluginClassLoader.loadedPluginSet.stream()
-                    .filter(p -> p.getName() != null && p.getName().equals(getItem()))
-                    .findAny()
-                    .orElseThrow(() -> new RuntimeException("Plugin Does Not Exist"));
-
-            label.setText(item);
-            controlButton.setText(plugin.isEnabled() ? "Disable" : "Enable");
-            desc.setText(plugin.getDescription());
-            setGraphic(hbox);
-        }
-    }
+//    @Override
+//    protected void updateItem(Plugin item, boolean empty) {
+//        super.updateItem(item, empty);
+//        setText(null);
+//        setGraphic(null);
+//
+//        if (item != null && !empty) {
+//            plugin = PluginClassLoader.loadedPluginSet.stream()
+//                    .filter(p -> p.equals(getItem()))
+//                    .findAny()
+//                    .orElseThrow(() -> new RuntimeException("Plugin Does Not Exist"));
+//
+//            try {
+//                if(plugin.getPluginGui() != null)
+//                    control.getChildren().add(configButton);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            label.setText(item.getName());
+//            label.setStyle("-fx-font-weight: bold;");
+//
+//            version.setText("version placeholder");
+//            author.setText("author placeholder");
+//            controlButton.setText(plugin.isEnabled() ? "Disable" : "Enable");
+//            desc.setText(plugin.getDescription());
+//            setGraphic(mainVBox);
+//        }
+//    }
 }

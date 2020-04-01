@@ -1,5 +1,6 @@
 package moe.ofs.backend.plugin.static_display;
 
+import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.Plugin;
 import moe.ofs.backend.PluginClassLoader;
 import moe.ofs.backend.domain.PlayerInfo;
@@ -28,6 +29,7 @@ import java.util.*;
  * TODO -> normal unit cannot replace static object because it occupies a parking in game
  */
 
+@Slf4j
 @Component
 public class StaticDisplay implements Plugin {
 
@@ -68,12 +70,8 @@ public class StaticDisplay implements Plugin {
         this.flyableUnitService = flyableUnitService;
         this.parkingInfoService = parkingInfoService;
         this.slotValidator = slotValidator;
-    }
 
-    @PostConstruct
-    public void init() {
-        System.out.println("Static Display plugin bean constructed..register");
-        Plugin.super.init();
+        log.info(getName() + " initialized");
         PluginClassLoader.loadedPluginSet.add(this);
     }
 

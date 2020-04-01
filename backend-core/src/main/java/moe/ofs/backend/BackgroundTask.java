@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -24,6 +25,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -40,12 +42,6 @@ public class BackgroundTask implements PropertyChangeListener {
 
     private PropertyChangeSupport support;
 
-    // why does background task need a instance of heartbeat factory?
-    // because it wants to spawn a thread from factory
-    // let factory listen to background started property change
-
-    // services
-
     private final PollHandlerService exportObjectPollService;
 
     private final PollHandlerService playerInfoPollService;
@@ -58,6 +54,17 @@ public class BackgroundTask implements PropertyChangeListener {
 
     private final ParkingInfoService parkingInfoService;
 
+    private final List<Plugin> plugins;
+
+
+    @PostConstruct
+    private void loadPlugins() {
+        Plugin.loadedPlugins.addAll(plugins);
+        Plugin.loadedPlugins.forEach(p -> System.out.println("Loaded plugin -> " + p.getName()));
+
+        // how to add to obserable list?
+    }
+
 
     @Autowired
     public BackgroundTask(
@@ -68,7 +75,7 @@ public class BackgroundTask implements PropertyChangeListener {
             ExportObjectService exportObjectService,
             PlayerInfoService playerInfoService,
             FlyableUnitService flyableUnitService,
-            ParkingInfoService parkingInfoService) {
+            ParkingInfoService parkingInfoService, List<Plugin> plugins) {
 
         this.exportObjectPollService = exportObjectPollService;
         this.playerInfoPollService = playerInfoPollService;
@@ -77,6 +84,8 @@ public class BackgroundTask implements PropertyChangeListener {
 
         this.flyableUnitService = flyableUnitService;
         this.parkingInfoService = parkingInfoService;
+
+        this.plugins = plugins;
 
         currentTask = this;
         support = new PropertyChangeSupport(this);
@@ -90,6 +99,10 @@ public class BackgroundTask implements PropertyChangeListener {
     private ScheduledExecutorService serverPollingScheduler;
 
     private static BackgroundTask currentTask;
+
+    public static BackgroundTask getCurrentTask() {
+        return currentTask;
+    }
 
     // property change listener
     public void addPropertyChangeListener(PropertyChangeListener listener) {
@@ -114,15 +127,13 @@ public class BackgroundTask implements PropertyChangeListener {
         this.started = started;
 
         if(started) {
-            try {
-                System.out.println("Starting Background Task...");
-                this.start();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            log.info("Starting Background Task...");
+            backgroundThread = new Thread(background);
+            backgroundThread.setName("bg task");
+            backgroundThread.start();
         } else {
+            log.info("Stopping Background Task...");
             try {
-                System.out.println("Stopping Background Task...");
                 this.stop();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -176,7 +187,7 @@ public class BackgroundTask implements PropertyChangeListener {
     }
 
 
-    public Runnable background = () -> {
+    private final Runnable background = () -> {
         try {
             start();
         } catch (IOException e) {
@@ -226,6 +237,7 @@ public class BackgroundTask implements PropertyChangeListener {
     // restart background task when connect is cut
     public void start() throws IOException {
 
+
         BackgroundTaskRestartObservable.invokeAll();
 
         ConnectionManager.sanitizeDataPipeline();
@@ -250,8 +262,6 @@ public class BackgroundTask implements PropertyChangeListener {
         exportObjectPollService.init();
         playerInfoPollService.init();
 
-
-
         Runnable exportPolling = () -> {
             try {
                 exportObjectPollService.poll();
@@ -271,6 +281,7 @@ public class BackgroundTask implements PropertyChangeListener {
         // main loop
 //         requests are sent and result are received in this thread only
         Runnable mainLoop = () -> {
+//            log.info("main loop -> " + Thread.currentThread().getName());
             if(requestHandler.hasPendingServerRequest())
                 new FillerRequest(Level.SERVER).send();
 
@@ -297,7 +308,13 @@ public class BackgroundTask implements PropertyChangeListener {
         serverPollingScheduler.scheduleWithFixedDelay(serverPolling,
                 0, 200, TimeUnit.MILLISECONDS);
 
-        log.info("Scheduler running, backgroundTask ready, mission data initialized");
+        // initialize plugins
+        Plugin.loadedPlugins.forEach(Plugin::init);
+
+        log.info("Schedulers running, background task ready, mission data initialized");
+
+        log.info("((ServerDataRequest) new ServerDataRequest(\"return os.time()\").send()).getAsInt() = " + ((ServerDataRequest) new ServerDataRequest("return os.time()").send()).getAsInt());
+
         new ServerDataRequest("return env.mission.theatre")
                 .addProcessable(theater -> {
                     MissionStartObservable.invokeAll(theater);
