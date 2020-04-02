@@ -11,10 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TabPane;
 import jfxtras.styles.jmetro.JMetroStyleClass;
-import moe.ofs.backend.BackgroundTask;
-import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.Plugin;
-import moe.ofs.backend.PluginClassLoader;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.gui.PlayerListCellFactory;
 import moe.ofs.backend.gui.PluginListCell;
@@ -24,16 +21,21 @@ import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 import moe.ofs.backend.interaction.TestButtonCommand;
 import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.util.AirdromeDataCollector;
+import net.rgielen.fxweaver.core.FxmlView;
 import org.controlsfx.control.StatusBar;
 import org.springframework.stereotype.Component;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+@Component
+@FxmlView("ControlPanelApplication.fxml")
 public class MainController implements Initializable, PropertyChangeListener {
 
     private ResourceBundle bundle;
@@ -48,6 +50,12 @@ public class MainController implements Initializable, PropertyChangeListener {
     @FXML private Label labelDebugInfo2;
 
     @FXML private Button devTestButton;
+
+    private final PlayerListCellFactory playerListCellFactory;
+
+    public MainController(PlayerListCellFactory playerListCellFactory) {
+        this.playerListCellFactory = playerListCellFactory;
+    }
 
 
     @FXML public void setDebugLabelTextOne(String info) {
@@ -78,7 +86,10 @@ public class MainController implements Initializable, PropertyChangeListener {
 
         Set<Plugin> plugins = new HashSet<>(Plugin.loadedPlugins);
 
-        ObservableList<Plugin> list = FXCollections.observableArrayList(plugins);
+        ObservableList<Plugin> list = FXCollections.observableArrayList(
+                plugins.stream()
+                        .sorted(Comparator.comparingInt(p ->
+                                p.getName().length())).collect(Collectors.toList()));
 
         listViewAddons.setItems(list);
         listViewAddons.setCellFactory(PluginListCell::new);
@@ -118,10 +129,8 @@ public class MainController implements Initializable, PropertyChangeListener {
         BackgroundTaskRestartObservable backgroundTaskRestartObservable = this::removeAllPlayerFromListView;
         backgroundTaskRestartObservable.register();
 
-        PlayerListCellFactory factory =
-                ControlPanelApplication.applicationContext.getBean(PlayerListCellFactory.class);
 
-        listViewConnectedPlayer.setCellFactory(lv -> factory.listView(lv).getObject());
+        listViewConnectedPlayer.setCellFactory(lv -> playerListCellFactory.listView(lv).getObject());
         populateLoadedPluginListView();
 
 

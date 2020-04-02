@@ -12,7 +12,7 @@ public class BackendRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         log.info("Starting Control Panel GUI...");
 
-        new Thread(() -> javafx.application.Application.launch(ControlPanelApplication.class)).start();
+//        new Thread(() -> javafx.application.Application.launch(ControlPanelApplication.class)).start();
 
     }
 }

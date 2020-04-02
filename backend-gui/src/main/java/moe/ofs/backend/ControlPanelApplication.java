@@ -1,6 +1,7 @@
 package moe.ofs.backend;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -8,8 +9,11 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
+import moe.ofs.backend.controllers.MainController;
 import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
 import moe.ofs.backend.util.HeartbeatThreadFactory;
+import net.rgielen.fxweaver.core.FxWeaver;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Locale;
@@ -20,6 +24,8 @@ public class ControlPanelApplication extends Application {
 
     public static Stage stage;
     public static ConfigurableApplicationContext applicationContext;
+
+    private ConfigurableApplicationContext context;
 
     private static Parent root;
 
@@ -32,18 +38,31 @@ public class ControlPanelApplication extends Application {
 
     @Override
     public void init() throws Exception {
-        super.init();
-        FXMLLoader loader = new FXMLLoader(ControlPanelApplication.class.getResource("/ControlPanelApplication.fxml"));
-        loader.setResources(ResourceBundle.getBundle("ControlPanelApplication", Locale.CHINA, new UTF8Control()));
-        root = loader.load();
+        this.context = new SpringApplicationBuilder() //(1)
+                .sources(BackendApplication.class)
+                .run(getParameters().getRaw().toArray(new String[0]));
 
-        task = applicationContext.getBean(BackgroundTask.class);
-        heartbeatThreadFactory = applicationContext.getBean(HeartbeatThreadFactory.class);
+
+//
+//        super.init();
+//        FXMLLoader loader = new FXMLLoader(ControlPanelApplication.class.getResource("/ControlPanelApplication.fxml"));
+//        loader.setResources(ResourceBundle.getBundle("ControlPanelApplication", Locale.CHINA, new UTF8Control()));
+//        root = loader.load();
+
+        task = context.getBean(BackgroundTask.class);
+        heartbeatThreadFactory = context.getBean(HeartbeatThreadFactory.class);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
         stage = primaryStage;
+
+        FxWeaver fxWeaver = context.getBean(FxWeaver.class);
+        ResourceBundle resourceBundle =
+                ResourceBundle.getBundle("ControlPanelApplication", Locale.CHINA, new UTF8Control());
+
+        Parent root = fxWeaver.loadView(MainController.class, resourceBundle);
 
         Scene scene = new Scene(root);
 
@@ -65,7 +84,7 @@ public class ControlPanelApplication extends Application {
                 ))
         );
 
-        primaryStage.setTitle("422d Backend Control Panel");
+        primaryStage.setTitle(resourceBundle.getString("app_title"));
         primaryStage.show();
 
 //         start background thread only if connect can be made
@@ -82,6 +101,9 @@ public class ControlPanelApplication extends Application {
         task.stop();
 
         ControlPanelShutdownObservable.invokeAll();
+
+        context.close();
+        Platform.exit();
     }
 
 

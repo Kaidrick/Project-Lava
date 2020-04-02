@@ -5,11 +5,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import moe.ofs.backend.util.DcsScriptConfigManager;
+import net.rgielen.fxweaver.core.FxmlView;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.nio.file.Path;
 import java.util.ResourceBundle;
 
+@Component
+@FxmlView
 public class ConfigPane implements Initializable {
 
     private Path selectedBranchPath;

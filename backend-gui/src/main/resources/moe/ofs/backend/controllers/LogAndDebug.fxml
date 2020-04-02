@@ -53,9 +53,9 @@
                                     <Insets bottom="5.0" top="5.0" />
                                  </VBox.margin>
                               </Separator>
-                                    <Button mnemonicParsing="false" onAction="#reloadCurrentMission" text="%restart" />
-                                      <RadioButton fx:id="loadStringInMission" mnemonicParsing="false" selected="true" text="%do_string_in_mission" />
-                                      <RadioButton fx:id="loadStringInApi" mnemonicParsing="false" text="%do_string_in_api" />
+                                    <Button mnemonicParsing="false" onAction="#reloadCurrentMission" text="restart" />
+                                      <RadioButton fx:id="loadStringInMission" mnemonicParsing="false" selected="true" text="do_string_in_mission" />
+                                      <RadioButton fx:id="loadStringInApi" mnemonicParsing="false" text="do_string_in_api" />
                               <RadioButton fx:id="loadStringInExport" mnemonicParsing="false" text="Export" />
                               <ToggleSwitch fx:id="toggleSwitch_LuaDebugInteractive" nodeOrientation="RIGHT_TO_LEFT" />
                               <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">

@@ -13,6 +13,8 @@ import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.function.Message;
 import moe.ofs.backend.gui.AddGeneralMessageDialog;
 import moe.ofs.backend.plugin.greeting.Greeting;
+import net.rgielen.fxweaver.core.FxmlView;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+@Component
+@FxmlView
 public class General implements Initializable, Configurable {
 
     @FXML
@@ -134,7 +138,7 @@ public class General implements Initializable, Configurable {
 
     // push update after each button click is finished
     private void pushUpdates() {
-        ControlPanelApplication.applicationContext.getBean(Greeting.class).setList(listViewGeneralInfo.getItems());
+//        ControlPanelApplication.applicationContext.getBean(Greeting.class).setList(listViewGeneralInfo.getItems());
 
         writeFile(new ArrayList<>(listViewGeneralInfo.getItems()));
     }

@@ -147,6 +147,8 @@ public interface Configurable {
         return (T) objectInputStream.readObject();
     }
 
+    // TODO --> write json file
+
     default boolean dataFileExists() {
         return Files.exists(configPath.resolve(getName() + ".data"));
     }

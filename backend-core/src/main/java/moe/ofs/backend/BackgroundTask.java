@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -60,9 +61,7 @@ public class BackgroundTask implements PropertyChangeListener {
     @PostConstruct
     private void loadPlugins() {
         Plugin.loadedPlugins.addAll(plugins);
-        Plugin.loadedPlugins.forEach(p -> System.out.println("Loaded plugin -> " + p.getName()));
-
-        // how to add to obserable list?
+        Plugin.loadedPlugins.forEach(Plugin::load);
     }
 
 

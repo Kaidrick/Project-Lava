@@ -16,9 +16,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,10 +38,11 @@ public class PluginBuilderMojo extends AbstractMojo {
     private static final String pluginPackage = "moe.ofs.backend.plugin";
     private static final String pluginDirectory = "backend-core/src/main/java/moe/ofs/backend/plugin";
 
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
+
             getLog().info(("compile cp: " +
                     this.project.getCompileClasspathElements()));
 
@@ -58,6 +57,13 @@ public class PluginBuilderMojo extends AbstractMojo {
                     new RuntimeException("Unable to locate any resource directory"));
 
             Path metaInf = Files.createDirectories(Paths.get(metaInfoRoot).resolve("META-INF"));
+
+            Path metaInfOutput = Files.createDirectories(Paths.get(
+                    project.getCompileClasspathElements().stream()
+                            .filter(cp -> cp.endsWith("\\target\\classes"))
+                            .findAny()
+                            .orElseThrow(() -> new RuntimeException("Unable to locate class output directory"))
+            )).resolve("META-INF");
 
             List<String> autoConfigurationList = new ArrayList<>();
 
@@ -95,10 +101,16 @@ public class PluginBuilderMojo extends AbstractMojo {
                         }
                     });
 
-            try(BufferedWriter writer = Files.newBufferedWriter(metaInf.resolve("spring.factories"))) {
+            Path sourceSpringFactory = metaInf.resolve("spring.factories");
+            Path outputSpringFactory = metaInfOutput.resolve("spring.factories");
+
+            try(BufferedWriter writer = Files.newBufferedWriter(sourceSpringFactory)) {
                 writer.write("org.springframework.boot.autoconfigure.EnableAutoConfiguration=\\\n");
                 writer.append(String.join(",\\\n", autoConfigurationList));
             }
+
+            Files.createDirectories(metaInfOutput);
+            Files.copy(sourceSpringFactory, outputSpringFactory, StandardCopyOption.REPLACE_EXISTING);
 
         } catch (IOException | DependencyResolutionRequiredException e) {
             e.printStackTrace();

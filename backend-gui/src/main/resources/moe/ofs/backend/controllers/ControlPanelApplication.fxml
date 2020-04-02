@@ -56,7 +56,7 @@
                <content>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <Button fx:id="mainLoopStartButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#testStart" text="%start" />
+                        <Button fx:id="mainLoopStartButton" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#testStart" text="start" />
                         <Label fx:id="labelDebugInfo1" layoutX="14.0" layoutY="77.0" prefHeight="76.0" prefWidth="468.0" text="Label" />
                         <Label fx:id="labelDebugInfo2" layoutX="14.0" layoutY="180.0" prefHeight="108.0" prefWidth="468.0" text="Label" />
                         <Button fx:id="devTestButton" layoutX="93.0" layoutY="14.0" mnemonicParsing="false" text="Test Button!" />
@@ -82,6 +82,6 @@
   </children>
 
   <stylesheets>
-    <URL value="@main.css" />
+    <URL value="@../../../../main.css" />
   </stylesheets>
 </VBox>

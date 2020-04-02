@@ -1,6 +1,7 @@
 package moe.ofs.backend.plugin.static_display;
 
 import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.BackgroundTask;
 import moe.ofs.backend.Plugin;
 import moe.ofs.backend.PluginClassLoader;
 import moe.ofs.backend.domain.PlayerInfo;
@@ -19,7 +20,6 @@ import moe.ofs.backend.util.LuaScripts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 /**
@@ -36,8 +36,6 @@ public class StaticDisplay implements Plugin {
     // name
     public final String name = "Static Aircraft Display";
     public final String desc = "Display a flyable static aircraft";
-
-    private boolean isLoaded;
 
     // handlers
     MissionStartObservable missionStartObservable;
@@ -92,10 +90,6 @@ public class StaticDisplay implements Plugin {
 
         playerLeaveServerObservable = this::respawnOnPlayerLeaveServer;
         playerLeaveServerObservable.register();
-
-        isLoaded = true;
-
-        writeConfiguration("enabled", "true");
     }
 
     @Override
@@ -104,11 +98,8 @@ public class StaticDisplay implements Plugin {
         missionStartObservable.unregister();
         playerLeaveServerObservable.unregister();
 
-        cleanStaticDisplay();
-
-        isLoaded = false;
-
-        writeConfiguration("enabled", "false");
+        if(BackgroundTask.getCurrentTask().isStarted())
+            cleanStaticDisplay();
     }
 
     @Override
@@ -122,8 +113,13 @@ public class StaticDisplay implements Plugin {
     }
 
     @Override
-    public boolean isLoaded() {
-        return isLoaded;
+    public String getVersion() {
+        return "0.0.1";
+    }
+
+    @Override
+    public String getAuthor() {
+        return "Project Lava";
     }
 
 

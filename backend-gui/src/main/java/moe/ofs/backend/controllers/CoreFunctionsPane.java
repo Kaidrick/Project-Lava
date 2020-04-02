@@ -7,6 +7,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.util.ConnectionManager;
+import net.rgielen.fxweaver.core.FxmlView;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.util.Map;
@@ -14,6 +16,8 @@ import java.util.ResourceBundle;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
+@Component
+@FxmlView
 public class CoreFunctionsPane implements Initializable {
 
     @FXML

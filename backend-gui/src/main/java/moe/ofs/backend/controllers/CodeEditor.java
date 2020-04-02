@@ -7,12 +7,14 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
+import net.rgielen.fxweaver.core.FxmlView;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.reactfx.Subscription;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.time.Duration;
@@ -25,6 +27,8 @@ import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component
+@FxmlView
 public class CodeEditor implements Initializable {
 
     private static final String[] KEYWORDS = new String[] {

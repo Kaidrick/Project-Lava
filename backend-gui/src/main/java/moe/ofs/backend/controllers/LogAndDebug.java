@@ -21,8 +21,10 @@ import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.export.ExportExecRequest;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.util.LuaScripts;
+import net.rgielen.fxweaver.core.FxmlView;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.ToggleSwitch;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.net.URL;
@@ -30,6 +32,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+@Component
+@FxmlView
 public class LogAndDebug implements Initializable {
 
     private List<LogEntry> logEntryList;
@@ -109,7 +113,7 @@ public class LogAndDebug implements Initializable {
 
         FXMLLoader loader = new FXMLLoader();
         try {
-            AnchorPane topAnchorPanel = loader.load(getClass().getResourceAsStream("/CodeEditor.fxml"));
+            AnchorPane topAnchorPanel = loader.load(getClass().getResourceAsStream("/moe/ofs/backend/controllers/CodeEditor.fxml"));
             luaEditor = loader.getController();
             lowerMainHBox.getChildren().add(0, topAnchorPanel);
             HBox.setHgrow(topAnchorPanel, Priority.ALWAYS);

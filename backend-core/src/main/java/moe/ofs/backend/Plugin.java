@@ -3,6 +3,7 @@ package moe.ofs.backend;
 import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -20,20 +21,9 @@ public interface Plugin extends Configurable {
 
     Set<Plugin> loadedPlugins = new HashSet<>();
 
-    /**
-     * Load ofs.backend.plugin classes from ofs.backend.plugin package
-     * for each directory, load the class that implements Plugin interface
-     */
-    static void loadPlugins() throws IOException {
-
-        PluginClassLoader pluginClassLoader = new PluginClassLoader();
-
-        Properties properties = new Properties();
-        properties.load(Plugin.class.getResourceAsStream("/enabled_plugins.properties"));
-
-        properties.forEach((pluginName, pluginCoreClassName) ->
-                pluginClassLoader.invokeClassMethod(String.format("moe.ofs.backend.plugin.%s.%s",
-                        pluginName, pluginCoreClassName)));
+    default void load() {
+        if(isEnabled())
+            register();
     }
 
     /**
@@ -41,23 +31,26 @@ public interface Plugin extends Configurable {
      * If background task is already running, register immediately
      */
     default void enable() {
-        if(BackgroundTask.getCurrentTask().isStarted()) {
-            System.out.println("Background Task is running. Init plugin " + getName());
-            init();
-        } else {
-            System.out.println("Background Task is pending. Postpone initialization of " + getName());
-        }
+        register();
+//        if(BackgroundTask.getCurrentTask().isStarted()) {
+//            System.out.println("Background Task is running. Init plugin " + getName());
+//            init();
+//        } else {
+//            System.out.println("Background Task is pending. Postpone initialization of " + getName());
+//        }
         writeConfiguration("enabled", "true");
     }
 
     /**
      * Disable a plugin so that it is not initialized when background task is started
      * If background task is already running, unregister immediately
+     * If background task is not running,
      */
     default void disable() {
-        if(BackgroundTask.getCurrentTask().isStarted()) {
-            unregister();
-        }
+        unregister();
+//        if(BackgroundTask.getCurrentTask().isStarted()) {
+//            unregister();
+//        }
         writeConfiguration("enabled", "false");
     }
 
@@ -83,28 +76,26 @@ public interface Plugin extends Configurable {
      */
     String getDescription();
 
-    /**
-     * Return a boolean value to indicate whether the plugin is initialized or registered to a handler.
-     * In other word, this value represents whether the register() or unregister() has been called.
-     * @return
-     */
-    boolean isLoaded();
-
     default Parent getPluginGui() throws IOException {
         return null;
     }
 
     /**
-     * Load the addon. If addon needs to save config xml and add additional data loading behaviors,
+     * Perform data loading for this addon on background task ready.
+     * If addon needs to save config xml and add additional data loading behaviors,
      * it should override this method and call Plugin.super.init() method.
-     * If
      */
-    default void init() {
-        if(isEnabled()) {
-            System.out.println("registering " + getName());
-            register();
-            writeConfiguration("enabled", "true");
-        }
-        loadedPlugins.add(this);
+    default void init() {}
+
+    default String getVersion() {
+        return null;
+    }
+
+    default String getAuthor() {
+        return null;
+    }
+
+    default String getDependencies() {
+        return null;
     }
 }

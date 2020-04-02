@@ -53,10 +53,6 @@ class PluginTest {
                 return null;
             }
 
-            @Override
-            public boolean isLoaded() {
-                return false;
-            }
         };
         testPluginXmlPath = Configurable.configPath.resolve(testPlugin.getName() + ".xml");
     }

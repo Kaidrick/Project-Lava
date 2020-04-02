@@ -2,7 +2,6 @@ package moe.ofs.backend.plugin.greeting;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.Plugin;
-import moe.ofs.backend.PluginClassLoader;
 import moe.ofs.backend.function.Message;
 import moe.ofs.backend.function.MessageQueue;
 import moe.ofs.backend.function.MessageQueueFactory;
@@ -12,7 +11,6 @@ import moe.ofs.backend.domain.ExportObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +25,6 @@ public class Greeting implements Plugin {
 
     public final String name = "Server Greeting";
     public final String desc = "Say Hello on player spawn";
-
-    private boolean isLoaded;
 
     private List<Message> list;
 
@@ -55,18 +51,19 @@ public class Greeting implements Plugin {
     }
 
     @Override
+    public void init() {
+        log.info(getName() + " initialized");
+    }
+
+    @Override
     public void register() {
         exportUnitSpawnObservable = this::greet;
         exportUnitSpawnObservable.register();
-        isLoaded = true;
-        writeConfiguration("enabled", "true");
     }
 
     @Override
     public void unregister() {
         exportUnitSpawnObservable.unregister();
-        isLoaded = false;
-        writeConfiguration("enabled", "false");
     }
 
     @Override
@@ -75,13 +72,18 @@ public class Greeting implements Plugin {
     }
 
     @Override
-    public String getDescription() {
-        return desc;
+    public String getVersion() {
+        return "0.0.1";
     }
 
     @Override
-    public boolean isLoaded() {
-        return isLoaded;
+    public String getAuthor() {
+        return "Project Lava";
+    }
+
+    @Override
+    public String getDescription() {
+        return desc;
     }
 
     private void greet(ExportObject unit) {
