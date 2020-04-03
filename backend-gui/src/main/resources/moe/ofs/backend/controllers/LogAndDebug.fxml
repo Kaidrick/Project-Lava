@@ -34,7 +34,7 @@
                            <children>
                               <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0">
                                  <children>
-                                    <Label text="Filter Log Level" />
+                                    <Label fx:id="filterLogLevelLabel" text="Filter Log Level" />
                                     <CheckComboBox fx:id="levelFilterSelection" />
                                     <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                        <children>
@@ -53,7 +53,7 @@
                                     <Insets bottom="5.0" top="5.0" />
                                  </VBox.margin>
                               </Separator>
-                                    <Button mnemonicParsing="false" onAction="#reloadCurrentMission" text="restart" />
+                                    <Button fx:id="missionRestartButton" mnemonicParsing="false" onAction="#reloadCurrentMission" text="restart" />
                                       <RadioButton fx:id="loadStringInMission" mnemonicParsing="false" selected="true" text="do_string_in_mission" />
                                       <RadioButton fx:id="loadStringInApi" mnemonicParsing="false" text="do_string_in_api" />
                               <RadioButton fx:id="loadStringInExport" mnemonicParsing="false" text="Export" />

@@ -12,25 +12,25 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.controlsfx.control.StatusBar?>
 
-<VBox prefHeight="800.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="moe.ofs.backend.controllers.MainController">
+<VBox fx:id="mainVBox" prefHeight="800.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="moe.ofs.backend.controllers.MainController">
   <children>
       <TabPane fx:id="baseTabPane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <tabs>
-          <Tab text="Log / Debug">
+          <Tab fx:id="consoleTab" text="Log / Debug">
                <content>
                    <fx:include source="LogAndDebug.fxml" />
                </content>
             </Tab>
-          <Tab text="Settings">
+          <Tab fx:id="settingTab" text="Settings">
                <content>
                   <Accordion>
                     <panes>
-                        <TitledPane animated="false" text="Core Functions">
+                        <TitledPane fx:id="settings_coreFucntionTitle" animated="false" text="Core Functions">
                           <content>
                               <fx:include source="CoreFunctionsPane.fxml" />
                           </content>
                         </TitledPane>
-                      <TitledPane animated="false" text="Addons">
+                      <TitledPane fx:id="settings_addonListTitle" animated="false" text="Addons">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                  <children>
@@ -39,12 +39,12 @@
                               </AnchorPane>
                         </content>
                       </TitledPane>
-                      <TitledPane animated="false" text="Config">
+                      <TitledPane fx:id="settings_configListTitle" animated="false" text="Config">
                         <content>
                             <fx:include source="ConfigPane.fxml" />
                         </content>
                       </TitledPane>
-                      <TitledPane animated="false" text="Miscellaneous">
+                      <TitledPane fx:id="settings_miscListTitle" animated="false" text="Miscellaneous">
                         <content>
                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                         </content>
@@ -52,7 +52,7 @@
                     </panes>
                   </Accordion>
                </content></Tab>
-          <Tab text="Dev / Test">
+          <Tab fx:id="devTestTab" text="Dev / Test">
                <content>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
@@ -63,7 +63,7 @@
                      </children>
                   </AnchorPane>
                </content></Tab>
-          <Tab text="Players">
+          <Tab fx:id="playerTab" text="Players">
                <content>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0">
                      <children>
@@ -71,7 +71,7 @@
                      </children>
                   </AnchorPane>
                </content></Tab>
-            <Tab text="Lua Editor">
+            <Tab fx:id="luaEditorTab" text="Lua Editor">
                 <content>
 <!--                    <fx:include source="CodeEditor.fxml"/>-->
                 </content>

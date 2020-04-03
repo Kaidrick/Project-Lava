@@ -2,7 +2,6 @@ package moe.ofs.backend;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -12,6 +11,7 @@ import jfxtras.styles.jmetro.Style;
 import moe.ofs.backend.controllers.MainController;
 import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
 import moe.ofs.backend.util.HeartbeatThreadFactory;
+import moe.ofs.backend.util.I18n;
 import net.rgielen.fxweaver.core.FxWeaver;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -27,8 +27,6 @@ public class ControlPanelApplication extends Application {
 
     private ConfigurableApplicationContext context;
 
-    private static Parent root;
-
     public static BackgroundTask task;
     public static HeartbeatThreadFactory heartbeatThreadFactory;
 
@@ -43,12 +41,6 @@ public class ControlPanelApplication extends Application {
                 .run(getParameters().getRaw().toArray(new String[0]));
 
 
-//
-//        super.init();
-//        FXMLLoader loader = new FXMLLoader(ControlPanelApplication.class.getResource("/ControlPanelApplication.fxml"));
-//        loader.setResources(ResourceBundle.getBundle("ControlPanelApplication", Locale.CHINA, new UTF8Control()));
-//        root = loader.load();
-
         task = context.getBean(BackgroundTask.class);
         heartbeatThreadFactory = context.getBean(HeartbeatThreadFactory.class);
     }
@@ -59,9 +51,13 @@ public class ControlPanelApplication extends Application {
         stage = primaryStage;
 
         FxWeaver fxWeaver = context.getBean(FxWeaver.class);
-        ResourceBundle resourceBundle =
-                ResourceBundle.getBundle("ControlPanelApplication", Locale.CHINA, new UTF8Control());
 
+        I18n.setLocale(Locale.getDefault());
+
+        ResourceBundle resourceBundle =
+                ResourceBundle.getBundle("ControlPanelApplication", I18n.getLocale(), new UTF8Control());
+
+        // load with system default locale
         Parent root = fxWeaver.loadView(MainController.class, resourceBundle);
 
         Scene scene = new Scene(root);
@@ -72,7 +68,7 @@ public class ControlPanelApplication extends Application {
         scene.getStylesheets().clear();
         scene.getStylesheets().addAll("base.css", "base_extras.css", "base_other_libraries.css", "light_theme.css");
 
-        root.setStyle("accent_color: #854188");
+        root.setStyle("accent_color: purple");
 
         primaryStage.setScene(scene);
         primaryStage.setMinWidth(555);
@@ -84,7 +80,15 @@ public class ControlPanelApplication extends Application {
                 ))
         );
 
-        primaryStage.setTitle(resourceBundle.getString("app_title"));
+        I18n.localeProperty().addListener(((observable, oldValue, newValue) -> {
+            if(!newValue.equals(oldValue)) {
+                ResourceBundle bundle =
+                        ResourceBundle.getBundle("ControlPanelApplication", newValue, new UTF8Control());
+                primaryStage.setTitle(I18n.getString(bundle, "app_title"));
+            }
+        }));
+
+        primaryStage.setTitle(I18n.getString(resourceBundle, "app_title"));
         primaryStage.show();
 
 //         start background thread only if connect can be made

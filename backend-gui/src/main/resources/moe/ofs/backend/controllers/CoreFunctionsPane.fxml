@@ -17,24 +17,24 @@
          <children>
             <VBox spacing="10.0">
                <children>
-                      <Label text="DCS Lua Server Port Settings" underline="true" />
+                      <Label fx:id="settings_core_dcsLuaServerPortLabel" text="DCS Lua Server Port Settings" underline="true" />
                   <HBox spacing="5.0">
                      <children>
-                            <Label text="Export Service " />
+                            <Label fx:id="settings_core_dcsExportServiceLabel" text="Export Service " />
                             <TextField fx:id="portConfigExportQuery" prefHeight="25.0" prefWidth="90.0" promptText="Query" />
                             <TextField fx:id="portConfigExportData" prefHeight="25.0" prefWidth="90.0" promptText="Data" />
                      </children>
                   </HBox>
                   <HBox spacing="5.0">
                      <children>
-                            <Label text="Server/API Service" />
+                            <Label fx:id="settings_core_dcsAPIServiceLabel" text="Server/API Service" />
                             <TextField fx:id="portConfigServerQuery" prefHeight="25.0" prefWidth="90.0" promptText="Query" />
                             <TextField fx:id="portConfigServerData" prefHeight="25.0" prefWidth="90.0" promptText="Data" />
                      </children>
                   </HBox>
                   <HBox spacing="5.0">
                      <children>
-                        <Button mnemonicParsing="false" text="Instruction" />
+                        <Button fx:id="settings_core_dcsPortSettingsInstrctionShowButton" mnemonicParsing="false" text="Instruction" />
                             <Button fx:id="buttonCoreConfigPortSave" mnemonicParsing="false" onAction="#savePortConfig" text="Save" />
                             <Button fx:id="buttonCoreConfigPortDefault" mnemonicParsing="false" onAction="#defaultPortConfig" text="Default" />
                      </children>

@@ -1,15 +1,18 @@
 package moe.ofs.backend.controllers;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import moe.ofs.backend.util.DcsScriptConfigManager;
+import moe.ofs.backend.util.I18n;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
 @Component
@@ -17,10 +20,11 @@ import java.util.ResourceBundle;
 public class ConfigPane implements Initializable {
 
     private Path selectedBranchPath;
-    @FXML
-    private ComboBox<Path> comboBoxDcsBranchSelection;
+    @FXML private ComboBox<Path> comboBoxDcsBranchSelection;
     @FXML private Button buttonExportAndHookConfig;
     @FXML private Button buttonRemoveBackendConfigFile;
+
+    @FXML private ComboBox<Locale> localeComboBox;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -58,6 +62,13 @@ public class ConfigPane implements Initializable {
                 buttonExportAndHookConfig.setText("Install Scripts");
             }
         });
+
+        localeComboBox.setItems(FXCollections.observableArrayList(
+                new Locale("zh", "CN"), new Locale("en", "US")));
+        localeComboBox.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
+            I18n.setLocale(newValue);
+            System.out.println(I18n.getLocale());
+        }));
 
     }
 }

@@ -6,12 +6,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TabPane;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 import moe.ofs.backend.Plugin;
+import moe.ofs.backend.UTF8Control;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.gui.PlayerListCellFactory;
 import moe.ofs.backend.gui.PluginListCell;
@@ -21,6 +23,7 @@ import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 import moe.ofs.backend.interaction.TestButtonCommand;
 import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.util.AirdromeDataCollector;
+import moe.ofs.backend.util.I18n;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.controlsfx.control.StatusBar;
 import org.springframework.stereotype.Component;
@@ -28,10 +31,7 @@ import org.springframework.stereotype.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -40,7 +40,14 @@ public class MainController implements Initializable, PropertyChangeListener {
 
     private ResourceBundle bundle;
 
+    @FXML private VBox mainVBox;
     @FXML private TabPane baseTabPane;
+
+    @FXML private Tab consoleTab;
+    @FXML private Tab settingTab;
+    @FXML private Tab devTestTab;
+    @FXML private Tab playerTab;
+    @FXML private Tab luaEditorTab;
 
     @FXML private StatusBar statusBar_Connection;
     @FXML private ListView<Plugin> listViewAddons;
@@ -115,7 +122,6 @@ public class MainController implements Initializable, PropertyChangeListener {
     public void initialize(URL location, ResourceBundle resources) {
         bundle = resources;
 
-
         RequestHandler.getInstance().addPropertyChangeListener(this);
 
         baseTabPane.getStyleClass().add(JMetroStyleClass.BACKGROUND);
@@ -136,6 +142,14 @@ public class MainController implements Initializable, PropertyChangeListener {
 
         // TEST
         devTestButton.setOnAction(event -> TestButtonCommand.invokeAll());
+
+        I18n.localeProperty().addListener(((observable, oldValue, newValue) -> {
+            ResourceBundle bundle =
+                    ResourceBundle.getBundle("ControlPanelApplication", newValue, new UTF8Control());
+
+            I18n.toPaneOrNotToPane(mainVBox, bundle);
+//            parsePane(mainVBox, bundle);
+        }));
 
     }
 

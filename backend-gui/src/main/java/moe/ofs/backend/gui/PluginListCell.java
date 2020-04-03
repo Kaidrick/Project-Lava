@@ -15,6 +15,7 @@ import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import moe.ofs.backend.Plugin;
 import moe.ofs.backend.PluginClassLoader;
+import moe.ofs.backend.util.I18n;
 
 import java.io.IOException;
 
@@ -76,13 +77,35 @@ public class PluginListCell extends ListCell<Plugin> {
                 e.printStackTrace();
             }
 
-            label.setText(plugin.getName());
+            if(plugin.getLocalizedName() != null) {
+                label.setText(plugin.getLocalizedName());
+            } else {
+                label.setText(plugin.getName());
+            }
+            I18n.localeProperty().addListener(observable -> {
+                if(plugin.getLocalizedName() != null) {
+                    label.setText(plugin.getLocalizedName());
+                }
+            });
+
+
             label.setStyle("-fx-font-weight: bold;");
 
             version.setText(plugin.getVersion());
             author.setText(plugin.getAuthor());
             controlButton.setText(plugin.isEnabled() ? "Disable" : "Enable");
-            desc.setText(plugin.getDescription());
+
+
+            if(plugin.getLocalizedDescription() != null) {
+                desc.setText(plugin.getLocalizedDescription());
+            } else {
+                desc.setText(plugin.getDescription());
+            }
+            I18n.localeProperty().addListener(observable -> {
+                if(plugin.getLocalizedDescription() != null) {
+                    desc.setText(plugin.getLocalizedDescription());
+                }
+            });
 
             controlButton.setOnAction(event -> switchPluginLoadState(plugin));
             configButton.setOnAction(event -> {
@@ -97,9 +120,19 @@ public class PluginListCell extends ListCell<Plugin> {
                         jMetro.setScene(scene);
 
                         Stage pluginStage = new Stage();
-                        pluginStage.setTitle(plugin.getName());
+                        if(plugin.getLocalizedName() != null) {
+                            pluginStage.setTitle(plugin.getLocalizedName());
+                        } else {
+                            pluginStage.setTitle(plugin.getName());
+                        }
+
                         pluginStage.setScene(scene);
                         pluginStage.show();
+
+                        I18n.localeProperty().addListener(observable -> {
+                            if(plugin.getLocalizedName() != null)
+                                pluginStage.setTitle(plugin.getLocalizedName());
+                        });
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

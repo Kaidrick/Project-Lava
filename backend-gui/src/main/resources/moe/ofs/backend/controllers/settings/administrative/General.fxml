@@ -13,10 +13,10 @@
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="moe.ofs.backend.controllers.settings.administrative.General">
     <VBox spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <children>
-            <Label text="Administrative Information" underline="true" />
+            <Label fx:id="settings_admin_generalOptionsLabel" text="Administrative Information" underline="true" />
             <TabPane tabClosingPolicy="UNAVAILABLE">
                 <tabs>
-                    <Tab text="Server Admin">
+                    <Tab fx:id="settings_admin_serverAdminListLabel" text="Server Admin">
                         <content>
                             <AnchorPane>
                                 <children>
@@ -25,8 +25,8 @@
                                             <ListView />
                                             <VBox spacing="5.0">
                                                 <children>
-                                                    <Button mnemonicParsing="false" text="Add" />
-                                                    <Button mnemonicParsing="false" text="Remove" />
+                                                    <Button fx:id="settings_admin_serverAdminAdd" mnemonicParsing="false" text="Add" />
+                                                    <Button fx:id="settings_admin_serverAdminRemove" mnemonicParsing="false" text="Remove" />
                                                 </children>
                                             </VBox>
                                         </children>
@@ -35,7 +35,7 @@
                             </AnchorPane>
                         </content>
                     </Tab>
-                    <Tab text="General Information">
+                    <Tab fx:id="settings_main_generalInformationOptionsLabel" text="General Information">
                         <content>
                             <AnchorPane>
                                 <children>
@@ -46,7 +46,7 @@
                                               <Button fx:id="buttonGeneralRemove" mnemonicParsing="false" onAction="#removeGeneralMessageOnClick" text="Remove" />
                                               <Button fx:id="buttonGeneralMoveUp" mnemonicParsing="false" onAction="#moveUpGeneralMessageOnClick" text="Move Up" />
                                               <Button fx:id="buttonGeneralMoveDown" mnemonicParsing="false" onAction="#moveDownGeneralMessageOnClick" text="Move Down" />
-                                 <Button fx:id="buttonGeneralEdit" mnemonicParsing="false" onAction="#editGeneralMessageOnClick" text="Edit" />
+                                              <Button fx:id="buttonGeneralEdit" mnemonicParsing="false" onAction="#editGeneralMessageOnClick" text="Edit" />
                                           </children>
                                       </VBox>
                                 </children>

@@ -98,4 +98,12 @@ public interface Plugin extends Configurable {
     default String getDependencies() {
         return null;
     }
+
+    default String getLocalizedName() {
+        return null;
+    }
+
+    default String getLocalizedDescription() {
+        return null;
+    }
 }
