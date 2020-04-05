@@ -23,8 +23,6 @@ import java.util.ResourceBundle;
 public class ControlPanelApplication extends Application {
 
     public static Stage stage;
-    public static ConfigurableApplicationContext applicationContext;
-
     private ConfigurableApplicationContext context;
 
     public static BackgroundTask task;

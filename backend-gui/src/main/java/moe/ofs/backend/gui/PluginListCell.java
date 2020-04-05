@@ -13,14 +13,16 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
+import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.Plugin;
-import moe.ofs.backend.PluginClassLoader;
 import moe.ofs.backend.util.I18n;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class PluginListCell extends ListCell<Plugin> {
     Scene scene;
+    Stage pluginStage;
 
     VBox mainVBox = new VBox(5);
     HBox title = new HBox(10);
@@ -119,15 +121,29 @@ public class PluginListCell extends ListCell<Plugin> {
                         JMetro jMetro = new JMetro(Style.LIGHT);
                         jMetro.setScene(scene);
 
-                        Stage pluginStage = new Stage();
+                        if(pluginStage == null) {
+                            pluginStage = new Stage();
+
+                            // TODO -> modify icon size!
+                            if(plugin.getIcon() != null) {
+                                pluginStage.getIcons().add(
+                                        Objects.requireNonNull(plugin.getIcon())
+                                );
+                            }
+
+                            pluginStage.initOwner(ControlPanelApplication.stage);
+                            pluginStage.setScene(scene);
+                        }
+
                         if(plugin.getLocalizedName() != null) {
                             pluginStage.setTitle(plugin.getLocalizedName());
                         } else {
                             pluginStage.setTitle(plugin.getName());
                         }
 
-                        pluginStage.setScene(scene);
-                        pluginStage.show();
+                        if(!pluginStage.isShowing()) {
+                            pluginStage.show();
+                        }
 
                         I18n.localeProperty().addListener(observable -> {
                             if(plugin.getLocalizedName() != null)

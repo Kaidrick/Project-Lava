@@ -7,7 +7,7 @@ import java.util.*;
 
 public abstract class AbstractMapService <T extends BaseEntity> implements CrudService<T> {
 
-    Map<Long, T> map = new HashMap<>();
+    protected Map<Long, T> map = new HashMap<>();
 
     private Long getNextId() {
         return map.keySet().isEmpty() ? 1L : Collections.max(map.keySet()) + 1;
