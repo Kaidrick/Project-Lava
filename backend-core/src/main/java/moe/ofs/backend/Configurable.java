@@ -1,14 +1,19 @@
 package moe.ofs.backend;
 
+import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import moe.ofs.backend.util.DcsScriptConfigManager;
 
 import java.io.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 public interface Configurable {
 
@@ -129,27 +134,71 @@ public interface Configurable {
         return Files.exists(configPath.resolve(getName() + ".xml"));
     }
 
+
+
+
     @SneakyThrows
-    default <T extends Serializable> void writeFile(T object) {
-        Path configFilePath = configPath.resolve(getName() + ".data");
+    default <T extends Serializable> void writeFile(T object, String fileName) {
+        Path configFilePath = configPath.resolve(fileName + ".data");
         FileOutputStream fileOutputStream = new FileOutputStream(configFilePath.toFile());
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
         objectOutputStream.writeObject(object);
         objectOutputStream.close();
     }
 
+    default <T extends Serializable> void writeFile(T object) {
+        writeFile(object, getName());
+    }
+
     @SneakyThrows
     @SuppressWarnings("unchecked")
-    default <T extends Serializable> T readFile() {
-        Path configFilePath = configPath.resolve(getName() + ".data");
+    default <T extends Serializable> T readFile(String fileName) {
+        ClassLoader boot = getClass().getClassLoader();
+        Path configFilePath = configPath.resolve(fileName + ".data");
         FileInputStream fileInputStream = new FileInputStream(configFilePath.toFile());
-        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+        ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream) {
+            @Override
+            protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+                try {
+                    return Class.forName(desc.getName(), false, ClassLoader.getSystemClassLoader());
+                } catch (ClassNotFoundException e) {
+                    return Class.forName(desc.getName(), false, boot);
+                }
+            }
+        };
         return (T) objectInputStream.readObject();
     }
 
+    default <T extends Serializable> T readFile() {
+        return readFile(getName());
+    }
+
     // TODO --> write json file
+    @SneakyThrows
+    default <T> void writeJsonFile(T object, String fileName) {
+        Path configFilePath = configPath.resolve(fileName + ".json");
+        Gson gson = new Gson();
+
+        try(PrintWriter out = new PrintWriter(configFilePath.toFile())) {
+            out.println(gson.toJson(object));
+        }
+    }
+
+    @SneakyThrows
+    default <T> T readJsonFile(Type type, String fileName) {
+        Path configFilePath = configPath.resolve(fileName + ".json");
+        Gson gson = new Gson();
+        String s = String.join("\n", Files.readAllLines(configFilePath));
+
+        return gson.fromJson(s, type);
+    }
+
 
     default boolean dataFileExists() {
         return Files.exists(configPath.resolve(getName() + ".data"));
+    }
+
+    default boolean dataFileExists(String fileName) {
+        return Files.exists(configPath.resolve(fileName + ".data"));
     }
 }

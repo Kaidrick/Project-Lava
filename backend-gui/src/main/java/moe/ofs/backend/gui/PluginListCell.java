@@ -15,6 +15,7 @@ import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.Plugin;
+import moe.ofs.backend.Viewable;
 import moe.ofs.backend.util.I18n;
 
 import java.io.IOException;
@@ -71,12 +72,8 @@ public class PluginListCell extends ListCell<Plugin> {
                     .findAny()
                     .orElseThrow(() -> new RuntimeException("Plugin Does Not Exist"));
 
-            try {
-                if(plugin.getPluginGui() != null)
-                    control.getChildren().add(configButton);
-
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(plugin instanceof Viewable) {
+                control.getChildren().add(configButton);
             }
 
             if(plugin.getLocalizedName() != null) {
@@ -89,7 +86,6 @@ public class PluginListCell extends ListCell<Plugin> {
                     label.setText(plugin.getLocalizedName());
                 }
             });
-
 
             label.setStyle("-fx-font-weight: bold;");
 
@@ -111,45 +107,47 @@ public class PluginListCell extends ListCell<Plugin> {
 
             controlButton.setOnAction(event -> switchPluginLoadState(plugin));
             configButton.setOnAction(event -> {
+                // must be a Viewable
+                Viewable viewable = (Viewable) plugin;
                 try {
-                    if(plugin.getPluginGui() != null) {
-                        if(scene == null) {
-                            Parent root = plugin.getPluginGui();
-                            scene = new Scene(root);
+                    if(scene == null) {
+                        Parent parent = viewable.getPluginGui();
+                        if(parent != null) {
+                            scene = new Scene(parent);
                         }
-
-                        JMetro jMetro = new JMetro(Style.LIGHT);
-                        jMetro.setScene(scene);
-
-                        if(pluginStage == null) {
-                            pluginStage = new Stage();
-
-                            // TODO -> modify icon size!
-                            if(plugin.getIcon() != null) {
-                                pluginStage.getIcons().add(
-                                        Objects.requireNonNull(plugin.getIcon())
-                                );
-                            }
-
-                            pluginStage.initOwner(ControlPanelApplication.stage);
-                            pluginStage.setScene(scene);
-                        }
-
-                        if(plugin.getLocalizedName() != null) {
-                            pluginStage.setTitle(plugin.getLocalizedName());
-                        } else {
-                            pluginStage.setTitle(plugin.getName());
-                        }
-
-                        if(!pluginStage.isShowing()) {
-                            pluginStage.show();
-                        }
-
-                        I18n.localeProperty().addListener(observable -> {
-                            if(plugin.getLocalizedName() != null)
-                                pluginStage.setTitle(plugin.getLocalizedName());
-                        });
                     }
+
+                    JMetro jMetro = new JMetro(Style.LIGHT);
+                    jMetro.setScene(scene);
+
+                    if(pluginStage == null) {
+                        pluginStage = new Stage();
+
+                        if(plugin.getIcon() != null) {
+                            pluginStage.getIcons().add(
+                                    Objects.requireNonNull(plugin.getIcon())
+                            );
+                        }
+
+                        pluginStage.initOwner(ControlPanelApplication.stage);
+                        pluginStage.setScene(scene);
+                    }
+
+                    if(plugin.getLocalizedName() != null) {
+                        pluginStage.setTitle(plugin.getLocalizedName());
+                    } else {
+                        pluginStage.setTitle(plugin.getName());
+                    }
+
+                    if(!pluginStage.isShowing()) {
+                        pluginStage.show();
+                    }
+
+                    I18n.localeProperty().addListener(observable -> {
+                        if(plugin.getLocalizedName() != null)
+                            pluginStage.setTitle(plugin.getLocalizedName());
+                    });
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

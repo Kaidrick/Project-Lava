@@ -5,10 +5,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import moe.ofs.backend.GeoPositions;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class GeoPosition {
+public class GeoPosition implements Serializable {
     private double latitude;
     private double longitude;
     private double altitude;

@@ -73,10 +73,6 @@ public interface Plugin extends Configurable {
      */
     String getDescription();
 
-    default Parent getPluginGui() throws IOException {
-        return null;
-    }
-
     /**
      * Perform data loading for this addon on background task ready.
      * If addon needs to save config xml and add additional data loading behaviors,
