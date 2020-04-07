@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -173,7 +172,9 @@ public class BackgroundTask implements PropertyChangeListener {
 
     // probably should use a property changed handler? so that request handler don't need a backgrountask instance
     public void stop() throws InterruptedException {
-        if(isHalted.get()) return;
+        if(isHalted.get()) {
+            return;
+        }
 
         backgroundThread.interrupt();
         requestHandler.dispose();
@@ -307,12 +308,10 @@ public class BackgroundTask implements PropertyChangeListener {
         serverPollingScheduler.scheduleWithFixedDelay(serverPolling,
                 0, 200, TimeUnit.MILLISECONDS);
 
-        // initialize plugins
+//         initialize plugins
         Plugin.loadedPlugins.forEach(Plugin::init);
 
         log.info("Schedulers running, background task ready, mission data initialized");
-
-        log.info("((ServerDataRequest) new ServerDataRequest(\"return os.time()\").send()).getAsInt() = " + ((ServerDataRequest) new ServerDataRequest("return os.time()").send()).getAsInt());
 
         new ServerDataRequest("return env.mission.theatre")
                 .addProcessable(theater -> {

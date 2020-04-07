@@ -3,7 +3,6 @@ package moe.ofs.backend.object.map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import moe.ofs.backend.GeoPositions;
 
 import java.io.Serializable;
 

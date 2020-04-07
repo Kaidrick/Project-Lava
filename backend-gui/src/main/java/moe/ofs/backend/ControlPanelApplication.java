@@ -100,9 +100,9 @@ public class ControlPanelApplication extends Application {
 
     @Override
     public void stop() throws Exception {
-        task.stop();
-
         ControlPanelShutdownObservable.invokeAll();
+
+        BackgroundTask.getCurrentTask().stop();
 
         context.close();
         Platform.exit();

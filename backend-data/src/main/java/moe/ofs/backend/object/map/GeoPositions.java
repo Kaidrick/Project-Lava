@@ -1,4 +1,4 @@
-package moe.ofs.backend;
+package moe.ofs.backend.object.map;
 
 import moe.ofs.backend.object.map.GeoPosition;
 import moe.ofs.backend.object.map.Orientation;

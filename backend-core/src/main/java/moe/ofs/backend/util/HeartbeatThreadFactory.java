@@ -33,7 +33,6 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
         RequestHandler.getInstance().addPropertyChangeListener(this);
 
         runnable = () -> {
-
             heartbeatActive.set(true);
 
             while(true) {
@@ -86,6 +85,7 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
         } else {
             if(heartbeat.getState() == Thread.State.TERMINATED) {
                 heartbeat = new Thread(runnable);
+                heartbeat.setName("conn checker");
                 return heartbeat;
             } else {
                 return null;

@@ -36,13 +36,7 @@
                                  <children>
                                     <Label fx:id="filterLogLevelLabel" text="Filter Log Level" />
                                     <CheckComboBox fx:id="levelFilterSelection" />
-                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
-                                       <children>
-                                          <TextField fx:id="searchLogMessage" promptText="Search Log" />
-                                          <Button fx:id="logSearchButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0" />
-                                          <Button fx:id="logSearchClearButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0" />
-                                       </children>
-                                    </HBox>
+                                    <TextField fx:id="searchLogMessage" promptText="Search Log" />
                                  </children>
                                  <VBox.margin>
                                     <Insets />

@@ -1,12 +1,11 @@
 package moe.ofs.backend;
 
 import moe.ofs.backend.object.map.GeoPosition;
+import moe.ofs.backend.object.map.GeoPositions;
 import moe.ofs.backend.object.map.Orientation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
 
 class GeoPositionsTest {
     GeoPosition geoPosition;

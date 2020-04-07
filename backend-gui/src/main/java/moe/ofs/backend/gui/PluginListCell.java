@@ -6,6 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -25,6 +27,7 @@ public class PluginListCell extends ListCell<Plugin> {
     Scene scene;
     Stage pluginStage;
 
+    HBox iconByContent = new HBox(10);
     VBox mainVBox = new VBox(5);
     HBox title = new HBox(10);
     HBox control = new HBox(5);
@@ -58,6 +61,8 @@ public class PluginListCell extends ListCell<Plugin> {
         HBox.setHgrow(pane, Priority.ALWAYS);
         mainVBox.getChildren().addAll(title, desc, control);
         control.getChildren().addAll(controlButton);
+
+        iconByContent.getChildren().add(mainVBox);
     }
 
     @Override
@@ -75,6 +80,12 @@ public class PluginListCell extends ListCell<Plugin> {
             if(plugin instanceof Viewable) {
                 control.getChildren().add(configButton);
             }
+
+            ImageView imageView = plugin.getIcon() != null ? new ImageView(plugin.getIcon()) :
+                    new ImageView(new Image(getClass().getResourceAsStream("/plugin_alternative_icon.png")));
+            imageView.setFitHeight(32);
+            imageView.setFitWidth(32);
+            iconByContent.getChildren().add(0, imageView);
 
             if(plugin.getLocalizedName() != null) {
                 label.setText(plugin.getLocalizedName());
@@ -124,8 +135,10 @@ public class PluginListCell extends ListCell<Plugin> {
                         pluginStage = new Stage();
 
                         if(plugin.getIcon() != null) {
+                            pluginStage.getIcons().add(plugin.getIcon());
+                        } else {
                             pluginStage.getIcons().add(
-                                    Objects.requireNonNull(plugin.getIcon())
+                                    new Image(getClass().getResourceAsStream("/plugin_default_icon.png"))
                             );
                         }
 
@@ -135,25 +148,25 @@ public class PluginListCell extends ListCell<Plugin> {
 
                     if(plugin.getLocalizedName() != null) {
                         pluginStage.setTitle(plugin.getLocalizedName());
+
+                        I18n.localeProperty().addListener(observable -> {
+                            pluginStage.setTitle(plugin.getLocalizedName());
+                        });
                     } else {
                         pluginStage.setTitle(plugin.getName());
                     }
 
+
                     if(!pluginStage.isShowing()) {
                         pluginStage.show();
                     }
-
-                    I18n.localeProperty().addListener(observable -> {
-                        if(plugin.getLocalizedName() != null)
-                            pluginStage.setTitle(plugin.getLocalizedName());
-                    });
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
 
-            setGraphic(mainVBox);
+            setGraphic(iconByContent);
         }
     }
 }

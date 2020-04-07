@@ -113,7 +113,7 @@ public class RadioItemManager {
 
     public void tearDown() {
         if(radioPullExecutorService != null) {
-            radioPullExecutorService.shutdown();
+            radioPullExecutorService.shutdownNow();
         }
         new ServerDataRequest("radio_commands = nil").send();
     }

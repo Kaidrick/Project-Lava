@@ -122,7 +122,6 @@ public class StaticDisplay implements Plugin {
         return "Project Lava";
     }
 
-
     // if connection is not established, wait for establishment and than init
     // if connection is already established, init immediately?
     public void initStaticDisplay() {

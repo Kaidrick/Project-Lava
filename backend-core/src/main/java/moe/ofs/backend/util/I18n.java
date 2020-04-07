@@ -37,6 +37,7 @@ public class I18n {
         localeProperty().set(locale);
         Locale.setDefault(locale);
     }
+
     public static ObjectProperty<Locale> localeProperty() {
         return locale;
     }
@@ -64,10 +65,10 @@ public class I18n {
                 try {
                     ((Labeled) node).setText(bundle.getString(node.getId()));
                 } catch (Exception e) {
-                    if(node.getId() != null && !node.getId().equals(""))
-                        System.out.println("missing resource for Labeled fx:id -> " + node);
-                    else
-                        System.out.println("missing fx:id for Labeled " + node);
+//                    if(node.getId() != null && !node.getId().equals(""))
+//                        System.out.println("missing resource for Labeled fx:id -> " + node);
+//                    else
+//                        System.out.println("missing fx:id for Labeled " + node);
                 }
             }
 
@@ -75,10 +76,10 @@ public class I18n {
                 try {
                     ((TextInputControl) node).setPromptText(bundle.getString(node.getId()));
                 } catch (Exception e) {
-                    if(node.getId() != null && !node.getId().equals(""))
-                        System.out.println("missing resource for TextInputControl fx:id -> " + node);
-                    else
-                        System.out.println("missing fx:id for TextInputControl " + node);
+//                    if(node.getId() != null && !node.getId().equals(""))
+//                        System.out.println("missing resource for TextInputControl fx:id -> " + node);
+//                    else
+//                        System.out.println("missing fx:id for TextInputControl " + node);
                 }
             }
 
@@ -91,10 +92,10 @@ public class I18n {
                     try {
                         tab.setText(bundle.getString(tab.getId()));
                     } catch (Exception e) {
-                        if(tab.getId() != null && !tab.getId().equals(""))
-                            System.out.println("missing resource for Tab fx:id -> " + tab);
-                        else
-                            System.out.println("missing fx:id for Tab " + tab);
+//                        if(tab.getId() != null && !tab.getId().equals(""))
+//                            System.out.println("missing resource for Tab fx:id -> " + tab);
+//                        else
+//                            System.out.println("missing fx:id for Tab " + tab);
                     }
 
                     toPaneOrNotToPane(tab.getContent(), bundle);
@@ -108,10 +109,10 @@ public class I18n {
             // not a pane, but if it extends parent, then it has child elements
             else {
                 if(node instanceof Parent) {
-                    System.out.println("Parent node -> " + node);
+//                    System.out.println("Parent node -> " + node);
                     ((Parent) node).getChildrenUnmodifiable().forEach(n -> toPaneOrNotToPane(n, bundle));
                 } else {
-                    System.out.println("unknown node = " + node);
+//                    System.out.println("unknown node = " + node);
                 }
             }
 

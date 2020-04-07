@@ -67,7 +67,6 @@ public class ConfigPane implements Initializable {
                 new Locale("zh", "CN"), new Locale("en", "US")));
         localeComboBox.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
             I18n.setLocale(newValue);
-            System.out.println(I18n.getLocale());
         }));
 
     }

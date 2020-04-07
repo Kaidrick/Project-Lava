@@ -31,6 +31,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 @Component
 @FxmlView
@@ -51,8 +52,6 @@ public class LogAndDebug implements Initializable {
     ToggleGroup loadStringState = new ToggleGroup();
 
     @FXML private TextField searchLogMessage;
-    @FXML private Button logSearchButton;
-    @FXML private Button logSearchClearButton;
 
     @FXML private ToggleSwitch toggleSwitch_LuaDebugInteractive;
 
@@ -70,8 +69,8 @@ public class LogAndDebug implements Initializable {
     @FXML private void appendLog(LogEntry logEntry) {
         logEntryList.add(logEntry);
 
-        // if this level is checked, add to log view
-        if(levelFilterSelection.getCheckModel().getCheckedItems().contains(logEntry.getLevel())) {
+        // if not filtered and meet search criteria, add to log view
+        if(levelAndSearchFilterCheck(logEntry)) {
             listViewLogDebugInfo.getItems().add(logEntry);
         }
     }
@@ -108,12 +107,33 @@ public class LogAndDebug implements Initializable {
         luaEditor.clearEditorContent();
     }
 
+    private void filterBySelectedLogLevel() {
+        ObservableList<Level> checkedLevels = levelFilterSelection.getCheckModel().getCheckedItems();
+
+        listViewLogDebugInfo.getItems().clear();
+
+        logEntryList.stream()
+                .filter(logEntry -> checkedLevels.contains(logEntry.getLevel()))
+                .forEach(logEntry -> listViewLogDebugInfo.getItems().add(logEntry));
+    }
+
+    /**
+     *  new entry logs are always appended to logEntryList,
+     *  but only added to listview if meeting search and filter criteria
+     */
+    private boolean levelAndSearchFilterCheck(LogEntry logEntry) {
+        ObservableList<Level> checkedLevels = levelFilterSelection.getCheckModel().getCheckedItems();
+        return checkedLevels.contains(logEntry.getLevel()) &&
+                logEntry.getMessage().contains(searchLogMessage.getText().toLowerCase());
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         FXMLLoader loader = new FXMLLoader();
         try {
-            AnchorPane topAnchorPanel = loader.load(getClass().getResourceAsStream("/moe/ofs/backend/controllers/CodeEditor.fxml"));
+            AnchorPane topAnchorPanel =
+                    loader.load(getClass().getResourceAsStream("/moe/ofs/backend/controllers/CodeEditor.fxml"));
             luaEditor = loader.getController();
             lowerMainHBox.getChildren().add(0, topAnchorPanel);
             HBox.setHgrow(topAnchorPanel, Priority.ALWAYS);
@@ -121,32 +141,29 @@ public class LogAndDebug implements Initializable {
             System.out.println("File not found");
         }
 
-
         loadStringInApi.setToggleGroup(loadStringState);
         loadStringInExport.setToggleGroup(loadStringState);
         loadStringInMission.setToggleGroup(loadStringState);
 
         // use a timer here so that it searches only after input stops
         // or just make a button...
-//        searchLogMessage.textProperty().addListener(((observable, oldValue, newValue) -> {
-//            System.out.println(newValue);
-//        }));
-
-        logSearchButton.setOnAction(event -> {
+        searchLogMessage.textProperty().addListener(((observable, oldValue, newValue) -> {
             if(!searchLogMessage.getText().equals("")) {
                 listViewLogDebugInfo.getItems().clear();
-                logEntryList.stream()
+
+                ObservableList<Level> checkedLevels = levelFilterSelection.getCheckModel().getCheckedItems();
+                List<LogEntry> levelFilteredList = logEntryList.stream()
+                        .filter(logEntry -> checkedLevels.contains(logEntry.getLevel()))
+                        .collect(Collectors.toList());
+
+                levelFilteredList.stream()
                         .filter(logEntry -> logEntry.getMessage().toLowerCase()
                                 .contains(searchLogMessage.getText().toLowerCase()))
                         .forEach(logEntry -> listViewLogDebugInfo.getItems().add(logEntry));
+            } else {
+                filterBySelectedLogLevel();
             }
-        });
-
-        logSearchClearButton.setOnAction(event -> {
-            listViewLogDebugInfo.getItems().clear();
-            logSearchClearButton.setText("");
-            listViewLogDebugInfo.getItems().addAll(logEntryList);
-        });
+        }));
 
 
         LogAppendedEventHandler handler = this::appendLog;
@@ -181,15 +198,7 @@ public class LogAndDebug implements Initializable {
         levelFilterSelection.getItems().addAll(Level.values());
         levelFilterSelection.getCheckModel().checkAll();
 
-        levelFilterSelection.getCheckModel().getCheckedItems().addListener((ListChangeListener<? super Level>) c -> {
-            ObservableList<Level> checkedLevels = levelFilterSelection.getCheckModel().getCheckedItems();
-
-            listViewLogDebugInfo.getItems().clear();
-
-            logEntryList.stream()
-                    .filter(logEntry -> checkedLevels.contains(logEntry.getLevel()))
-                    .forEach(logEntry -> listViewLogDebugInfo.getItems().add(logEntry));
-
-        });
+        levelFilterSelection.getCheckModel().getCheckedItems()
+                .addListener((ListChangeListener<? super Level>) c -> filterBySelectedLogLevel());
     }
 }

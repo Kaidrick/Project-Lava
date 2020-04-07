@@ -20,7 +20,7 @@ public abstract class BaseRequest {
     protected List<Object> params = new ArrayList<>();
     protected UUID uuid;
 
-    private transient boolean sent = false;
+    private transient boolean sent;
 
     protected boolean isSent() {
         return sent;
