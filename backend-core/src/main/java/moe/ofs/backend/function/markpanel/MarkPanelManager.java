@@ -1,4 +1,4 @@
-package moe.ofs.backend.function;
+package moe.ofs.backend.function.markpanel;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

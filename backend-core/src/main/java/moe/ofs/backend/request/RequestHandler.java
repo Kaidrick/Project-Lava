@@ -142,12 +142,14 @@ public final class RequestHandler implements PropertyChangeListener {
             BufferedReader bufferedReader = new BufferedReader(
                     new InputStreamReader(dataInputStream, StandardCharsets.UTF_8));
             s = bufferedReader.readLine();
+
+            ConnectionManager.connectionCountIncrement();
         } catch (SocketException e) {
 
+//            e.printStackTrace();
             // triggers background task stop
             setTrouble(true);
 //            System.out.println("Trouble in RequestHandler " + LocalDateTime.now());
-
 
         }
         return s;
@@ -189,8 +191,9 @@ public final class RequestHandler implements PropertyChangeListener {
             transmissionQueue.stream().filter(r -> r instanceof Resolvable).forEach(r -> waitMap.put(r.getUuid(), r));
             try {
                 String json = gson.toJson(queue);
-//                if(!json.equals("[]"))
-//                    System.out.println(json);
+                if(!json.equals("[]"))
+                    System.out.println(level + " -> " + json);
+//                waitMap.forEach(((s, request) -> System.out.println(s + " -> " + request.getLevel() + request.params)));
 
 
                 String responseJsonString;

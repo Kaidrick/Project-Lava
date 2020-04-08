@@ -1,4 +1,4 @@
-package moe.ofs.backend.function;
+package moe.ofs.backend.function.slotcontrol;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Getter;

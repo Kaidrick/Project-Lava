@@ -1,4 +1,4 @@
-package moe.ofs.backend.function;
+package moe.ofs.backend.function.slotcontrol;
 
 public class SlotChangeResult {
     private boolean allowed;

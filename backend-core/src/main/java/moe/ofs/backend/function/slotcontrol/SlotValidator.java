@@ -1,17 +1,15 @@
-package moe.ofs.backend.function;
+package moe.ofs.backend.function.slotcontrol;
 
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.server.ServerActionRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
-import moe.ofs.backend.services.PlayerInfoService;
-import moe.ofs.backend.util.ConnectionManager;
 import moe.ofs.backend.util.LuaScripts;
 import org.springframework.stereotype.Component;
 
@@ -19,8 +17,6 @@ import javax.annotation.PostConstruct;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -127,7 +123,7 @@ public class SlotValidator {
 
         slotEntryPullExecutorService = Executors.newSingleThreadScheduledExecutor();
         slotEntryPullExecutorService.scheduleWithFixedDelay(getSlotEntryRequest,
-                0, 200, TimeUnit.MILLISECONDS);
+                0, 500, TimeUnit.MILLISECONDS);
 
     }
 
@@ -135,7 +131,7 @@ public class SlotValidator {
         if(slotEntryPullExecutorService != null) {
             slotEntryPullExecutorService.shutdownNow();
         }
-        new ServerDataRequest(RequestToServer.State.DEBUG,
+        new ServerActionRequest(RequestToServer.State.DEBUG,
                 LuaScripts.load("slotchange/clean_request_table.lua")).send();
     }
 }

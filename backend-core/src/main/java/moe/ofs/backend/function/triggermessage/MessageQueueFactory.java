@@ -1,4 +1,4 @@
-package moe.ofs.backend.function;
+package moe.ofs.backend.function.triggermessage;
 
 import moe.ofs.backend.domain.ExportObject;
 import moe.ofs.backend.services.FlyableUnitService;

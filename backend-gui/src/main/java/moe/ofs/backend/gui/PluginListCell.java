@@ -17,11 +17,12 @@ import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.Plugin;
+import moe.ofs.backend.UTF8Control;
 import moe.ofs.backend.Viewable;
 import moe.ofs.backend.util.I18n;
 
 import java.io.IOException;
-import java.util.Objects;
+import java.util.ResourceBundle;
 
 public class PluginListCell extends ListCell<Plugin> {
     Scene scene;
@@ -41,16 +42,18 @@ public class PluginListCell extends ListCell<Plugin> {
     Plugin plugin;
 
     Button controlButton = new Button();
-    Button configButton = new Button("Config");
+    Button configButton = new Button();
 
     private void switchPluginLoadState(Plugin plugin) {
         // get the loaded instance of the plugin
+        ResourceBundle resourceBundle =
+                ResourceBundle.getBundle("ControlPanelApplication", I18n.getLocale(), new UTF8Control());
         if(plugin.isEnabled()) {
             plugin.disable();
-            controlButton.setText("Enable");
+            controlButton.setText(resourceBundle.getString("plugin_control_enable"));
         } else {
             plugin.enable();
-            controlButton.setText("Disable");
+            controlButton.setText(resourceBundle.getString("plugin_control_disable"));
         }
     }
 
@@ -77,12 +80,24 @@ public class PluginListCell extends ListCell<Plugin> {
                     .findAny()
                     .orElseThrow(() -> new RuntimeException("Plugin Does Not Exist"));
 
+            ResourceBundle resourceBundle =
+                    ResourceBundle.getBundle("ControlPanelApplication", I18n.getLocale(), new UTF8Control());
+
             if(plugin instanceof Viewable) {
+                configButton = new Button(resourceBundle.getString("plugin_control_config"));
                 control.getChildren().add(configButton);
+
+                I18n.localeProperty().addListener(((observable, oldValue, newValue) -> {
+                    ResourceBundle newBundle =
+                            ResourceBundle.getBundle("ControlPanelApplication", I18n.getLocale(),
+                                    new UTF8Control());
+
+                    configButton.setText(newBundle.getString("plugin_control_config"));
+                }));
             }
 
             ImageView imageView = plugin.getIcon() != null ? new ImageView(plugin.getIcon()) :
-                    new ImageView(new Image(getClass().getResourceAsStream("/plugin_alternative_icon.png")));
+                    new ImageView(new Image(getClass().getResourceAsStream("/plugin_default_icon.png")));
             imageView.setFitHeight(32);
             imageView.setFitWidth(32);
             iconByContent.getChildren().add(0, imageView);
@@ -102,7 +117,21 @@ public class PluginListCell extends ListCell<Plugin> {
 
             version.setText(plugin.getVersion());
             author.setText(plugin.getAuthor());
-            controlButton.setText(plugin.isEnabled() ? "Disable" : "Enable");
+
+
+            controlButton.setText(plugin.isEnabled() ?
+                    resourceBundle.getString("plugin_control_disable") :
+                    resourceBundle.getString("plugin_control_enable"));
+
+            I18n.localeProperty().addListener(((observable, oldValue, newValue) -> {
+                ResourceBundle newBundle =
+                        ResourceBundle.getBundle("ControlPanelApplication", newValue,
+                                new UTF8Control());
+                controlButton.setText(plugin.isEnabled() ?
+                        newBundle.getString("plugin_control_disable") :
+                        newBundle.getString("plugin_control_enable"));
+            }));
+
 
 
             if(plugin.getLocalizedDescription() != null) {

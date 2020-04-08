@@ -1,4 +1,4 @@
-package moe.ofs.backend.function;
+package moe.ofs.backend.function.triggermessage;
 
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.request.server.ServerExecRequest;
@@ -42,7 +42,7 @@ public final class TriggerMessage {
 
     private TriggerMessage() {}
 
-    TriggerMessage(int receiverGroupId, String message) {
+    public TriggerMessage(int receiverGroupId, String message) {
         this.message = message;
         this.receiverGroupId = receiverGroupId;
     }

@@ -126,15 +126,26 @@ public class BackgroundTask implements PropertyChangeListener {
 
         if(started) {
             log.info("Starting Background Task...");
-            backgroundThread = new Thread(background);
-            backgroundThread.setName("bg task");
-            backgroundThread.start();
+
+            // there can only be one background thread
+            // how to ensure this is a singleton?
+            if(backgroundThread == null) {
+                backgroundThread = new Thread(background);
+                backgroundThread.setName("bg task");
+                backgroundThread.start();
+            } else {
+                log.error("Duplicate background thread");
+            }
+
         } else {
             log.info("Stopping Background Task...");
             try {
                 this.stop();
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            } finally {
+                backgroundThread.interrupt();
+                backgroundThread = null;
             }
         }
     }
@@ -176,7 +187,9 @@ public class BackgroundTask implements PropertyChangeListener {
             return;
         }
 
-        backgroundThread.interrupt();
+        if(backgroundThread != null)
+            backgroundThread.interrupt();
+
         requestHandler.dispose();
 
         shutdownExecutorService(mainRequestScheduler);
@@ -194,45 +207,7 @@ public class BackgroundTask implements PropertyChangeListener {
             e.printStackTrace();
         }
     };
-    public Thread backgroundThread = new Thread(background);
-
-    private boolean initialized;
-
-    private void initCore() throws IOException {
-        if(!initialized) {
-
-            // TODO --> VERY BAD IMPLEMENTATION! REFACTOR!
-            PlayerEnterServerObservable playerEnterServerObservable =
-                    playerInfo -> Logger.log("New connection: " + playerInfo.getName()
-                            + "@" + playerInfo.getIpaddr());
-            playerEnterServerObservable.register();
-
-            PlayerLeaveServerObservable playerLeaveServerObservable =
-                    playerInfo -> Logger.log("Player left: " + playerInfo.getName()
-                            + "@" + playerInfo.getIpaddr());
-            playerLeaveServerObservable.register();
-
-            PlayerSlotChangeObservable playerSlotChangeObservable =
-                    (previous, current) -> Logger.log(
-                            current.getName()
-                                    + " slot change: " + previous.getSlot() + " -> " + current.getSlot());
-            playerSlotChangeObservable.register();
-
-            ExportUnitSpawnObservable exportUnitSpawnObservable =
-                    unit -> Logger.log(String.format("Unit Spawn: %s (RuntimeID: %s) - %s Type",
-                            unit.getUnitName(), unit.getRuntimeID(), unit.getName()));
-            exportUnitSpawnObservable.register();
-
-            ExportUnitDespawnObservable exportUnitDespawnObservable =
-                    unit -> Logger.log(String.format("Unit Despawn: %s (RuntimeID: %s) - %s Type",
-                            unit.getUnitName(), unit.getRuntimeID(), unit.getName()));
-            exportUnitDespawnObservable.register();
-
-            initialized = true;
-        } else {
-            log.info("TODO --> Already Initialized in last session");
-        }
-    }
+    public Thread backgroundThread;
 
     // restart background task when connect is cut
     public void start() throws IOException {
@@ -241,8 +216,6 @@ public class BackgroundTask implements PropertyChangeListener {
         BackgroundTaskRestartObservable.invokeAll();
 
         ConnectionManager.sanitizeDataPipeline();
-
-        initCore();
 
         log.info("Initializing data services");
         // dispose obsolete data if any
@@ -302,11 +275,11 @@ public class BackgroundTask implements PropertyChangeListener {
 
         exportPollingScheduler = Executors.newSingleThreadScheduledExecutor();
         exportPollingScheduler.scheduleWithFixedDelay(exportPolling,
-                0, 200, TimeUnit.MILLISECONDS);
+                0, 500, TimeUnit.MILLISECONDS);
 
         serverPollingScheduler = Executors.newSingleThreadScheduledExecutor();
         serverPollingScheduler.scheduleWithFixedDelay(serverPolling,
-                0, 200, TimeUnit.MILLISECONDS);
+                0, 500, TimeUnit.MILLISECONDS);
 
 //         initialize plugins
         Plugin.loadedPlugins.forEach(Plugin::init);
@@ -326,7 +299,7 @@ public class BackgroundTask implements PropertyChangeListener {
 
     public static void processResource(URI uri, IOConsumer<Path> action) throws IOException {
         try {
-            Path p= Paths.get(uri);
+            Path p = Paths.get(uri);
             action.accept(p);
         }
         catch(FileSystemNotFoundException ex) {

@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import moe.ofs.backend.function.Message;
+import moe.ofs.backend.function.triggermessage.Message;
 
 import java.util.Locale;
 import java.util.function.UnaryOperator;

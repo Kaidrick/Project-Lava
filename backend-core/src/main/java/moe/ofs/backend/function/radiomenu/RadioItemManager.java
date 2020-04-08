@@ -1,12 +1,14 @@
-package moe.ofs.backend.function;
+package moe.ofs.backend.function.radiomenu;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.function.triggermessage.TriggerMessage;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 import moe.ofs.backend.handlers.MissionStartObservable;
+import moe.ofs.backend.request.server.ServerActionRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.util.LuaScripts;
@@ -115,7 +117,7 @@ public class RadioItemManager {
         if(radioPullExecutorService != null) {
             radioPullExecutorService.shutdownNow();
         }
-        new ServerDataRequest("radio_commands = nil").send();
+        new ServerActionRequest("radio_commands = {}").send();
     }
 
     // match control by group id and path list?

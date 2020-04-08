@@ -2,6 +2,8 @@ package moe.ofs.backend.util;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.Configurable;
 import moe.ofs.backend.domain.Level;
@@ -28,6 +30,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ConnectionManager implements Configurable {
 
+    private static ObjectProperty<Long> connectionCount = new SimpleObjectProperty<>(0L);
+
     private static final Gson gson = new Gson();
 
     private static RequestHandler requestHandler = RequestHandler.getInstance();
@@ -37,6 +41,14 @@ public class ConnectionManager implements Configurable {
     private Map<Level, Integer> portOverrideMap = new HashMap<>();
 
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+
+    public synchronized static void connectionCountIncrement() {
+        connectionCount.set(connectionCount.get() + 1);
+    }
+
+    public static ObjectProperty<Long> connectionCountProperty() {
+        return connectionCount;
+    }
 
     public Map<Level, Integer> getPortOverrideMap() {
         return portOverrideMap;

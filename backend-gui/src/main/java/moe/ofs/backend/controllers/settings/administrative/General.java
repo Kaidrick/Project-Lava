@@ -10,9 +10,8 @@ import javafx.scene.control.SelectionModel;
 import javafx.stage.Modality;
 import moe.ofs.backend.Configurable;
 import moe.ofs.backend.ControlPanelApplication;
-import moe.ofs.backend.function.Message;
+import moe.ofs.backend.function.triggermessage.Message;
 import moe.ofs.backend.gui.AddGeneralMessageDialog;
-import moe.ofs.backend.plugin.greeting.Greeting;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 

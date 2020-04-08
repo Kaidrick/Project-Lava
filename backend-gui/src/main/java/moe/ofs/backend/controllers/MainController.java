@@ -23,6 +23,7 @@ import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 import moe.ofs.backend.interaction.TestButtonCommand;
 import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.util.AirdromeDataCollector;
+import moe.ofs.backend.util.ConnectionManager;
 import moe.ofs.backend.util.I18n;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.controlsfx.control.StatusBar;
@@ -31,6 +32,10 @@ import org.springframework.stereotype.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -59,6 +64,9 @@ public class MainController implements Initializable, PropertyChangeListener {
     @FXML private Button devTestButton;
 
     private final PlayerListCellFactory playerListCellFactory;
+
+    private long pileCount;
+    private long previousTimeStamp = Instant.now().toEpochMilli();
 
     public MainController(PlayerListCellFactory playerListCellFactory) {
         this.playerListCellFactory = playerListCellFactory;
@@ -149,6 +157,21 @@ public class MainController implements Initializable, PropertyChangeListener {
 
             I18n.toPaneOrNotToPane(mainVBox, bundle);
 //            parsePane(mainVBox, bundle);
+        }));
+
+        ConnectionManager.connectionCountProperty().addListener(((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> {
+                if(Instant.now().toEpochMilli() - previousTimeStamp > 5000) {
+                    previousTimeStamp = Instant.now().toEpochMilli();
+                    setDebugLabelTextTwo("Connection Request per seconds: " + pileCount / 5);
+
+                    pileCount = 0L;
+                } else {  // elapsed time less than 1000ms
+                    pileCount += (newValue - oldValue);
+                }
+
+                setDebugLabelTextOne("Total connection request made: " + newValue);
+            });
         }));
 
     }

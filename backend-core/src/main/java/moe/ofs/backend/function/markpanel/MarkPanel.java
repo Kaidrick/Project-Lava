@@ -1,4 +1,4 @@
-package moe.ofs.backend.function;
+package moe.ofs.backend.function.markpanel;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Builder;
@@ -14,7 +14,7 @@ import moe.ofs.backend.object.Vector3D;
 @Getter
 @Setter
 @Builder
-public class MarkPanel {
+public final class MarkPanel {
     @SerializedName("idx")
     private long index;
 

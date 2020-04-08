@@ -1,4 +1,4 @@
-package moe.ofs.backend.function;
+package moe.ofs.backend.function.triggermessage;
 
 import java.io.Serializable;
 

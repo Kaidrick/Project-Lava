@@ -2,9 +2,9 @@ package moe.ofs.backend.plugin.greeting;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.Plugin;
-import moe.ofs.backend.function.Message;
-import moe.ofs.backend.function.MessageQueue;
-import moe.ofs.backend.function.MessageQueueFactory;
+import moe.ofs.backend.function.triggermessage.Message;
+import moe.ofs.backend.function.triggermessage.MessageQueue;
+import moe.ofs.backend.function.triggermessage.MessageQueueFactory;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 import moe.ofs.backend.domain.ExportObject;

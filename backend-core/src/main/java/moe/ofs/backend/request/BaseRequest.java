@@ -78,7 +78,7 @@ public abstract class BaseRequest {
                     String modifiers = Modifier.toString(f.getModifiers());
                     String fieldName = f.getName();
 //                    System.out.println(fieldName);
-                    return modifiers.contains("transient") && !fieldName.equals("isSent");
+                    return modifiers.contains("transient") && !fieldName.equals("sent");
                 })
                 .map(Field::getName)
                 .forEach(addField);

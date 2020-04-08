@@ -49,7 +49,7 @@ public final class ExportDeltaPollHandlerService implements PollHandlerService {
         list = new ArrayList<>();
 
         setGeneric(new GenericClass<>(ExportObject.class));
-        setFlipThreshold(20);
+        setFlipThreshold(5);
     }
 
     @Override

@@ -41,7 +41,7 @@ public final class ServerBulkPollHandlerService implements PollHandlerService {
 
         list = new ArrayList<>();
 
-        setFlipThreshold(20);
+        setFlipThreshold(5);
     }
 
     @Override

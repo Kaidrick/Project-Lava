@@ -1,4 +1,4 @@
-package moe.ofs.backend.function;
+package moe.ofs.backend.function.radiomenu;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

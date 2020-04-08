@@ -1,14 +1,10 @@
 package moe.ofs.backend.function;
 
-import moe.ofs.backend.object.Vector3D;
+import moe.ofs.backend.function.markpanel.MarkPanelManager;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class MarkPanelManagerTest {
