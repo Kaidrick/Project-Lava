@@ -64,7 +64,11 @@ public final class ServerBulkPollHandlerService implements PollHandlerService {
 
         }
 
-        String s = ConnectionManager.fastPackThenSendAndGet(request);
+        Connection connection = RequestHandler.getInstance().getConnections().get(level);
+        String s = connection.transmitAndReceive(ConnectionManager.fastPack(request));
+
+//        System.out.println(s);
+//        String s = ConnectionManager.fastPackThenSendAndGet(request);
 
         List<JsonRpcResponse<List<PlayerInfo>>> jsonRpcResponseList = ConnectionManager.parseJsonResponse(s, PlayerInfo.class);
         List<PlayerInfo> objectList = ConnectionManager.flattenResponse(jsonRpcResponseList);

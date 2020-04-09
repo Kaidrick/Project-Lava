@@ -255,18 +255,21 @@ public class BackgroundTask implements PropertyChangeListener {
 //         requests are sent and result are received in this thread only
         Runnable mainLoop = () -> {
 //            log.info("main loop -> " + Thread.currentThread().getName());
-            if(requestHandler.hasPendingServerRequest())
+//            if(requestHandler.hasPendingServerRequest())
                 new FillerRequest(Level.SERVER).send();
 
-            if(requestHandler.hasPendingExportRequest())
+//            if(requestHandler.hasPendingExportRequest())
                 new FillerRequest(Level.EXPORT).send();
 
             try {
-                requestHandler.transmitAndReceive();
+//                requestHandler.transmitAndReceive();
+                requestHandler.transmissionCycle();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         };
+
+        requestHandler.createConnections();
 
 //         dedicated polling thread
 //         polling and receive data only in this thread
@@ -276,7 +279,7 @@ public class BackgroundTask implements PropertyChangeListener {
         exportPollingScheduler = Executors.newSingleThreadScheduledExecutor();
         exportPollingScheduler.scheduleWithFixedDelay(exportPolling,
                 0, 500, TimeUnit.MILLISECONDS);
-
+//
         serverPollingScheduler = Executors.newSingleThreadScheduledExecutor();
         serverPollingScheduler.scheduleWithFixedDelay(serverPolling,
                 0, 500, TimeUnit.MILLISECONDS);
