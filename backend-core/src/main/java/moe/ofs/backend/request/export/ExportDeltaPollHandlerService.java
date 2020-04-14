@@ -72,7 +72,10 @@ public final class ExportDeltaPollHandlerService implements PollHandlerService {
 
         }
 
-        String s = ConnectionManager.fastPackThenSendAndGet(request);
+        Connection connection = RequestHandler.getInstance().getConnections().get(level);
+        String s = connection.transmitAndReceive(ConnectionManager.fastPack(request));
+
+//        String s = ConnectionManager.fastPackThenSendAndGet(request);
 
 //        if(!s.equals("[]"))
 //            System.out.println(s);

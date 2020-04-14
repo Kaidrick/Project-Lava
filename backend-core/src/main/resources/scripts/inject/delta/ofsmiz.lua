@@ -12,7 +12,9 @@ local ofsmiz = {}
 -- Constants
 local PORT = PORT or %d
 local POLL_PORT = POLL_PORT or %d
-local REACT_PORT = REACT_PORT or 3009  -- dedicated for radio command pulling
+
+local last_comm_timestamp
+local last_poll_timestamp
 
 local DATA_TIMEOUT_SEC = 0.001
 
@@ -248,21 +250,77 @@ end
 
 local function step()
 	if server then
-		server:settimeout(0)  -- give up if no connection
-		client = server:accept()  -- accept client
-		
-		if client then  -- if client not nil, connection established
-			--client:settimeout(0.001)
+		if not client then  -- if no client, establish connection from server object
+			client = server:accept()
+      
+			if client then
+				client:settimeout(0)
+				
+				local line, err = client:receive()  -- should immediately receive a line from client otherwise assert fail
+			
+				if not err then
+					last_comm_timestamp = os.time()  -- update on successful handshake
+
+					---[[
+					local success, requests = pcall(
+						function()
+							return JSON:decode(line)
+						end
+					)
+					if success then  -- run request here
+						local readyResult = PULL.prepared_result()
+						local bytes, status, lastbyte = client:send(JSON:encode(readyResult) .. '\n')
+						
+						-- run_request
+						process_request(requests)
+					else
+						net.log("Requests: " .. requests)  -- log error
+						local bytes, status, lastbyte = client:send(JSON:encode(jsonrpc_parse_error) .. '\n')
+					end
+					--]]
+				else
+					net.log(line, err)
+					client:send(JSON:encode(jsonrpc_server_error) + "\r\n")
+				end
+			end
+      
+		else  -- existing client, reuse this object
+			-- reuse client
 			local line, err = client:receive()
-			if not err then
-				-- net.log("run -> " .. line)
+      
+			if err then
+				if err == 'timeout' then
+					if os.time() - last_comm_timestamp > 5 then
+						net.log("connection is lost")
+				
+						client:close()
+						client = nil
+						last_comm_timestamp = nil
+						return
+					end
+
+				elseif err == 'closed' then
+					net.log("connection is closed")
+					client:close()
+					client = nil
+					last_comm_timestamp = nil
+					return
+			  
+				else  -- other error
+					net.log(err)
+				end
+			end
+
+			if not err then  -- successful handshake
+				last_comm_timestamp = os.time()
+			
+				---[[
 				local success, requests = pcall(
 					function()
 						return JSON:decode(line)
 					end
 				)
 				if success then  -- run request here
-
 					local readyResult = PULL.prepared_result()
 					local bytes, status, lastbyte = client:send(JSON:encode(readyResult) .. '\n')
 					
@@ -270,74 +328,133 @@ local function step()
 					process_request(requests)
 				else
 					net.log(requests)  -- log error
-					local bytes, status, lastbyte = client:send(JSON:encode(false) .. '\n')
+					local bytes, status, lastbyte = client:send(JSON:encode(jsonrpc_parse_error) .. '\n')
 				end
-			else
-				net.log(tostring(err))
+				--]]
 			end
-			
-			client:close()  -- done, close connection
-			client = nil
 		end
 	end
 end
 
+---[[
 local function poll_step()
 	if poll_server then
-		poll_server:settimeout(0)  -- give up if no connection
-		poll_client = poll_server:accept()  -- accept poll_client
-		
-		if poll_client then  -- if poll_client not nil, connection established
-			local line, err = poll_client:receive()
+		if not poll_client then  -- if no client, establish connection from server object
+			poll_client = poll_server:accept()
+      
+			if poll_client then
+				poll_client:settimeout(0)
+				-- try to receive from client?
+				local line, err = poll_client:receive()
 			
-			if not err then
-				-- net.log("poll -> " .. line)
+				if not err then
+					last_poll_timestamp = os.time()  -- update on successful handshake
+
+					---[[
+					local success, requests = pcall(
+						function()
+							return JSON:decode(line)
+						end
+					)
+					if success then  -- run request here
+						local readyResult = PULL.brew_result()
+						local bytes, status, lastbyte = poll_client:send(JSON:encode(readyResult) .. '\n')
+						
+						-- run_request
+						process_request(requests)
+					else
+						net.log(requests)  -- log error
+						local bytes, status, lastbyte = poll_client:send(JSON:encode(jsonrpc_parse_error) .. '\n')
+					end
+					--]]
+				else
+					net.log(line, err)
+					client:send(JSON:encode(jsonrpc_server_error) + "\r\n")
+				end
+			end
+      
+		else  -- existing client, reuse this object
+			-- reuse client
+			local line, err = poll_client:receive()
+      
+			if err then
+				if err == 'timeout' then
+
+					if os.time() - last_poll_timestamp > 5 then
+						net.log("connection is lost")
+				
+						poll_client:close()
+						poll_client = nil
+						last_poll_timestamp = nil
+						return
+					end
+
+				elseif err == 'closed' then
+					net.log("connection is closed")
+					poll_client:close()
+					poll_client = nil
+					last_poll_timestamp = nil
+					return
+			  
+				else  -- other error
+					net.log(err)
+				end
+			end
+
+			if not err then  -- successful handshake
+				last_poll_timestamp = os.time()
+			
+				---[[
 				local success, requests = pcall(
 					function()
 						return JSON:decode(line)
 					end
 				)
 				if success then  -- run request here
-					local readyResult = PULL.brew_result()  -- send nothing back to polling thread
-					-- local readyResult = {}
+					local readyResult = PULL.brew_result()
 					local bytes, status, lastbyte = poll_client:send(JSON:encode(readyResult) .. '\n')
 					
 					-- run_request
 					process_request(requests)
 				else
 					net.log(requests)  -- log error
-					local readyResult = PULL.brew_result()
-					local bytes, status, lastbyte = poll_client:send(JSON:encode(readyResult) .. '\n')
+					local bytes, status, lastbyte = poll_client:send(JSON:encode(false) .. '\n')
 				end
-			else
-				net.log(tostring(err))
+				--]]
 			end
-			
-			poll_client:close()  -- done, close connection
-			poll_client = nil
 		end
 	end
 end
+--]]
 
 function ofsmiz.onSimulationStart()
-	log("Starting DCS API CONTROL server")
-	
-	-- server = assert(socket.bind("127.0.0.1", PORT))
-	-- poll_server = assert(socket.bind("127.0.0.1", POLL_PORT))
-
+	-- Request Server
 	server = socket.tcp()
-	assert(server:setoption('reuseaddr', true))
-	assert(server:bind("127.0.0.1", PORT))
+	
+	assert(server:bind("localhost", PORT))
 	assert(server:listen())
+	
+	server:settimeout(0)  -- non-blocking
+	server:setoption("reuseaddr", true)
+	server:setoption("keepalive", true)
+	server:setoption("tcp-nodelay", true)
 
+	-- Poll Server
 	poll_server = socket.tcp()
-	assert(poll_server:setoption('reuseaddr', true))
-	assert(poll_server:bind("127.0.0.1", POLL_PORT))
+	
+	assert(poll_server:bind("localhost", POLL_PORT))
 	assert(poll_server:listen())
-
+	
+	poll_server:settimeout(0)  -- non-blocking
+	poll_server:setoption("reuseaddr", true)
+	poll_server:setoption("keepalive", true)
+	poll_server:setoption("tcp-nodelay", true)
+	
+	-- write log
 	local ip, port = server:getsockname()
 	local poll_ip, poll_port = poll_server:getsockname()
-	net.log("DCS API Server: Started on Port " .. port .. " at " .. ip)
+	
+	net.log("DCS API Request Server: Started on Port " .. port .. " at " .. ip)
 	net.log("DCS API Poll Server: Started on Port " .. poll_port .. " at " .. poll_ip)
 end
 
@@ -352,6 +469,7 @@ function ofsmiz.onSimulationFrame()
 		
 			local success, err = pcall(step)
 			local poll_success, poll_err = pcall(poll_step)
+			
 			manage_coroutine()
 			
 			step_frame_count = 0
@@ -362,13 +480,13 @@ end
 
 function ofsmiz.onSimulationStop()
 	do_step = false
-
-	server:close()
-	poll_server:close()
-
-	server = nil
-	poll_server = nil
-
+	
+    if client then client:close() end
+    if server then server:close() end
+	  
+    if poll_client then poll_client:close() end
+    if poll_server then poll_server:close() end
+  
 	PULL.wait_list = {}
 	PULL.result = {}
 	PULL.poll_result = {}

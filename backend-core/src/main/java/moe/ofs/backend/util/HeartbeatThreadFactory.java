@@ -3,12 +3,15 @@ package moe.ofs.backend.util;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
+import moe.ofs.backend.request.Connection;
 import moe.ofs.backend.request.FillerRequest;
 import moe.ofs.backend.request.RequestHandler;
 import org.springframework.stereotype.Component;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -41,14 +44,21 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
                     return;
                 }
 
-                if(isExportConnectionEstablished() && isServerConnectionEstablished()) {
-                    // can connect, clear request handler trouble
-                    // this also triggers background task start
+
+                if(checkPortConnection()) {
                     RequestHandler.getInstance().setTrouble(false);
 
                     break;
-
                 }
+
+//                if(isExportConnectionEstablished() && isServerConnectionEstablished()) {
+//                    // can connect, clear request handler trouble
+//                    // this also triggers background task start
+//                    RequestHandler.getInstance().setTrouble(false);
+//
+//                    break;
+//
+//                }
             }
 
             heartbeatActive.set(false);
@@ -66,6 +76,40 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
         return checkPortConnection(Level.EXPORT_POLL);
     }
 
+    private boolean checkPortConnection() {
+        // create a connection for this level and try to send a message
+        RequestHandler requestHandler = RequestHandler.getInstance();
+        boolean trouble = false;
+
+        requestHandler.createConnections(1000);  // for checking only, timeout can be very low
+
+        // if createConnections() throws exception, no connection will not be created
+        // the size of getConnections().entrySet() will be zero
+
+        if(requestHandler.getConnections().entrySet().isEmpty()) {
+            return false;  // connections are not properly established and there is trouble
+        } else {
+            for (Map.Entry<Level, Connection> entry : requestHandler.getConnections().entrySet()) {
+                Level level = entry.getKey();
+                Connection connection = entry.getValue();
+
+                try {
+                    connection.transmitAndReceive(ConnectionManager.fastPack(new FillerRequest(level)));
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+                    trouble = true;
+                    break;  // break the loop and close all connections;
+                }
+            }
+        }
+
+        requestHandler.shutdownConnections();
+
+        return !trouble;
+    }
+
+    @Deprecated
     private boolean checkPortConnection(Level level) {
 
         FillerRequest filler = new FillerRequest(level);

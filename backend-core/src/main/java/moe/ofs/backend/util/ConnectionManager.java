@@ -111,7 +111,7 @@ public class ConnectionManager implements Configurable {
         new FillerRequest(Level.SERVER_POLL).send();
 //        new FillerRequest(Level.EXPORT).send();
 //        new FillerRequest(Level.EXPORT_POLL).send();
-        RequestHandler.getInstance().transmitAndReceive();
+//        RequestHandler.getInstance().transmitAndReceive();
 
         fastPackThenSendAndGet(new FillerRequest(Level.EXPORT));
         fastPackThenSendAndGet(new FillerRequest(Level.EXPORT_POLL));
