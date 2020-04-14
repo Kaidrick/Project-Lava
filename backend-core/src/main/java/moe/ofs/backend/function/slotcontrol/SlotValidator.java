@@ -123,7 +123,7 @@ public class SlotValidator {
 
         slotEntryPullExecutorService = Executors.newSingleThreadScheduledExecutor();
         slotEntryPullExecutorService.scheduleWithFixedDelay(getSlotEntryRequest,
-                0, 500, TimeUnit.MILLISECONDS);
+                0, 200, TimeUnit.MILLISECONDS);
 
     }
 

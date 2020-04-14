@@ -17,6 +17,9 @@ local POLL_PORT = POLL_PORT or %d
 
 local DATA_TIMEOUT_SEC = 0.001
 
+local last_comm_timestamp
+local last_poll_timestamp
+
 -- File Ouput
 local default_output_file = nil
 
@@ -438,66 +441,199 @@ end
 
 local function step()
 	if server then
-		server:settimeout(0)  -- give up if no connection
-		client = server:accept()  -- accept client
-		
-		if client then  -- if client not nil, connection established
-
+		if not client then  -- if no client, establish connection from server object
+			client = server:accept()
+      
+			if client then
+				client:settimeout(0)
+				-- try to receive from client?
+				local line, err = client:receive()
+			
+				if not err then
+					last_comm_timestamp = os.time()  -- update on successful handshake
+			  
+					---[[
+					local success, requests = pcall(
+						function()
+							return JSON:decode(line)
+						end
+					)
+					if success then  -- run request here
+						local readyResult = PULL.prepared_result()
+						local bytes, status, lastbyte = client:send(JSON:encode(readyResult) .. '\n')
+						
+						-- run_request
+						if requests then
+							process_request(requests)
+						end
+					else
+						log("Request: " .. requests)  -- log error
+						local bytes, status, lastbyte = client:send(JSON:encode(false) .. '\n')
+					end
+					--]]
+				else
+					log(line, err)
+					client:send("\r\n")
+				end
+			end
+      
+		else  -- existing client, reuse this object
+			-- reuse client
 			local line, err = client:receive()
-			if not err then
+      
+			if err then
+				if err == 'timeout' then
+					if last_comm_timestamp then  
+						if os.time() - last_comm_timestamp > 5 then
+							log("connection is lost")
+							
+							log("current os.time is " .. os.time() .. " and last handshake timestamp is " .. last_comm_timestamp)
+							log("diff is " .. os.time() - last_comm_timestamp)
+					
+							client:close()
+							client = nil
+							last_comm_timestamp = nil
+							return
+						end
+					else  -- no successful handshake is made yet
+						log("no handshake")
+					end
+			  
+				elseif err == 'closed' then
+					log("connection is closed")
+					client:close()
+					client = nil
+					last_comm_timestamp = nil
+					return
+			  
+				else  -- other error
+					log("Error: " .. err)
+				end
+			end
 
+			if not err then  -- successful handshake
+				last_comm_timestamp = os.time()
+			
+				---[[
 				local success, requests = pcall(
 					function()
 						return JSON:decode(line)
 					end
 				)
 				if success then  -- run request here
-
 					local readyResult = PULL.prepared_result()
 					local bytes, status, lastbyte = client:send(JSON:encode(readyResult) .. '\n')
 					
 					-- run_request
-					process_request(requests)
+					if requests then
+						process_request(requests)
+					end
 				else
+					log("Request: " .. requests)  -- log error
 					local bytes, status, lastbyte = client:send(JSON:encode(false) .. '\n')
 				end
+				--]]
 			end
-			
-			client:close()  -- done, close connection
-			client = nil
 		end
 	end
 end
 
 local function poll_step()
 	if poll_server then
-		poll_server:settimeout(0)  -- give up if no connection
-		poll_client = poll_server:accept()  -- accept poll_client
-		
-		if poll_client then  -- if poll_client not nil, connection established
-			local line, err = poll_client:receive()
+		if not poll_client then  -- if no client, establish connection from server object
+			poll_client = poll_server:accept()
 			
-			if not err then
+			if poll_client then
+				poll_client:settimeout(0)
+				-- try to receive from client?
+				local line, err = poll_client:receive()
+			
+				if not err then
+					last_poll_timestamp = os.time()  -- update on successful handshake
+			  
+					---[[
+					local success, requests = pcall(
+						function()
+							return JSON:decode(line)
+						end
+					)
+					if success then  -- run request here
+						local readyResult = PULL.brew_result()  -- send nothing back to polling thread
+						local bytes, status, lastbyte = poll_client:send(JSON:encode(readyResult) .. '\n')
+
+						if requests then
+							process_request(requests)
+						end
+					else
+						env.info(requests)  -- log error
+						local readyResult = PULL.brew_result()
+						local bytes, status, lastbyte = poll_client:send(JSON:encode(readyResult) .. '\n')
+					end
+					--]]
+				else
+					log(line, err)
+					poll_client:send("\r\n")
+				end
+			end
+      
+		else  -- existing client, reuse this object
+			-- reuse client
+			local line, err = poll_client:receive()
+      
+			if err then
+				if err == 'timeout' then
+					if last_poll_timestamp then  
+						if os.time() - last_poll_timestamp > 5 then
+							
+							log("current os.time is " .. os.time() .. " and last handshake timestamp is " .. last_poll_timestamp)
+							log("diff is " .. os.time() - last_poll_timestamp)
+							
+							log("connection is lost")
+					
+							poll_client:close()
+							poll_client = nil
+							last_poll_timestamp = nil
+							return
+						end
+					else  -- no successful handshake is made yet
+						log("no handshake")
+					end
+					
+				elseif err == 'closed' then
+					log("connection is closed")
+					poll_client:close()
+					poll_client = nil
+					last_poll_timestamp = nil
+					return
+			  
+				else  -- other error
+					log("Error: " .. err)
+				end
+			end
+
+			if not err then  -- successful handshake
+				last_poll_timestamp = os.time()
+			
+				---[[
 				local success, requests = pcall(
 					function()
 						return JSON:decode(line)
 					end
 				)
 				if success then  -- run request here
-
 					local readyResult = PULL.brew_result()  -- send nothing back to polling thread
 					local bytes, status, lastbyte = poll_client:send(JSON:encode(readyResult) .. '\n')
 
-					process_request(requests)
+					if requests then
+						process_request(requests)
+					end
 				else
 					env.info(requests)  -- log error
-					local readyResult = PULL.prepared_result()
+					local readyResult = PULL.brew_result()
 					local bytes, status, lastbyte = poll_client:send(JSON:encode(readyResult) .. '\n')
 				end
+				--]]
 			end
-			
-			poll_client:close()  -- done, close connection
-			poll_client = nil
 		end
 	end
 end
@@ -566,7 +702,7 @@ local function manage_coroutine()
 					collector(uuid, res, tail)
 				else
 					if res and type(res) == 'string' then  -- error
-						log(res)
+						log("Coroutine Error: " .. res)
 					end
 					
 					if res and next(res) ~= nil then
@@ -581,14 +717,35 @@ end
 
 function LuaExportStart()
 	log("Starting DCS Export Server")
-	server = assert(socket.bind("127.0.0.1", PORT))
-	poll_server = assert(socket.bind("127.0.0.1", POLL_PORT))
 	
+	-- Request Server
+	server = socket.tcp()
+	
+	assert(server:bind("localhost", PORT))
+	assert(server:listen())
+	
+	server:settimeout(0)  -- non-blocking
+	server:setoption("reuseaddr", true)
+	server:setoption("keepalive", true)
+	server:setoption("tcp-nodelay", true)
+
+	-- Poll Server
+	poll_server = socket.tcp()
+	
+	assert(poll_server:bind("localhost", POLL_PORT))
+	assert(poll_server:listen())
+	
+	poll_server:settimeout(0)  -- non-blocking
+	poll_server:setoption("reuseaddr", true)
+	poll_server:setoption("keepalive", true)
+	poll_server:setoption("tcp-nodelay", true)
+	
+	-- write log
 	local ip, port = server:getsockname()
 	local poll_ip, poll_port = poll_server:getsockname()
 	
-	log("DCS Export Server - Normal Request -> Started on Port " .. port .. " at " .. ip)
-	log("DCS Export Server - Polling Request -> Started on Port " .. poll_port .. " at " .. poll_ip)
+	log("DCS Export Request Server: Started on Port " .. port .. " at " .. ip)
+	log("DCS Export Poll Server: Started on Port " .. poll_port .. " at " .. poll_ip)
 	
 	initData()
 end
@@ -599,7 +756,12 @@ function LuaExportStop()
 		default_output_file = nil
 	end
 
-	server:close()
+	if client then client:close() end
+    if server then server:close() end
+	  
+    if poll_client then poll_client:close() end
+    if poll_server then poll_server:close() end
+	
 	log("DCS Export Server Terminated")
 end
 

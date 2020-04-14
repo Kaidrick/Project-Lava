@@ -2,8 +2,8 @@ package moe.ofs.backend;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
-import moe.ofs.backend.handlers.*;
-import moe.ofs.backend.logmanager.Logger;
+import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
+import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.request.FillerRequest;
 import moe.ofs.backend.request.PollHandlerService;
 import moe.ofs.backend.request.RequestHandler;
@@ -235,11 +235,19 @@ public class BackgroundTask implements PropertyChangeListener {
         exportObjectPollService.init();
         playerInfoPollService.init();
 
+        // on exception, do clean up
+        // close all connections immediately
+        //
         Runnable exportPolling = () -> {
             try {
                 exportObjectPollService.poll();
             } catch (IOException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
+
+                requestHandler.setTrouble(true);
+
+                // shutdown
+                requestHandler.shutdownConnections();
             }
         };
 
@@ -247,7 +255,12 @@ public class BackgroundTask implements PropertyChangeListener {
             try {
                 playerInfoPollService.poll();
             } catch (IOException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
+
+                requestHandler.setTrouble(true);
+
+                // shutdown
+                requestHandler.shutdownConnections();
             }
         };
 
@@ -255,18 +268,24 @@ public class BackgroundTask implements PropertyChangeListener {
 //         requests are sent and result are received in this thread only
         Runnable mainLoop = () -> {
 //            log.info("main loop -> " + Thread.currentThread().getName());
-            if(requestHandler.hasPendingServerRequest())
+//            if(requestHandler.hasPendingServerRequest())
                 new FillerRequest(Level.SERVER).send();
 
-            if(requestHandler.hasPendingExportRequest())
+//            if(requestHandler.hasPendingExportRequest())
                 new FillerRequest(Level.EXPORT).send();
 
             try {
-                requestHandler.transmitAndReceive();
+//                requestHandler.transmitAndReceive();
+                requestHandler.transmissionCycle();
             } catch (Exception e) {
                 e.printStackTrace();
+
+                // shutdown
+                requestHandler.shutdownConnections();
             }
         };
+
+        requestHandler.createConnections();
 
 //         dedicated polling thread
 //         polling and receive data only in this thread
@@ -275,11 +294,11 @@ public class BackgroundTask implements PropertyChangeListener {
 
         exportPollingScheduler = Executors.newSingleThreadScheduledExecutor();
         exportPollingScheduler.scheduleWithFixedDelay(exportPolling,
-                0, 500, TimeUnit.MILLISECONDS);
-
+                0, 100, TimeUnit.MILLISECONDS);
+//
         serverPollingScheduler = Executors.newSingleThreadScheduledExecutor();
         serverPollingScheduler.scheduleWithFixedDelay(serverPolling,
-                0, 500, TimeUnit.MILLISECONDS);
+                0, 100, TimeUnit.MILLISECONDS);
 
 //         initialize plugins
         Plugin.loadedPlugins.forEach(Plugin::init);
