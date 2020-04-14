@@ -1,5 +1,6 @@
 package moe.ofs.backend.object.map;
 
+import moe.ofs.backend.object.Vector3D;
 import moe.ofs.backend.object.map.GeoPosition;
 import moe.ofs.backend.object.map.Orientation;
 
@@ -89,19 +90,5 @@ public class GeoPositions {
 
         return new GeoPosition(orientLat.getSign() * totalLatDeg,
                 orientLon.getSign() * totalLonDeg);
-    }
-
-    public static GeoPosition getPrecision(String latDegree, String latMinute,
-                                           String lonDegree, String lonMinute) {
-        long latDegVal = Long.parseLong(latDegree);
-        long latMinVal = Long.parseLong(latMinute);
-
-        long lonDegVal = Long.parseLong(lonDegree);
-        long lonMinVal = Long.parseLong(lonMinute);
-
-        long totalLatDeg = latDegVal + latMinVal / 60;
-        long totalLonDeg = lonDegVal + lonMinVal / 60;
-
-        return new GeoPosition(totalLatDeg, totalLonDeg);
     }
 }

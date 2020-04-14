@@ -81,19 +81,26 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
         RequestHandler requestHandler = RequestHandler.getInstance();
         boolean trouble = false;
 
-        requestHandler.createConnections();  // maybe this will throw exceptions as well?
+        requestHandler.createConnections(1000);  // for checking only, timeout can be very low
 
-        for (Map.Entry<Level, Connection> entry : requestHandler.getConnections().entrySet()) {
-            Level level = entry.getKey();
-            Connection connection = entry.getValue();
+        // if createConnections() throws exception, no connection will not be created
+        // the size of getConnections().entrySet() will be zero
 
-            try {
-                connection.transmitAndReceive(ConnectionManager.fastPack(new FillerRequest(level)));
-            } catch (IOException e) {
-                e.printStackTrace();
+        if(requestHandler.getConnections().entrySet().isEmpty()) {
+            return false;  // connections are not properly established and there is trouble
+        } else {
+            for (Map.Entry<Level, Connection> entry : requestHandler.getConnections().entrySet()) {
+                Level level = entry.getKey();
+                Connection connection = entry.getValue();
 
-                trouble = true;
-                break;  // break the loop and close all connections;
+                try {
+                    connection.transmitAndReceive(ConnectionManager.fastPack(new FillerRequest(level)));
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+                    trouble = true;
+                    break;  // break the loop and close all connections;
+                }
             }
         }
 

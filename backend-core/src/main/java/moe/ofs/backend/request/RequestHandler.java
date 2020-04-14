@@ -183,17 +183,25 @@ public final class RequestHandler implements PropertyChangeListener {
      * An request of some sort must be send to the socket immediately after its creation
      */
     public void createConnections() {
-        portMap.forEach((level, port) -> {
-            try {
-                Connection connection = new Connection("localhost", port, 1000);
+        createConnections(5000);
+    }
+
+    public void createConnections(int timeout) {
+        for (Map.Entry<Level, Integer> entry : portMap.entrySet()) {
+            Level level = entry.getKey();
+            int port = entry.getValue();
+
+            try{
+                Connection connection = new Connection("localhost", port, timeout);
 
                 connectionMap.put(level, connection);
                 log.info("Connection create: " + level + " " + connection + " at " + port);
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch(IOException e) {
                 log.error("Unable to create connection to Lua server: at " + level + " on port " + port);
+
+                break;  // break loop; no need to try connection on other ports
             }
-        });
+        }
     }
 
     public Map<Level, Connection> getConnections() {
@@ -239,8 +247,9 @@ public final class RequestHandler implements PropertyChangeListener {
                 try {
                     responseJsonString = connectionMap.get(level).transmitAndReceive(json);
                 } catch (IOException e) {
+//                    e.printStackTrace();
+
                     setTrouble(true);
-                    e.printStackTrace();
                     responseJsonString = "";
                 }
 
