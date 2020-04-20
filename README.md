@@ -3,9 +3,9 @@
 # Project Lava
 An functional framework for DCS World and a solution to mission scripting, server management and data analysis, packed with a GUI control panel.
 
-![Main GUI](docs/main_ui_en.png) <!-- .element height="50%" width="50%" -->
+![Main GUI](docs/main_ui_en.png) {:height="50%" width="50%"}
 
-![Main GUI](docs/plugin_list.png) <!-- .element height="50%" width="50%" -->
+![Main GUI](docs/plugin_list.png) {:height="50%" width="50%"}
 
 Project Lava enables average users or server hosts to control and extends the functionality of DCS World server without the need to write scripts. Project Lava is designed with compatibility in mind: it is supposed to be used, without the necessity to modified existing mission, and compatible with any map theatres, missions or DCS lua scripts such as MIST / Moose Framework or external tools such as SimpleRadioStandalone and TacView.
 
