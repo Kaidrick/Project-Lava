@@ -3,27 +3,27 @@
 # Project Lava
 An functional framework for DCS World and a solution to mission scripting, server management and data analysis, packed with a GUI control panel.
 
-<img src="docs/main_ui_en.png" width="300" alt="">
-
-![Main GUI](docs/plugin_list.png) {:height="50%" width="50%"}
+<img src="docs/main_ui_en.png" width="300" alt=""> <img src="docs/plugin_list.png" width="300" alt="">
 
 Project Lava enables average users or server hosts to control and extends the functionality of DCS World server without the need to write scripts. Project Lava is designed with compatibility in mind: it is supposed to be used, without the necessity to modified existing mission, and compatible with any map theatres, missions or DCS lua scripts such as MIST / Moose Framework or external tools such as SimpleRadioStandalone and TacView.
 
 # Ok, show me some examples
-![Admin data](docs/admin_info.png)
+
+<img src="docs/admin_info.png" width="300" alt="">
 
 Automatically sends administrative info or greets player on spawning.
 
-![Static aircraft display](docs/plugin_static_display_showcase.png)
+<img src="docs/plugin_static_display_showcase.png" width="300" alt="Static aircraft display">
 
 Each flyable aircraft has a static model displayed at the position it will be spawned at. If a player enters this aircraft, the static model is removed before player spawns. If a player leaves this aircraft, the static model is re-added to the apron before player de-spawns.
 
-![nav data provider](docs/plugin_navaid_search.png)
-![nav data provider navdata creation](docs/plugin_navdata_creation.png)
+<img src="docs/plugin_navaid_search.png" width="300" alt="">
+
+<img src="docs/plugin_navdata_creation.png" width="300" alt="">
 
 A navigational data provider that can be used to provide real-world aeronautical chart data, such as Navaid or Waypoint position.
 
-![tanker service](docs/plugin_tanker_service_creation.png)
+<img src="docs/plugin_tanker_service_creation.png" width="300" alt="tanker service">
 
 A tanker service dispatcher that can dispatch tanker automatically based on tanker type, route, service info
 
@@ -46,7 +46,9 @@ A tanker service dispatcher that can dispatch tanker automatically based on tank
 
 \+ You can do web things with plugin, because Spring is a full stack framework, for example, display data using a webserver.
 
-# How does it work?
+
+#How does it work?
+
 Project Lava, along with several other prototype projects, has been made to tackle a very specific problem in DCS online multi-player environment: heavy Lua tasks slow down server performance and responsiveness and induce stuttering. Tons of Lua scripts are injected at runtime to extend playability, thus increasing the Lua CPU usage for each “frame”, where the speed, 3d position, animations and behaviors of all objects in the simulation are processed and calculated. After all of these are done, user scripts are executed before the next frame is rendered.
 Maybe you want to send a message to a group, or maybe you need to spawn a tanker because the previous one is rammed or shotdown by someone, or, you want to iterate through a pile of units and find a specific unit or a set of units that are controlled by AI, has "AAA" in their name, are air defense units with radar turned off. These "common" behaviors are usually written in Lua script and included in each mission; you either do loops to lookup or check for a data or condition, or you put existing names from Mission Editor to a table, and use the name to access certain unit table; that is how DCS is supposed to work, and that is as much expendable as it can be, without pulling runtime data out of the sim environment.
 
