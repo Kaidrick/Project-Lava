@@ -4,7 +4,9 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
-        <option value="$PROJECT_DIR$/backend-core/pom.xml" />
+        <option value="$PROJECT_DIR$/backend-gui/pom.xml" />
+        <option value="$PROJECT_DIR$/backend-log/pom.xml" />
+        <option value="$PROJECT_DIR$/backend-web/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">

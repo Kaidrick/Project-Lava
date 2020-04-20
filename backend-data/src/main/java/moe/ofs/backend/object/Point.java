@@ -1,11 +1,17 @@
 package moe.ofs.backend.object;
 
+import lombok.Getter;
+import lombok.Setter;
+import moe.ofs.backend.object.tasks.Task;
+
+@Getter
+@Setter
 public class Point {
     private Double alt;
     private String action;
     private String alt_type;
     private Double speed;
-    private Object task;
+    private Task task;
     private String type;
     private String name;
     private Integer airdromeId;
@@ -13,7 +19,9 @@ public class Point {
     private Double y;
 
     public enum Action {
-        FROM_PARKING_AREA("From Parking Area"), FROM_RUNWAY("From Runway");
+        FROM_PARKING_AREA("From Parking Area"), FROM_PARKING_AREA_HOT("From Parking Area Hot"),
+        FROM_RUNWAY("From Runway"),
+        FLY_OVER_POINT("Fly Over Point"), TURNING_POINT("Turning Point"), LANDING("Landing");
 
         private String action;
         Action(String action) {
@@ -27,7 +35,23 @@ public class Point {
     }
 
     public enum PointType {
-        TakeOffParking, TakeOff;
+        TakeOffParking("TakeOffParking"), TakeOff("TakeOff"), TakeOffParkingHot("TakeOffParkingHot"),
+        TurningPoint("Turning Point"), Land("Land");
+
+        private String type;
+
+        PointType(String type) {
+            this.type = type;
+        }
+
+        @Override
+        public String toString() {
+            return type;
+        }
+    }
+
+    public enum AltType {
+        BARO, RADIO;
 
         @Override
         public String toString() {
@@ -48,8 +72,16 @@ public class Point {
     public static class PointBuilder {
         private Point point = new Point();
 
+        public PointBuilder setSpeed(double speed) {
+            point.speed = speed;
+            return this;
+        }
         public PointBuilder setAlt(double alt) {
             point.alt = alt;
+            return this;
+        }
+        public PointBuilder setAltType(AltType altType) {
+            point.alt_type = altType.toString();
             return this;
         }
         public PointBuilder setAction(Action action) {
@@ -74,6 +106,10 @@ public class Point {
         }
         public PointBuilder setAirdromeId(int airdromeId) {
             point.airdromeId = airdromeId;
+            return this;
+        }
+        public PointBuilder setTask(Task task) {
+            point.task = task;
             return this;
         }
 

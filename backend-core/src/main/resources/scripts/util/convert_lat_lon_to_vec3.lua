@@ -1,6 +1,6 @@
 local JSON = require("JSON")
 
-local longitude = %f
 local latitude = %f
+local longitude = %f
 
 return JSON:encode(Export.LoGeoCoordinatesToLoCoordinates(longitude, latitude))

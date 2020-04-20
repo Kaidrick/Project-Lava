@@ -19,7 +19,7 @@ public class Group extends SimObject {
     private Double start_time;
     private Double frequency;
 
-    enum Category {
+    public enum Category {
         AIRPLANE, HELICOPTER, GROUND, SHIP, TRAIN
     }
 

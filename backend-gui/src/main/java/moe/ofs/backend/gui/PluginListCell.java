@@ -19,9 +19,8 @@ import moe.ofs.backend.ControlPanelApplication;
 import moe.ofs.backend.Plugin;
 import moe.ofs.backend.UTF8Control;
 import moe.ofs.backend.Viewable;
-import moe.ofs.backend.interaction.PluginStage;
-import moe.ofs.backend.util.I18n;
 import moe.ofs.backend.interaction.StageControl;
+import moe.ofs.backend.util.I18n;
 
 import java.io.IOException;
 import java.util.ResourceBundle;
@@ -174,8 +173,6 @@ public class PluginListCell extends ListCell<Plugin> {
                         }
 
                         pluginStage.setScene(scene);
-
-                        PluginStage.stageMap.put(plugin.getName(), pluginStage);
                     }
 
                     if(plugin.getLocalizedName() != null) {

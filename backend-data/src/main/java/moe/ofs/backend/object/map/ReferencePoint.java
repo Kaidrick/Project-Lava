@@ -28,4 +28,9 @@ public class ReferencePoint extends BaseEntity {
     private double y;
 
     private Map<String, Number> properties;
+
+    private double latitude;
+    private double longitude;
+
+    private int coalition;
 }

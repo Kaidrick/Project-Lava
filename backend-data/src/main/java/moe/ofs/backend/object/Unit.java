@@ -16,7 +16,7 @@ public class Unit extends SimObject {
     private Double x;
     private Double y;
     private Double heading;
-    private Map<String, Object> payload;
+    private Payload payload;
     private Object callsign;
     private String onboard_num;
 
@@ -81,6 +81,10 @@ public class Unit extends SimObject {
         }
         public UnitBuilder setCategory(Category category) {
             unit.category = category.ordinal();
+            return this;
+        }
+        public UnitBuilder setPayload(Payload payload) {
+            unit.payload = payload;
             return this;
         }
 
