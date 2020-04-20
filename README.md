@@ -62,6 +62,8 @@ A tanker service dispatcher that can dispatch tanker automatically based on tank
 
 # How does it work
 
+<img src="docs/project_overview.png" alt="overview">
+
 Project Lava, along with several other prototype projects, has been made to tackle a very specific problem in DCS online multi-player environment: heavy Lua tasks slow down server performance and responsiveness and induce stuttering. Tons of Lua scripts are injected at runtime to extend playability, thus increasing the Lua CPU usage for each “frame”, where the speed, 3d position, animations and behaviors of all objects in the simulation are processed and calculated. After all of these are done, user scripts are executed before the next frame is rendered.
 Maybe you want to send a message to a group, or maybe you need to spawn a tanker because the previous one is rammed or shotdown by someone, or, you want to iterate through a pile of units and find a specific unit or a set of units that are controlled by AI, has "AAA" in their name, are air defense units with radar turned off. These "common" behaviors are usually written in Lua script and included in each mission; you either do loops to lookup or check for a data or condition, or you put existing names from Mission Editor to a table, and use the name to access certain unit table; that is how DCS is supposed to work, and that is as much expendable as it can be, without pulling runtime data out of the sim environment.
 
