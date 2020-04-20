@@ -3,7 +3,7 @@
 # Project Lava
 An functional framework for DCS World and a solution to mission scripting, server management and data analysis, packed with a GUI control panel.
 
-<img src="docs/main_ui_en.png" width alt="">
+<img src="docs/main_ui_en.png" width="300" alt="">
 
 ![Main GUI](docs/plugin_list.png) {:height="50%" width="50%"}
 
