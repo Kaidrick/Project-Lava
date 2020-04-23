@@ -12,6 +12,14 @@ public class Lengths {
         return feet * 0.3048;
     }
 
+    public static double nauticalMilesToMeters(double nauticalMiles) {
+        return nauticalMiles * 1852;
+    }
+
+    public static double kilometersToMeters(double kilometers) {
+        return kilometers * 1000;
+    }
+
     public static Length of(SystemOfMeasurement system) {
         if(system.equals(SystemOfMeasurement.IMPERIAL)) {
             return Length.FEET;

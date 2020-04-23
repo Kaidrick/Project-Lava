@@ -3,7 +3,9 @@ package moe.ofs.backend.object.unitofmeasure;
 public enum Length {
     METERS("m", "meter", "meters"),
     FEET("ft", "foot", "feet"),
-    MILES("mi", "mile", "miles");
+    STATUTE_MILES("mi", "mile", "miles"),
+    NAUTICAL_MILES("nm", "nautical mile", "nautical miles"),
+    KILOMETERS("km", "kilometer", "kilometers");
 
     private String symbol;
     private String singular;

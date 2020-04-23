@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,31 +43,32 @@ class OffsetTest {
 
     @Test
     void of() {
-        Vector3D offset000 = Offset.of(distance, bearing000, base);
-        System.out.println("offset000 = " + offset000);
 
-        Vector3D offset045 = Offset.of(distance, bearing045, base);
-        System.out.println("offset045 = " + offset045);
-
-        Vector3D offset090 = Offset.of(distance, bearing090, base);
-        System.out.println("offset090 = " + offset090);
-
-        Vector3D offset135 = Offset.of(distance, bearing135, base);
-        System.out.println("offset135 = " + offset135);
-
-        Vector3D offset180 = Offset.of(distance, bearing180, base);
-        System.out.println("offset180 = " + offset180);
-
-        Vector3D offset225 = Offset.of(distance, bearing225, base);
-        System.out.println("offset225 = " + offset225);
-
-        Vector3D offset270 = Offset.of(distance, bearing270, base);
-        System.out.println("offset270 = " + offset270);
-
-        Vector3D offset315 = Offset.of(distance, bearing315, base);
-        System.out.println("offset315 = " + offset315);
-
-        Vector3D offset360 = Offset.of(distance, bearing360, base);
-        System.out.println("offset360 = " + offset360);
+//        Vector3D offset000 = Offset.of(distance, bearing000, base);
+//        System.out.println("offset000 = " + offset000);
+//
+//        Vector3D offset045 = Offset.of(distance, bearing045, base);
+//        System.out.println("offset045 = " + offset045);
+//
+//        Vector3D offset090 = Offset.of(distance, bearing090, base);
+//        System.out.println("offset090 = " + offset090);
+//
+//        Vector3D offset135 = Offset.of(distance, bearing135, base);
+//        System.out.println("offset135 = " + offset135);
+//
+//        Vector3D offset180 = Offset.of(distance, bearing180, base);
+//        System.out.println("offset180 = " + offset180);
+//
+//        Vector3D offset225 = Offset.of(distance, bearing225, base);
+//        System.out.println("offset225 = " + offset225);
+//
+//        Vector3D offset270 = Offset.of(distance, bearing270, base);
+//        System.out.println("offset270 = " + offset270);
+//
+//        Vector3D offset315 = Offset.of(distance, bearing315, base);
+//        System.out.println("offset315 = " + offset315);
+//
+//        Vector3D offset360 = Offset.of(distance, bearing360, base);
+//        System.out.println("offset360 = " + offset360);
     }
 }

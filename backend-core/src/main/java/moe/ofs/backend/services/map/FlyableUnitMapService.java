@@ -24,7 +24,7 @@ public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> imple
 
     @Override
     public Optional<FlyableUnit> findByUnitName(String name) {
-        return Optional.empty();
+        return map.values().stream().filter(e -> e.getUnit_name().equals(name)).findAny();
     }
 
     @Override

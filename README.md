@@ -23,7 +23,7 @@ Automatically sends customizable administrative info/messages or greets player o
 
 <img src="docs/plugin_static_display_showcase.png" width="300" alt="Static aircraft display">
 
-Each flyable aircraft has a static model displayed at the position it will be spawned at. If a player enters this aircraft, the static model is removed before player spawns. If a player leaves this aircraft, the static model is re-added to the apron before player de-spawns.
+Each flyable aircraft has a static model displayed at the position it will be spawned at. If a player enters this aircraft, the static model is removed before player spawns. If a player leaves this aircraft, the static model is re-added to the apron after player de-spawns.
 
 **Navigational Data Provider**
 

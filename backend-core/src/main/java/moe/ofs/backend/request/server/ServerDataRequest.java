@@ -90,6 +90,13 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
         return Double.parseDouble(get());
     }
 
+    public boolean getAsBoolean() {
+        if(!isSent()) {
+            send();
+        }
+        return Boolean.parseBoolean(get());
+    }
+
     public ServerDataRequest addProcessable(Processable processable) {
         list.add(processable);
         return this;

@@ -3,6 +3,7 @@ package moe.ofs.backend;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
+import moe.ofs.backend.handlers.LuaScriptInjectionObservable;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.request.FillerRequest;
 import moe.ofs.backend.request.PollHandlerService;
@@ -302,6 +303,28 @@ public class BackgroundTask implements PropertyChangeListener {
 
 //         initialize plugins
         Plugin.loadedPlugins.forEach(Plugin::init);
+
+        // check in lua mission env for global variable persistent initialization
+        // this flag can only be reset by mission restart event handler
+
+        // lua must return a string
+        boolean flag = new ServerDataRequest("return tostring(lava_mission_persistent_initialization)").getAsBoolean();
+
+        System.out.println("MPDB: " + new ServerDataRequest("local inspect = require('inspect') return inspect(missionDatabase)").get());
+
+        if(!flag) {
+            log.info("injecting mission persistence");
+
+            LuaScriptInjectionObservable.invokeAll();
+
+            new ServerDataRequest("lava_mission_persistent_initialization = true").send();
+
+            log.info("mission persistence initialized");
+        } else {
+
+            log.info("persistence already initialized");
+
+        }
 
         log.info("Schedulers running, background task ready, mission data initialized");
 
