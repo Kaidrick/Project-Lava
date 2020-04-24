@@ -38,7 +38,7 @@ public class ExportObjectBulkJpaService extends AbstractJpaService<ExportObject,
         if(updatable(updateObject, recordObject)) {
             // update recordObject with new data
             recordObject.setFlags(updateObject.getFlags());
-            recordObject.setLatLongAlt(updateObject.getLatLongAlt());
+            recordObject.setGeoPosition(updateObject.getGeoPosition());
             recordObject.setPosition(updateObject.getPosition());
             recordObject.setHeading(updateObject.getHeading());
             recordObject.setBank(updateObject.getBank());

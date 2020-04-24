@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class BackendRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
-        log.info("Starting Control Panel GUI...");
+        log.info("Starting Control Panel GUI");
 
 //        new Thread(() -> javafx.application.Application.launch(ControlPanelApplication.class)).start();
 

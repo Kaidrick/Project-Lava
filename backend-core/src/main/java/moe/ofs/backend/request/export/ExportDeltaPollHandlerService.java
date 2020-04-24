@@ -3,6 +3,7 @@ package moe.ofs.backend.request.export;
 import moe.ofs.backend.domain.ExportObject;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.domain.LuaState;
+import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
 import moe.ofs.backend.request.*;
 import moe.ofs.backend.services.UpdatableService;
 import moe.ofs.backend.util.ConnectionManager;
@@ -15,11 +16,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service("exportObjectDelta")
 public final class ExportDeltaPollHandlerService implements PollHandlerService {
 
     protected List<DataUpdateBundle> list;
+
+//    private ExecutorService executorService;
 
     protected int flipCount;
 
@@ -45,6 +50,15 @@ public final class ExportDeltaPollHandlerService implements PollHandlerService {
     @Autowired
     public ExportDeltaPollHandlerService(UpdatableService<ExportObject> service) {
         this.service = service;
+
+//        executorService = Executors.newCachedThreadPool();
+//
+//        // FIXME: shutdown
+//        ControlPanelShutdownObservable observable = () -> {
+//            executorService.shutdown();
+//            executorService.shutdownNow();
+//        };
+//        observable.register();
 
         list = new ArrayList<>();
 
@@ -90,21 +104,26 @@ public final class ExportDeltaPollHandlerService implements PollHandlerService {
 
                 jsonRpcResponseList.forEach(r -> {
                     if(r.getResult() != null && r.getResult().isIs_tail()) {
-                        list.forEach(bundle -> {
+                        list.parallelStream().forEach(bundle -> {
                             switch (bundle.getAction()) {
                                 case "create":
+//                                    executorService.submit(() -> service.add(bundle.getData()));
                                     service.add(bundle.getData());
                                     break;
                                 case "update":
+//                                    executorService.submit(() -> service.update(bundle.getData()));
                                     service.update(bundle.getData());
                                     break;
                                 case "delete":
+//                                    executorService.submit(() -> service.remove(bundle.getData()));
                                     service.remove(bundle.getData());
                                     break;
                                 default:
                                     throw new UnsupportedOperationException();
                             }
                         });
+
+                        // add a lock so that next iter is run only after batch update finishes?
 
                         requestCompleted = true;
                         list.clear();

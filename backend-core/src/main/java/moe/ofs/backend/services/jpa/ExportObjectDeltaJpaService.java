@@ -3,6 +3,7 @@ package moe.ofs.backend.services.jpa;
 import moe.ofs.backend.domain.ExportObject;
 import moe.ofs.backend.handlers.ExportUnitDespawnObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
+import moe.ofs.backend.handlers.ExportUnitUpdateObservable;
 import moe.ofs.backend.logmanager.Logger;
 import moe.ofs.backend.repositories.ExportObjectRepository;
 import moe.ofs.backend.services.ExportObjectService;
@@ -28,7 +29,11 @@ public class ExportObjectDeltaJpaService extends AbstractJpaService<ExportObject
 
     @Override
     public void update(ExportObject deltaObject) {
+
         repository.findByRuntimeID(deltaObject.getRuntimeID()).ifPresent(record -> {
+
+            ExportObject previous = new ExportObject(record);
+
             if(deltaObject.getBank() != null) {
                 record.setBank(deltaObject.getBank());
             }
@@ -41,14 +46,22 @@ public class ExportObjectDeltaJpaService extends AbstractJpaService<ExportObject
             if(deltaObject.getFlags() != null) {
                 deltaObject.getFlags().forEach((key, value) -> record.getFlags().put(key, value));
             }
-            if(deltaObject.getLatLongAlt() != null) {
-                deltaObject.getLatLongAlt().forEach((key, value) -> record.getLatLongAlt().put(key, value));
+            if(deltaObject.getGeoPosition() != null) {
+                record.setGeoPosition(deltaObject.getGeoPosition());
             }
             if(deltaObject.getPosition() != null) {
-                deltaObject.getPosition().forEach((key, value) -> record.getPosition().put(key, value));
+                record.setPosition(deltaObject.getPosition());
             }
 
+            ExportObject current = new ExportObject(record);
+
             repository.save(record);
+
+            try {
+                ExportUnitUpdateObservable.invokeAll(previous, current);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
     }
 

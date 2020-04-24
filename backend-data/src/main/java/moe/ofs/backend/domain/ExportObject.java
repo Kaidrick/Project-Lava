@@ -5,8 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import moe.ofs.backend.object.FlyableUnit;
+import moe.ofs.backend.object.Vector3D;
+import moe.ofs.backend.object.map.GeoPosition;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,7 +21,7 @@ import java.util.Objects;
 @LuaState(Level.EXPORT_POLL)
 @Entity
 @Table(name = "export_objects")
-public final class ExportObject extends BaseEntity {
+public final class ExportObject extends BaseEntity implements Serializable {
     @Column(name = "own_bank")
     @SerializedName("Bank")
     private Double bank;
@@ -64,19 +69,29 @@ public final class ExportObject extends BaseEntity {
     @SerializedName("Flags")
     private Map<String, Boolean> flags;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="key")
-    @Column(name="value")
-    @CollectionTable(name="lat_lon_alt", joinColumns=@JoinColumn(name="id"))
-    @SerializedName("LatLongAlt")
-    private Map<String, Double> latLongAlt;
+//    @ElementCollection(fetch = FetchType.EAGER)
+//    @MapKeyColumn(name="key")
+//    @Column(name="value")
+//    @CollectionTable(name="lat_lon_alt", joinColumns=@JoinColumn(name="id"))
+//    @SerializedName("LatLongAlt")
+//    private Map<String, Double> latLongAlt;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="key")
-    @Column(name="value")
-    @CollectionTable(name="position", joinColumns=@JoinColumn(name="id"))
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "geoposition_id", referencedColumnName = "id")
+    @SerializedName("LatLongAlt")
+    private GeoPosition geoPosition;
+
+//    @ElementCollection(fetch = FetchType.EAGER)
+//    @MapKeyColumn(name="key")
+//    @Column(name="value")
+//    @CollectionTable(name="position", joinColumns=@JoinColumn(name="id"))
+//    @SerializedName("Position")
+//    private Map<String, Double> position;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "vector3d_id", referencedColumnName = "id")
     @SerializedName("Position")
-    private Map<String, Double> position;
+    private Vector3D position;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @MapKeyColumn(name="key")
@@ -88,8 +103,8 @@ public final class ExportObject extends BaseEntity {
     @Builder
     public ExportObject(Long id, double bank, String coalition, int coalitionID, int country, String groupName, double heading,
                         String name, double pitch, int runtimeID, String unitName,
-                        Map<String, Boolean> flags, Map<String, Double> latLongAlt,
-                        Map<String, Double> position, Map<String, Integer> type) {
+                        Map<String, Boolean> flags, GeoPosition geoPosition,
+                        Vector3D position, Map<String, Integer> type) {
         super(id);
         this.bank = bank;
         this.coalition = coalition;
@@ -103,9 +118,28 @@ public final class ExportObject extends BaseEntity {
         this.unitName = unitName;
 
         this.flags = flags;
-        this.latLongAlt = latLongAlt;
+        this.geoPosition = geoPosition;
         this.position = position;
         this.type = type;
+    }
+
+    public ExportObject(ExportObject object) {
+        super(object.getId());
+        this.bank = object.getBank();
+        this.coalition = object.getCoalition();
+        this.coalitionID = object.getCoalitionID();
+        this.country = object.getCountry();
+        this.groupName = object.getGroupName();
+        this.heading = object.getHeading();
+        this.name = object.getName();
+        this.pitch = object.getPitch();
+        this.runtimeID = object.getRuntimeID();
+        this.unitName = object.getUnitName();
+
+        this.flags = new HashMap<>(object.getFlags());
+        this.geoPosition = object.getGeoPosition();
+        this.position = object.getPosition();
+        this.type = new HashMap<>(object.getType());
     }
 
     /**

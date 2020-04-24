@@ -17,4 +17,6 @@ public interface MissionDataService<T> extends MissionPersistenceService {
     void delete(T object);
 
     void deleteById(Long id);
+
+    void deleteBy(String attributeName, Object value);
 }

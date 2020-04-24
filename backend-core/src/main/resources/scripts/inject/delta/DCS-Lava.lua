@@ -295,7 +295,7 @@ local function get_delta_export_data(current_data, ...)
 								if previous_data[runtime_id][attribute_name][subkey] ~= subvalue then
 									-- if the value is a number, then if the difference is less than 0.0001, we should ignore the change
 									if type(subvalue) == 'number' then
-										if math.abs(previous_data[runtime_id][attribute_name][subkey] - subvalue) > 0.001 then
+										if math.abs(previous_data[runtime_id][attribute_name][subkey] - subvalue) > 0.001 or subkey == 'Alt' or subkey == 'Lat' or subkey == 'Long' then
 											-- change
 											new_sub_data[subkey] = subvalue
 

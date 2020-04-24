@@ -18,8 +18,6 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
         String dataJson = new ServerDataRequest(LuaScripts.loadAndPrepare("mizdb/table_find_all.lua",
                 getRepositoryName())).get();
 
-        System.out.println("find all");
-
         System.out.println("dataJson = " + dataJson);
         Type type = TypeToken.getParameterized(ArrayList.class, tClass).getType();
 
@@ -34,8 +32,6 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
         String dataJson = new ServerDataRequest(
                 LuaScripts.loadAndPrepare("mizdb/table_find_by_attribute_name.lua",
                 getRepositoryName(), attributeName, value)).get();
-
-        System.out.println("find by");
 
         T t = gson.fromJson(dataJson, tClass);
 
@@ -70,6 +66,13 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
 
         new ServerExecRequest(LuaScripts.loadAndPrepare("mizdb/table_delete.lua",
                 getRepositoryName(), objectJson)).send();
+    }
+
+    @Override
+    public void deleteBy(String attributeName, Object value) {
+        new ServerExecRequest(
+                LuaScripts.loadAndPrepare("mizdb/table_delete_by_attribute_name.lua",
+                        getRepositoryName(), attributeName, value)).send();
     }
 
     @Override

@@ -6,9 +6,7 @@ local handler = {}
 handler.ident = "missionDataBaseDropOnMissionRestart"
 handler.f = function(event)
     if event.id == world.event.S_EVENT_MISSION_START then
-        env.info("mission started " .. os.time())
         missionDatabase = {}
-        env.info("db reset")
     end
 end
 
@@ -44,6 +42,14 @@ function DataTable:findBy(attribute_name, value)
   for _, data in pairs(self.repository) do
     if data[attribute_name] == value then
       return data
+    end
+  end
+end
+
+function DataTable:deleteBy(attribute_name, value)
+  for index, data in pairs(self.repository) do
+    if data[attribute_name] == value then
+      self.repository[index] = nil
     end
   end
 end

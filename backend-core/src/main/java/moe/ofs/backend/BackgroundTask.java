@@ -310,8 +310,6 @@ public class BackgroundTask implements PropertyChangeListener {
         // lua must return a string
         boolean flag = new ServerDataRequest("return tostring(lava_mission_persistent_initialization)").getAsBoolean();
 
-        System.out.println("MPDB: " + new ServerDataRequest("local inspect = require('inspect') return inspect(missionDatabase)").get());
-
         if(!flag) {
             log.info("injecting mission persistence");
 

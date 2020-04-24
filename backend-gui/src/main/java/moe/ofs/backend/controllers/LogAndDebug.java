@@ -14,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 import moe.ofs.backend.gui.LogMessageListViewCell;
+import moe.ofs.backend.handlers.GuiServerResetObservable;
 import moe.ofs.backend.logmanager.Level;
 import moe.ofs.backend.logmanager.LogAppendedEventHandler;
 import moe.ofs.backend.logmanager.LogEntry;
@@ -95,6 +96,9 @@ public class LogAndDebug implements Initializable {
 
 
     @FXML public void reloadCurrentMission(ActionEvent actionEvent) {
+
+        GuiServerResetObservable.invokeAll();
+
         new ServerExecRequest(RequestToServer.State.DEBUG,
                 LuaScripts.load("api/reload_current_mission.lua")).send();
     }
