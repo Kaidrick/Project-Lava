@@ -1,7 +1,7 @@
 [![CircleCI](https://circleci.com/gh/Kaidrick/Project-Lava.svg?style=shield&circle-token=52645945daec19c9f2ca08f057236b9eea790d6b)](https://circleci.com/gh/Kaidrick/422d-backend-ui/tree/master)
 
 # Project Lava
-An functional framework for DCS World and a solution to mission scripting, server management and data analysis, packed with a GUI control panel.
+A framework for DCS World and a solution to mission scripting, server management and data analysis, packed with a GUI control panel.
 
 <img src="docs/main_ui_en.png" width="300" alt="main ui">
 
