@@ -16,6 +16,6 @@ public interface ControlPanelShutdownObservable {
     }
 
     static void invokeAll() {
-        list.forEach(ControlPanelShutdownObservable::observe);
+        new ArrayList<>(list).forEach(ControlPanelShutdownObservable::observe);
     }
 }

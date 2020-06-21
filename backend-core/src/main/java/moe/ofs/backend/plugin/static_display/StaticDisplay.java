@@ -8,9 +8,10 @@ import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.function.slotcontrol.SlotChangeRequest;
 import moe.ofs.backend.function.slotcontrol.SlotChangeResult;
 import moe.ofs.backend.function.slotcontrol.SlotValidator;
+import moe.ofs.backend.function.unitwiselog.LogControl;
+import moe.ofs.backend.function.unitwiselog.eventlogger.SpawnControlLogger;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
-import moe.ofs.backend.logmanager.Logger;
 import moe.ofs.backend.object.FlyableUnit;
 import moe.ofs.backend.object.ParkingInfo;
 import moe.ofs.backend.request.server.ServerDataRequest;
@@ -32,6 +33,8 @@ import java.util.*;
 @Slf4j
 @Component
 public class StaticDisplay implements Plugin {
+
+    private final LogControl.Logger logger = LogControl.getLogger(StaticDisplay.class);
 
     // name
     public final String name = "Static Aircraft Display";
@@ -133,7 +136,7 @@ public class StaticDisplay implements Plugin {
 
     public void cleanStaticDisplay() {
         // find flyable unit and pass to despawn control method
-        Logger.log("Disabling Static Display...removing existing static objects");
+        logger.log("Disabling Static Display...removing existing static objects");
         mapSlotStaticId.keySet().forEach(id -> flyableUnitService.findByUnitId(id).ifPresent(this::despawnControl));
     }
 
@@ -174,7 +177,7 @@ public class StaticDisplay implements Plugin {
 
             new ServerDataRequest(p)
                     .addProcessable(s -> mapSlotStaticId.put(String.valueOf(flyableUnit.getUnit_id()), s))
-                    .addProcessable(s -> Logger.addon(
+                    .addProcessable(s -> logger.addon(
                             String.format("Static Object [%s] spawned for %s with livery [%s]",
                                     s, flyableUnit.getUnit_name(), flyableUnit.getLivery_id())
                     )).send();
@@ -184,7 +187,7 @@ public class StaticDisplay implements Plugin {
     private void despawnControl(FlyableUnit flyableUnit) {
         String runtimeId = mapSlotStaticId.get(String.valueOf(flyableUnit.getUnit_id()));
         new ServerDataRequest(String.format(luaStringRemoveObject, runtimeId))
-                .addProcessable(s -> Logger.addon(runtimeId + " -> static object removed"))
+                .addProcessable(s -> logger.addon(runtimeId + " -> static object removed"))
                 .send();
     }
 

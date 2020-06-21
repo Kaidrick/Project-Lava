@@ -2,6 +2,7 @@ package moe.ofs.backend.logmanager;
 
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -9,10 +10,11 @@ import java.time.format.DateTimeFormatter;
 @Setter
 @EqualsAndHashCode
 @Builder
-public class LogEntry {
+public class LogEntry implements Serializable {
     private ZonedDateTime time;
     private Level level;
     private String message;
+    private String source;
 
     @Override
     public String toString() {

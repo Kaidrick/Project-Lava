@@ -18,6 +18,6 @@ public interface ExportUnitUpdateObservable {
     }
 
     static void invokeAll(ExportObject previous, ExportObject current) {
-        list.forEach(o -> o.observe(previous, current));
+        new ArrayList<>(list).forEach(o -> o.observe(previous, current));
     }
 }

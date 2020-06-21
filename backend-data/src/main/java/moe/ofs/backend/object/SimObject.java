@@ -2,8 +2,10 @@ package moe.ofs.backend.object;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class SimObject {
+public class SimObject implements Serializable {
 
     protected int     id;
     protected String  name;

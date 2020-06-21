@@ -1,10 +1,11 @@
 package moe.ofs.backend.services.jpa;
 
 import moe.ofs.backend.domain.ExportObject;
+import moe.ofs.backend.function.unitwiselog.LogControl;
 import moe.ofs.backend.handlers.ExportUnitDespawnObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 import moe.ofs.backend.handlers.ExportUnitUpdateObservable;
-import moe.ofs.backend.logmanager.Logger;
+import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.repositories.ExportObjectRepository;
 import moe.ofs.backend.services.ExportObjectService;
 import org.springframework.context.annotation.Primary;
@@ -17,14 +18,21 @@ import java.util.Optional;
 @Primary
 public class ExportObjectDeltaJpaService extends AbstractJpaService<ExportObject, ExportObjectRepository>
         implements ExportObjectService {
-    public ExportObjectDeltaJpaService(ExportObjectRepository repository) {
+
+    private final Sender sender;
+
+    private final LogControl.Logger logger = LogControl.getLogger(ExportObjectDeltaJpaService.class);
+
+    public ExportObjectDeltaJpaService(ExportObjectRepository repository, Sender sender) {
         super(repository);
+
+        this.sender = sender;
     }
 
     @Override
     public void dispose() {
         repository.deleteAll();
-        Logger.log("ExportObjectRepository data discarded.");
+        logger.log("ExportObjectRepository data discarded.");
     }
 
     @Override
@@ -69,6 +77,7 @@ public class ExportObjectDeltaJpaService extends AbstractJpaService<ExportObject
     public void add(ExportObject deltaObject) {
         repository.save(deltaObject);
         ExportUnitSpawnObservable.invokeAll(deltaObject);
+        sender.sendToTopic("unit.spawncontrol", deltaObject, "spawn");
     }
 
     @Override
@@ -77,6 +86,7 @@ public class ExportObjectDeltaJpaService extends AbstractJpaService<ExportObject
         optional.ifPresent(obsoleteObject -> {
             ExportUnitDespawnObservable.invokeAll(obsoleteObject);
             repository.delete(optional.get());
+            sender.sendToTopic("unit.spawncontrol", deltaObject, "despawn");
         });
     }
 

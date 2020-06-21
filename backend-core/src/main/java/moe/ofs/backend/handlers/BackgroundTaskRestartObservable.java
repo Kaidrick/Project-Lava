@@ -16,6 +16,6 @@ public interface BackgroundTaskRestartObservable {
     }
 
     static void invokeAll() {
-        list.forEach(BackgroundTaskRestartObservable::observe);
+        new ArrayList<>(list).forEach(BackgroundTaskRestartObservable::observe);
     }
 }

@@ -2,12 +2,13 @@ package moe.ofs.backend.services.map;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import moe.ofs.backend.function.unitwiselog.LogControl;
+import moe.ofs.backend.function.unitwiselog.eventlogger.SpawnControlLogger;
 import moe.ofs.backend.object.FlyableUnit;
 import moe.ofs.backend.request.JsonRpcResponse;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.util.ConnectionManager;
-import moe.ofs.backend.logmanager.Logger;
 import moe.ofs.backend.util.LuaScripts;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,8 @@ import java.util.Optional;
 
 @Service
 public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> implements FlyableUnitService {
+
+    private final LogControl.Logger logger = LogControl.getLogger(SpawnControlLogger.class);
 
     // protected map for FlyableUnit in AbstractMapService
 
@@ -99,8 +102,8 @@ public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> imple
                     Map<String, FlyableUnit> flyableUnitMap = gson.fromJson(dataString, mapUnitNameDataType);
                     flyableUnitMap.values().forEach(this::save);
 
-                    Logger.log(this.findAll().size() + " flyable units data collected from DCS mission env.");
-                    flyableUnitMap.forEach((name, data) -> Logger.debug(data.toString()));
+                    logger.log(this.findAll().size() + " flyable units data collected from DCS mission env.");
+                    flyableUnitMap.forEach((name, data) -> logger.debug(data.toString()));
                 }
         );
     }

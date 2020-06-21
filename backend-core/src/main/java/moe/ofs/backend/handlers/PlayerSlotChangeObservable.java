@@ -20,6 +20,6 @@ public interface PlayerSlotChangeObservable {
     }
 
     static void invokeAll(PlayerInfo previous, PlayerInfo current) {
-        list.forEach(o -> o.observe(previous, current));
+        new ArrayList<>(list).forEach(o -> o.observe(previous, current));
     }
 }

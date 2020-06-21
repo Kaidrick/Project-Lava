@@ -2,11 +2,11 @@ package moe.ofs.backend.services.jpa;
 
 import com.google.common.collect.Sets;
 import moe.ofs.backend.domain.ExportObject;
+import moe.ofs.backend.function.unitwiselog.LogControl;
 import moe.ofs.backend.handlers.ExportUnitDespawnObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 import moe.ofs.backend.repositories.ExportObjectRepository;
 import moe.ofs.backend.services.ExportObjectService;
-import moe.ofs.backend.logmanager.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -18,6 +18,8 @@ import java.util.stream.Collectors;
 public class ExportObjectBulkJpaService extends AbstractJpaService<ExportObject, ExportObjectRepository>
         implements ExportObjectService {
 
+    private final LogControl.Logger logger = LogControl.getLogger(ExportObjectBulkJpaService.class);
+
     public ExportObjectBulkJpaService(ExportObjectRepository repository) {
         super(repository);
     }
@@ -25,7 +27,7 @@ public class ExportObjectBulkJpaService extends AbstractJpaService<ExportObject,
     @Override
     public void dispose() {
         repository.deleteAll();
-        Logger.log("ExportObjectRepository data discarded.");
+        logger.log("ExportObjectRepository data discarded.");
     }
 
     @Override

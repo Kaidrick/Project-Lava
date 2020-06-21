@@ -19,6 +19,6 @@ public interface ExportUnitSpawnObservable {
     }
 
     static void invokeAll(ExportObject exportObject) {
-        list.forEach(o -> o.observe(exportObject));
+        new ArrayList<>(list).forEach(o -> o.observe(exportObject));
     }
 }

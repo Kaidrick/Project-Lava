@@ -19,6 +19,6 @@ public interface PlayerLeaveServerObservable {
     }
 
     static void invokeAll(PlayerInfo playerInfo) {
-        list.forEach(o -> o.observe(playerInfo));
+        new ArrayList<>(list).forEach(o -> o.observe(playerInfo));
     }
 }

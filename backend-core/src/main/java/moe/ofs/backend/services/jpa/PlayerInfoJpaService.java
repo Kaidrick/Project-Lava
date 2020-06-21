@@ -2,12 +2,13 @@ package moe.ofs.backend.services.jpa;
 
 import com.google.common.collect.Sets;
 import moe.ofs.backend.domain.PlayerInfo;
+import moe.ofs.backend.function.unitwiselog.LogControl;
+import moe.ofs.backend.function.unitwiselog.eventlogger.SpawnControlLogger;
 import moe.ofs.backend.handlers.PlayerEnterServerObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
-import moe.ofs.backend.handlers.PlayerSlotChangeObservable;
+import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.repositories.PlayerInfoRepository;
 import moe.ofs.backend.services.PlayerInfoService;
-import moe.ofs.backend.logmanager.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -20,14 +21,19 @@ import java.util.stream.Collectors;
 public class PlayerInfoJpaService extends AbstractJpaService<PlayerInfo, PlayerInfoRepository>
         implements PlayerInfoService {
 
-    public PlayerInfoJpaService(PlayerInfoRepository repository) {
+    private final LogControl.Logger logger = LogControl.getLogger(SpawnControlLogger.class);
+
+    private final Sender sender;
+
+    public PlayerInfoJpaService(PlayerInfoRepository repository, Sender sender) {
         super(repository);
+        this.sender = sender;
     }
 
     @Override
     public void dispose() {
         repository.deleteAll();
-        Logger.log("PlayerInfoRepository data discarded.");
+        logger.log("PlayerInfoRepository data discarded.");
     }
 
     @Override
@@ -52,7 +58,10 @@ public class PlayerInfoJpaService extends AbstractJpaService<PlayerInfo, PlayerI
             recordObject.setSide(updateObject.getSide());
 
             if(!recordObject.getSlot().equals(updateObject.getSlot())) {
-                PlayerSlotChangeObservable.invokeAll(recordObject, updateObject);
+
+//                PlayerSlotChangeObservable.invokeAll(recordObject, updateObject);
+                sender.sendToTopic("player.connection", new PlayerInfo[] {recordObject, updateObject},
+                        "slotchange");
                 recordObject.setSlot(updateObject.getSlot());
             }
 
@@ -64,12 +73,14 @@ public class PlayerInfoJpaService extends AbstractJpaService<PlayerInfo, PlayerI
     public void add(PlayerInfo newObject) {
         repository.save(newObject);
         PlayerEnterServerObservable.invokeAll(newObject);
+        sender.sendToTopic("player.connection", newObject, "connect");
     }
 
     @Override
     public void remove(PlayerInfo obsoleteObject) {
         repository.delete(obsoleteObject);
         PlayerLeaveServerObservable.invokeAll(obsoleteObject);
+        sender.sendToTopic("player.connection", obsoleteObject, "disconnect");
     }
 
     @Override

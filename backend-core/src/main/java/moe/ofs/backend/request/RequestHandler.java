@@ -4,7 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
-import moe.ofs.backend.logmanager.Logger;
+import moe.ofs.backend.function.unitwiselog.LogControl;
+import moe.ofs.backend.function.unitwiselog.eventlogger.SpawnControlLogger;
 import moe.ofs.backend.util.ConnectionManager;
 
 import java.beans.PropertyChangeEvent;
@@ -35,6 +36,8 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public final class RequestHandler implements PropertyChangeListener {
+
+    private final LogControl.Logger logger = LogControl.getLogger(RequestHandler.class);
 
     private Map<Level, Connection> connectionMap = new HashMap<>();
 
@@ -116,7 +119,8 @@ public final class RequestHandler implements PropertyChangeListener {
         if(this.trouble.get() != trouble) {
             log.warn(trouble ? "SocketException occurs: Failed to send request(s); set trouble flag to true"
                     : "Connection Established: set trouble flag to false");
-            Logger.warn(trouble ? "Trying to connect to DCS Lua server" : "Successfully connected to DCS Lua server");
+
+            logger.warn(trouble ? "Trying to connect to DCS Lua server" : "Successfully connected to DCS Lua server");
             support.firePropertyChange("trouble", this.trouble, trouble);
         }
 

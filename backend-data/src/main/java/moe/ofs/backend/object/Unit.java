@@ -17,7 +17,7 @@ public class Unit extends SimObject {
     private Double y;
     private Double heading;
     private Payload payload;
-    private Object callsign;
+    private Map<Object, Object> callsign;
     private String onboard_num;
 
     private String getParking() {
@@ -85,6 +85,10 @@ public class Unit extends SimObject {
         }
         public UnitBuilder setPayload(Payload payload) {
             unit.payload = payload;
+            return this;
+        }
+        public UnitBuilder setCallsign(Map<Object, Object> callsign) {
+            unit.callsign = callsign;
             return this;
         }
 

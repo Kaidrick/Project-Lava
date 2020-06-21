@@ -5,6 +5,7 @@ import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.LuaScriptInjectionObservable;
 import moe.ofs.backend.handlers.MissionStartObservable;
+import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.request.FillerRequest;
 import moe.ofs.backend.request.PollHandlerService;
 import moe.ofs.backend.request.RequestHandler;
@@ -57,6 +58,8 @@ public class BackgroundTask implements PropertyChangeListener {
 
     private final List<Plugin> plugins;
 
+    private final Sender sender;
+
 
     @PostConstruct
     private void loadPlugins() {
@@ -74,7 +77,7 @@ public class BackgroundTask implements PropertyChangeListener {
             ExportObjectService exportObjectService,
             PlayerInfoService playerInfoService,
             FlyableUnitService flyableUnitService,
-            ParkingInfoService parkingInfoService, List<Plugin> plugins) {
+            ParkingInfoService parkingInfoService, List<Plugin> plugins, Sender sender) {
 
         this.exportObjectPollService = exportObjectPollService;
         this.playerInfoPollService = playerInfoPollService;
@@ -85,6 +88,9 @@ public class BackgroundTask implements PropertyChangeListener {
         this.parkingInfoService = parkingInfoService;
 
         this.plugins = plugins;
+
+        // JMS
+        this.sender = sender;
 
         currentTask = this;
         support = new PropertyChangeSupport(this);
@@ -212,6 +218,8 @@ public class BackgroundTask implements PropertyChangeListener {
 
     // restart background task when connect is cut
     public void start() throws IOException {
+
+        sender.send("BackgroundTaskRestarting");
 
 
         BackgroundTaskRestartObservable.invokeAll();

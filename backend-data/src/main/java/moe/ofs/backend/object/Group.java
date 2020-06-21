@@ -1,8 +1,12 @@
 package moe.ofs.backend.object;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.*;
 
-
+@Getter
+@Setter
 public class Group extends SimObject {
     private Integer modulation;
     private List<Object> tasks = new ArrayList<>();
@@ -61,6 +65,14 @@ public class Group extends SimObject {
         }
         public GroupBuilder setCategory(int category) {
             group.category = category;
+            return this;
+        }
+        public GroupBuilder setFrequency(double frequency) {
+            group.frequency = frequency;
+            return this;
+        }
+        public GroupBuilder setTask(String task) {
+            group.task = task;
             return this;
         }
 

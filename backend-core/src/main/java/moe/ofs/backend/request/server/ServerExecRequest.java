@@ -2,9 +2,9 @@ package moe.ofs.backend.request.server;
 
 import moe.ofs.backend.domain.Handle;
 import moe.ofs.backend.domain.Level;
-import moe.ofs.backend.request.Resolvable;
-import moe.ofs.backend.logmanager.Logger;
+import moe.ofs.backend.function.unitwiselog.LogControl;
 import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.Resolvable;
 
 /**
  * The constructor of ServerExecRequest can take a RequestToMission
@@ -16,6 +16,8 @@ public class ServerExecRequest extends RequestToServer implements Resolvable {
         port = 3010;
         state = State.SERVER;
     }
+
+    private final LogControl.Logger logger = LogControl.getLogger(ServerExecRequest.class);
 
     private transient String env;
     private transient String luaString;
@@ -37,7 +39,7 @@ public class ServerExecRequest extends RequestToServer implements Resolvable {
     @Override
     public void resolve(String object) {
         String logMessage = luaString + "\nReturns: " + object;
-        Logger.debug(logMessage);
+        logger.debug(logMessage);
     }
 }
 

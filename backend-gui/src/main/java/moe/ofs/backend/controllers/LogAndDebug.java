@@ -1,5 +1,6 @@
 package moe.ofs.backend.controllers;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -16,7 +17,6 @@ import jfxtras.styles.jmetro.JMetroStyleClass;
 import moe.ofs.backend.gui.LogMessageListViewCell;
 import moe.ofs.backend.handlers.GuiServerResetObservable;
 import moe.ofs.backend.logmanager.Level;
-import moe.ofs.backend.logmanager.LogAppendedEventHandler;
 import moe.ofs.backend.logmanager.LogEntry;
 import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.export.ExportExecRequest;
@@ -25,9 +25,13 @@ import moe.ofs.backend.util.LuaScripts;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.ToggleSwitch;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
+import javax.jms.JMSException;
+import javax.jms.ObjectMessage;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +71,15 @@ public class LogAndDebug implements Initializable {
         listViewLogDebugInfo.scrollTo(listViewLogDebugInfo.getItems().size());
     }
 
-    @FXML private void appendLog(LogEntry logEntry) {
+    @JmsListener(destination = "backend.entry", containerFactory = "jmsListenerContainerFactory")
+    private void appendLog(ObjectMessage objectMessage) throws JMSException {
+        Serializable serializable = objectMessage.getObject();
+        if(serializable instanceof LogEntry) {
+            Platform.runLater(() -> appendLog((LogEntry) serializable));
+        }
+    }
+
+    @FXML public void appendLog(LogEntry logEntry) {
         logEntryList.add(logEntry);
 
         // if not filtered and meet search criteria, add to log view
@@ -131,6 +143,8 @@ public class LogAndDebug implements Initializable {
                 logEntry.getMessage().contains(searchLogMessage.getText().toLowerCase());
     }
 
+
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
@@ -170,8 +184,8 @@ public class LogAndDebug implements Initializable {
         }));
 
 
-        LogAppendedEventHandler handler = this::appendLog;
-        handler.attach();
+//        LogAppendedEventHandler handler = this::appendLog;
+//        handler.attach();
 
         logEntryList = FXCollections.observableList(new ArrayList<>());
 

@@ -29,17 +29,22 @@ public interface Configurable {
      */
     @SneakyThrows
     default String readConfiguration(String key) {
-        Path configXmlPath = configPath.resolve(getName() + ".xml");
+        return readConfiguration(getName(), key);
+    }
+
+    @SneakyThrows
+    default String readConfiguration(String configFileName, String key) {
+        Path configXmlPath = configPath.resolve(configFileName + ".xml");
 
         Properties properties = new Properties();
 
-        if(xmlConfigExists()) {  // if xml file of this plugin name exists, read then write to xml
+        if(xmlConfigExists(configFileName)) {  // if xml file of this plugin name exists, read then write to xml
             try(InputStream inputStream = Files.newInputStream(configXmlPath)) {
                 properties.loadFromXML(inputStream);
                 return properties.getProperty(key);
             }
         } else {  // else write to file directly
-            throw new NoSuchFileException("Unable to locale XML config file for \"" + getName() + "\"");
+            throw new NoSuchFileException("Unable to locale XML config file for \"" + configFileName + "\"");
         }
     }
 
@@ -49,26 +54,31 @@ public interface Configurable {
      */
     @SneakyThrows
     default void writeConfiguration(String key, String value) {
+        writeConfiguration(getName(), key, value);
+    }
+
+    @SneakyThrows
+    default void writeConfiguration(String configFileName, String key, String value) {
         if(Files.notExists(configPath))
             Files.createDirectories(configPath);
 
-        Path configXmlPath = configPath.resolve(getName() + ".xml");
+        Path configXmlPath = configPath.resolve(configFileName + ".xml");
 
         Properties properties = new Properties();
 
-        if(xmlConfigExists()) {  // if xml file of this plugin name exists, read then write to xml
+        if(xmlConfigExists(configFileName)) {  // if xml file of this plugin name exists, read then write to xml
             try(InputStream inputStream = Files.newInputStream(configXmlPath)) {
                 properties.loadFromXML(inputStream);
                 properties.setProperty(key, value);
             }
 
             try(OutputStream outputStream = Files.newOutputStream(configXmlPath)) {
-                properties.storeToXML(outputStream, "Config XML for " + getName());
+                properties.storeToXML(outputStream, "Config XML for " + configFileName);
             }
         } else {  // else write to file directly
             try(OutputStream outputStream = Files.newOutputStream(configXmlPath)) {
                 properties.setProperty(key, value);
-                properties.storeToXML(outputStream, "Config XML for " + getName());
+                properties.storeToXML(outputStream, "Config XML for " + configFileName);
             }
         }
     }
@@ -131,10 +141,12 @@ public interface Configurable {
      * @return boolean value indicating whether this file exists in the file system.
      */
     default boolean xmlConfigExists() {
-        return Files.exists(configPath.resolve(getName() + ".xml"));
+        return xmlConfigExists(getName());
     }
 
-
+    default boolean xmlConfigExists(String configFileName) {
+        return Files.exists(configPath.resolve(configFileName + ".xml"));
+    }
 
 
     @SneakyThrows

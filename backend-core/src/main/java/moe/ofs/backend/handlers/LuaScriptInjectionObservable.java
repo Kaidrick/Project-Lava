@@ -19,6 +19,6 @@ public interface LuaScriptInjectionObservable {
     }
 
     static void invokeAll() {
-        list.forEach(LuaScriptInjectionObservable::observe);
+        new ArrayList<>(list).forEach(LuaScriptInjectionObservable::observe);
     }
 }

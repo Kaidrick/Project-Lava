@@ -16,6 +16,6 @@ public interface GuiServerResetObservable {
     }
 
     static void invokeAll() {
-        list.forEach(GuiServerResetObservable::observe);
+        new ArrayList<>(list).forEach(GuiServerResetObservable::observe);
     }
 }
