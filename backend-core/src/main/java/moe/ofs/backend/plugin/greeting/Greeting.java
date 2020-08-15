@@ -9,6 +9,7 @@ import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 import moe.ofs.backend.domain.ExportObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -47,7 +48,9 @@ public class Greeting implements Plugin {
         this.messageQueueFactory = messageQueueFactory;
 
         // or load from xml file?
-        list = new ArrayList<>();
+//        list = new ArrayList<>();
+
+        list = readFile("administrative");
     }
 
     @Override
@@ -57,13 +60,13 @@ public class Greeting implements Plugin {
 
     @Override
     public void register() {
-        exportUnitSpawnObservable = this::greet;
-        exportUnitSpawnObservable.register();
+//        exportUnitSpawnObservable = this::greet;
+//        exportUnitSpawnObservable.register();
     }
 
     @Override
     public void unregister() {
-        exportUnitSpawnObservable.unregister();
+//        exportUnitSpawnObservable.unregister();
     }
 
     @Override
@@ -90,8 +93,15 @@ public class Greeting implements Plugin {
         testMessageFunction(unit);
     }
 
+    @JmsListener(destination = "unit.spawncontrol", containerFactory = "jmsListenerContainerFactory",
+            selector = "type = 'spawn'")
     private void testMessageFunction(ExportObject object) {
         if(object.getFlags().get("Human")) {
+
+            // TODO: add some hook to reload list from file when messages are changed via UI
+            // reload the file regardless
+            list = readFile("administrative");
+
             messageQueueFactory.setExportObject(object);
             MessageQueue messageQueue = messageQueueFactory.getObject();
             if (messageQueue != null) {
