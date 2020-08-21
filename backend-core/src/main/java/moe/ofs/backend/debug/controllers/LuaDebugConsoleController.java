@@ -2,7 +2,9 @@ package moe.ofs.backend.debug.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.debug.model.LuaCommand;
+import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,9 +20,9 @@ public class LuaDebugConsoleController {
 
         log.info(luaCommand.toString());
 
-        ServerExecRequest serverExecRequest =
-                new ServerExecRequest(RequestToServer.State.DEBUG, luaCommand.getLuaString());
-        serverExecRequest.send();
-        return "good";
+//        new ServerDataRequest(luaCommand.getLuaString())
+//                .addProcessable(log::info).send();
+
+        return ((ServerDataRequest) new ServerDataRequest(luaCommand.getLuaString()).send()).get();
     }
 }
