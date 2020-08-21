@@ -216,7 +216,7 @@ public final class RequestHandler implements PropertyChangeListener {
                 connectionMap.put(level, connection);
                 log.info("Connection create: " + level + " " + connection + " at " + port);
             } catch(IOException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
                 log.error("Unable to create connection to Lua server: at " + level + " on port " + port);
 
                 break;  // break loop; no need to try connection on other ports
