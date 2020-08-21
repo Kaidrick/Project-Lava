@@ -8,16 +8,16 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="backend-core" />
-        <module name="backend-log" />
         <module name="plugin-builder-maven-plugin" />
-        <module name="backend-data" />
         <module name="backend-addon" />
-        <module name="backend-gui" />
+        <module name="backend-log" />
         <module name="backend-web" />
+        <module name="backend-data" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="422d-backend-ui" target="1.8" />
+      <module name="backend" target="1.8" />
       <module name="backend-addon" target="1.8" />
       <module name="backend-core" target="1.8" />
       <module name="backend-data" target="1.8" />

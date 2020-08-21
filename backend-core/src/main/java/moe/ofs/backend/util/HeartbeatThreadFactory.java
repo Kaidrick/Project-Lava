@@ -44,10 +44,8 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
                     return;
                 }
 
-
                 if(checkPortConnection()) {
                     RequestHandler.getInstance().setTrouble(false);
-
                     break;
                 }
 
@@ -84,9 +82,19 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
         requestHandler.createConnections(1000);  // for checking only, timeout can be very low
 
         // if createConnections() throws exception, no connection will not be created
-        // the size of getConnections().entrySet() will be zero
+        // and the size of getConnections().entrySet() will be zero
+        // TODO: maybe there is a better way to do it?
 
         if(requestHandler.getConnections().entrySet().isEmpty()) {
+            System.out.println("empty");  // some how the entry set is empty
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // maybe connections are empty?
+            // why is connection empty thou?
             return false;  // connections are not properly established and there is trouble
         } else {
             for (Map.Entry<Level, Connection> entry : requestHandler.getConnections().entrySet()) {

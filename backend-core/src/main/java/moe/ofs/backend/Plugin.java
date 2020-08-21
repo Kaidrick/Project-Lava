@@ -1,8 +1,5 @@
 package moe.ofs.backend;
 
-import javafx.scene.Parent;
-import javafx.scene.image.Image;
-
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -97,10 +94,6 @@ public interface Plugin extends Configurable {
     }
 
     default String getLocalizedDescription() {
-        return null;
-    }
-
-    default Image getIcon() {
         return null;
     }
 }

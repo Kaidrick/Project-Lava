@@ -60,8 +60,8 @@ public class ControlPanelApplication extends Application {
 
         Scene scene = new Scene(root);
 
-        JMetro jMetro = new JMetro(Style.LIGHT);
-        jMetro.setScene(scene);
+//        JMetro jMetro = new JMetro(Style.LIGHT);
+//        jMetro.setScene(scene);
 
         scene.getStylesheets().clear();
         scene.getStylesheets().addAll("base.css", "base_extras.css", "base_other_libraries.css", "light_theme.css");

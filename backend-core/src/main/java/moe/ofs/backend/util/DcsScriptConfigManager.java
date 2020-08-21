@@ -1,7 +1,5 @@
 package moe.ofs.backend.util;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
@@ -35,18 +33,6 @@ public class DcsScriptConfigManager {
 
     private static final Path TARGET_EXPORT = Paths.get("Scripts/Export.lua");
     private static final Path TARGET_LAVA = Paths.get("Scripts/DCS-Lava.lua");
-
-    @SneakyThrows
-    public ObservableList<Path> getUserDcsWritePaths() {
-        ObservableList<Path> list = FXCollections.observableArrayList();
-
-        Files.walk(SAVED_GAMES_PATH, 1)
-                .filter(p -> p.getFileName().toString().startsWith("DCS.") || p.getFileName().toString().equals("DCS"))
-                // for populating gui drop menu
-                .forEach(list::add);
-
-        return list;
-    }
 
     /**
      * Injects Hooks script into DCS write path, replacing default ports with overridden ports if an xml config exists.

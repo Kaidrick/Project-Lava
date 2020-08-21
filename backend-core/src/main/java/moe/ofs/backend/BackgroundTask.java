@@ -132,6 +132,7 @@ public class BackgroundTask implements PropertyChangeListener {
         this.started = started;
 
         if(started) {
+
             log.info("Starting Background Task...");
 
             // there can only be one background thread

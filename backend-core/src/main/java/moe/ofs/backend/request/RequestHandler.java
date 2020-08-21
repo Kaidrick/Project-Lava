@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /** RequestHandler class
@@ -67,8 +68,17 @@ public final class RequestHandler implements PropertyChangeListener {
         if(instance == null) {
             instance = new RequestHandler();
 
-            instance.portMap = ConnectionManager.getInstance().getPortOverrideMap();
-            ConnectionManager.getInstance().addPropertyChangeListener(instance);
+            // FIXME: bad implementation -> RequestHandler and ConnectionManager have circular reference
+            // if override map is empty, then use default value
+            // otherwise read from file the overridden port number
+            Map<Level, Integer> portOverrideMap = ConnectionManager.getInstance().getPortOverrideMap();
+            if(portOverrideMap.isEmpty()) {
+                // use default mapping defined in Level enum
+                instance.portMap = Arrays.stream(Level.values())
+                        .collect(Collectors.toMap(Function.identity(), Level::getPort));
+            } else {
+                instance.portMap = ConnectionManager.getInstance().getPortOverrideMap();
+            }
         }
         return instance;
     }
@@ -155,7 +165,6 @@ public final class RequestHandler implements PropertyChangeListener {
                     new InputStreamReader(dataInputStream, StandardCharsets.UTF_8));
             s = bufferedReader.readLine();
 
-            ConnectionManager.connectionCountIncrement();
         } catch (SocketException e) {
 
 //            e.printStackTrace();
@@ -184,7 +193,7 @@ public final class RequestHandler implements PropertyChangeListener {
      * There should be a heartbeat thread to check connection to server / export
      * If a connection is established, it is put into the map
      *
-     * An request of some sort must be send to the socket immediately after its creation
+     * A hand shake request must be send to the socket immediately after the creation of a connection.
      */
     public void createConnections() {
         createConnections(5000);
@@ -195,12 +204,19 @@ public final class RequestHandler implements PropertyChangeListener {
             Level level = entry.getKey();
             int port = entry.getValue();
 
+            // Attempt to create a connection and test its connectivity to dcs lua server.
+            // If the connection is created and tested successfully, it is added to a map.
+
+            // TODO: what if connections has been made, but user somehow changes the settings?
+            // TODO: user may use a single web gui to connect to multiple instances of lava?
+
             try{
                 Connection connection = new Connection("localhost", port, timeout);
 
                 connectionMap.put(level, connection);
                 log.info("Connection create: " + level + " " + connection + " at " + port);
             } catch(IOException e) {
+                e.printStackTrace();
                 log.error("Unable to create connection to Lua server: at " + level + " on port " + port);
 
                 break;  // break loop; no need to try connection on other ports
@@ -327,7 +343,7 @@ public final class RequestHandler implements PropertyChangeListener {
                 }
 
                 // received json string is a list-type
-                // parse as a list of object, and each object is a subresult of a request
+                // parse as a list of object, and each object is a sub-result of a request
                 // with a tag attribute with uuid of the result
 
                 try {
@@ -361,11 +377,24 @@ public final class RequestHandler implements PropertyChangeListener {
      * Listen to property change of "portOverrideMap" in ConnectionManager
      * @param propertyChangeEvent
      */
+
+    // TODO: bad implementation
+    // do a frontend ui that can assign and save config json to disk
+
     @SuppressWarnings("unchecked")
     @Override
     public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
         if(propertyChangeEvent.getPropertyName().equals("portOverrideMap")) {
             portMap = (Map<Level, Integer>) propertyChangeEvent.getNewValue();
         }
+    }
+
+    /**
+     * If user change port configuration via web gui, the connection manager should call this method to update
+     *  the port number mapping, so that heartbeat can be checked against correct port number.
+     * @param portMap the map to be used as an override port mapping.
+     */
+    public void updatePortMap(Map<Level, Integer> portMap) {
+        this.portMap = portMap;
     }
 }

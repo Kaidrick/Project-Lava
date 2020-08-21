@@ -1,7 +1,5 @@
 package moe.ofs.backend;
 
-import moe.ofs.backend.logmanager.Logger;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -34,7 +32,7 @@ public class PluginClassLoader extends ClassLoader {
 //                System.out.println("Invoked method name: " + method.getName());
                 method.invoke(pluginInstance);
 
-                Logger.log("Plugin loaded successfully from class: " + className);
+                System.out.println("Plugin loaded successfully from class: " + className);
 
                 loadedPluginSet.add(pluginInstance);
             }
