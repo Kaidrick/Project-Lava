@@ -39,12 +39,13 @@ public final class ConnectionManager implements Configurable {
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     public Map<Level, Integer> getPortOverrideMap() {
-        return portOverrideMap;
+        return portOverrideMap.isEmpty() ? Arrays.stream(Level.values())
+                .collect(Collectors.toMap(Function.identity(), Level::getPort)) : portOverrideMap;
     }
 
     public void setPortOverrideMap(Map<Level, Integer> portOverrideMap) {
         this.portOverrideMap = portOverrideMap;
-        requestHandler.updatePortMap(this.portOverrideMap);
+        requestHandler.updatePortMap(this.portOverrideMap);  // force update request handler port mapping
     }
 
     public static synchronized ConnectionManager getInstance() {

@@ -7,6 +7,6 @@ import java.time.LocalDateTime;
 @Data
 public class LuaCommand {
     private String luaString;
-    private String level;
+    private int level;
     private LocalDateTime timeStamp;
 }

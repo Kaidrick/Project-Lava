@@ -86,8 +86,6 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
         // TODO: maybe there is a better way to do it?
 
         if(requestHandler.getConnections().entrySet().isEmpty()) {
-            System.out.println("empty");  // some how the entry set is empty
-
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {

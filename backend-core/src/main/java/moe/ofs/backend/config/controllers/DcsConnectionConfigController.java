@@ -1,4 +1,4 @@
-package moe.ofs.backend.controllers;
+package moe.ofs.backend.config.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
@@ -15,8 +15,14 @@ import java.util.Map;
 public class DcsConnectionConfigController {
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    public String getCurrentConfiguration() {
-        return "good";
+    public PortConfig getCurrentConfiguration() {
+        Map<Level, Integer> portMapping = ConnectionManager.getInstance().getPortOverrideMap();
+        return PortConfig.builder()
+                .serverMainPort(portMapping.get(Level.SERVER))
+                .serverPollPort(portMapping.get(Level.SERVER_POLL))
+                .exportMainPort(portMapping.get(Level.EXPORT))
+                .exportPollPort(portMapping.get(Level.EXPORT_POLL))
+                .build();
     }
 
     @RequestMapping(value = "/port", method = RequestMethod.POST)
@@ -26,6 +32,7 @@ public class DcsConnectionConfigController {
         // set request handler connection port number
         ConnectionManager connectionManager = ConnectionManager.getInstance();
         Map<Level, Integer> map = new HashMap<>();
+
         map.put(Level.SERVER, config.getServerMainPort());
         map.put(Level.SERVER_POLL, config.getServerPollPort());
         map.put(Level.EXPORT, config.getExportMainPort());
