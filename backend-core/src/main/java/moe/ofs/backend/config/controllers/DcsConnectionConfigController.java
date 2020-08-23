@@ -26,7 +26,7 @@ public class DcsConnectionConfigController {
     }
 
     @RequestMapping(value = "/port", method = RequestMethod.POST)
-    public String setConnectionPort(@RequestBody PortConfig config) {
+    public PortConfig setConnectionPort(@RequestBody PortConfig config) {
         log.info(config.toString());
 
         // set request handler connection port number
@@ -39,6 +39,13 @@ public class DcsConnectionConfigController {
         map.put(Level.EXPORT_POLL, config.getExportPollPort());
 
         connectionManager.setPortOverrideMap(map);
-        return "good!";
+
+        Map<Level, Integer> portMapping = ConnectionManager.getInstance().getPortOverrideMap();
+        return PortConfig.builder()
+                .serverMainPort(portMapping.get(Level.SERVER))
+                .serverPollPort(portMapping.get(Level.SERVER_POLL))
+                .exportMainPort(portMapping.get(Level.EXPORT))
+                .exportPollPort(portMapping.get(Level.EXPORT_POLL))
+                .build();
     }
 }
