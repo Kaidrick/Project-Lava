@@ -1,5 +1,6 @@
 package moe.ofs.backend.config.controllers;
 
+import moe.ofs.backend.BackgroundTask;
 import moe.ofs.backend.config.model.ConnectionStatus;
 import moe.ofs.backend.util.ConnectionManager;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,8 @@ public class BackendConnectionStatusController {
         ConnectionStatus status = new ConnectionStatus();
         status.setConnected(ConnectionManager.getInstance().isBackendConnected());
         status.setTimestamp(LocalDateTime.now());
+        status.setPhaseCode(BackgroundTask.getCurrentTask().getPhase().getStatusCode());
+        status.setTheater(BackgroundTask.getCurrentTask().getTaskDcsMapTheaterName());
 
         return status;
     }

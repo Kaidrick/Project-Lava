@@ -60,6 +60,17 @@ public class BackgroundTask implements PropertyChangeListener {
 
     private final Sender sender;
 
+    private OperationPhase phase;
+
+    private String taskDcsMapTheaterName;
+
+    public String getTaskDcsMapTheaterName() {
+        return taskDcsMapTheaterName;
+    }
+
+    public OperationPhase getPhase() {
+        return phase;
+    }
 
     @PostConstruct
     private void loadPlugins() {
@@ -97,6 +108,8 @@ public class BackgroundTask implements PropertyChangeListener {
 
         // listen to property change of "trouble"
         requestHandler.addPropertyChangeListener(this);
+
+        phase = OperationPhase.PREPARING;
     }
 
     private ScheduledExecutorService mainRequestScheduler;
@@ -147,6 +160,8 @@ public class BackgroundTask implements PropertyChangeListener {
 
         } else {
             log.info("Stopping Background Task...");
+            phase = OperationPhase.STOPPING;
+
             try {
                 this.stop();
             } catch (InterruptedException e) {
@@ -154,6 +169,8 @@ public class BackgroundTask implements PropertyChangeListener {
             } finally {
                 backgroundThread.interrupt();
                 backgroundThread = null;
+
+                phase = OperationPhase.IDLE;
             }
         }
     }
@@ -222,6 +239,7 @@ public class BackgroundTask implements PropertyChangeListener {
 
         sender.send("BackgroundTaskRestarting");
 
+        phase = OperationPhase.LOADING;
 
         BackgroundTaskRestartObservable.invokeAll();
 
@@ -335,10 +353,14 @@ public class BackgroundTask implements PropertyChangeListener {
 
         log.info("Schedulers running, background task ready, mission data initialized");
 
+        phase = OperationPhase.RUNNING;
+
         new ServerDataRequest("return env.mission.theatre")
                 .addProcessable(theater -> {
                     MissionStartObservable.invokeAll(theater);
                     log.info("Mission started in " + theater);
+
+                    taskDcsMapTheaterName = theater;  // store theater name
                 }).send();
     }
 
