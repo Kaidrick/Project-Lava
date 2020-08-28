@@ -26,7 +26,15 @@ import java.util.stream.Collectors;
  * This class is used to check and validate a net player's request to enter a particular slot.
  * It will check ban list and other customized criteria before moving the player to this slot.
  *
- * When a player tries to enter a slot
+ * When a player tries to enter a slot,the slot change event in dcs is intercepted in hook environment,
+ * and a request change info table is queued into a table from which the data will be pulled to backend.
+ * The backend then determines whether the player has met the requirement to enter said slot.
+ * If the player paases the validation, the backend actively sends a message to dcs lua server to
+ * move force player into said slot, thus completing the slot change process.
+ *
+ * A hand-off should be set to switch of the intercept flag in the dcs lua server. If the backend failed to
+ * send a heartbeat signal to dcs lua server within 
+ *
  */
 
 @Slf4j

@@ -38,6 +38,10 @@ public final class ConnectionManager implements Configurable {
 
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
+    public boolean isBackendConnected() {
+        return !RequestHandler.getInstance().isTrouble();
+    }
+
     public Map<Level, Integer> getPortOverrideMap() {
         return portOverrideMap.isEmpty() ? Arrays.stream(Level.values())
                 .collect(Collectors.toMap(Function.identity(), Level::getPort)) : portOverrideMap;
