@@ -11,4 +11,5 @@ public class ConnectionStatus {
     private boolean isConnected;
     private int phaseCode;
     private String theater;
+    private int objectCount;
 }
