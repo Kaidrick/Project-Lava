@@ -47,6 +47,20 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
 
     /**
      * blocking call
+     *
+     * FIXME: should fail fast if no connection can be made
+     * There are two possibilities:
+     * 1. The attempt to create a connection to DCS Lua server fail. In this case, the get() method
+     *    should fail and return immediately to avoid indefinitely blocking the thread.
+     * 2. The backend maintains a connection to DCS Lua server, but the DCS lua server takes too
+     *    long to respond for some reason; get() method should fail and return after a set amount of time.
+     *
+     * TODO: how to check connection? check operation phase?
+     * TODO: what if phase is ok but when request is sent operation halts?
+     * TODO: if above condition is true, how to check timeout?
+     * TODO: override get() method with a get(long milliseconds)
+     * TODO: the default get() should wait 5 seconds by default.
+     * TODO: use Optional to extinguish between empty return and null value.
      * @return result
      */
     public String get() {

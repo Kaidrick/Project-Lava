@@ -12,4 +12,5 @@ public class ConnectionStatus {
     private int phaseCode;
     private String theater;
     private int objectCount;
+    private int playerCount;
 }

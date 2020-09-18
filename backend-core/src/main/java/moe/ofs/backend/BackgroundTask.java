@@ -64,6 +64,7 @@ public class BackgroundTask implements PropertyChangeListener {
 
     private String taskDcsMapTheaterName;
 
+    // TODO: if the background task is halted, this field should be reset to null
     public String getTaskDcsMapTheaterName() {
         return taskDcsMapTheaterName;
     }
