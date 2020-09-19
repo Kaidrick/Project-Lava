@@ -1,6 +1,8 @@
 package moe.ofs.backend.request.server;
 
 import com.google.gson.Gson;
+import moe.ofs.backend.BackgroundTask;
+import moe.ofs.backend.OperationPhase;
 import moe.ofs.backend.domain.Handle;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.request.Processable;
@@ -68,8 +70,15 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
             send();
         }
         while(true) {
-            if(result != null) {
-                return result;
+            if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {
+                if(result != null) {
+                    return result;
+                }
+            } else {
+                // return something that indicates bad operation phase
+                System.out.println("ServerDataRequest.get -> bad operation phase -> " +
+                        BackgroundTask.getCurrentTask().getPhase().toString());
+                return null;
             }
         }
     }
