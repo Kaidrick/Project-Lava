@@ -9,7 +9,7 @@ public abstract class AbstractMapService <T extends BaseEntity> implements CrudS
 
     protected Map<Long, T> map = new HashMap<>();
 
-    private Long getNextId() {
+    protected Long getNextId() {
         return map.keySet().isEmpty() ? 1L : Collections.max(map.keySet()) + 1;
     }
 

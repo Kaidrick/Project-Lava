@@ -14,6 +14,7 @@ import moe.ofs.backend.services.ExportObjectService;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.services.ParkingInfoService;
 import moe.ofs.backend.services.PlayerInfoService;
+import moe.ofs.backend.telemetry.serivces.LuaStateTelemetryService;
 import moe.ofs.backend.util.ConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,6 +57,8 @@ public class BackgroundTask implements PropertyChangeListener {
 
     private final ParkingInfoService parkingInfoService;
 
+    private final LuaStateTelemetryService luaStateTelemetryService;
+
     private final List<Plugin> plugins;
 
     private final Sender sender;
@@ -63,10 +66,15 @@ public class BackgroundTask implements PropertyChangeListener {
     private OperationPhase phase;
 
     private String taskDcsMapTheaterName;
+    private String dcsApplicationVersion;
 
     // TODO: if the background task is halted, this field should be reset to null
     public String getTaskDcsMapTheaterName() {
         return taskDcsMapTheaterName;
+    }
+
+    public String getDcsApplicationVersion() {
+        return dcsApplicationVersion;
     }
 
     public OperationPhase getPhase() {
@@ -86,10 +94,13 @@ public class BackgroundTask implements PropertyChangeListener {
             @Qualifier("exportObjectDelta") PollHandlerService exportObjectPollService,
             @Qualifier("playerInfoBulk") PollHandlerService playerInfoPollService,
 
+            LuaStateTelemetryService luaStateTelemetryService,
             ExportObjectService exportObjectService,
             PlayerInfoService playerInfoService,
             FlyableUnitService flyableUnitService,
             ParkingInfoService parkingInfoService, List<Plugin> plugins, Sender sender) {
+
+        this.luaStateTelemetryService = luaStateTelemetryService;
 
         this.exportObjectPollService = exportObjectPollService;
         this.playerInfoPollService = playerInfoPollService;
@@ -356,6 +367,7 @@ public class BackgroundTask implements PropertyChangeListener {
 
         phase = OperationPhase.RUNNING;
 
+        // also get dcs version here
         new ServerDataRequest("return env.mission.theatre")
                 .addProcessable(theater -> {
                     MissionStartObservable.invokeAll(theater);
