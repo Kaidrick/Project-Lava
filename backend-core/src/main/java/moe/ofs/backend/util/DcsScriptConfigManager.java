@@ -4,10 +4,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,6 +30,12 @@ public class DcsScriptConfigManager {
 
     private static final Path TARGET_EXPORT = Paths.get("Scripts/Export.lua");
     private static final Path TARGET_LAVA = Paths.get("Scripts/DCS-Lava.lua");
+
+    public List<Path> getUserDcsWritePaths() throws IOException {
+        return Files.walk(SAVED_GAMES_PATH, 1)
+                .filter(p -> p.getFileName().toString().startsWith("DCS.") || p.getFileName().toString().equals("DCS"))
+                .collect(Collectors.toList());
+    }
 
     /**
      * Injects Hooks script into DCS write path, replacing default ports with overridden ports if an xml config exists.
@@ -151,7 +154,6 @@ public class DcsScriptConfigManager {
             String hookContent = String.join("\n", Files.readAllLines(hook));
             String lavaContent = String.join("\n", Files.readAllLines(lava));
             String exportContent = String.join("\n", Files.readAllLines(export));
-
             return hookContent.equals(hookRefOverriddenPort)
                     && lavaContent.equals(lavaRefOverriddenPort)
                     && exportContent.contains(exportRef);
