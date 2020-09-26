@@ -17,19 +17,6 @@ class LavaTaskDispatcherImplTest {
     private TaskController controller;
     private LavaTaskDispatcher dispatcher;
 
-    private final LavaTask task1 = LavaTask.builder()
-            .task(() -> System.out.println("test task 1"))
-            .interval(1000)
-            .isPeriodic(true)
-            .name("test task name 1")
-            .source(this.getClass()).build();
-
-    private final LavaTask task2 = LavaTask.builder()
-            .task(() -> System.out.println("test task 2"))
-            .interval(10000)
-            .isPeriodic(true)
-            .name("test task name 2")
-            .source(this.getClass()).build();
 
     @BeforeEach
     void setUp() {
@@ -43,9 +30,6 @@ class LavaTaskDispatcherImplTest {
 
     @Test
     void addTask() {
-        dispatcher.addTask(task1);
-        dispatcher.addTask(task2);
-
 
         dispatcher.init();
     }

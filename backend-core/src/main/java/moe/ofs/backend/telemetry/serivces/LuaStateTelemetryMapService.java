@@ -6,14 +6,21 @@ import moe.ofs.backend.request.export.ExportDataRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.services.map.AbstractMapService;
 import moe.ofs.backend.util.LuaScripts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class LuaStateTelemetryMapService
         extends AbstractMapService<TelemetryData>
         implements LuaStateTelemetryService {
+
+    @Value("${telemetry.data.size}")
+    private long maxTelemetryEntrySize;
 
     /**
      * Should only save 1,000 entries by default
@@ -26,27 +33,28 @@ public class LuaStateTelemetryMapService
         // user should also have a option to right memory usage to log file
 
         TelemetryData data = TelemetryData.builder()
-                .missionStateLuaMemory(Double.parseDouble(((ServerDataRequest) new ServerDataRequest(
-                                LuaScripts.load("telemetry/memory_usage")).send()).get()))
+                .missionStateLuaMemory(Double.parseDouble(
+                        ((ServerDataRequest) new ServerDataRequest(
+                                LuaScripts.load("telemetry/memory_usage.lua"))
+                                .send()).get()))
 
                 .hookStateLuaMemory(Double.parseDouble(
                         ((ServerDataRequest) new ServerDataRequest(RequestToServer.State.DEBUG,
-                                LuaScripts.load("telemetry/memory_usage"))
+                                LuaScripts.load("telemetry/memory_usage.lua"))
                                 .send()).get()))
 
                 .exportStateLuaMemory(Double.parseDouble(
                         ((ExportDataRequest) new ExportDataRequest(
-                                LuaScripts.load("telemetry/memory_usage"))
+                                LuaScripts.load("telemetry/memory_usage.lua"))
                                 .send()).get()))
 
-                .timestamp(LocalDateTime.now())
+                .timestamp(Instant.now())
                 .build();
 
         save(data);  // save current entry first
 
-        if (map.size() > 1000) {
-            deleteById(getNextId() - 1000);  // delete overflowed entry
+        if (map.size() > maxTelemetryEntrySize) {
+            deleteById(getNextId() - maxTelemetryEntrySize - 1);  // delete overflowed entry
         }
-
     }
 }

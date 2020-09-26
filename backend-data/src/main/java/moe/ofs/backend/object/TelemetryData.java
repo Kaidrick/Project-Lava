@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import moe.ofs.backend.domain.BaseEntity;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
@@ -18,5 +19,5 @@ public class TelemetryData extends BaseEntity implements Serializable {
 
     private double exportStateLuaMemory;
 
-    private LocalDateTime timestamp;
+    private Instant timestamp;
 }

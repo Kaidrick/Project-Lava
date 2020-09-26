@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A cached thread pool is maintained to receive work from a controller.
@@ -90,6 +91,30 @@ public class LavaTaskDispatcherImpl extends AbstractMapService<LavaTask> impleme
 
     @Override
     public Map<String, Boolean> haltAll() {
+        timer.shutdown();
+        try {
+            timer.awaitTermination(5000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            timer.shutdownNow();
+        }
+
+        service.shutdown();
+        try {
+            service.awaitTermination(5000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            service.shutdownNow();
+        }
+
+        taskController.shutdown();
+
+        map.clear();
+
+        log.info("Dispatcher halted");
+
         return null;
     }
 }

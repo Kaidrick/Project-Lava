@@ -12,4 +12,6 @@ public interface TaskController {
     List<LavaTask> allocate(Map<Long, LavaTask> map);
 
     void init(Map<Long, LavaTask> map, ExecutorService service);
+
+    void shutdown();
 }

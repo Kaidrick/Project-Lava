@@ -1,11 +1,14 @@
 package moe.ofs.backend;
 
 import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.dispatcher.model.LavaTask;
+import moe.ofs.backend.dispatcher.services.LavaTaskDispatcher;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.LuaScriptInjectionObservable;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.jms.Sender;
+import moe.ofs.backend.object.TelemetryData;
 import moe.ofs.backend.request.FillerRequest;
 import moe.ofs.backend.request.PollHandlerService;
 import moe.ofs.backend.request.RequestHandler;
@@ -59,6 +62,8 @@ public class BackgroundTask implements PropertyChangeListener {
 
     private final LuaStateTelemetryService luaStateTelemetryService;
 
+    private final LavaTaskDispatcher lavaTaskDispatcher;
+
     private final List<Plugin> plugins;
 
     private final Sender sender;
@@ -98,7 +103,7 @@ public class BackgroundTask implements PropertyChangeListener {
             ExportObjectService exportObjectService,
             PlayerInfoService playerInfoService,
             FlyableUnitService flyableUnitService,
-            ParkingInfoService parkingInfoService, List<Plugin> plugins, Sender sender) {
+            ParkingInfoService parkingInfoService, LavaTaskDispatcher lavaTaskDispatcher, List<Plugin> plugins, Sender sender) {
 
         this.luaStateTelemetryService = luaStateTelemetryService;
 
@@ -109,6 +114,7 @@ public class BackgroundTask implements PropertyChangeListener {
 
         this.flyableUnitService = flyableUnitService;
         this.parkingInfoService = parkingInfoService;
+        this.lavaTaskDispatcher = lavaTaskDispatcher;
 
         this.plugins = plugins;
 
@@ -232,6 +238,8 @@ public class BackgroundTask implements PropertyChangeListener {
         shutdownExecutorService(mainRequestScheduler);
         shutdownExecutorService(serverPollingScheduler);
         shutdownExecutorService(exportPollingScheduler);
+
+        lavaTaskDispatcher.haltAll();
 
         isHalted.set(true);
     }
@@ -375,6 +383,16 @@ public class BackgroundTask implements PropertyChangeListener {
 
                     taskDcsMapTheaterName = theater;  // store theater name
                 }).send();
+
+        // initializing task dispatcher
+        lavaTaskDispatcher.init();
+        LavaTask telemetryTask =
+                new LavaTask("Lua State Telemetry Task", luaStateTelemetryService::recordTelemetry, 5000);
+//        testTask.setStopCondition(t -> t.getCycles().get() > 5);  // test stop condition
+
+        lavaTaskDispatcher.addTask(telemetryTask);
+
+        log.info("Background Task start completed");
     }
 
     interface IOConsumer<T> {

@@ -1,6 +1,8 @@
 package moe.ofs.backend.telemetry.serivces;
 
-import moe.ofs.backend.object.TelemetryState;
+import moe.ofs.backend.object.TelemetryData;
+
+import java.util.Set;
 
 /**
  * This interface describes the services that can be applied to DCS Lua environment.
@@ -12,5 +14,5 @@ import moe.ofs.backend.object.TelemetryState;
 public interface LuaStateTelemetryService {
     void recordTelemetry();
 
-
+    Set<TelemetryData> findAll();
 }
