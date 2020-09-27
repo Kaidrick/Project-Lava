@@ -7,7 +7,6 @@ import moe.ofs.backend.domain.BaseEntity;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

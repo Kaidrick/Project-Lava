@@ -128,13 +128,15 @@ public class SlotValidator {
 
                     }).send();
         };
-
         slotEntryPullExecutorService = Executors.newSingleThreadScheduledExecutor();
         slotEntryPullExecutorService.scheduleWithFixedDelay(getSlotEntryRequest,
                 0, 200, TimeUnit.MILLISECONDS);
 
     }
 
+    /**
+     * also need to handoff to dcs
+     */
     public void tearDown() {
         if(slotEntryPullExecutorService != null) {
             slotEntryPullExecutorService.shutdownNow();

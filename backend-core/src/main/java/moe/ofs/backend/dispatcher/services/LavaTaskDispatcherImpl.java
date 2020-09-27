@@ -117,4 +117,17 @@ public class LavaTaskDispatcherImpl extends AbstractMapService<LavaTask> impleme
 
         return null;
     }
+
+    /**
+     * Submit a task immediately as a run-once anonymous lava task
+     * @param task Runnable to be submitted to execute service
+     */
+
+    @Override
+    public void go(Runnable task) {
+        if (service == null || service.isShutdown() || service.isTerminated()) {
+            throw new DispatcherNotOperationalException();
+        }
+        addTask(new LavaTask(task));
+    }
 }

@@ -7,7 +7,6 @@ import moe.ofs.backend.domain.BaseEntity;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
 /**

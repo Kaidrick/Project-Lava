@@ -28,4 +28,6 @@ public interface LavaTaskDispatcher {
     Map<String, Boolean> haltAll();
 
     void init();
+
+    void go(Runnable task);
 }
