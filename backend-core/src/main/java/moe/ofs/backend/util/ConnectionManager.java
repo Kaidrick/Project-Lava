@@ -164,7 +164,7 @@ public final class ConnectionManager implements Configurable {
     }
 
     /**
-     * This method extract a List of Response result from parsed Json String object
+     * This method extracts a List of Response result from parsed Json String object
      * @param jsonRpcResponseList an instance of JsonPrcResponse class.
      * @param <T> Generic Type of the object the result data to be convert into.
      * @return List of said generic type.
