@@ -80,6 +80,12 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
                         BackgroundTask.getCurrentTask().getPhase().toString());
                 return null;
             }
+
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

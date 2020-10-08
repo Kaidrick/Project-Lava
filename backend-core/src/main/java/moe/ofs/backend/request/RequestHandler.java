@@ -5,7 +5,6 @@ import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.function.unitwiselog.LogControl;
-import moe.ofs.backend.function.unitwiselog.eventlogger.SpawnControlLogger;
 import moe.ofs.backend.util.ConnectionManager;
 
 import java.beans.PropertyChangeEvent;
@@ -50,8 +49,6 @@ public final class RequestHandler implements PropertyChangeListener {
     private AtomicBoolean trouble = new AtomicBoolean(true);
 
     private PropertyChangeSupport support;
-
-    private static final Gson gson = new Gson();
 
     // TODO --> shutdown service
     private ExecutorService executorService = Executors.newCachedThreadPool();
@@ -258,6 +255,7 @@ public final class RequestHandler implements PropertyChangeListener {
         splitQueue.forEach((level, queue) -> {
             transmissionQueue.stream().filter(r -> r instanceof Resolvable).forEach(r -> waitMap.put(r.getUuid(), r));
             try {
+                Gson gson = new Gson();
                 String json = gson.toJson(queue);
 //                if(!json.equals("[]"))
 //                    System.out.println(level + " -> cycle -> " + json);
@@ -329,6 +327,7 @@ public final class RequestHandler implements PropertyChangeListener {
         splitQueue.forEach((level, queue) -> {
             transmissionQueue.stream().filter(r -> r instanceof Resolvable).forEach(r -> waitMap.put(r.getUuid(), r));
             try {
+                Gson gson = new Gson();
                 String json = gson.toJson(queue);
                 if(!json.equals("[]"))
                     System.out.println(level + " -> deprecated -> " + json);

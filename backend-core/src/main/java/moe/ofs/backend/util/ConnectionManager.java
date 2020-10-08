@@ -184,7 +184,9 @@ public final class ConnectionManager implements Configurable {
                 .collect(Collectors.toList());
     }
 
-    public static <T> List<JsonRpcResponse<T>> parseJsonResponseToRaw(String jsonString, Class<T> targetClass) {
+    public synchronized static <T> List<JsonRpcResponse<T>> parseJsonResponseToRaw(String jsonString, Class<T> targetClass) {
+        Gson gson = new Gson();  // FIXME: potential concurrent issue fix?
+
         // TODO --> this is so sad
         Type jsonRpcResponseListType = TypeToken.getParameterized(List.class,
                 TypeToken.getParameterized(JsonRpcResponse.class, targetClass).getType()).getType();
@@ -194,8 +196,10 @@ public final class ConnectionManager implements Configurable {
         return gson.fromJson(jsonString, jsonRpcResponseListType);
     }
 
-    public static <T> List<JsonRpcResponse<List<T>>> parseJsonResponse(String jsonString, Class<T> targetClass) {
+    public synchronized static <T> List<JsonRpcResponse<List<T>>> parseJsonResponse(String jsonString, Class<T> targetClass) {
         // TODO --> this is so sad
+        Gson gson = new Gson();
+
         Type jsonRpcResponseListType = TypeToken.getParameterized(List.class,
                 TypeToken.getParameterized(JsonRpcResponse.class,
                         TypeToken.getParameterized(List.class, targetClass).getType()).getType()).getType();

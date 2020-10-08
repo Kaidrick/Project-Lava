@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>pom</packaging>
     <modules>
-        <module>backend-web</module>
+<!--        <module>backend-web</module>-->
         <module>backend-core</module>
         <module>plugin-builder-maven-plugin</module>
         <module>backend-data</module>
         <module>backend-log</module>
-        <module>backend-gui</module>
+<!--        <module>backend-gui</module>-->
     </modules>
 
     <groupId>moe.ofs</groupId>
@@ -49,6 +49,17 @@
                 <configuration>
                     <mainClass>moe.ofs.backend.BackendApplication</mainClass>
                 </configuration>
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>repackage</id>-->
+<!--                        <goals>-->
+<!--                            <goal>repackage</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <classifier>exec</classifier>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
             </plugin>
         </plugins>
     </build>

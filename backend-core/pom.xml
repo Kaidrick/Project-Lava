@@ -11,9 +11,9 @@
 
     <artifactId>backend-core</artifactId>
 
-    <properties>
-        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
-    </properties>
+<!--    <properties>-->
+<!--        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>-->
+<!--    </properties>-->
 
     <repositories>
         <repository>
@@ -45,6 +45,11 @@
 <!--                    <artifactId>junit-vintage-engine</artifactId>-->
 <!--                </exclusion>-->
 <!--            </exclusions>-->
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
