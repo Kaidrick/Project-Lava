@@ -6,23 +6,24 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.util.Map;
 
 @Service
 public class AtlasServiceImpl implements AtlasService {
 
-    Object[][] objects;
+    Map<String, byte[]> map;
 
     @PostConstruct
     public void loadData() throws IOException, ClassNotFoundException {
         InputStream in = getClass()
-                .getResourceAsStream("/data/atlas/atlas_20");
+                .getResourceAsStream("/data/atlas/atlas_20.ser");
         ObjectInputStream objectInputStream = new ObjectInputStream(in);
-        objects = (Object[][]) objectInputStream.readObject();
+        map = (Map<String, byte[]>) objectInputStream.readObject();
     }
 
     @Override
     public byte[] getTileImage( //String theater,
                                int level, int x, int y) {
-        return (byte[]) objects[x][y];
+        return map.get(String.format("%s_%d_%d_%d", "Nevada", level, x, y));
     }
 }
