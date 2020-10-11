@@ -3,6 +3,7 @@ package moe.ofs.backend.dispatcher.services;
 import moe.ofs.backend.dispatcher.model.LavaTask;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * LavaTaskDispatcher is task dispatcher that can execute a runnable at a fixed rate or only once.
@@ -30,4 +31,12 @@ public interface LavaTaskDispatcher {
     void init();
 
     void go(Runnable task);
+
+    /**
+     * Returns the number of tasks added to task map
+     * @return long number of tasks added to task map
+     */
+    int getTaskCount();
+
+    Set<LavaTask> findAll();
 }

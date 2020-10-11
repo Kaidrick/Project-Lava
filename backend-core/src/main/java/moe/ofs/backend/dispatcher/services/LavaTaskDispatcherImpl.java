@@ -130,4 +130,9 @@ public class LavaTaskDispatcherImpl extends AbstractMapService<LavaTask> impleme
         }
         addTask(new LavaTask(task));
     }
+
+    @Override
+    public int getTaskCount() {
+        return map.size();
+    }
 }

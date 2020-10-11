@@ -390,7 +390,7 @@ public class BackgroundTask implements PropertyChangeListener {
                 new LavaTask("Lua State Telemetry Task", luaStateTelemetryService::recordTelemetry, 5000);
 //        testTask.setStopCondition(t -> t.getCycles().get() > 5);  // test stop condition
 
-//        lavaTaskDispatcher.addTask(telemetryTask);
+        lavaTaskDispatcher.addTask(telemetryTask);
 
         log.info("Background Task start completed");
     }
