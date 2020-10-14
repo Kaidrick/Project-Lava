@@ -128,7 +128,7 @@ public final class RequestHandler implements PropertyChangeListener {
                     : "Connection Established: set trouble flag to false");
 
             logger.warn(trouble ? "Trying to connect to DCS Lua server" : "Successfully connected to DCS Lua server");
-            support.firePropertyChange("trouble", this.trouble, trouble);
+//            support.firePropertyChange("trouble", this.trouble, trouble);
         }
 
         this.trouble.set(trouble);

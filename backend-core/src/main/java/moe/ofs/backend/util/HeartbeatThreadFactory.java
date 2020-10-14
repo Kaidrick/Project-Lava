@@ -54,12 +54,12 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
 
                 // if check port connection ok, flag connection to true
                 if(checkPortConnection()) {
+
+                    sender.sendToTopicAsJson("connection.dcs",
+                            new ConnectionStatusChange(ConnectionStatus.CONNECTED), "change");
+
                     RequestHandler.getInstance().setTrouble(false);
-                    sender.sendToTopic("connection.dcs", "String", "String");
-                    Gson gson = new Gson();
-                    sender.sendToTopicAsJson("connection.dcs", gson.toJson(
-                            new ConnectionStatusChange(ConnectionStatus.CONNECTED)
-                    ), "change");
+
                     break;
                 }
 

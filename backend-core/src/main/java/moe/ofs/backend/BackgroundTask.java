@@ -162,8 +162,8 @@ public class BackgroundTask implements PropertyChangeListener {
     public void setStarted(boolean started) {
 
         // fire property change iff value changed
-        if(this.started != started)
-            support.firePropertyChange("started", this.started, started);
+//        if(this.started != started)
+//            support.firePropertyChange("started", this.started, started);
 
         // set value anyway
         this.started = started;
@@ -203,9 +203,11 @@ public class BackgroundTask implements PropertyChangeListener {
             selector = "type = 'change'"
     )
     public void detectDcsConnectionStatusChange(TextMessage textMessage) throws JMSException {
-        Gson gson = new Gson();
-        ConnectionStatusChange change = gson.fromJson(textMessage.getText(), ConnectionStatusChange.class);
-        setStarted(change.getStatus() == ConnectionStatus.CONNECTED);
+        log.warn(textMessage.getText());
+//        Gson gson = new Gson();
+
+//        ConnectionStatusChange change = gson.fromJson(textMessage.getText(), ConnectionStatusChange.class);
+        setStarted(true);
 
     }
 
