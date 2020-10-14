@@ -1,8 +1,13 @@
 package moe.ofs.backend.util;
 
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
+import moe.ofs.backend.jms.Sender;
+import moe.ofs.backend.message.ConnectionStatusChange;
+import moe.ofs.backend.message.OperationPhase;
+import moe.ofs.backend.message.connection.ConnectionStatus;
 import moe.ofs.backend.request.Connection;
 import moe.ofs.backend.request.FillerRequest;
 import moe.ofs.backend.request.RequestHandler;
@@ -19,13 +24,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Component
 public final class HeartbeatThreadFactory implements PropertyChangeListener {
 
+    private final Sender sender;
+
     public static AtomicBoolean heartbeatActive;
 
     private static Thread heartbeat;
 
     private static boolean masterShutDown = false;
 
-    public HeartbeatThreadFactory() {
+    public HeartbeatThreadFactory(Sender sender) {
+        this.sender = sender;
 
         heartbeatActive = new AtomicBoolean(false);
 
@@ -44,8 +52,14 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
                     return;
                 }
 
+                // if check port connection ok, flag connection to true
                 if(checkPortConnection()) {
                     RequestHandler.getInstance().setTrouble(false);
+                    sender.sendToTopic("connection.dcs", "String", "String");
+                    Gson gson = new Gson();
+                    sender.sendToTopicAsJson("connection.dcs", gson.toJson(
+                            new ConnectionStatusChange(ConnectionStatus.CONNECTED)
+                    ), "change");
                     break;
                 }
 
@@ -87,7 +101,7 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
 
         if(requestHandler.getConnections().entrySet().isEmpty()) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

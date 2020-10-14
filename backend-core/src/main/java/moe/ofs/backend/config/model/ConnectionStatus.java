@@ -1,7 +1,6 @@
 package moe.ofs.backend.config.model;
 
 import lombok.Data;
-import moe.ofs.backend.OperationPhase;
 
 import java.time.LocalDateTime;
 

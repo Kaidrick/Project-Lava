@@ -2,7 +2,7 @@ package moe.ofs.backend.request.server;
 
 import com.google.gson.Gson;
 import moe.ofs.backend.BackgroundTask;
-import moe.ofs.backend.OperationPhase;
+import moe.ofs.backend.message.OperationPhase;
 import moe.ofs.backend.domain.Handle;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.request.Processable;

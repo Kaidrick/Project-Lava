@@ -1,4 +1,4 @@
-package moe.ofs.backend;
+package moe.ofs.backend.message;
 
 public enum OperationPhase {
     PREPARING, LOADING, STOPPING, IDLE, RUNNING;

@@ -1,5 +1,6 @@
 package moe.ofs.backend;
 
+import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.dispatcher.model.LavaTask;
 import moe.ofs.backend.dispatcher.services.LavaTaskDispatcher;
@@ -8,7 +9,9 @@ import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.LuaScriptInjectionObservable;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.jms.Sender;
-import moe.ofs.backend.object.TelemetryData;
+import moe.ofs.backend.message.ConnectionStatusChange;
+import moe.ofs.backend.message.OperationPhase;
+import moe.ofs.backend.message.connection.ConnectionStatus;
 import moe.ofs.backend.request.FillerRequest;
 import moe.ofs.backend.request.PollHandlerService;
 import moe.ofs.backend.request.RequestHandler;
@@ -21,9 +24,12 @@ import moe.ofs.backend.telemetry.serivces.LuaStateTelemetryService;
 import moe.ofs.backend.util.ConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -191,6 +197,16 @@ public class BackgroundTask implements PropertyChangeListener {
                 phase = OperationPhase.IDLE;
             }
         }
+    }
+
+    @JmsListener(destination = "connection.dcs", containerFactory = "jsonStringListenerContainerFactory",
+            selector = "type = 'change'"
+    )
+    public void detectDcsConnectionStatusChange(TextMessage textMessage) throws JMSException {
+        Gson gson = new Gson();
+        ConnectionStatusChange change = gson.fromJson(textMessage.getText(), ConnectionStatusChange.class);
+        setStarted(change.getStatus() == ConnectionStatus.CONNECTED);
+
     }
 
 
