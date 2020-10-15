@@ -19,12 +19,17 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class ParkingInfoMapService extends AbstractMapService<ParkingInfo> implements ParkingInfoService {
 
     private String theater;
+
+    private final ConnectionManager connectionManager;
+
+    public ParkingInfoMapService(ConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
 
     @Override
     public Optional<ParkingInfo> getParking(int airdromeId, int parkingId) {
@@ -53,8 +58,8 @@ public class ParkingInfoMapService extends AbstractMapService<ParkingInfo> imple
             ServerDataRequest serverExecRequest = new ServerDataRequest(luaString);
 
 
-            ConnectionManager.fastPackThenSendAndCheck(serverExecRequest);
-            String theaterDataJson = ConnectionManager.fastPackThenSendAndGet(serverExecRequest);
+            connectionManager.fastPackThenSendAndCheck(serverExecRequest);
+            String theaterDataJson = connectionManager.fastPackThenSendAndGet(serverExecRequest);
 
             Gson gson = new Gson();
             Type jsonRpcResponseListType = new TypeToken<ArrayList<JsonRpcResponse<String>>>(){}.getType();

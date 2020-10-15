@@ -7,10 +7,9 @@ import moe.ofs.backend.Configurable;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.request.*;
 import moe.ofs.backend.request.export.ExportResetRequest;
+import moe.ofs.backend.request.services.RequestTransmissionService;
+import org.springframework.stereotype.Component;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -26,20 +25,38 @@ import java.util.stream.Collectors;
  */
 
 @Slf4j
+@Component
 public final class ConnectionManager implements Configurable {
 
     private static final Gson gson = new Gson();
 
-    private static RequestHandler requestHandler = RequestHandler.getInstance();
+    private final RequestHandler requestHandler;
+
+    private final RequestTransmissionService requestTransmissionService;
 
     private static ConnectionManager instance;
 
     private Map<Level, Integer> portOverrideMap = new HashMap<>();
 
-    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+    public ConnectionManager(RequestHandler requestHandler, RequestTransmissionService requestTransmissionService) {
+        this.requestHandler = requestHandler;
+        this.requestTransmissionService = requestTransmissionService;
+
+        instance = this;
+
+        // check whether an overridden port map exists, if not, set request handler port map to default port map
+        requestHandler.updatePortMap(getPortOverrideMap());
+    }
+
+    public static ConnectionManager getInstance() {
+        if (instance != null) {
+            return instance;
+        }
+        return null;
+    }
 
     public boolean isBackendConnected() {
-        return !RequestHandler.getInstance().isTrouble();
+        return requestHandler.isTrouble();
     }
 
     public Map<Level, Integer> getPortOverrideMap() {
@@ -50,23 +67,6 @@ public final class ConnectionManager implements Configurable {
     public void setPortOverrideMap(Map<Level, Integer> portOverrideMap) {
         this.portOverrideMap = portOverrideMap;
         requestHandler.updatePortMap(this.portOverrideMap);  // force update request handler port mapping
-    }
-
-    public static synchronized ConnectionManager getInstance() {
-        if(instance == null) {
-            instance = new ConnectionManager();
-            instance.refreshConfig();
-        }
-        return instance;
-    }
-
-    // property change listener
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
     public void refreshConfig() {
@@ -87,8 +87,6 @@ public final class ConnectionManager implements Configurable {
         Configurable.super.writeConfiguration(map);
 
         refreshConfig();
-        Map<Level, Integer> newValue = portOverrideMap;
-        propertyChangeSupport.firePropertyChange("portOverrideMap", null, newValue);
     }
 
     @Override
@@ -99,10 +97,11 @@ public final class ConnectionManager implements Configurable {
     /**
      * use to sanitize remaining data on lua side after backend restart
      */
-    public static void sanitizeDataPipeline() throws IOException {
+    public void sanitizeDataPipeline() throws IOException {
 
-        new FillerRequest(Level.SERVER).send();
-        new FillerRequest(Level.SERVER_POLL).send();
+        requestTransmissionService.send(new FillerRequest(Level.SERVER));
+        requestTransmissionService.send(new FillerRequest(Level.SERVER_POLL));
+
 //        new FillerRequest(Level.EXPORT).send();
 //        new FillerRequest(Level.EXPORT_POLL).send();
 //        RequestHandler.getInstance().transmitAndReceive();
@@ -128,9 +127,9 @@ public final class ConnectionManager implements Configurable {
      * @param request an instance of BaseRequest.
      * @return boolean value indicating whether server responds to this request.
      */
-    public static boolean fastPackThenSendAndCheck(BaseRequest request) {
+    public boolean fastPackThenSendAndCheck(BaseRequest request) {
         int port;
-        Integer portOverridden = ConnectionManager.getInstance().portOverrideMap.get(request.getLevel());
+        Integer portOverridden = portOverrideMap.get(request.getLevel());
         if(portOverridden != null) {
             port = portOverridden;
         } else {
@@ -151,9 +150,9 @@ public final class ConnectionManager implements Configurable {
      * @return A JSON string representing the result of this request
      * @throws IOException if tcp connection fails
      */
-    public static String fastPackThenSendAndGet(BaseRequest request) throws IOException {
+    public String fastPackThenSendAndGet(BaseRequest request) throws IOException {
         int port;
-        Integer portOverridden = ConnectionManager.getInstance().portOverrideMap.get(request.getLevel());
+        Integer portOverridden = portOverrideMap.get(request.getLevel());
         if(portOverridden != null) {
             port = portOverridden;
         } else {

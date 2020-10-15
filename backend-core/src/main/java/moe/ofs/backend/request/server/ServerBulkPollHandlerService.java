@@ -6,7 +6,6 @@ import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.request.*;
 import moe.ofs.backend.services.UpdatableService;
 import moe.ofs.backend.util.ConnectionManager;
-import moe.ofs.backend.util.GenericClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +15,8 @@ import java.util.List;
 
 @Service("playerInfoBulk")
 public final class ServerBulkPollHandlerService implements PollHandlerService {
+
+    private final RequestHandler requestHandler;
 
     protected List<PlayerInfo> list;
 
@@ -34,7 +35,8 @@ public final class ServerBulkPollHandlerService implements PollHandlerService {
     }
 
     @Autowired
-    public ServerBulkPollHandlerService(UpdatableService<PlayerInfo> service) {
+    public ServerBulkPollHandlerService(RequestHandler requestHandler, UpdatableService<PlayerInfo> service) {
+        this.requestHandler = requestHandler;
         this.service = service;
 
         this.level = PlayerInfo.class.getAnnotation(LuaState.class).value();
@@ -64,7 +66,7 @@ public final class ServerBulkPollHandlerService implements PollHandlerService {
 
         }
 
-        Connection connection = RequestHandler.getInstance().getConnections().get(level);
+        Connection connection = requestHandler.getConnections().get(level);
         String s = connection.transmitAndReceive(ConnectionManager.fastPack(request));
 
 //        System.out.println(s);

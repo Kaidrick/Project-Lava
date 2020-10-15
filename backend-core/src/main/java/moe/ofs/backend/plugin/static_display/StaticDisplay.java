@@ -9,12 +9,12 @@ import moe.ofs.backend.function.slotcontrol.SlotChangeRequest;
 import moe.ofs.backend.function.slotcontrol.SlotChangeResult;
 import moe.ofs.backend.function.slotcontrol.SlotValidator;
 import moe.ofs.backend.function.unitwiselog.LogControl;
-import moe.ofs.backend.function.unitwiselog.eventlogger.SpawnControlLogger;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 import moe.ofs.backend.object.FlyableUnit;
 import moe.ofs.backend.object.ParkingInfo;
 import moe.ofs.backend.request.server.ServerDataRequest;
+import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.services.ParkingInfoService;
 import moe.ofs.backend.util.LuaScripts;
@@ -35,6 +35,8 @@ import java.util.*;
 public class StaticDisplay implements Plugin {
 
     private final LogControl.Logger logger = LogControl.getLogger(StaticDisplay.class);
+
+    private final RequestTransmissionService requestTransmissionService;
 
     // name
     public final String name = "Static Aircraft Display";
@@ -67,7 +69,9 @@ public class StaticDisplay implements Plugin {
     private final SlotValidator slotValidator;
 
     @Autowired
-    public StaticDisplay(FlyableUnitService flyableUnitService, ParkingInfoService parkingInfoService, SlotValidator slotValidator) {
+    public StaticDisplay(RequestTransmissionService requestTransmissionService, FlyableUnitService flyableUnitService,
+                         ParkingInfoService parkingInfoService, SlotValidator slotValidator) {
+        this.requestTransmissionService = requestTransmissionService;
         this.flyableUnitService = flyableUnitService;
         this.parkingInfoService = parkingInfoService;
         this.slotValidator = slotValidator;
@@ -175,20 +179,23 @@ public class StaticDisplay implements Plugin {
                     flyableUnit.getX(), flyableUnit.getY(), flyableUnit.getLivery_id(),
                     flyableUnit.getOnboard_num(), heading, flyableUnit.getCountry_id());
 
-            new ServerDataRequest(p)
-                    .addProcessable(s -> mapSlotStaticId.put(String.valueOf(flyableUnit.getUnit_id()), s))
-                    .addProcessable(s -> logger.addon(
-                            String.format("Static Object [%s] spawned for %s with livery [%s]",
-                                    s, flyableUnit.getUnit_name(), flyableUnit.getLivery_id())
-                    )).send();
+            requestTransmissionService.send(
+                    new ServerDataRequest(p)
+                            .addProcessable(s -> mapSlotStaticId.put(String.valueOf(flyableUnit.getUnit_id()), s))
+                            .addProcessable(s -> logger.addon(
+                                    String.format("Static Object [%s] spawned for %s with livery [%s]",
+                                            s, flyableUnit.getUnit_name(), flyableUnit.getLivery_id())
+                            ))
+            );
         }  // else no spawn
     }
 
     private void despawnControl(FlyableUnit flyableUnit) {
         String runtimeId = mapSlotStaticId.get(String.valueOf(flyableUnit.getUnit_id()));
-        new ServerDataRequest(String.format(luaStringRemoveObject, runtimeId))
-                .addProcessable(s -> logger.addon(runtimeId + " -> static object removed"))
-                .send();
+        requestTransmissionService.send(
+                new ServerDataRequest(String.format(luaStringRemoveObject, runtimeId))
+                        .addProcessable(s -> logger.addon(runtimeId + " -> static object removed"))
+        );
     }
 
     private void respawnOnPlayerLeaveServer(PlayerInfo playerInfo) {

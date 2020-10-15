@@ -5,11 +5,12 @@ import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.function.unitwiselog.LogControl;
+import moe.ofs.backend.jms.Sender;
+import moe.ofs.backend.message.ConnectionStatusChange;
+import moe.ofs.backend.message.connection.ConnectionStatus;
 import moe.ofs.backend.util.ConnectionManager;
+import org.springframework.stereotype.Component;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -20,7 +21,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /** RequestHandler class
@@ -32,12 +32,19 @@ import java.util.stream.Collectors;
  *  when the request receive the result, it should let the handler know, and the handler will
  *  processes the returned data and update data locally.
  *
+ * FIXME: RequestHandler should not reference any other class
+ * Redesign:
+ *      request handler should react to heartbeat connection status change
+ *      request handler should be called to stop and clear all request and transmission
  */
 
 @Slf4j
-public final class RequestHandler implements PropertyChangeListener {
+@Component
+public final class RequestHandler {
 
     private final LogControl.Logger logger = LogControl.getLogger(RequestHandler.class);
+
+    private final Sender sender;
 
     private Map<Level, Connection> connectionMap = new HashMap<>();
 
@@ -48,42 +55,17 @@ public final class RequestHandler implements PropertyChangeListener {
 
     private AtomicBoolean trouble = new AtomicBoolean(true);
 
-    private PropertyChangeSupport support;
-
     // TODO --> shutdown service
     private ExecutorService executorService = Executors.newCachedThreadPool();
 
-    private static RequestHandler instance;
-
-    private RequestHandler() {
-        support = new PropertyChangeSupport(this);
-    }
-
-    public static synchronized RequestHandler getInstance() {
-        // singleton
-        // check if exists
-        if(instance == null) {
-            instance = new RequestHandler();
-
-            // FIXME: bad implementation -> RequestHandler and ConnectionManager have circular reference
-            // if override map is empty, then use default value
-            // otherwise read from file the overridden port number
-            Map<Level, Integer> portOverrideMap = ConnectionManager.getInstance().getPortOverrideMap();
-            if(portOverrideMap.isEmpty()) {
-                // use default mapping defined in Level enum
-                instance.portMap = Arrays.stream(Level.values())
-                        .collect(Collectors.toMap(Function.identity(), Level::getPort));
-            } else {
-                instance.portMap = ConnectionManager.getInstance().getPortOverrideMap();
-            }
-        }
-        return instance;
+    public RequestHandler(Sender sender) {
+        this.sender = sender;
     }
 
     /**
      * if wait map has entry in it, query is needed
      * if wait map does not has entry in it, there is no need to send any filler request
-     * @return
+     * @return boolean indicating whether there is a ServerRequest entry in the map
      */
     public boolean hasPendingServerRequest() {
 //        System.out.println("server waitMap.size() = " + waitMap.size());
@@ -104,14 +86,6 @@ public final class RequestHandler implements PropertyChangeListener {
         sendQueue.clear();
     }
 
-    // property change listener
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        support.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        support.removePropertyChangeListener(listener);
-    }
 
     public boolean isTrouble() {
         return trouble.get();
@@ -119,7 +93,8 @@ public final class RequestHandler implements PropertyChangeListener {
 
 
     /**
-     * Trigger property change if and only if value changes.
+     * This method decides whether the background task should be started.
+     * It should listen for heartbeat detection, while
      * @param trouble a boolean value indicating whether there is a trouble in connecting to DCS lua server.
      */
     public synchronized void setTrouble(boolean trouble) {
@@ -128,10 +103,13 @@ public final class RequestHandler implements PropertyChangeListener {
                     : "Connection Established: set trouble flag to false");
 
             logger.warn(trouble ? "Trying to connect to DCS Lua server" : "Successfully connected to DCS Lua server");
-//            support.firePropertyChange("trouble", this.trouble, trouble);
         }
 
         this.trouble.set(trouble);
+
+        sender.sendToTopicAsJson("dcs.connection",
+                new ConnectionStatusChange(trouble ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED),
+                "change");
     }
 
     // if exception is thrown here, try reconnect: check if connection can be made
@@ -225,6 +203,49 @@ public final class RequestHandler implements PropertyChangeListener {
         return connectionMap;
     }
 
+    public boolean checkConnections() {
+        // create a connection for this level and try to send a message
+        boolean trouble = false;
+
+        createConnections(1000);  // for checking only, timeout can be very low
+
+        // if createConnections() throws exception, no connection will not be created
+        // and the size of getConnections().entrySet() will be zero
+        // TODO: maybe there is a better way to do it?
+
+        if(getConnections().entrySet().isEmpty()) {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // maybe connections are empty?
+            // why is connection empty thou?
+            return false;  // connections are not properly established and there is trouble
+        } else {
+            for (Map.Entry<Level, Connection> entry : getConnections().entrySet()) {
+                Level level = entry.getKey();
+                Connection connection = entry.getValue();
+
+                try {
+                    connection.transmitAndReceive(ConnectionManager.fastPack(new FillerRequest(level)));
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+                    trouble = true;
+                    break;  // break the loop and close all connections;
+                }
+            }
+        }
+
+        shutdownConnections();
+
+        // FIXME: why not set trouble directly here?
+        setTrouble(trouble);
+
+        return !trouble;
+    }
+
     public void shutdownConnections() {
         connectionMap.values().forEach(connection -> {
             try {
@@ -253,7 +274,7 @@ public final class RequestHandler implements PropertyChangeListener {
 
         // only add to wait map if result is definitely needed
         splitQueue.forEach((level, queue) -> {
-            transmissionQueue.stream().filter(r -> r instanceof Resolvable).forEach(r -> waitMap.put(r.getUuid(), r));
+            transmissionQueue.stream().filter(r -> r instanceof Resolvable).forEach(r -> waitMap.put(r.getUuidString(), r));
             try {
                 Gson gson = new Gson();
                 String json = gson.toJson(queue);
@@ -325,7 +346,7 @@ public final class RequestHandler implements PropertyChangeListener {
 
         // only add to wait map if result is definitely needed
         splitQueue.forEach((level, queue) -> {
-            transmissionQueue.stream().filter(r -> r instanceof Resolvable).forEach(r -> waitMap.put(r.getUuid(), r));
+            transmissionQueue.stream().filter(r -> r instanceof Resolvable).forEach(r -> waitMap.put(r.getUuidString(), r));
             try {
                 Gson gson = new Gson();
                 String json = gson.toJson(queue);
@@ -370,22 +391,6 @@ public final class RequestHandler implements PropertyChangeListener {
                 e.printStackTrace();
             }
         });
-    }
-
-    /**
-     * Listen to property change of "portOverrideMap" in ConnectionManager
-     * @param propertyChangeEvent
-     */
-
-    // TODO: bad implementation
-    // do a frontend ui that can assign and save config json to disk
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        if(propertyChangeEvent.getPropertyName().equals("portOverrideMap")) {
-            portMap = (Map<Level, Integer>) propertyChangeEvent.getNewValue();
-        }
     }
 
     /**

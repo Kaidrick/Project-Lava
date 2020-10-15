@@ -21,15 +21,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RestController
 public class BackendConnectionStatusController {
 
+    private final ConnectionManager manager;
+
     private final AtomicInteger exportObjectCount = new AtomicInteger(0);
 
     // TODO: change to "in-game" player count in the future, because ED webGui already has this info
     private final AtomicInteger connectedPlayerCount = new AtomicInteger(0);
 
+    public BackendConnectionStatusController(ConnectionManager manager) {
+        this.manager = manager;
+    }
+
     @RequestMapping(value = "/status", method = RequestMethod.GET)
     public ConnectionStatus getBackendStatus() {
         ConnectionStatus status = new ConnectionStatus();
-        status.setConnected(ConnectionManager.getInstance().isBackendConnected());
+        status.setConnected(manager.isBackendConnected());
         status.setTimestamp(LocalDateTime.now());
         status.setPhaseCode(BackgroundTask.getCurrentTask().getPhase().getStatusCode());
         status.setTheater(BackgroundTask.getCurrentTask().getTaskDcsMapTheaterName());

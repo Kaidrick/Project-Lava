@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import moe.ofs.backend.interaction.TestButtonCommand;
 import moe.ofs.backend.object.Vector3D;
 import moe.ofs.backend.request.server.ServerDataRequest;
+import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.util.LuaScripts;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +36,12 @@ public class MarkPanelManager {
     private static final int textMaxLength = 256;
 
     private Gson gson = new Gson();
+
+    private final RequestTransmissionService requestTransmissionService;
+
+    public MarkPanelManager(RequestTransmissionService requestTransmissionService) {
+        this.requestTransmissionService = requestTransmissionService;
+    }
 
     @PostConstruct
     private void initialize() {
@@ -79,7 +86,7 @@ public class MarkPanelManager {
                 panel.getPosition().getX(), panel.getPosition().getY(), panel.getPosition().getZ(),
                 panel.getGroupId(), panel.isReadOnly(), messageOnCreation);
 
-        new ServerDataRequest(luaString).send();
+        requestTransmissionService.send(new ServerDataRequest(luaString));
     }
 
     public void removeMarkPanel(MarkPanel panel) {
@@ -87,9 +94,11 @@ public class MarkPanelManager {
     }
 
     public List<MarkPanel> getAllMarkPanels() {
-        String panelJsonString =
-                ((ServerDataRequest) new ServerDataRequest(
-                        LuaScripts.load("markpanel/get_all_marks.lua")).send()).get();
+        String panelJsonString = ((ServerDataRequest) requestTransmissionService.send(
+                ( new ServerDataRequest(
+                        LuaScripts.load("markpanel/get_all_marks.lua"))
+        ))).get();
+
         Type panelListType = new TypeToken<List<MarkPanel>>() {}.getType();
         return gson.fromJson(panelJsonString, panelListType);
     }

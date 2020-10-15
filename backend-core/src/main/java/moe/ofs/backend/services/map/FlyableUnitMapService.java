@@ -25,6 +25,12 @@ public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> imple
 
     // protected map for FlyableUnit in AbstractMapService
 
+    private final ConnectionManager connectionManager;
+
+    public FlyableUnitMapService(ConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
+
     @Override
     public Optional<FlyableUnit> findByUnitName(String name) {
         return map.values().stream().filter(e -> e.getUnit_name().equals(name)).findAny();
@@ -79,8 +85,8 @@ public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> imple
         try {
             ServerExecRequest serverExecRequest = new ServerExecRequest(wholeText);
 
-            ConnectionManager.fastPackThenSendAndGet(serverExecRequest);
-            String playableJson = ConnectionManager.fastPackThenSendAndGet(serverExecRequest);
+            connectionManager.fastPackThenSendAndGet(serverExecRequest);
+            String playableJson = connectionManager.fastPackThenSendAndGet(serverExecRequest);
             // TODO --> make proper jsonrpc
 
             parse(playableJson);

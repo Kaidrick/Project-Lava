@@ -10,6 +10,7 @@ import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.server.ServerActionRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
+import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.util.LuaScripts;
 import org.springframework.stereotype.Component;
 
@@ -45,11 +46,17 @@ public class SlotValidator {
     private BackgroundTaskRestartObservable backgroundTaskRestartObservable;
     private ControlPanelShutdownObservable controlPanelShutdownObservable;
 
+    private final RequestTransmissionService requestTransmissionService;
+
     private final Gson gson = new Gson();
 
     private List<PlayerSlotControl> playerSlotControls = new ArrayList<>();
 
     private ScheduledExecutorService slotEntryPullExecutorService;
+
+    public SlotValidator(RequestTransmissionService requestTransmissionService) {
+        this.requestTransmissionService = requestTransmissionService;
+    }
 
     public List<PlayerSlotControl> getPlayerSlotControls() {
         return playerSlotControls;
@@ -71,62 +78,68 @@ public class SlotValidator {
         controlPanelShutdownObservable = this::tearDown;
         controlPanelShutdownObservable.register();
 
-        log.info("Initialized SlotValidator");
+        log.info("Slot Validator Initialized");
     }
 
     public void setUp() {
-        new ServerDataRequest(RequestToServer.State.DEBUG,
-                LuaScripts.load("slotchange/player_change_slot_hook.lua")).send();
+        requestTransmissionService.send(new ServerDataRequest(RequestToServer.State.DEBUG,
+                LuaScripts.load("slotchange/player_change_slot_hook.lua")));
 
-        System.out.println("set up slot validator");
+        log.info("Setting up playable slot validator");
 
         Runnable getSlotEntryRequest = () -> {
-            new ServerDataRequest(RequestToServer.State.DEBUG,
-                    LuaScripts.load("slotchange/pull_slot_entry_request.lua"))
-                    .addProcessable(s -> {
-                        Type entryRequestListType = new TypeToken<List<SlotChangeRequest>>() {}.getType();
-                        List<SlotChangeRequest> entryRequestList = gson.fromJson(s, entryRequestListType);
+            requestTransmissionService.send(
+                    new ServerDataRequest(RequestToServer.State.DEBUG,
+                            LuaScripts.load("slotchange/pull_slot_entry_request.lua"))
+                            .addProcessable(s -> {
+                                Type entryRequestListType = new TypeToken<List<SlotChangeRequest>>() {}.getType();
+                                List<SlotChangeRequest> entryRequestList = gson.fromJson(s, entryRequestListType);
 
-                        entryRequestList.forEach(slotChangeRequest -> {
+                                entryRequestList.forEach(slotChangeRequest -> {
 
-                            // when a player enters the server, his/her data is always updated to the db
-                            // the loading time is usually pretty long, say more than 10 seconds
-                            // therefore, when the player initiates a request to enter a slot,
-                            // the player info should always be available
+                                    // when a player enters the server, his/her data is always updated to the db
+                                    // the loading time is usually pretty long, say more than 10 seconds
+                                    // therefore, when the player initiates a request to enter a slot,
+                                    // the player info should always be available
 
-                            // now, what if the player made a request to enter a slot,
-                            // and before server reacted, the player left server or enters another slot?
-                            // if the player left server, not a problem
-                            // if the player enters another slot, the server will still move the player
-                            // previous slot selected. it's always a delayed action.
+                                    // now, what if the player made a request to enter a slot,
+                                    // and before server reacted, the player left server or enters another slot?
+                                    // if the player left server, not a problem
+                                    // if the player enters another slot, the server will still move the player
+                                    // previous slot selected. it's always a delayed action.
 
-                            // run criteria here
-                            if(playerSlotControls.isEmpty()) {
-                                // if no criteria, pass the check immediately
-                                new ServerDataRequest(RequestToServer.State.DEBUG,
-                                        LuaScripts.loadAndPrepare("slotchange/force_player_slot.lua",
-                                                slotChangeRequest.getNetId(),
-                                                slotChangeRequest.getSide(),
-                                                slotChangeRequest.getSlotId())).send();
-                            } else {
+                                    // run criteria here
+                                    if(playerSlotControls.isEmpty()) {
+                                        // if no criteria, pass the check immediately
+                                        requestTransmissionService.send(
+                                                new ServerDataRequest(RequestToServer.State.DEBUG,
+                                                        LuaScripts.loadAndPrepare("slotchange/force_player_slot.lua",
+                                                                slotChangeRequest.getNetId(),
+                                                                slotChangeRequest.getSide(),
+                                                                slotChangeRequest.getSlotId()))
+                                        );
+                                    } else {
 
-                                List<PlayerSlotControl> list = playerSlotControls.stream()
-                                        .filter(control -> !control.validate(slotChangeRequest).isAllowed())
-                                        .collect(Collectors.toList());
+                                        List<PlayerSlotControl> list = playerSlotControls.stream()
+                                                .filter(control -> !control.validate(slotChangeRequest).isAllowed())
+                                                .collect(Collectors.toList());
 
-                                if(list.isEmpty()) {
-                                    new ServerDataRequest(RequestToServer.State.DEBUG,
-                                            LuaScripts.loadAndPrepare("slotchange/force_player_slot.lua",
-                                                    slotChangeRequest.getNetId(),
-                                                    slotChangeRequest.getSide(),
-                                                    slotChangeRequest.getSlotId())).send();
-                                } else {
-                                    // send notice to player about why request is denied
-                                }
-                            }
-                        });
+                                        if(list.isEmpty()) {
+                                            requestTransmissionService.send(
+                                                    new ServerDataRequest(RequestToServer.State.DEBUG,
+                                                            LuaScripts.loadAndPrepare("slotchange/force_player_slot.lua",
+                                                                    slotChangeRequest.getNetId(),
+                                                                    slotChangeRequest.getSide(),
+                                                                    slotChangeRequest.getSlotId()))
+                                            );
+                                        } else {
+                                            // send notice to player about why request is denied
+                                        }
+                                    }
+                                });
 
-                    }).send();
+                            })
+            );
         };
         slotEntryPullExecutorService = Executors.newSingleThreadScheduledExecutor();
         slotEntryPullExecutorService.scheduleWithFixedDelay(getSlotEntryRequest,
@@ -141,7 +154,8 @@ public class SlotValidator {
         if(slotEntryPullExecutorService != null) {
             slotEntryPullExecutorService.shutdownNow();
         }
-        new ServerActionRequest(RequestToServer.State.DEBUG,
-                LuaScripts.load("slotchange/clean_request_table.lua")).send();
+
+        requestTransmissionService.send(new ServerActionRequest(RequestToServer.State.DEBUG,
+                LuaScripts.load("slotchange/clean_request_table.lua")));
     }
 }

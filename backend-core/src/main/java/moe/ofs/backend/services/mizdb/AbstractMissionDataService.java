@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.server.ServerExecRequest;
+import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.MissionDataService;
 import moe.ofs.backend.util.LuaScripts;
 
@@ -11,12 +12,19 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 public abstract class AbstractMissionDataService<T> implements MissionDataService<T> {
+    protected RequestTransmissionService requestTransmissionService;
+
+    public AbstractMissionDataService(RequestTransmissionService requestTransmissionService) {
+        this.requestTransmissionService = requestTransmissionService;
+    }
 
     @Override
     public Set<T> findAll(Class<T> tClass) {
         Gson gson = new Gson();
-        String dataJson = new ServerDataRequest(LuaScripts.loadAndPrepare("mizdb/table_find_all.lua",
-                getRepositoryName())).get();
+
+        String dataJson = ((ServerDataRequest) requestTransmissionService
+                .send(new ServerDataRequest(LuaScripts.loadAndPrepare("mizdb/table_find_all.lua",
+                        getRepositoryName())))).get();
 
         System.out.println("dataJson = " + dataJson);
         Type type = TypeToken.getParameterized(ArrayList.class, tClass).getType();
@@ -29,9 +37,11 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
     @Override
     public Optional<T> findBy(String attributeName, Object value, Class<T> tClass) {
         Gson gson = new Gson();
-        String dataJson = new ServerDataRequest(
-                LuaScripts.loadAndPrepare("mizdb/table_find_by_attribute_name.lua",
-                getRepositoryName(), attributeName, value)).get();
+
+        String dataJson = ((ServerDataRequest) requestTransmissionService
+                .send(new ServerDataRequest(
+                        LuaScripts.loadAndPrepare("mizdb/table_find_by_attribute_name.lua",
+                                getRepositoryName(), attributeName, value)))).get();
 
         T t = gson.fromJson(dataJson, tClass);
 
@@ -40,8 +50,10 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
 
     @Override
     public void deleteAll() {
-        new ServerExecRequest(LuaScripts.loadAndPrepare("mizdb/table_delete_all.lua",
-                getRepositoryName())).send();
+        requestTransmissionService.send(
+                new ServerExecRequest(LuaScripts.loadAndPrepare("mizdb/table_delete_all.lua",
+                        getRepositoryName()))
+        );
     }
 
     @Override
@@ -54,8 +66,10 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
         Gson gson = new Gson();
         String objectJson = gson.toJson(object);
 
-        new ServerExecRequest(LuaScripts.loadAndPrepare("mizdb/table_save.lua",
-                        getRepositoryName(), objectJson)).send();
+        requestTransmissionService.send(
+                new ServerExecRequest(LuaScripts.loadAndPrepare("mizdb/table_save.lua",
+                        getRepositoryName(), objectJson))
+        );
         return object;
     }
 
@@ -64,15 +78,19 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
         Gson gson = new Gson();
         String objectJson = gson.toJson(object);
 
-        new ServerExecRequest(LuaScripts.loadAndPrepare("mizdb/table_delete.lua",
-                getRepositoryName(), objectJson)).send();
+        requestTransmissionService.send(
+                new ServerExecRequest(LuaScripts.loadAndPrepare("mizdb/table_delete.lua",
+                        getRepositoryName(), objectJson))
+        );
     }
 
     @Override
     public void deleteBy(String attributeName, Object value) {
-        new ServerExecRequest(
-                LuaScripts.loadAndPrepare("mizdb/table_delete_by_attribute_name.lua",
-                        getRepositoryName(), attributeName, value)).send();
+        requestTransmissionService.send(
+                new ServerExecRequest(
+                        LuaScripts.loadAndPrepare("mizdb/table_delete_by_attribute_name.lua",
+                                getRepositoryName(), attributeName, value))
+        );
     }
 
     @Override
@@ -87,7 +105,9 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
 
     @Override
     public void createRepository() {
-        new ServerExecRequest(LuaScripts.loadAndPrepare("mizdb/create_table.lua",
-                        getRepositoryName())).send();
+        requestTransmissionService.send(
+                new ServerExecRequest(LuaScripts.loadAndPrepare("mizdb/create_table.lua",
+                        getRepositoryName()))
+        );
     }
 }

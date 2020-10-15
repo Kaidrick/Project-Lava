@@ -16,6 +16,7 @@ import moe.ofs.backend.request.FillerRequest;
 import moe.ofs.backend.request.PollHandlerService;
 import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.request.server.ServerDataRequest;
+import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.ExportObjectService;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.services.ParkingInfoService;
@@ -30,9 +31,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
@@ -46,13 +44,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Component
-public class BackgroundTask implements PropertyChangeListener {
+public class BackgroundTask {
 
-    private final RequestHandler requestHandler = RequestHandler.getInstance();
+    private final RequestHandler requestHandler;
+    private final ConnectionManager connectionManager;
 
     private boolean started;
-
-    private PropertyChangeSupport support;
 
     private final PollHandlerService exportObjectPollService;
 
@@ -75,6 +72,8 @@ public class BackgroundTask implements PropertyChangeListener {
     private final Sender sender;
 
     private OperationPhase phase;
+
+    private final RequestTransmissionService requestTransmissionService;
 
     private String taskDcsMapTheaterName;
     private String dcsApplicationVersion;
@@ -102,6 +101,7 @@ public class BackgroundTask implements PropertyChangeListener {
     @Autowired
     public BackgroundTask(
 
+            RequestHandler requestHandler, ConnectionManager connectionManager,
             @Qualifier("exportObjectDelta") PollHandlerService exportObjectPollService,
             @Qualifier("playerInfoBulk") PollHandlerService playerInfoPollService,
 
@@ -109,7 +109,9 @@ public class BackgroundTask implements PropertyChangeListener {
             ExportObjectService exportObjectService,
             PlayerInfoService playerInfoService,
             FlyableUnitService flyableUnitService,
-            ParkingInfoService parkingInfoService, LavaTaskDispatcher lavaTaskDispatcher, List<Plugin> plugins, Sender sender) {
+            ParkingInfoService parkingInfoService, LavaTaskDispatcher lavaTaskDispatcher, List<Plugin> plugins, Sender sender, RequestTransmissionService requestTransmissionService) {
+        this.requestHandler = requestHandler;
+        this.connectionManager = connectionManager;
 
         this.luaStateTelemetryService = luaStateTelemetryService;
 
@@ -127,11 +129,10 @@ public class BackgroundTask implements PropertyChangeListener {
         // JMS
         this.sender = sender;
 
-        currentTask = this;
-        support = new PropertyChangeSupport(this);
+        // Request output
+        this.requestTransmissionService = requestTransmissionService;
 
-        // listen to property change of "trouble"
-        requestHandler.addPropertyChangeListener(this);
+        currentTask = this;
 
         phase = OperationPhase.PREPARING;
     }
@@ -146,25 +147,11 @@ public class BackgroundTask implements PropertyChangeListener {
         return currentTask;
     }
 
-    // property change listener
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
-        support.addPropertyChangeListener(listener);
-    }
-
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
-        support.removePropertyChangeListener(listener);
-    }
-
     public boolean isStarted() {
         return started;
     }
 
     public void setStarted(boolean started) {
-
-        // fire property change iff value changed
-//        if(this.started != started)
-//            support.firePropertyChange("started", this.started, started);
-
         // set value anyway
         this.started = started;
 
@@ -199,31 +186,18 @@ public class BackgroundTask implements PropertyChangeListener {
         }
     }
 
-    @JmsListener(destination = "connection.dcs", containerFactory = "jsonStringListenerContainerFactory",
-            selector = "type = 'change'"
-    )
-    public void detectDcsConnectionStatusChange(TextMessage textMessage) throws JMSException {
-        log.warn(textMessage.getText());
-//        Gson gson = new Gson();
-
-//        ConnectionStatusChange change = gson.fromJson(textMessage.getText(), ConnectionStatusChange.class);
-        setStarted(true);
-
-    }
-
-
-    @Override
-    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        if(propertyChangeEvent.getPropertyName().equals("trouble")) {
-
-            if((boolean) propertyChangeEvent.getNewValue()) {
-                // trouble, stop background task
-                setStarted(false);
-            } else {
-                // no trouble, start background task
-                setStarted(true);
-            }
-        }
+    /**
+     * Listen for RequestHandler connection status change. If status changes to CONNECTED, start background task.
+     * @param textMessage JSON string that represents the change.
+     * @throws JMSException if the message cannot be parsed or converted correctly.
+     */
+    @JmsListener(destination = "dcs.connection", containerFactory = "jmsListenerContainerFactory",
+            selector = "type = 'change'")
+    public void connectionStatusChangeListener(TextMessage textMessage) throws JMSException {
+        Gson gson = new Gson();
+        ConnectionStatusChange change = gson.fromJson(textMessage.getText(), ConnectionStatusChange.class);
+        setStarted(change.getStatus() == ConnectionStatus.CONNECTED);
+        log.info("Connection Status Change: {} at {}", change.getStatus(), change.getTimestamp().getEpochSecond());
     }
 
     public AtomicBoolean isHalted = new AtomicBoolean(false);
@@ -281,7 +255,7 @@ public class BackgroundTask implements PropertyChangeListener {
 
         BackgroundTaskRestartObservable.invokeAll();
 
-        ConnectionManager.sanitizeDataPipeline();
+        connectionManager.sanitizeDataPipeline();
 
         log.info("Initializing data services");
         // dispose obsolete data if any
@@ -335,10 +309,8 @@ public class BackgroundTask implements PropertyChangeListener {
         Runnable mainLoop = () -> {
 //            log.info("main loop -> " + Thread.currentThread().getName());
 //            if(requestHandler.hasPendingServerRequest())
-                new FillerRequest(Level.SERVER).send();
-
-//            if(requestHandler.hasPendingExportRequest())
-                new FillerRequest(Level.EXPORT).send();
+            requestTransmissionService.send(new FillerRequest(Level.SERVER));
+            requestTransmissionService.send(new FillerRequest(Level.EXPORT));
 
             try {
 //                requestHandler.transmitAndReceive();
@@ -380,7 +352,8 @@ public class BackgroundTask implements PropertyChangeListener {
 
             LuaScriptInjectionObservable.invokeAll();
 
-            new ServerDataRequest("lava_mission_persistent_initialization = true").send();
+            requestTransmissionService
+                    .send(new ServerDataRequest("lava_mission_persistent_initialization = true"));
 
             log.info("mission persistence initialized");
         } else {
@@ -393,14 +366,16 @@ public class BackgroundTask implements PropertyChangeListener {
 
         phase = OperationPhase.RUNNING;
 
-        // also get dcs version here
-        new ServerDataRequest("return env.mission.theatre")
-                .addProcessable(theater -> {
-                    MissionStartObservable.invokeAll(theater);
-                    log.info("Mission started in " + theater);
+        requestTransmissionService.send(
+                // also get dcs version here
+                new ServerDataRequest("return env.mission.theatre")
+                        .addProcessable(theater -> {
+                            MissionStartObservable.invokeAll(theater);
+                            log.info("Mission started in " + theater);
 
-                    taskDcsMapTheaterName = theater;  // store theater name
-                }).send();
+                            taskDcsMapTheaterName = theater;  // store theater name
+                        })
+        );
 
         // initializing task dispatcher
         lavaTaskDispatcher.init();

@@ -1,8 +1,10 @@
 package moe.ofs.backend.function.triggermessage;
 
+import lombok.Data;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.request.server.ServerExecRequest;
 
+@Data
 public final class TriggerMessage {
     private String message = "Hello from 422d Backend Powered by Java 8";
     private int receiverGroupId = -1;
@@ -45,12 +47,5 @@ public final class TriggerMessage {
     public TriggerMessage(int receiverGroupId, String message) {
         this.message = message;
         this.receiverGroupId = receiverGroupId;
-    }
-
-    public void send() {
-        String preparedString = String.format(triggerMessageByGroupId,
-                receiverGroupId, message, duration, clearView);
-        System.out.println(preparedString);
-        new ServerExecRequest(preparedString).send();
     }
 }

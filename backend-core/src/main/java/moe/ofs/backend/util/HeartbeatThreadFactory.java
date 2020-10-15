@@ -2,29 +2,23 @@ package moe.ofs.backend.util;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
-import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.message.ConnectionStatusChange;
-import moe.ofs.backend.message.OperationPhase;
 import moe.ofs.backend.message.connection.ConnectionStatus;
-import moe.ofs.backend.request.Connection;
-import moe.ofs.backend.request.FillerRequest;
 import moe.ofs.backend.request.RequestHandler;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.util.Map;
+import javax.jms.JMSException;
+import javax.jms.TextMessage;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Component
-public final class HeartbeatThreadFactory implements PropertyChangeListener {
+public final class HeartbeatThreadFactory {
 
-    private final Sender sender;
+    private final RequestHandler requestHandler;
 
     public static AtomicBoolean heartbeatActive;
 
@@ -32,110 +26,34 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
 
     private static boolean masterShutDown = false;
 
-    public HeartbeatThreadFactory(Sender sender) {
-        this.sender = sender;
+    private final Runnable runnable;
+
+    public HeartbeatThreadFactory(RequestHandler requestHandler) {
+
+        this.requestHandler = requestHandler;
 
         heartbeatActive = new AtomicBoolean(false);
 
         ControlPanelShutdownObservable observable = () -> masterShutDown = true;
         observable.register();
 
-        // listen to RequestHandler property changes
-        RequestHandler.getInstance().addPropertyChangeListener(this);
-
+        // the Runnable to be run to check if connections can be established on specified ports
         runnable = () -> {
             heartbeatActive.set(true);
 
-            while(true) {
-
-                if(masterShutDown) {
+            do {
+                if (masterShutDown) {
                     return;
                 }
-
-                // if check port connection ok, flag connection to true
-                if(checkPortConnection()) {
-
-                    sender.sendToTopicAsJson("connection.dcs",
-                            new ConnectionStatusChange(ConnectionStatus.CONNECTED), "change");
-
-                    RequestHandler.getInstance().setTrouble(false);
-
-                    break;
-                }
-
-//                if(isExportConnectionEstablished() && isServerConnectionEstablished()) {
-//                    // can connect, clear request handler trouble
-//                    // this also triggers background task start
-//                    RequestHandler.getInstance().setTrouble(false);
-//
-//                    break;
-//
-//                }
-            }
+            } while (!checkPortConnection());
 
             heartbeatActive.set(false);
 
         };
     }
 
-    private final Runnable runnable;
-
-    private boolean isServerConnectionEstablished() {
-        return checkPortConnection(Level.SERVER_POLL);
-    }
-
-    private boolean isExportConnectionEstablished() {
-        return checkPortConnection(Level.EXPORT_POLL);
-    }
-
     private boolean checkPortConnection() {
-        // create a connection for this level and try to send a message
-        RequestHandler requestHandler = RequestHandler.getInstance();
-        boolean trouble = false;
-
-        requestHandler.createConnections(1000);  // for checking only, timeout can be very low
-
-        // if createConnections() throws exception, no connection will not be created
-        // and the size of getConnections().entrySet() will be zero
-        // TODO: maybe there is a better way to do it?
-
-        if(requestHandler.getConnections().entrySet().isEmpty()) {
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            // maybe connections are empty?
-            // why is connection empty thou?
-            return false;  // connections are not properly established and there is trouble
-        } else {
-            for (Map.Entry<Level, Connection> entry : requestHandler.getConnections().entrySet()) {
-                Level level = entry.getKey();
-                Connection connection = entry.getValue();
-
-                try {
-                    connection.transmitAndReceive(ConnectionManager.fastPack(new FillerRequest(level)));
-                } catch (IOException e) {
-                    e.printStackTrace();
-
-                    trouble = true;
-                    break;  // break the loop and close all connections;
-                }
-            }
-        }
-
-        requestHandler.shutdownConnections();
-
-        return !trouble;
-    }
-
-    @Deprecated
-    private boolean checkPortConnection(Level level) {
-
-        FillerRequest filler = new FillerRequest(level);
-
-        return ConnectionManager.fastPackThenSendAndCheck(filler);
-
+        return requestHandler.checkConnections();
     }
 
     public synchronized Thread getHeartbeatThread() {
@@ -145,6 +63,7 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
         if(heartbeat == null) {
             heartbeat = new Thread(runnable);
             heartbeat.setName("conn checker");
+
             return heartbeat;
         } else {
             if(heartbeat.getState() == Thread.State.TERMINATED) {
@@ -157,19 +76,26 @@ public final class HeartbeatThreadFactory implements PropertyChangeListener {
         }
     }
 
-    @Override
-    public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
-        if(propertyChangeEvent.getPropertyName().equals("trouble")) {
-            if((boolean) propertyChangeEvent.getNewValue()) {
-                // trouble, start heartbeat
-                if(!heartbeatActive.get()) {
-                    Objects.requireNonNull(getHeartbeatThread()).start();
-                    log.info("Started Heartbeat Signal check thread");
-                }
-            } else {
-                // no trouble, stop heartbeat
-                heartbeat.interrupt();
-                log.info("Interrupted Heartbeat Signal check thread");
+    /**
+     * Listen for connection status change. If connection status changes to CONNECTED, active heartbeat checker
+     * @param textMessage JSON that represents the change object
+     * @throws JMSException if the text message cannot be parsed or converted correctly.
+     */
+    @JmsListener(destination = "dcs.connection", containerFactory = "jmsListenerContainerFactory",
+            selector = "type = 'change'")
+    public void connectionStatusChangeListener(TextMessage textMessage) throws JMSException {
+        Gson gson = new Gson();
+        ConnectionStatusChange change = gson.fromJson(textMessage.getText(), ConnectionStatusChange.class);
+
+        if (change.getStatus() == ConnectionStatus.CONNECTED) {
+            // no trouble, stop heartbeat
+            heartbeat.interrupt();
+            log.info("Interrupted Heartbeat Signal check thread");
+        } else {
+            // trouble, start heartbeat
+            if(!heartbeatActive.get()) {
+                Objects.requireNonNull(getHeartbeatThread()).start();
+                log.info("Started Heartbeat Signal check thread");
             }
         }
     }

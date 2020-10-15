@@ -1,6 +1,7 @@
 package moe.ofs.backend.function.triggermessage;
 
 import moe.ofs.backend.domain.ExportObject;
+import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.FlyableUnitService;
 
 import java.util.ArrayDeque;
@@ -16,17 +17,21 @@ public class MessageQueue {
 
     private FlyableUnitService flyableUnitService;
 
+    private TriggerMessageService triggerMessageService;
+
     private int nextTimeStamp;
 
-    private MessageQueue() {}
+//    private MessageQueue() {}
+//
+//    public MessageQueue(int receiverGroupId) {
+//        this.receiverGroupId = receiverGroupId;
+//    }
 
-    public MessageQueue(int receiverGroupId) {
-        this.receiverGroupId = receiverGroupId;
-    }
-
-    public MessageQueue(ExportObject object, FlyableUnitService flyableUnitService) {
+    public MessageQueue(ExportObject object, FlyableUnitService flyableUnitService,
+                        TriggerMessageService triggerMessageService) {
 
         this.flyableUnitService = flyableUnitService;
+        this.triggerMessageService = triggerMessageService;
 
         Optional<Integer> id = flyableUnitService.findGroupIdByName(object.getGroupName());
 
@@ -50,11 +55,13 @@ public class MessageQueue {
             messageQueue.forEach(m ->
                     scheduledExecutorService.schedule(
                             () -> {
-                                TriggerMessage.TriggerMessageBuilder builder = new TriggerMessage.TriggerMessageBuilder();
-                                builder.setMessage(m.getContent())
+                                TriggerMessage triggerMessage = triggerMessageService.getTriggerMessageTemplate()
+                                        .setMessage(m.getContent())
                                         .setReceiverGroupId(receiverGroupId)
                                         .setDuration(m.getDuration())
-                                        .setClearView(false).build().send();
+                                        .setClearView(false)
+                                        .build();
+                                triggerMessageService.sendTriggerMessage(triggerMessage);
                             }, nextTime(m), TimeUnit.SECONDS));
             scheduledExecutorService.shutdown();
             try {

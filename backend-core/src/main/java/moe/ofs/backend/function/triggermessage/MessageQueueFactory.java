@@ -12,8 +12,12 @@ public class MessageQueueFactory implements FactoryBean<MessageQueue> {
 
     private final FlyableUnitService flyableUnitService;
 
-    public MessageQueueFactory(FlyableUnitService flyableUnitService) {
+    private final TriggerMessageService triggerMessageService;
+
+    public MessageQueueFactory(FlyableUnitService flyableUnitService,
+                               TriggerMessageService triggerMessageService) {
         this.flyableUnitService = flyableUnitService;
+        this.triggerMessageService = triggerMessageService;
     }
 
     public ExportObject getExportObject() {
@@ -26,7 +30,7 @@ public class MessageQueueFactory implements FactoryBean<MessageQueue> {
 
     @Override
     public MessageQueue getObject() {
-        return new MessageQueue(exportObject, flyableUnitService);
+        return new MessageQueue(exportObject, flyableUnitService, triggerMessageService);
     }
 
     @Override

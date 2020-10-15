@@ -1,6 +1,5 @@
 package moe.ofs.backend.request;
 
-import com.google.gson.Gson;
 import moe.ofs.backend.domain.Handle;
 import moe.ofs.backend.domain.Level;
 
@@ -22,14 +21,16 @@ public abstract class BaseRequest {
 
     private transient boolean sent;
 
-    protected boolean isSent() {
+    public void setSent(boolean sent) {
+        this.sent = sent;
+    }
+
+    public boolean isSent() {
         return sent;
     }
 
-    private static class RequestBadStateException extends RuntimeException {
-        RequestBadStateException() {
-            super("Request cannot be sent more than once.");
-        }
+    public List<Object> getParams() {
+        return params;
     }
 
     public BaseRequest(Level level) {
@@ -46,8 +47,16 @@ public abstract class BaseRequest {
         return level;
     }
 
-    public String getUuid() {
+    public String getUuidString() {
         return uuid.toString();
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public Handle getHandle() {
+        return handle;
     }
 
     public JsonRpcRequest toJsonRpcCall() {
@@ -82,23 +91,5 @@ public abstract class BaseRequest {
                 })
                 .map(Field::getName)
                 .forEach(addField);
-    }
-
-    @Override
-    public String toString() {
-        prepareParameters();
-        Gson gson = new Gson();
-        return super.toString() + "|" + gson.toJson(this);
-    }
-
-    public BaseRequest send() {
-        if(sent) {
-            throw new RequestBadStateException();
-        } else {
-            prepareParameters();
-            RequestHandler.getInstance().take(this);
-            sent = true;
-        }
-        return this;
     }
 }

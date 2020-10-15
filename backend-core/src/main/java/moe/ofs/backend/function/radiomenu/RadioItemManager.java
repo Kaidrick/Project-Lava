@@ -10,6 +10,7 @@ import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.request.server.ServerActionRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
+import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.util.LuaScripts;
 import org.springframework.stereotype.Component;
@@ -26,6 +27,8 @@ import java.util.stream.Collectors;
 @Component
 public class RadioItemManager {
 
+    private final RequestTransmissionService requestTransmissionService;
+
     static MissionStartObservable missionStartObservable;
     static BackgroundTaskRestartObservable backgroundTaskRestartObservable;
     static ControlPanelShutdownObservable controlPanelShutdownObservable;
@@ -33,31 +36,36 @@ public class RadioItemManager {
     private final HashMap<Integer, List<RadioItem>> radioCommandGroupIdPathMap = new HashMap<>();
     private final Gson gson = new Gson();
     private ScheduledExecutorService radioPullExecutorService;
-    private final Runnable getRadioPulls = () -> {
-        new ServerDataRequest(LuaScripts.load("radio/pull_radio_commands.lua"))
-                .addProcessable(s -> {
-                    if(!s.equals("[]"))
-                        System.out.println(s);
-
-                    Type pushedCommandMapType = new TypeToken<Map<String, List<String>>>() {}.getType();
-                    Map<String, List<String>> pushedCommandMap = gson.fromJson(s, pushedCommandMapType);
-
-                    pushedCommandMap.keySet()
-                            .forEach(groupId -> {
-                                // TODO -> send to a blocking queue for worker
-                                Optional<RadioItem> radioItemOptional =
-                                        radioCommandGroupIdPathMap.get(Integer.parseInt(groupId)).stream()
-                                                .filter(r -> r.getCommand().equals(pushedCommandMap.get(groupId)))
-                                                .findAny();
-                                radioItemOptional.ifPresent(this::relayCommand);
-                            });
-                }).send();
-    };
+    private final Runnable getRadioPulls;
 
     private final FlyableUnitService flyableUnitService;
 
-    public RadioItemManager(FlyableUnitService flyableUnitService) {
+    public RadioItemManager(RequestTransmissionService requestTransmissionService, FlyableUnitService flyableUnitService) {
+        this.requestTransmissionService = requestTransmissionService;
         this.flyableUnitService = flyableUnitService;
+
+        this.getRadioPulls = () -> {
+            requestTransmissionService.send(
+                    new ServerDataRequest(LuaScripts.load("radio/pull_radio_commands.lua"))
+                            .addProcessable(s -> {
+                                if(!s.equals("[]"))
+                                    System.out.println(s);
+
+                                Type pushedCommandMapType = new TypeToken<Map<String, List<String>>>() {}.getType();
+                                Map<String, List<String>> pushedCommandMap = gson.fromJson(s, pushedCommandMapType);
+
+                                pushedCommandMap.keySet()
+                                        .forEach(groupId -> {
+                                            // TODO -> send to a blocking queue for worker
+                                            Optional<RadioItem> radioItemOptional =
+                                                    radioCommandGroupIdPathMap.get(Integer.parseInt(groupId)).stream()
+                                                            .filter(r -> r.getCommand()
+                                                                    .equals(pushedCommandMap.get(groupId)))
+                                                            .findAny();
+                                            radioItemOptional.ifPresent(this::relayCommand);
+                                        });
+                            }));
+        };
     }
 
     @PostConstruct
@@ -71,7 +79,7 @@ public class RadioItemManager {
         controlPanelShutdownObservable = this::tearDown;
         controlPanelShutdownObservable.register();
 
-        log.info("Initialized RadioItemManager");
+        log.info("RadioItemManager Initialized");
     }
 
     // should only be set up once
@@ -79,7 +87,9 @@ public class RadioItemManager {
         // inject a lua table into mission runtime lua state
         // send a request to get all pulls every 100 milliseconds
         radioCommandGroupIdPathMap.clear();
-        new ServerDataRequest(LuaScripts.load("radio/radio_commands_init.lua")).send();
+        requestTransmissionService.send(
+                new ServerDataRequest(LuaScripts.load("radio/radio_commands_init.lua"))
+        );
 
         radioPullExecutorService = Executors.newSingleThreadScheduledExecutor();
         radioPullExecutorService.scheduleWithFixedDelay(getRadioPulls, 0, 1000, TimeUnit.MILLISECONDS);
@@ -96,7 +106,7 @@ public class RadioItemManager {
                 RadioItem testCommand1 = newRadioControl(id, "test command1", testMenu1);
                 testCommand1.setDescription("TRIGGER_WELCOME_MESSAGES");
                 testCommand1.setAvailability(Availability.REMOVE_PARENT);
-                testCommand1.setAction(() -> new TriggerMessage(id, "ok!").send());
+//                testCommand1.setAction(() -> new TriggerMessage(id, "ok!").send());
 
                 RadioItem testCommand2 = newRadioControl(id, "test command2", testMenu2);
                 testCommand2.setDescription("I DON'T KNOW!");
@@ -117,7 +127,7 @@ public class RadioItemManager {
         if(radioPullExecutorService != null) {
             radioPullExecutorService.shutdownNow();
         }
-        new ServerActionRequest("radio_commands = {}").send();
+        requestTransmissionService.send(new ServerActionRequest("radio_commands = {}"));
     }
 
     // match control by group id and path list?
@@ -150,28 +160,35 @@ public class RadioItemManager {
     public void addRadioControlAsMenu(RadioItem control) {
         String preparedLuaString = LuaScripts.loadAndPrepare("radio/add_radio_menu_by_group_id.lua",
                 control.getGroupId(), control.getName(), getParentTable(control));
-        new ServerDataRequest(preparedLuaString).send();
+
+        requestTransmissionService.send(new ServerDataRequest(preparedLuaString));
+
         radioCommandGroupIdPathMap.get(control.getGroupId()).add(control);
     }
 
     public void addRadioControlAsCommand(RadioItem control) {
         String preparedLuaString = LuaScripts.loadAndPrepare("radio/add_radio_command_by_group_id.lua",
                 control.getGroupId(), control.getName(), getParentTable(control));
-        new ServerDataRequest(preparedLuaString).send();
+
+        requestTransmissionService.send(new ServerDataRequest(preparedLuaString));
+
         radioCommandGroupIdPathMap.get(control.getGroupId()).add(control);
     }
 
     public void removeRadioControl(RadioItem control) {
         String preparedString = LuaScripts.loadAndPrepare("radio/remove_radio_item_by_group_id.lua",
                 control.getGroupId(), getPathTable(control));
-        new ServerDataRequest(preparedString).send();
+
+        requestTransmissionService.send(new ServerDataRequest(preparedString));
+
         radioCommandGroupIdPathMap.get(control.getGroupId()).remove(control);
     }
 
     public void sanitizeGroupRadioControl(int groupId) {
         String preparedString = LuaScripts.loadAndPrepare("radio/remove_radio_item_by_group_id.lua",
                 groupId, "nil");
-        new ServerDataRequest(preparedString).send();
+
+        requestTransmissionService.send(new ServerDataRequest(preparedString));
     }
 
     public RadioItem newRadioControl(int groupId, String name) {

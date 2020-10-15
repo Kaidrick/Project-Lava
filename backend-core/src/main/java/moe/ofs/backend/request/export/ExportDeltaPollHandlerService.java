@@ -3,7 +3,6 @@ package moe.ofs.backend.request.export;
 import moe.ofs.backend.domain.ExportObject;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.domain.LuaState;
-import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
 import moe.ofs.backend.request.*;
 import moe.ofs.backend.services.UpdatableService;
 import moe.ofs.backend.util.ConnectionManager;
@@ -13,16 +12,14 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Service("exportObjectDelta")
 public final class ExportDeltaPollHandlerService implements PollHandlerService {
 
     protected List<DataUpdateBundle> list;
+
+    private final RequestHandler requestHandler;
 
 //    private ExecutorService executorService;
 
@@ -48,7 +45,8 @@ public final class ExportDeltaPollHandlerService implements PollHandlerService {
     }
 
     @Autowired
-    public ExportDeltaPollHandlerService(UpdatableService<ExportObject> service) {
+    public ExportDeltaPollHandlerService(RequestHandler requestHandler, UpdatableService<ExportObject> service) {
+        this.requestHandler = requestHandler;
         this.service = service;
 
 //        executorService = Executors.newCachedThreadPool();
@@ -86,7 +84,7 @@ public final class ExportDeltaPollHandlerService implements PollHandlerService {
 
         }
 
-        Connection connection = RequestHandler.getInstance().getConnections().get(level);
+        Connection connection = requestHandler.getConnections().get(level);
         String s = connection.transmitAndReceive(ConnectionManager.fastPack(request));
 
 //        String s = ConnectionManager.fastPackThenSendAndGet(request);

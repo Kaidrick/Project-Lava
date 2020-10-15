@@ -30,7 +30,7 @@ public class UnitController implements Controller {
                 LuaScripts.loadAndPrepare("simcontroller/controller_set_task_for_unit.lua",
                         unit.getId(), gson.toJson(task)));
         System.out.println("request = " + request);
-        request.send();
+//        request.send();
     }
 
     @Override

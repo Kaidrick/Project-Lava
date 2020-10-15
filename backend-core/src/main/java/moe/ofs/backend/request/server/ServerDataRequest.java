@@ -6,6 +6,7 @@ import moe.ofs.backend.message.OperationPhase;
 import moe.ofs.backend.domain.Handle;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.request.Processable;
+import moe.ofs.backend.request.RequestInvalidStateException;
 import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.Resolvable;
 
@@ -67,7 +68,7 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
      */
     public String get() {
         if(!isSent()) {
-            send();
+            throw new RequestInvalidStateException("Request has never been sent and thus has no result.");
         }
         while(true) {
             if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {
@@ -93,35 +94,35 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
     public <T> T getAs(Class<T> type) {
         Gson gson = new Gson();
         if(!isSent()) {
-            send();
+            throw new RequestInvalidStateException("Request has never been sent and thus has no result.");
         }
         return gson.fromJson(get(), type);
     }
 
     public long getAsLong() {
         if(!isSent()) {
-            send();
+            throw new RequestInvalidStateException("Request has never been sent and thus has no result.");
         }
         return Long.parseLong(get());
     }
 
     public int getAsInt() {
         if(!isSent()) {
-            send();
+            throw new RequestInvalidStateException("Request has never been sent and thus has no result.");
         }
         return Integer.parseInt(get());
     }
 
     public double getAsDouble() {
         if(!isSent()) {
-            send();
+            throw new RequestInvalidStateException("Request has never been sent and thus has no result.");
         }
         return Double.parseDouble(get());
     }
 
     public boolean getAsBoolean() {
         if(!isSent()) {
-            send();
+            throw new RequestInvalidStateException("Request has never been sent and thus has no result.");
         }
         return Boolean.parseBoolean(get());
     }

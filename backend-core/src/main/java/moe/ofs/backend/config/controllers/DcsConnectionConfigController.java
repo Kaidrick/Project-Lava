@@ -19,11 +19,17 @@ import java.util.stream.Collectors;
 @RequestMapping("/config")
 public class DcsConnectionConfigController {
 
-    private final DcsScriptConfigManager manager = new DcsScriptConfigManager();
+    private final ConnectionManager connectionManager;
+
+    private final DcsScriptConfigManager configManager = new DcsScriptConfigManager();
+
+    public DcsConnectionConfigController(ConnectionManager connectionManager) {
+        this.connectionManager = connectionManager;
+    }
 
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public PortConfig getCurrentConfiguration() {
-        Map<Level, Integer> portMapping = ConnectionManager.getInstance().getPortOverrideMap();
+        Map<Level, Integer> portMapping = connectionManager.getPortOverrideMap();
         return PortConfig.builder()
                 .serverMainPort(portMapping.get(Level.SERVER))
                 .serverPollPort(portMapping.get(Level.SERVER_POLL))
@@ -37,7 +43,6 @@ public class DcsConnectionConfigController {
         log.info(config.toString());
 
         // set request handler connection port number
-        ConnectionManager connectionManager = ConnectionManager.getInstance();
         Map<Level, Integer> map = new HashMap<>();
 
         map.put(Level.SERVER, config.getServerMainPort());
@@ -47,7 +52,7 @@ public class DcsConnectionConfigController {
 
         connectionManager.setPortOverrideMap(map);
 
-        Map<Level, Integer> portMapping = ConnectionManager.getInstance().getPortOverrideMap();
+        Map<Level, Integer> portMapping = connectionManager.getPortOverrideMap();
         return PortConfig.builder()
                 .serverMainPort(portMapping.get(Level.SERVER))
                 .serverPollPort(portMapping.get(Level.SERVER_POLL))
@@ -58,22 +63,22 @@ public class DcsConnectionConfigController {
 
     @RequestMapping(value = "/script/install/{branch}", method = RequestMethod.GET)
     public void installScripts(@PathVariable String branch) {
-        manager.injectIntoHooks(Paths.get(branch));
-        manager.injectIntoExport(Paths.get(branch));
+        configManager.injectIntoHooks(Paths.get(branch));
+        configManager.injectIntoExport(Paths.get(branch));
     }
 
     @RequestMapping(value = "/script/uninstall/{branch}", method = RequestMethod.GET)
     public void uninstallScripts(@PathVariable String branch) {
-        manager.removeInjection(Paths.get(branch));
+        configManager.removeInjection(Paths.get(branch));
     }
 
     @RequestMapping(value = "/script/branch", method = RequestMethod.GET)
     public List<String> getBranches() throws IOException {
-        return manager.getUserDcsWritePaths().stream().map(path -> path.getName(path.getNameCount() - 1).toString()).collect(Collectors.toList());
+        return configManager.getUserDcsWritePaths().stream().map(path -> path.getName(path.getNameCount() - 1).toString()).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/script/branch/{name}", method = RequestMethod.POST)
     public boolean isInjected(@PathVariable String name) {
-        return manager.isInjectionConfigured(Paths.get(name));
+        return configManager.isInjectionConfigured(Paths.get(name));
     }
 }
