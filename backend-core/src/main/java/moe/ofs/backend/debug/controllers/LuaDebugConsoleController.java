@@ -1,5 +1,6 @@
 package moe.ofs.backend.debug.controllers;
 
+import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.debug.model.LuaCommand;
 import moe.ofs.backend.request.RequestToServer;
@@ -14,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("/lua")
+@Api(
+        tags = "DCS Lua state debug APIs",
+        value = "Provides APIs to loadstring in different DCS Lua environment")
 public class LuaDebugConsoleController {
 
     private final RequestTransmissionService requestTransmissionService;
@@ -32,7 +36,13 @@ public class LuaDebugConsoleController {
      * @return the String value that is returned from the dcs Lua server.
      */
     @RequestMapping(value = "/debug", method = RequestMethod.POST)
-    public String sendDebugString(@RequestBody LuaCommand luaCommand) {
+    @ApiOperation(value = "Sends Lua string to DCS and return a result if necessary")
+    public String sendDebugString(
+            @RequestBody @ApiParam(value = "JSON string that contains the string to be loaded in specified Lua state",
+                    examples = @Example({@ExampleProperty(
+                            mediaType = "application/json",
+                            value = "{'luaString': 'return env.mission.theatre, 'level': 0, 'timeStamp': '2020-10-15T13:07:52.110Z'}"
+            )})) LuaCommand luaCommand) {
 
         log.info(luaCommand.toString());
 
