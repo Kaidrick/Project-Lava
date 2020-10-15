@@ -195,9 +195,14 @@ public class BackgroundTask {
             selector = "type = 'change'")
     public void connectionStatusChangeListener(TextMessage textMessage) throws JMSException {
         Gson gson = new Gson();
-        ConnectionStatusChange change = gson.fromJson(textMessage.getText(), ConnectionStatusChange.class);
-        setStarted(change.getStatus() == ConnectionStatus.CONNECTED);
-        log.info("Connection Status Change: {} at {}", change.getStatus(), change.getTimestamp().getEpochSecond());
+        if (textMessage != null && textMessage.getText() != null) {
+            ConnectionStatusChange change = gson.fromJson(textMessage.getText(), ConnectionStatusChange.class);
+            setStarted(change.getStatus() == ConnectionStatus.CONNECTED);
+            log.info("Connection Status Change: {} at {}", change.getStatus(), change.getTimestamp().getEpochSecond());
+        } else {
+            log.warn("what is this a null message?");
+        }
+
     }
 
     public AtomicBoolean isHalted = new AtomicBoolean(false);
@@ -345,7 +350,9 @@ public class BackgroundTask {
         // this flag can only be reset by mission restart event handler
 
         // lua must return a string
-        boolean flag = new ServerDataRequest("return tostring(lava_mission_persistent_initialization)").getAsBoolean();
+        boolean flag = ((ServerDataRequest) requestTransmissionService.send(
+                new ServerDataRequest("return tostring(lava_mission_persistent_initialization)")))
+                .getAsBoolean();
 
         if(!flag) {
             log.info("injecting mission persistence");

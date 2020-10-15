@@ -44,6 +44,8 @@ public final class ConnectionManager implements Configurable {
 
         instance = this;
 
+        refreshConfig();
+
         // check whether an overridden port map exists, if not, set request handler port map to default port map
         requestHandler.updatePortMap(getPortOverrideMap());
     }

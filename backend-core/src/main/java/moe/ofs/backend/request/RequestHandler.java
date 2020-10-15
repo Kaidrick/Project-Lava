@@ -108,7 +108,7 @@ public final class RequestHandler {
         this.trouble.set(trouble);
 
         sender.sendToTopicAsJson("dcs.connection",
-                new ConnectionStatusChange(trouble ? ConnectionStatus.CONNECTED : ConnectionStatus.DISCONNECTED),
+                new ConnectionStatusChange(trouble ? ConnectionStatus.DISCONNECTED : ConnectionStatus.CONNECTED),
                 "change");
     }
 
