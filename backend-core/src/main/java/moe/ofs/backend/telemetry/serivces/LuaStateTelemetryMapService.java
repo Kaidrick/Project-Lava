@@ -46,12 +46,14 @@ public class LuaStateTelemetryMapService
                 new ServerDataRequest(RequestToServer.State.DEBUG,
                         LuaScripts.load("telemetry/memory_usage.lua"))
         )).get());
-        double exportStateLuaMem = Double.parseDouble(((ServerDataRequest) requestTransmissionService.send(
+        double exportStateLuaMem = Double.parseDouble(((ExportDataRequest) requestTransmissionService.send(
                 new ExportDataRequest(LuaScripts.load("telemetry/memory_usage.lua"))
         )).get());
+
         builder.missionStateLuaMemory(missionStateLuaMem)
                .hookStateLuaMemory(hookStateLuaMem)
-               .exportStateLuaMemory(exportStateLuaMem);
+               .exportStateLuaMemory(exportStateLuaMem)
+               .timestamp(Instant.now());
 
         TelemetryData data = builder.build();
 
