@@ -10,6 +10,7 @@ import moe.ofs.backend.request.RequestInvalidStateException;
 import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.Resolvable;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,10 +71,20 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
         if(!isSent()) {
             throw new RequestInvalidStateException("Request has never been sent and thus has no result.");
         }
+        Instant entryTime = Instant.now();
         while(true) {
             if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {
                 if(result != null) {
+                    if (result.isEmpty()) {
+                        return "<LUA EMPTY STRING>";
+                    }
+
                     return result;
+                } else {
+//                    System.out.println(entryTime + ", " + Instant.now());
+                    if (Instant.now().minusMillis(2000).isAfter(entryTime)) {
+                        return "<NO RESULT OR LUA TIMED OUT>";
+                    }
                 }
             } else {
                 // return something that indicates bad operation phase

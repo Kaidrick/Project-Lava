@@ -6,6 +6,7 @@ import moe.ofs.backend.request.BaseRequest;
 import moe.ofs.backend.request.Processable;
 import moe.ofs.backend.request.Resolvable;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,9 +36,18 @@ public class ExportDataRequest extends BaseRequest implements Resolvable {
      * @return result
      */
     public String get() {
+        Instant entryTime = Instant.now();
         while(true) {
             if(result != null) {
+                if (result.isEmpty()) {
+                    return "<LUA EMPTY STRING>";
+                }
+
                 return result;
+            } else {  // if result is null, but timeout is reached
+                if (Instant.now().minusMillis(2000).isAfter(entryTime)) {
+                    return "<NO RESULT OR LUA TIMED OUT>";
+                }
             }
         }
     }
