@@ -2,8 +2,8 @@ package moe.ofs.backend.domain;
 
 public enum Level {
 
-    SERVER(3010), SERVER_POLL(3011),
-    EXPORT(3012), EXPORT_POLL(3013);
+    SERVER(30100), SERVER_POLL(30110),
+    EXPORT(30120), EXPORT_POLL(30130);
 
     private int port;
 

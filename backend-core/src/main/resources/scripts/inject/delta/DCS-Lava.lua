@@ -8,9 +8,6 @@ local LAVA = {}
 local socket = require("socket")
 local JSON = require("JSON")
 
--- test
-local inspect = require("inspect")
-
 -- Constants
 local PORT = PORT or %d
 local POLL_PORT = POLL_PORT or %d
