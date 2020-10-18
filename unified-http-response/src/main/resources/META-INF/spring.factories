@@ -1,0 +1,2 @@
+#org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+#  moe.ofs.backend.http.GlobalDefaultProperties

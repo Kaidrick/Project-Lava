@@ -83,6 +83,12 @@
         </dependency>
 
         <dependency>
+            <groupId>moe.ofs</groupId>
+            <artifactId>unified-http-response</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-activemq</artifactId>
         </dependency>

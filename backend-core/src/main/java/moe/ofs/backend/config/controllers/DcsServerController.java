@@ -18,4 +18,6 @@ public class DcsServerController {
 
     // background task service halt
 
+    // lava system shutdown: shutdown background tasks and task dispatcher, then shutdown spring boot starter actuator
+
 }

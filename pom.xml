@@ -10,6 +10,7 @@
         <module>plugin-builder-maven-plugin</module>
         <module>backend-data</module>
         <module>backend-log</module>
+        <module>unified-http-response</module>
 <!--        <module>backend-gui</module>-->
     </modules>
 
