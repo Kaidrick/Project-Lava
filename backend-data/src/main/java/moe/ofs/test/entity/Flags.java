@@ -1,4 +1,4 @@
-package moe.ofs.backend.domain;
+package moe.ofs.test.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -11,29 +11,30 @@ import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
+/**
+ * <p>
+ *
+ * </p>
+ * @author Tyler
+ * @since 2020-10-19
+ */
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("LAVA_SYSTEM_LOG")
-@ApiModel(value = "LavaSystemLog对象", description = "")
-public class LavaSystemLog implements Serializable {
+@TableName("FLAGS")
+@ApiModel(value = "Flags对象", description = "")
+public class Flags implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "ID", type = IdType.ASSIGN_ID)
-    private Integer id;
+    private Long id;
 
-    @TableField("NAME")
-    private String name;
+    @TableField("VALUE")
+    private Boolean value;
 
-    @TableField("MESSAGE")
-    private String message;
-
-    @TableField("SOURCE_NAME")
-    private String sourceName;
-
-    @TableField("LEVEL")
-    private String level;
+    @TableField("KEY")
+    private String key;
 
 
 }

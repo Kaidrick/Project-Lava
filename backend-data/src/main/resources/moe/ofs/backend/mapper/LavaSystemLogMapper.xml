@@ -3,19 +3,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="moe.ofs.backend.mapper.LavaSystemLogMapper">
 
-    <resultMap id="lavaSystemLogMap" type="moe.ofs.backend.domain.LavaSystemLog">
-        <id property="id" column="id" />
-        <result property="level" column="level" />
-        <result property="message" column="message" />
-        <result property="sourceName" column="source_name" />
-        <result property="date" column="date" jdbcType="TIMESTAMP" />
+    <resultMap id="lavaSystemLogMap" type="moe.ofs.backend.dao.LavaSystemLogDao">
+        <id property="id" column="id"/>
+        <result property="level" column="level"/>
+        <result property="message" column="message"/>
+        <result property="sourceName" column="source_name"/>
+        <result property="date" column="date" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <select id="selectById" resultMap="lavaSystemLogMap">
-        select * from lava_system_log where id = #{id}
-    </select>
-
-    <select id="selectAll" resultType="moe.ofs.backend.domain.LavaSystemLog">
-        select id, level, message, source_name, date from lava_system_log
-    </select>
 </mapper>
