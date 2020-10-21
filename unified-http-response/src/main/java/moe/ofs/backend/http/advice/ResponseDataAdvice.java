@@ -15,6 +15,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 
 @RestControllerAdvice
@@ -52,13 +53,22 @@ public class ResponseDataAdvice implements ResponseBodyAdvice<Object> {
             return Response.success();
         }
 
+//        System.out.println("serverHttpRequest.getURI().getPath() = " + serverHttpRequest.getURI().getPath());
+
+        if (serverHttpRequest.getURI().getPath().startsWith("/atlas")) {
+            return o;
+        }
+
         if (serverHttpRequest.getURI().getPath().equals("/error")) {
             // check source
             if (o instanceof LinkedHashMap) {
-                LinkedHashMap response = (LinkedHashMap<String, Object>) o;
-                return Response.fail(response);
+                LinkedHashMap<String, Object> response = (LinkedHashMap<String, Object>) o;
+                Response<?> failResponse = Response.fail(null);
+                failResponse.setMessage((String) response.get("message"));
+                failResponse.setStatus((int) response.get("status"));
+                System.out.println("response = " + response);
+                return failResponse;
             }
-
         }
 
         // o is instanceof ConmmonResponse -> return o
