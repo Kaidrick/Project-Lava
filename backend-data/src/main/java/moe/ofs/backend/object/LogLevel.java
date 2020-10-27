@@ -1,6 +1,6 @@
-package moe.ofs.backend.logmanager;
+package moe.ofs.backend.object;
 
-public enum Level {
+public enum LogLevel {
     ERROR("log-message-error"), INFO("log-message-info"), WARN("log-message-warn"),
     EVENT("log-message-event"), ADDON("log-message-addon"), DEBUG("log-message-debug");
 
@@ -10,7 +10,7 @@ public enum Level {
         return style;
     }
 
-    Level(String style) {
+    LogLevel(String style) {
         this.style = style;
     }
 }

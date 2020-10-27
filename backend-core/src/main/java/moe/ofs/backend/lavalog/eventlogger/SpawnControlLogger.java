@@ -1,8 +1,8 @@
-package moe.ofs.backend.function.unitwiselog.eventlogger;
+package moe.ofs.backend.lavalog.eventlogger;
 
 import moe.ofs.backend.domain.ExportObject;
-import moe.ofs.backend.function.unitwiselog.LogControl;
-import moe.ofs.backend.logmanager.Level;
+import moe.ofs.backend.lavalog.LavaLog;
+import moe.ofs.backend.object.LogLevel;
 import org.springframework.jms.annotation.JmsListener;
 
 import javax.jms.JMSException;
@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 public class SpawnControlLogger {
 
-    private final LogControl.Logger logger = LogControl.getLogger(SpawnControlLogger.class);
+    private final LavaLog.Logger logger = LavaLog.getLogger(SpawnControlLogger.class);
 
     @JmsListener(destination = "unit.spawncontrol", containerFactory = "jmsListenerContainerFactory",
             selector = "type = 'spawn'")
@@ -21,7 +21,7 @@ public class SpawnControlLogger {
 
             ExportObject exportObject = (ExportObject) object;
 
-            logger.log(Level.INFO, String.format("Unit Spawn: %s (RuntimeID: %s) - %s Type",
+            logger.log(LogLevel.INFO, String.format("Unit Spawn: %s (RuntimeID: %s) - %s Type",
                     exportObject.getUnitName(), exportObject.getRuntimeID(), exportObject.getName()));
         }
     }
@@ -34,7 +34,7 @@ public class SpawnControlLogger {
 
             ExportObject exportObject = (ExportObject) object;
 
-            logger.log(Level.INFO, String.format("Unit Despawn: %s (RuntimeID: %s) - %s Type",
+            logger.log(LogLevel.INFO, String.format("Unit Despawn: %s (RuntimeID: %s) - %s Type",
                     exportObject.getUnitName(), exportObject.getRuntimeID(), exportObject.getName()));
         }
     }

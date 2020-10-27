@@ -2,7 +2,7 @@ package moe.ofs.backend.services.jpa;
 
 import com.google.common.collect.Sets;
 import moe.ofs.backend.domain.ExportObject;
-import moe.ofs.backend.function.unitwiselog.LogControl;
+import moe.ofs.backend.lavalog.LavaLog;
 import moe.ofs.backend.handlers.ExportUnitDespawnObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 import moe.ofs.backend.repositories.ExportObjectRepository;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class ExportObjectBulkJpaService extends AbstractJpaService<ExportObject, ExportObjectRepository>
         implements ExportObjectService {
 
-    private final LogControl.Logger logger = LogControl.getLogger(ExportObjectBulkJpaService.class);
+    private final LavaLog.Logger logger = LavaLog.getLogger(ExportObjectBulkJpaService.class);
 
     public ExportObjectBulkJpaService(ExportObjectRepository repository) {
         super(repository);
@@ -31,11 +31,13 @@ public class ExportObjectBulkJpaService extends AbstractJpaService<ExportObject,
     }
 
     @Override
-    public void update(ExportObject updateObject) {
+    public ExportObject update(ExportObject updateObject) {
         // fetched from db
         ExportObject recordObject = repository.findByRuntimeID(updateObject.getRuntimeID())
                 .orElseThrow(() -> new RuntimeException("Unable to find ExportObject with RuntimeID: " +
                         updateObject.getRuntimeID()));
+
+        ExportObject previous = new ExportObject(recordObject);
 
         if(updatable(updateObject, recordObject)) {
             // update recordObject with new data
@@ -50,6 +52,8 @@ public class ExportObjectBulkJpaService extends AbstractJpaService<ExportObject,
 
             // ExportUnitDataChangedObservable? is it necessary? for what will it be used?
         }
+
+        return previous;
     }
 
     @Override

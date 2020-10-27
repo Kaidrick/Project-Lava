@@ -20,7 +20,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @LuaState(Level.EXPORT_POLL)
 @Entity
-@Table(name = "export_objects")
+@Table(name = "export_object")
 public final class ExportObject extends BaseEntity implements Serializable {
     @Column(name = "own_bank")
     @SerializedName("Bank")
@@ -63,9 +63,9 @@ public final class ExportObject extends BaseEntity implements Serializable {
     private String unitName;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="key")
-    @Column(name="value")
-    @CollectionTable(name="flags", joinColumns=@JoinColumn(name="id"))
+    @MapKeyColumn(name="status_name")
+    @Column(name="is_active")
+    @CollectionTable(name="object_status", joinColumns=@JoinColumn(name="id"))
     @SerializedName("Flags")
     private Map<String, Boolean> flags;
 
@@ -94,9 +94,9 @@ public final class ExportObject extends BaseEntity implements Serializable {
     private Vector3D position;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="key")
-    @Column(name="value")
-    @CollectionTable(name="type", joinColumns=@JoinColumn(name="id"))
+    @MapKeyColumn(name="attribute_key")
+    @Column(name="attribute_value")
+    @CollectionTable(name="object_attribute", joinColumns=@JoinColumn(name="id"))
     @SerializedName("Type")
     private Map<String, Integer> type;
 

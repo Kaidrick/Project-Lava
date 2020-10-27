@@ -85,7 +85,7 @@ class GeoPositionsTest {
         pc.setModuleName("test");
         pc.setParent("moe.ofs");
         pc.setEntity("entity");
-        pc.setMapper("dao");
+        pc.setMapper("mapper");
         pc.setService("service");
         pc.setController("controller");
         mpg.setPackageInfo(pc);

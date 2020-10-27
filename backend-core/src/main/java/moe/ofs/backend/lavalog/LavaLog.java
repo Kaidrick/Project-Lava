@@ -1,23 +1,23 @@
-package moe.ofs.backend.function.unitwiselog;
+package moe.ofs.backend.lavalog;
 
 import moe.ofs.backend.jms.Sender;
-import moe.ofs.backend.logmanager.Level;
-import moe.ofs.backend.logmanager.LogEntry;
+import moe.ofs.backend.object.LogLevel;
+import moe.ofs.backend.domain.LogEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 
 @Component
-public class LogControl {
+public class LavaLog {
 
     public static final String TOPIC = "backend.entry";
 
     private static Sender sender;
 
     @Autowired
-    public LogControl(Sender baseSender) {
-        LogControl.sender = baseSender;
+    public LavaLog(Sender sender) {
+        LavaLog.sender = sender;
     }
 
     public static class Logger {
@@ -29,44 +29,44 @@ public class LogControl {
             this.source = source;
         }
 
-        public void log(Level level, String string) {
+        public void log(LogLevel logLevel, String string) {
             ZonedDateTime zonedDateTime = ZonedDateTime.now();
 
             LogEntry logEntry = LogEntry.builder()
-                    .level(level)
+                    .logLevel(logLevel)
                     .message(string)
                     .source(source)
-                    .time(zonedDateTime).build();
+                    .time(zonedDateTime.toString()).build();
 
             sender.sendToTopic(TOPIC, logEntry, null);
         }
 
         public void log(String string) {
-            log(Level.INFO, string);
+            log(LogLevel.INFO, string);
         }
 
         public void debug(String message) {
-            log(Level.DEBUG, message);
+            log(LogLevel.DEBUG, message);
         }
 
         public void addon(String message) {
-            log(Level.ADDON, message);
+            log(LogLevel.ADDON, message);
         }
 
         public void info(String message) {
-            log(Level.INFO, message);
+            log(LogLevel.INFO, message);
         }
 
         public void error(String message) {
-            log(Level.WARN, message);
+            log(LogLevel.WARN, message);
         }
 
         public void event(String message) {
-            log(Level.EVENT, message);
+            log(LogLevel.EVENT, message);
         }
 
         public void warn(String message) {
-            log(Level.WARN, message);
+            log(LogLevel.WARN, message);
         }
     }
 

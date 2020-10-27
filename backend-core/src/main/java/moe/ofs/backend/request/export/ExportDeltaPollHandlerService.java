@@ -1,5 +1,7 @@
 package moe.ofs.backend.request.export;
 
+import moe.ofs.backend.connector.model.DcsExportObjectDataUpdateBundle;
+import moe.ofs.backend.connector.services.ExportObjectDataService;
 import moe.ofs.backend.domain.ExportObject;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.domain.LuaState;
@@ -23,6 +25,8 @@ public final class ExportDeltaPollHandlerService implements PollHandlerService {
 
 //    private ExecutorService executorService;
 
+    private final ExportObjectDataService exportObjectDataService;
+
     protected int flipCount;
 
     protected int flipThreshold = 20;
@@ -45,8 +49,9 @@ public final class ExportDeltaPollHandlerService implements PollHandlerService {
     }
 
     @Autowired
-    public ExportDeltaPollHandlerService(RequestHandler requestHandler, UpdatableService<ExportObject> service) {
+    public ExportDeltaPollHandlerService(RequestHandler requestHandler, ExportObjectDataService exportObjectDataService, UpdatableService<ExportObject> service) {
         this.requestHandler = requestHandler;
+        this.exportObjectDataService = exportObjectDataService;
         this.service = service;
 
 //        executorService = Executors.newCachedThreadPool();
@@ -97,8 +102,14 @@ public final class ExportDeltaPollHandlerService implements PollHandlerService {
                 List<JsonRpcResponse<List<DataUpdateBundle>>> jsonRpcResponseList =
                         ConnectionManager.parseJsonResponse(s, DataUpdateBundle.class);
 
+                List<JsonRpcResponse<List<DcsExportObjectDataUpdateBundle>>> testResponseList =
+                        ConnectionManager.parseJsonResponse(s, DcsExportObjectDataUpdateBundle.class);
+
                 List<DataUpdateBundle> bundleList = ConnectionManager.flattenResponse(jsonRpcResponseList);
                 list.addAll(bundleList);
+
+                List<DcsExportObjectDataUpdateBundle> testBundleResponseList = ConnectionManager.flattenResponse(testResponseList);
+//                System.out.println("testBundleResponseList.size() = " + testBundleResponseList.size());
 
                 jsonRpcResponseList.forEach(r -> {
                     if(r.getResult() != null && r.getResult().isIs_tail()) {

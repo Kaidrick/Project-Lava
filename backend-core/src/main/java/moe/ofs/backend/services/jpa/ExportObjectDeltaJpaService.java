@@ -1,11 +1,10 @@
 package moe.ofs.backend.services.jpa;
 
 import moe.ofs.backend.domain.ExportObject;
-import moe.ofs.backend.function.unitwiselog.LogControl;
+import moe.ofs.backend.lavalog.LavaLog;
 import moe.ofs.backend.handlers.ExportUnitDespawnObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 import moe.ofs.backend.handlers.ExportUnitUpdateObservable;
-import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.repositories.ExportObjectRepository;
 import moe.ofs.backend.services.ExportObjectService;
 import org.springframework.context.annotation.Primary;
@@ -19,14 +18,10 @@ import java.util.Optional;
 public class ExportObjectDeltaJpaService extends AbstractJpaService<ExportObject, ExportObjectRepository>
         implements ExportObjectService {
 
-    private final Sender sender;
+    private final LavaLog.Logger logger = LavaLog.getLogger(ExportObjectDeltaJpaService.class);
 
-    private final LogControl.Logger logger = LogControl.getLogger(ExportObjectDeltaJpaService.class);
-
-    public ExportObjectDeltaJpaService(ExportObjectRepository repository, Sender sender) {
+    public ExportObjectDeltaJpaService(ExportObjectRepository repository) {
         super(repository);
-
-        this.sender = sender;
     }
 
     @Override
@@ -36,9 +31,9 @@ public class ExportObjectDeltaJpaService extends AbstractJpaService<ExportObject
     }
 
     @Override
-    public void update(ExportObject deltaObject) {
+    public ExportObject update(ExportObject deltaObject) {
 
-        repository.findByRuntimeID(deltaObject.getRuntimeID()).ifPresent(record -> {
+        return repository.findByRuntimeID(deltaObject.getRuntimeID()).map(record -> {
 
             ExportObject previous = new ExportObject(record);
 
@@ -70,14 +65,17 @@ public class ExportObjectDeltaJpaService extends AbstractJpaService<ExportObject
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        });
+
+            return previous;
+
+        }).get();
     }
 
     @Override
     public void add(ExportObject deltaObject) {
         repository.save(deltaObject);
         ExportUnitSpawnObservable.invokeAll(deltaObject);
-        sender.sendToTopic("unit.spawncontrol", deltaObject, "spawn");
+//        sender.sendToTopic("unit.spawncontrol", deltaObject, "spawn");
     }
 
     @Override
@@ -86,7 +84,7 @@ public class ExportObjectDeltaJpaService extends AbstractJpaService<ExportObject
         optional.ifPresent(obsoleteObject -> {
             ExportUnitDespawnObservable.invokeAll(obsoleteObject);
             repository.delete(optional.get());
-            sender.sendToTopic("unit.spawncontrol", deltaObject, "despawn");
+//            sender.sendToTopic("unit.spawncontrol", deltaObject, "despawn");
         });
     }
 

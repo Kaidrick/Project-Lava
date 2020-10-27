@@ -2,13 +2,13 @@ package moe.ofs.backend.request.export;
 
 import moe.ofs.backend.domain.Handle;
 import moe.ofs.backend.domain.Level;
-import moe.ofs.backend.function.unitwiselog.LogControl;
+import moe.ofs.backend.lavalog.LavaLog;
 import moe.ofs.backend.request.BaseRequest;
 import moe.ofs.backend.request.Resolvable;
 
 public class ExportExecRequest extends BaseRequest implements Resolvable {
 
-    private final LogControl.Logger logger = LogControl.getLogger(ExportExecRequest.class);
+    private final LavaLog.Logger logger = LavaLog.getLogger(ExportExecRequest.class);
 
     private transient String luaString;
 

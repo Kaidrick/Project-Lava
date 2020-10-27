@@ -9,7 +9,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 @Component
-//@Aspect
+@Aspect
 public class ExportObjectLoggingAspect {
 
     private final Sender sender;
@@ -19,12 +19,16 @@ public class ExportObjectLoggingAspect {
     }
 
     @Pointcut("execution(public void moe.ofs.backend.services.jpa.*.remove(moe.ofs.backend.domain.ExportObject))")
-    public void logObsoleteExportData() {}
+    public void exportObjectDataRemove() {}
 
     @Pointcut("execution(public void moe.ofs.backend.services.jpa.*.add(moe.ofs.backend.domain.ExportObject))")
-    public void logNewExportData() {}
+    public void exportObjectDataAdd() {}
 
-    @After("logNewExportData()")
+    @Pointcut("execution(public void moe.ofs.backend.services.jpa.ExportObjectDeltaJpaService." +
+            "update(moe.ofs.backend.domain.ExportObject))")
+    public void exportObjectDataUpdate() {}  // example of export object update listener
+
+    @After("exportObjectDataAdd()")
     public void logExportUnitSpawn(JoinPoint joinPoint) {
         Object object = joinPoint.getArgs()[0];
         if(object instanceof ExportObject) {
@@ -32,12 +36,17 @@ public class ExportObjectLoggingAspect {
         }
     }
 
-    @After("logObsoleteExportData()")
+    @After("exportObjectDataRemove()")
     private void logExportUnitDespawn(JoinPoint joinPoint) {
         Object object = joinPoint.getArgs()[0];
         if(object instanceof ExportObject) {
             sender.sendToTopic("unit.spawncontrol", (ExportObject) object, "despawn");
         }
+    }
+
+    @After("exportObjectDataUpdate()")
+    private void logExportObjectDataUpdate() {
+
     }
 
 }

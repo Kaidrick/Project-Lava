@@ -73,7 +73,8 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
         }
         Instant entryTime = Instant.now();
         while(true) {
-            if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {
+            OperationPhase phase = BackgroundTask.getCurrentTask().getPhase();
+            if (phase == OperationPhase.RUNNING || phase == OperationPhase.LOADING) {
                 if(result != null) {
                     if (result.isEmpty()) {
                         return "<LUA EMPTY STRING>";
@@ -90,6 +91,7 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
                 // return something that indicates bad operation phase
                 System.out.println("ServerDataRequest.get -> bad operation phase -> " +
                         BackgroundTask.getCurrentTask().getPhase().toString());
+                System.out.println(luaString);
                 return null;
             }
 

@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
-import moe.ofs.backend.function.unitwiselog.LogControl;
+import moe.ofs.backend.lavalog.LavaLog;
 import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.message.ConnectionStatusChange;
 import moe.ofs.backend.message.connection.ConnectionStatus;
@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
 @Component
 public final class RequestHandler {
 
-    private final LogControl.Logger logger = LogControl.getLogger(RequestHandler.class);
+    private final LavaLog.Logger logger = LavaLog.getLogger(RequestHandler.class);
 
     private final Sender sender;
 

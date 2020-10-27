@@ -1,4 +1,4 @@
-package moe.ofs.backend.function.unitwiselog.eventlogger;
+package moe.ofs.backend.lavalog.eventlogger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

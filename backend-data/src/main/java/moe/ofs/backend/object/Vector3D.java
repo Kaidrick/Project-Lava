@@ -1,9 +1,6 @@
 package moe.ofs.backend.object;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import moe.ofs.backend.domain.BaseEntity;
 import moe.ofs.backend.domain.ExportObject;
 

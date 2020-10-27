@@ -1,8 +1,8 @@
-package moe.ofs.backend.function.unitwiselog.eventlogger;
+package moe.ofs.backend.lavalog.eventlogger;
 
 import moe.ofs.backend.domain.PlayerInfo;
-import moe.ofs.backend.function.unitwiselog.LogControl;
-import moe.ofs.backend.logmanager.Level;
+import moe.ofs.backend.lavalog.LavaLog;
+import moe.ofs.backend.object.LogLevel;
 import org.springframework.jms.annotation.JmsListener;
 
 import javax.jms.JMSException;
@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 public class PlayerConnectionLogger {
 
-    private final LogControl.Logger logger = LogControl.getLogger(SpawnControlLogger.class);
+    private final LavaLog.Logger logger = LavaLog.getLogger(SpawnControlLogger.class);
 
     @JmsListener(destination = "player.connection", containerFactory = "jmsListenerContainerFactory",
             selector = "type = 'connect'")
@@ -21,7 +21,7 @@ public class PlayerConnectionLogger {
 
             PlayerInfo playerInfo = (PlayerInfo) object;
 
-            logger.log(Level.INFO, String.format("Player <%s> connected from <%s> with <%s> client; ping %sms",
+            logger.log(LogLevel.INFO, String.format("Player <%s> connected from <%s> with <%s> client; ping %sms",
                     playerInfo.getName(), playerInfo.getIpaddr(), playerInfo.getLang(), playerInfo.getPing()));
         }
     }
@@ -34,7 +34,7 @@ public class PlayerConnectionLogger {
 
             PlayerInfo playerInfo = (PlayerInfo) object;
 
-            logger.log(Level.INFO, String.format("Player <%s> disconnected from server",
+            logger.log(LogLevel.INFO, String.format("Player <%s> disconnected from server",
                     playerInfo.getName()));
         }
     }
@@ -49,7 +49,7 @@ public class PlayerConnectionLogger {
             PlayerInfo prev = playerInfoArray[0];
             PlayerInfo curr = playerInfoArray[1];
 
-            logger.log(Level.INFO, String.format("Player <%s> slot changed from %s to %s",
+            logger.log(LogLevel.INFO, String.format("Player <%s> slot changed from %s to %s",
                     curr.getName(), prev.getSlot(), curr.getSlot()));
         }
     }

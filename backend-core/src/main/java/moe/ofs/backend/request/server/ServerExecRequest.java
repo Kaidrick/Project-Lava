@@ -2,7 +2,7 @@ package moe.ofs.backend.request.server;
 
 import moe.ofs.backend.domain.Handle;
 import moe.ofs.backend.domain.Level;
-import moe.ofs.backend.function.unitwiselog.LogControl;
+import moe.ofs.backend.lavalog.LavaLog;
 import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.Resolvable;
 
@@ -17,7 +17,7 @@ public class ServerExecRequest extends RequestToServer implements Resolvable {
         state = State.SERVER;
     }
 
-    private final LogControl.Logger logger = LogControl.getLogger(ServerExecRequest.class);
+    private final LavaLog.Logger logger = LavaLog.getLogger(ServerExecRequest.class);
 
     private transient String env;
     private transient String luaString;

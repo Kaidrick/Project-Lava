@@ -1,17 +1,17 @@
 package moe.ofs.backend.exceptions;
 
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.dao.LavaSystemLogDao;
-import moe.ofs.backend.domain.LavaSystemLog;
+import moe.ofs.backend.dao.DcsExportObjectDao;
+import moe.ofs.backend.dao.PlayerInfoVoDao;
+import moe.ofs.backend.domain.DcsExportObject;
 import moe.ofs.backend.domain.Level;
+import moe.ofs.backend.domain.PlayerInfoVo;
 import moe.ofs.backend.object.PortConfig;
 import moe.ofs.backend.util.ConnectionManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -20,13 +20,17 @@ import java.util.Map;
 @Slf4j
 public class ExceptionTestController {
 
-    private final LavaSystemLogDao lavaSystemLogDao;
-
     private final ConnectionManager connectionManager;
 
-    public ExceptionTestController(LavaSystemLogDao lavaSystemLogDao, ConnectionManager connectionManager) {
-        this.lavaSystemLogDao = lavaSystemLogDao;
+    private final PlayerInfoVoDao playerInfoVoDao;
+    private final DcsExportObjectDao dcsExportObjectDao;
+
+    public ExceptionTestController(ConnectionManager connectionManager,
+                                   PlayerInfoVoDao playerInfoVoDao,
+                                   DcsExportObjectDao dcsExportObjectDao) {
         this.connectionManager = connectionManager;
+        this.playerInfoVoDao = playerInfoVoDao;
+        this.dcsExportObjectDao = dcsExportObjectDao;
     }
 
     @RequestMapping(value = "/test", method = RequestMethod.POST)
@@ -53,9 +57,18 @@ public class ExceptionTestController {
         return new ResponseEntity<>(config, HttpStatus.UNAUTHORIZED);
     }
 
-    @RequestMapping(value = "/log", method = RequestMethod.GET)
-    public LavaSystemLog interestingTest() {
-        System.out.println(LavaSystemLog.class);
-        return lavaSystemLogDao.selectById(1L);
+    @GetMapping("/player")
+    public PlayerInfoVo getPlayerTest() {
+        return playerInfoVoDao.getOneByNetIdAndName(1, "PILOT_255959");
+    }
+
+    @GetMapping("/player/{id}")
+    public PlayerInfoVo getPlayerTest(@PathVariable Long id) {
+        return playerInfoVoDao.selectById(id);
+    }
+
+    @GetMapping("object/{id}")
+    public DcsExportObject getObjectTest(@PathVariable Long id) {
+        return dcsExportObjectDao.findWithPosById(id);
     }
 }

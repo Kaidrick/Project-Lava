@@ -2,8 +2,8 @@ package moe.ofs.backend.services.map;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import moe.ofs.backend.function.unitwiselog.LogControl;
-import moe.ofs.backend.function.unitwiselog.eventlogger.SpawnControlLogger;
+import moe.ofs.backend.lavalog.LavaLog;
+import moe.ofs.backend.lavalog.eventlogger.SpawnControlLogger;
 import moe.ofs.backend.object.FlyableUnit;
 import moe.ofs.backend.request.JsonRpcResponse;
 import moe.ofs.backend.request.server.ServerExecRequest;
@@ -21,7 +21,7 @@ import java.util.Optional;
 @Service
 public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> implements FlyableUnitService {
 
-    private final LogControl.Logger logger = LogControl.getLogger(SpawnControlLogger.class);
+    private final LavaLog.Logger logger = LavaLog.getLogger(SpawnControlLogger.class);
 
     // protected map for FlyableUnit in AbstractMapService
 

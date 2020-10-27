@@ -14,4 +14,6 @@ public interface PlayerInfoService extends UpdatableService<PlayerInfo>, CrudSer
     Optional<PlayerInfo> findByNetId(int netId);
 
     Set<PlayerInfo> findAll();
+
+    boolean detectSlotChange(PlayerInfo previous, PlayerInfo current);
 }

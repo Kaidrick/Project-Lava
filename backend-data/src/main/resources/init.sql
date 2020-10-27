@@ -1,9 +1,9 @@
-create table lava_system_log
+create table if not exists lava_system_log
 (
-    id integer not null,
-    name varchar(255) not null,
+    id bigint not null auto_increment,
+    time varchar(255) not null,
     message varchar(255) not null,
-    source_name varchar(255) not null,
+    source varchar(255) not null,
     level varchar(64) not null,
     primary key(id)
 );

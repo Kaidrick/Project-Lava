@@ -266,8 +266,8 @@ public class BackgroundTask {
         // dispose obsolete data if any
         flyableUnitService.dispose();
         parkingInfoService.dispose();
-        exportObjectService.dispose();
-        playerInfoService.dispose();
+//        exportObjectService.dispose();
+//        playerInfoService.dispose();
 
         // load static data
         flyableUnitService.loadData();
