@@ -91,7 +91,7 @@ public class Greeting implements Plugin {
     }
 
     private void testMessageFunction(ExportObject object) {
-        if(object.getFlags().get("Human")) {
+        if(object.getStatus().get("Human")) {
             messageQueueFactory.setExportObject(object);
             MessageQueue messageQueue = messageQueueFactory.getObject();
             if (messageQueue != null) {

@@ -46,8 +46,8 @@ public class ExportObjectDeltaJpaService extends AbstractJpaService<ExportObject
             if(deltaObject.getPitch() != null) {
                 record.setPitch(deltaObject.getPitch());
             }
-            if(deltaObject.getFlags() != null) {
-                deltaObject.getFlags().forEach((key, value) -> record.getFlags().put(key, value));
+            if(deltaObject.getStatus() != null) {
+                deltaObject.getStatus().forEach((key, value) -> record.getStatus().put(key, value));
             }
             if(deltaObject.getGeoPosition() != null) {
                 record.setGeoPosition(deltaObject.getGeoPosition());

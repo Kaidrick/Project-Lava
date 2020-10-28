@@ -7,6 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="unified-http-response" />
         <module name="backend-core" />
         <module name="plugin-builder-maven-plugin" />
         <module name="backend-addon" />
@@ -26,6 +27,7 @@
       <module name="backend-web" target="1.8" />
       <module name="plugin-builder-maven-plugin" target="1.8" />
       <module name="Project-Lava" target="1.8" />
+      <module name="unified-http-response" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
@@ -38,6 +40,7 @@
       <module name="backend-log" options="-parameters" />
       <module name="backend-web" options="-parameters" />
       <module name="plugin-builder-maven-plugin" options="" />
+      <module name="unified-http-response" options="-parameters" />
     </option>
   </component>
 </project>

@@ -102,6 +102,6 @@ public class BackendConnectionStatusController {
 
     @GetMapping("syslog")
     public List<LogEntry> getSystemLogs() {
-        return logEntryList;
+        return logEntryDao.selectList(null);
     }
 }
