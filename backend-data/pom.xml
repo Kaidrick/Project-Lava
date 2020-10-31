@@ -76,6 +76,11 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-core</artifactId>
+            <version>5.4.6</version>
+        </dependency>
         <!--        Test-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
