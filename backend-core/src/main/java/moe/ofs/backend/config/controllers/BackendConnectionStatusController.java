@@ -9,10 +9,7 @@ import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.domain.LogEntry;
 import moe.ofs.backend.util.ConnectionManager;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
@@ -57,7 +54,7 @@ public class BackendConnectionStatusController {
             selector = "type = 'spawn'")
     public void receiveUnitSpawnMessage(ObjectMessage message) throws JMSException {
         Serializable object = message.getObject();
-        if(object instanceof ExportObject) {
+        if (object instanceof ExportObject) {
             exportObjectCount.incrementAndGet();
         }
     }
@@ -65,7 +62,7 @@ public class BackendConnectionStatusController {
     @JmsListener(destination = "unit.spawncontrol", containerFactory = "jmsListenerContainerFactory", selector = "type = 'depawn'")
     public void receiveUnitDespawnMessage(ObjectMessage message) throws JMSException {
         Serializable object = message.getObject();
-        if(object instanceof ExportObject) {
+        if (object instanceof ExportObject) {
             exportObjectCount.decrementAndGet();
         }
     }
@@ -74,7 +71,7 @@ public class BackendConnectionStatusController {
             selector = "type = 'connect'")
     private void logPlayerConnect(ObjectMessage objectMessage) throws JMSException {
         Serializable object = objectMessage.getObject();
-        if(object instanceof PlayerInfo) {
+        if (object instanceof PlayerInfo) {
             connectedPlayerCount.incrementAndGet();
         }
     }
@@ -83,7 +80,7 @@ public class BackendConnectionStatusController {
             selector = "type = 'disconnect'")
     private void logPlayerDisconnect(ObjectMessage objectMessage) throws JMSException {
         Serializable object = objectMessage.getObject();
-        if(object instanceof PlayerInfo) {
+        if (object instanceof PlayerInfo) {
             connectedPlayerCount.decrementAndGet();
         }
     }
@@ -93,7 +90,7 @@ public class BackendConnectionStatusController {
     @JmsListener(destination = "backend.entry", containerFactory = "jmsListenerContainerFactory")
     private void systemWiseLog(ObjectMessage objectMessage) throws JMSException {
         Serializable serializable = objectMessage.getObject();
-        if(serializable instanceof LogEntry) {
+        if (serializable instanceof LogEntry) {
             LogEntry entry = (LogEntry) serializable;
             logEntryList.add(entry);
             logEntryDao.insert(entry);
