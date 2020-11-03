@@ -1,7 +1,7 @@
 package moe.ofs.backend.services.jpa;
 
 import moe.ofs.backend.domain.ExportObject;
-import moe.ofs.backend.lavalog.LavaLog;
+import moe.ofs.backend.LavaLog;
 import moe.ofs.backend.handlers.ExportUnitDespawnObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 import moe.ofs.backend.handlers.ExportUnitUpdateObservable;

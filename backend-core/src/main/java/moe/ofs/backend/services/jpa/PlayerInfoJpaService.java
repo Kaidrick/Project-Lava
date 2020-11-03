@@ -2,7 +2,7 @@ package moe.ofs.backend.services.jpa;
 
 import com.google.common.collect.Sets;
 import moe.ofs.backend.domain.PlayerInfo;
-import moe.ofs.backend.lavalog.LavaLog;
+import moe.ofs.backend.LavaLog;
 import moe.ofs.backend.lavalog.eventlogger.SpawnControlLogger;
 import moe.ofs.backend.handlers.PlayerEnterServerObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;

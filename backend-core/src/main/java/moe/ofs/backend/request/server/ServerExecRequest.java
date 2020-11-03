@@ -2,7 +2,7 @@ package moe.ofs.backend.request.server;
 
 import moe.ofs.backend.domain.Handle;
 import moe.ofs.backend.domain.Level;
-import moe.ofs.backend.lavalog.LavaLog;
+import moe.ofs.backend.LavaLog;
 import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.Resolvable;
 

@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.util.Map;
 import java.util.Objects;
 
 @Getter
@@ -62,6 +63,8 @@ public class DcsExportObject extends DcsBaseEntity {
     private DcsPositionVector vector;
 
     private DcsGeoPosition position;
+
+    private Map<String, Boolean> status;
 
     /**
      * Two ExportObject is consider equal if runtime id and unitName is the same.

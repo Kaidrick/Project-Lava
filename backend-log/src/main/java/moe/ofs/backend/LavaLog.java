@@ -1,21 +1,21 @@
-package moe.ofs.backend.lavalog;
+package moe.ofs.backend;
 
+import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.domain.LogEntry;
 import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.object.LogLevel;
-import moe.ofs.backend.domain.LogEntry;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 @Component
+@Slf4j
 public class LavaLog {
 
     public static final String TOPIC = "backend.entry";
 
     private static Sender sender;
 
-    @Autowired
     public LavaLog(Sender sender) {
         LavaLog.sender = sender;
     }
@@ -30,15 +30,16 @@ public class LavaLog {
         }
 
         public void log(LogLevel logLevel, String string) {
-            ZonedDateTime zonedDateTime = ZonedDateTime.now();
+            Instant instant = Instant.now();
 
             LogEntry logEntry = LogEntry.builder()
                     .logLevel(logLevel)
                     .message(string)
                     .source(source)
-                    .time(zonedDateTime.toString()).build();
+                    .time(instant.toString()).build();
 
             sender.sendToTopic(TOPIC, logEntry, null);
+            log.debug(logEntry.toString());
         }
 
         public void log(String string) {

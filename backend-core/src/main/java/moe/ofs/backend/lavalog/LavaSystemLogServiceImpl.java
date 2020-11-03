@@ -9,11 +9,16 @@ import com.google.gson.Gson;
 import moe.ofs.backend.config.model.PageVo;
 import moe.ofs.backend.dao.LogEntryDao;
 import moe.ofs.backend.domain.LogEntry;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 
+import javax.jms.JMSException;
+import javax.jms.ObjectMessage;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -47,7 +52,7 @@ public class LavaSystemLogServiceImpl implements LavaSystemLogService {
     }
 
     @Override
-    public void saveLogFile(Boolean toJson) throws IOException {
+    public void saveLogFile(boolean toJson) throws IOException {
         List<LogEntry> list = entryDao.selectList(null);
         String path = "/LavaLog " + new Date();
 
@@ -65,6 +70,23 @@ public class LavaSystemLogServiceImpl implements LavaSystemLogService {
             CsvWriter writer = CsvUtil.getWriter(path, charset);
             writer.write(list);
             writer.close();
+        }
+    }
+
+    /**
+     * Listens to message queue topic and save entry log.
+     * MQ listener implementation detail is trivial to service contract and
+     * thus is not required in interface.
+     *
+     * @param objectMessage message object that holds the log entry
+     * @throws JMSException on message conversion exception
+     */
+    @JmsListener(destination = "backend.entry", containerFactory = "jmsListenerContainerFactory")
+    private void systemWiseLog(ObjectMessage objectMessage) throws JMSException {
+        Serializable serializable = objectMessage.getObject();
+        if (serializable instanceof LogEntry) {
+            LogEntry entry = (LogEntry) serializable;
+            save(entry);
         }
     }
 }

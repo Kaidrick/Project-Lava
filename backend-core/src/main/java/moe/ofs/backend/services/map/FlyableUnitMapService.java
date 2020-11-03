@@ -2,7 +2,7 @@ package moe.ofs.backend.services.map;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import moe.ofs.backend.lavalog.LavaLog;
+import moe.ofs.backend.LavaLog;
 import moe.ofs.backend.lavalog.eventlogger.SpawnControlLogger;
 import moe.ofs.backend.object.FlyableUnit;
 import moe.ofs.backend.request.JsonRpcResponse;

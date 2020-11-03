@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Aspect
-public class ExportObjectLoggingAspect {
+public class ExportObjectAspect {
 
     private final Sender sender;
 
-    public ExportObjectLoggingAspect(Sender sender) {
+    public ExportObjectAspect(Sender sender) {
         this.sender = sender;
     }
 

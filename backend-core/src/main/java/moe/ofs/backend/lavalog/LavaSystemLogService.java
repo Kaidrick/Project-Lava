@@ -39,6 +39,6 @@ public interface LavaSystemLogService {
     /**
      * Write selected logs to json (default) or csv file. Takes a File or Path.
      */
-    void saveLogFile(Boolean json) throws IOException;
+    void saveLogFile(boolean toJson) throws IOException;
 
 }

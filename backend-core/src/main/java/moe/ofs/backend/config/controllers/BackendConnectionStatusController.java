@@ -21,6 +21,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @RestController
+
+// FIXME: very bad design, need refactoring
 public class BackendConnectionStatusController {
 
     private final ConnectionManager manager;
@@ -82,18 +84,6 @@ public class BackendConnectionStatusController {
         Serializable object = objectMessage.getObject();
         if (object instanceof PlayerInfo) {
             connectedPlayerCount.decrementAndGet();
-        }
-    }
-
-    List<LogEntry> logEntryList = new ArrayList<>();
-
-    @JmsListener(destination = "backend.entry", containerFactory = "jmsListenerContainerFactory")
-    private void systemWiseLog(ObjectMessage objectMessage) throws JMSException {
-        Serializable serializable = objectMessage.getObject();
-        if (serializable instanceof LogEntry) {
-            LogEntry entry = (LogEntry) serializable;
-            logEntryList.add(entry);
-            logEntryDao.insert(entry);
         }
     }
 

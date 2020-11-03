@@ -3,12 +3,15 @@ package moe.ofs.backend;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
 import moe.ofs.backend.util.HeartbeatThreadFactory;
+import org.apache.activemq.broker.BrokerService;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+
+import java.time.Instant;
 
 @SpringBootApplication
 @MapperScan("moe.ofs.backend.dao")
@@ -38,17 +41,21 @@ public class BackendApplication {
     }
 
     @Bean
+    public BrokerService broker() throws Exception {
+        BrokerService broker = new BrokerService();
+        broker.setBrokerName("embedded-broker-service");
+        broker.setPersistent(false);
+        broker.addConnector("tcp://localhost:61616");
+        broker.addConnector("vm://embedded-broker?broker.persistent=false");
+//        broker.addConnector("vm://embedded-broker?broker.persistent=false");
+        return broker;
+    }
+
+    @Bean
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
         return args -> {
-
-//            System.out.println("Let's inspect the beans provided by Spring Boot:");
-
-//            String[] beanNames = ctx.getBeanDefinitionNames();
-//            Arrays.sort(beanNames);
-//            for (String beanName : beanNames) {
-//                System.out.println(beanName);
-//            }
-
+            LavaLog.getLogger(this.getClass())
+                    .info("Project Lava initialization finished; starting background heartbeat checker");
             heartbeatThreadFactory.getHeartbeatThread().start();
         };
     }

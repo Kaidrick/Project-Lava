@@ -28,6 +28,10 @@
             <result property="longitude" column="position_longitude"/>
             <result property="altitude" column="position_altitude"/>
         </association>
+        <collection property="status" javaType="ArrayList" ofType="java.util.HashMap">
+            <result property="key" column="is_active"/>
+            <result property="value" column="status_name"/>
+        </collection>
     </resultMap>
 
     <select id="findById" resultMap="dcsExportObjectMap">
@@ -62,6 +66,7 @@
         from export_object eo
         inner join vector3d vd on eo.VECTOR3D_ID = vd.id
         inner join geo_position gp on eo.geoposition_id = gp.id
+
         where eo.id=#{id}
     </select>
 </mapper>

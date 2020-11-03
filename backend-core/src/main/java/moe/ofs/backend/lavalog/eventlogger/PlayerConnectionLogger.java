@@ -1,7 +1,7 @@
 package moe.ofs.backend.lavalog.eventlogger;
 
 import moe.ofs.backend.domain.PlayerInfo;
-import moe.ofs.backend.lavalog.LavaLog;
+import moe.ofs.backend.LavaLog;
 import moe.ofs.backend.object.LogLevel;
 import org.springframework.jms.annotation.JmsListener;
 

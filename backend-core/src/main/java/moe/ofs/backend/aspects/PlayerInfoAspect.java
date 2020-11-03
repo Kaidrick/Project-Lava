@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Aspect
-public class PlayerInfoLoggingAspect {
+public class PlayerInfoAspect {
     private final Sender sender;
 
-    public PlayerInfoLoggingAspect(Sender sender) {
+    public PlayerInfoAspect(Sender sender) {
         this.sender = sender;
     }
 
