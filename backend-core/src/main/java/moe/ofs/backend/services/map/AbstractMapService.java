@@ -4,10 +4,12 @@ import moe.ofs.backend.domain.BaseEntity;
 import moe.ofs.backend.services.CrudService;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public abstract class AbstractMapService <T extends BaseEntity> implements CrudService<T> {
 
-    protected Map<Long, T> map = new HashMap<>();
+    protected ConcurrentMap<Long, T> map = new ConcurrentHashMap<>();
 
     protected Long getNextId() {
         return map.keySet().isEmpty() ? 1L : Collections.max(map.keySet()) + 1;

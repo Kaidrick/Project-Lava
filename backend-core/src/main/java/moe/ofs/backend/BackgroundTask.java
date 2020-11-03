@@ -102,8 +102,10 @@ public class BackgroundTask {
     public BackgroundTask(
 
             RequestHandler requestHandler, ConnectionManager connectionManager,
-            @Qualifier("exportObjectDelta") PollHandlerService exportObjectPollService,
-            @Qualifier("playerInfoBulk") PollHandlerService playerInfoPollService,
+            @Qualifier("exportObjectDelta")
+                    PollHandlerService exportObjectPollService,
+            @Qualifier("playerInfoBulk")
+                    PollHandlerService playerInfoPollService,
 
             LuaStateTelemetryService luaStateTelemetryService,
             ExportObjectService exportObjectService,

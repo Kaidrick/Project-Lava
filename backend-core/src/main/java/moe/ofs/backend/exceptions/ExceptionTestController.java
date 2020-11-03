@@ -69,6 +69,6 @@ public class ExceptionTestController {
 
     @GetMapping("object/{id}")
     public DcsExportObject getObjectTest(@PathVariable Long id) {
-        return dcsExportObjectDao.findWithPosById(id);
+        return dcsExportObjectDao.findCompleteExportObject(id);
     }
 }
