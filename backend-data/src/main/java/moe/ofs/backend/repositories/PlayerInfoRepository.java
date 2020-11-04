@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface PlayerInfoRepository // extends JpaRepository<PlayerInfo, Long>
 {
@@ -13,14 +14,14 @@ public interface PlayerInfoRepository // extends JpaRepository<PlayerInfo, Long>
 
     Optional<PlayerInfo> findByNetId(int netId);
 
-    List<PlayerInfo> findAllByLang(String lang);
+    Set<PlayerInfo> findAllByLang(String lang);
 
     Optional<PlayerInfo> findByUcid(String ucid);
 
     Optional<PlayerInfo> findBySlot(String slot);
 
-    Optional<PlayerInfo> findAllBySide(int side);
+    Set<PlayerInfo> findAllBySide(int side);
 
-    Optional<PlayerInfo> findByPingGreaterThan(int ping);
+    Set<PlayerInfo> findByPingGreaterThan(int ping);
 
 }

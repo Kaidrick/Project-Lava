@@ -8,10 +8,3 @@ create table if not exists lava_system_log
     meta_id bigint,
     primary key(id)
 );
-
-# create table if not exists lava_system_log_metadata
-# (
-#     id bigint not null auto_increment,
-#     attribute_name varchar(255) not null,
-#     attribute_value varchar(255) not null
-# )
