@@ -45,10 +45,15 @@ public class LavaSystemLogServiceImpl implements LavaSystemLogService {
     public PageVo<LogEntry> findAllForCurrentSession(Date date, Long current, Integer size) {
 
         Page<LogEntry> page = new Page<>(current, size);
-        entryDao.selectPage(page,
-                Wrappers.<LogEntry>lambdaQuery().gt(LogEntry::getTime, date)
-        );
-        return new PageVo<>(current, page.getTotal(), page.hasNext(), page.hasPrevious(), page.getRecords());
+        page.setSearchCount(false);
+//        entryDao.selectPage(page,
+//                Wrappers.<LogEntry>lambdaQuery().gt(LogEntry::getTime, date)
+//        );
+        entryDao.selectPage(page, null);
+
+        return new PageVo<>(current, page.getTotal(), page.getRecords());
+//        return new PageVo<>(current, page.getTotal(), page.hasNext(), page.hasPrevious(), page.getRecords());
+
     }
 
     @Override
