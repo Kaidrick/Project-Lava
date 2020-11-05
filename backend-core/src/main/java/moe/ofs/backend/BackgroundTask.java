@@ -102,8 +102,10 @@ public class BackgroundTask {
     public BackgroundTask(
 
             RequestHandler requestHandler, ConnectionManager connectionManager,
-            @Qualifier("exportObjectDelta") PollHandlerService exportObjectPollService,
-            @Qualifier("playerInfoBulk") PollHandlerService playerInfoPollService,
+            @Qualifier("exportObjectDelta")
+                    PollHandlerService exportObjectPollService,
+            @Qualifier("playerInfoBulk")
+                    PollHandlerService playerInfoPollService,
 
             LuaStateTelemetryService luaStateTelemetryService,
             ExportObjectService exportObjectService,
@@ -266,8 +268,8 @@ public class BackgroundTask {
         // dispose obsolete data if any
         flyableUnitService.dispose();
         parkingInfoService.dispose();
-//        exportObjectService.dispose();
-//        playerInfoService.dispose();
+        exportObjectService.dispose();
+        playerInfoService.dispose();
 
         // load static data
         flyableUnitService.loadData();

@@ -61,6 +61,12 @@ public class DcsConnectionConfigController {
                 .build();
     }
 
+    @RequestMapping(value = "/port_reset", method = RequestMethod.GET)
+    public PortConfig resetDefaultConnectionPort() {
+        connectionManager.restoreDefaultPortMap();
+        return getCurrentConfiguration();
+    }
+
     @RequestMapping(value = "/script/install/{branch}", method = RequestMethod.GET)
     public void installScripts(@PathVariable String branch) {
         configManager.injectIntoHooks(Paths.get(branch));

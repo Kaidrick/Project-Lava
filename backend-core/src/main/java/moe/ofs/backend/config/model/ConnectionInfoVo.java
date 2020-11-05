@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class ConnectionStatus {
+public class ConnectionInfoVo {
     private LocalDateTime timestamp;
     private boolean isConnected;
     private int phaseCode;

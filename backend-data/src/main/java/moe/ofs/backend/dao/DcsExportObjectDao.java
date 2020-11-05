@@ -8,4 +8,6 @@ public interface DcsExportObjectDao extends BaseMapper<DcsExportObject> {
     DcsExportObject findById(Long id);
 
     DcsExportObject findWithPosById(Long id);
+
+    DcsExportObject findCompleteExportObject(Long id);
 }

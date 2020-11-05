@@ -11,18 +11,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Aspect
-public class PlayerInfoLoggingAspect {
+public class PlayerInfoAspect {
     private final Sender sender;
 
-    public PlayerInfoLoggingAspect(Sender sender) {
+    public PlayerInfoAspect(Sender sender) {
         this.sender = sender;
     }
 
 //    @Pointcut("within(moe.ofs.backend.services.jpa.PlayerInfoJpaService)")
-    @Pointcut("execution(public void moe.ofs.backend.services.jpa.PlayerInfoJpaService.add(..))")
+    @Pointcut("execution(public void moe.ofs.backend.services.map.PlayerInfoMapService.add(..))")
     public void logNewPlayerInfo() {}
 
-    @Pointcut("execution(public void moe.ofs.backend.services.jpa.PlayerInfoJpaService.remove(..))")
+    @Pointcut("execution(public void moe.ofs.backend.services.map.PlayerInfoMapService.remove(..))")
     public void logObsoletePlayerInfo() {}
 
     @After("logNewPlayerInfo()")

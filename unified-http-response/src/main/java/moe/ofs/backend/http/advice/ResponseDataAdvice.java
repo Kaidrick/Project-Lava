@@ -59,6 +59,16 @@ public class ResponseDataAdvice implements ResponseBodyAdvice<Object> {
             return o;
         }
 
+        if (serverHttpRequest.getURI().getPath().startsWith("/actuator")) {
+            return o;
+        }
+
+        if (serverHttpRequest.getURI().getPath().startsWith("/swagger")) {
+            return o;
+        }
+
+
+
         if (serverHttpRequest.getURI().getPath().equals("/error")) {
             // check source
             if (o instanceof LinkedHashMap) {

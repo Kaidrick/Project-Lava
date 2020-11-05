@@ -36,10 +36,8 @@ public class LogEntry implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("%s %s %s",
+        return String.format("%s %s %s %s",
 //                time.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
-                time,
-                logLevel.name(),
-                message);
+                time, logLevel.name(), message, source);
     }
 }

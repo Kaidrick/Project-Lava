@@ -10,22 +10,24 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Aspect
-public class ExportObjectLoggingAspect {
+public class ExportObjectAspect {
 
     private final Sender sender;
 
-    public ExportObjectLoggingAspect(Sender sender) {
+    public ExportObjectAspect(Sender sender) {
         this.sender = sender;
     }
 
-    @Pointcut("execution(public void moe.ofs.backend.services.jpa.*.remove(moe.ofs.backend.domain.ExportObject))")
+    @Pointcut("execution(public void moe.ofs.backend.services.map.ExportObjectMapService.remove(moe.ofs.backend.domain.ExportObject))")
     public void exportObjectDataRemove() {}
 
-    @Pointcut("execution(public void moe.ofs.backend.services.jpa.*.add(moe.ofs.backend.domain.ExportObject))")
+    @Pointcut("execution(public void moe.ofs.backend.services.map.ExportObjectMapService.add(moe.ofs.backend.domain.ExportObject))")
     public void exportObjectDataAdd() {}
 
-    @Pointcut("execution(public void moe.ofs.backend.services.jpa.ExportObjectDeltaJpaService." +
-            "update(moe.ofs.backend.domain.ExportObject))")
+//    @Pointcut("execution(public void moe.ofs.backend.services.jpa.ExportObjectDeltaJpaService." +
+//            "update(moe.ofs.backend.domain.ExportObject))")
+@Pointcut("execution(public void moe.ofs.backend.services.map.ExportObjectMapService" +
+        ".update(moe.ofs.backend.domain.ExportObject))")
     public void exportObjectDataUpdate() {}  // example of export object update listener
 
     @After("exportObjectDataAdd()")

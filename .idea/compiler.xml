@@ -9,11 +9,12 @@
         <outputRelativeToContentRoot value="true" />
         <module name="unified-http-response" />
         <module name="backend-core" />
-        <module name="plugin-builder-maven-plugin" />
-        <module name="backend-addon" />
         <module name="backend-log" />
-        <module name="backend-web" />
+        <module name="plugin-builder-maven-plugin" />
         <module name="backend-data" />
+        <module name="backend-addon" />
+        <module name="unified-http-response" />
+        <module name="backend-web" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

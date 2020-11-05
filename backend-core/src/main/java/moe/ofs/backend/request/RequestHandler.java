@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
-import moe.ofs.backend.lavalog.LavaLog;
+import moe.ofs.backend.LavaLog;
 import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.message.ConnectionStatusChange;
 import moe.ofs.backend.message.connection.ConnectionStatus;
@@ -127,7 +127,7 @@ public final class RequestHandler {
     public String sendAndGet(int port, String jsonString) throws IOException {
 
         String s = null;
-        try (Socket socket = new Socket("127.0.0.1", port);
+        try (Socket socket = new Socket("localhost", port);
              DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
              DataInputStream dataInputStream = new DataInputStream(socket.getInputStream())) {
 

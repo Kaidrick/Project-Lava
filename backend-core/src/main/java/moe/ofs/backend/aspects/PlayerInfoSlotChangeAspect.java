@@ -17,7 +17,7 @@ public class PlayerInfoSlotChangeAspect {
         this.sender = sender;
     }
 
-    @Pointcut("execution(public void moe.ofs.backend.services.jpa.PlayerInfoJpaService.detectSlotChange(..))")
+    @Pointcut("execution(public void moe.ofs.backend.services.map.PlayerInfoMapService.detectSlotChange(..))")
     public void playerSlotChange() {}
 
     @AfterReturning(value = "playerSlotChange()", returning = "change")

@@ -5,11 +5,13 @@ import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.Configurable;
 import moe.ofs.backend.domain.Level;
+import moe.ofs.backend.LavaLog;
 import moe.ofs.backend.request.*;
 import moe.ofs.backend.request.export.ExportResetRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -37,6 +39,8 @@ public final class ConnectionManager implements Configurable {
     private static ConnectionManager instance;
 
     private Map<Level, Integer> portOverrideMap = new HashMap<>();
+
+    private static final LavaLog.Logger logger = LavaLog.getLogger(ConnectionManager.class);
 
     public ConnectionManager(RequestHandler requestHandler, RequestTransmissionService requestTransmissionService) {
         this.requestHandler = requestHandler;
@@ -69,6 +73,14 @@ public final class ConnectionManager implements Configurable {
     public void setPortOverrideMap(Map<Level, Integer> portOverrideMap) {
         this.portOverrideMap = portOverrideMap;
         requestHandler.updatePortMap(this.portOverrideMap);  // force update request handler port mapping
+        logger.info(String.format("Backend connection ports re-mapped to the followings: %s",
+                this.portOverrideMap.values()
+                        .stream().map(String::valueOf).collect(Collectors.joining(", "))));
+    }
+
+    public void restoreDefaultPortMap() {
+        portOverrideMap.clear();
+        requestHandler.updatePortMap(getPortOverrideMap());
     }
 
     public void refreshConfig() {

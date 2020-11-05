@@ -3,6 +3,7 @@ package moe.ofs.backend.util;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
+import moe.ofs.backend.LavaLog;
 import moe.ofs.backend.message.ConnectionStatusChange;
 import moe.ofs.backend.message.connection.ConnectionStatus;
 import moe.ofs.backend.request.RequestHandler;
@@ -13,12 +14,15 @@ import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public final class HeartbeatThreadFactory {
 
     private final RequestHandler requestHandler;
+
+    private final ConnectionManager connectionManager;
 
     public static AtomicBoolean heartbeatActive;
 
@@ -28,9 +32,12 @@ public final class HeartbeatThreadFactory {
 
     private final Runnable runnable;
 
-    public HeartbeatThreadFactory(RequestHandler requestHandler) {
+    private static LavaLog.Logger logger = LavaLog.getLogger(HeartbeatThreadFactory.class);
+
+    public HeartbeatThreadFactory(RequestHandler requestHandler, ConnectionManager connectionManager) {
 
         this.requestHandler = requestHandler;
+        this.connectionManager = connectionManager;
 
         heartbeatActive = new AtomicBoolean(false);
 
@@ -60,20 +67,20 @@ public final class HeartbeatThreadFactory {
         // if heartbeat is null, make new heartbeat
         // if heartbeat is not null, check if it is start
 
-        if(heartbeat == null) {
+        if (heartbeat == null || heartbeat.getState() == Thread.State.TERMINATED) {
             heartbeat = new Thread(runnable);
             heartbeat.setName("conn checker");
 
+            String portString = connectionManager.getPortOverrideMap().values().stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(", "));
+
+            logger.info(String.format("Heartbeat checker scanning connections on following ports: %s",
+                    portString));
+
             return heartbeat;
-        } else {
-            if(heartbeat.getState() == Thread.State.TERMINATED) {
-                heartbeat = new Thread(runnable);
-                heartbeat.setName("conn checker");
-                return heartbeat;
-            } else {
-                return null;
-            }
         }
+        return null;
     }
 
     /**

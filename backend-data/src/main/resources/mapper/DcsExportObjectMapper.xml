@@ -28,7 +28,40 @@
             <result property="longitude" column="position_longitude"/>
             <result property="altitude" column="position_altitude"/>
         </association>
+        <collection property="status" javaType="ArrayList" ofType="java.util.HashMap">
+            <result property="key" column="is_active"/>
+            <result property="value" column="status_name"/>
+        </collection>
     </resultMap>
+
+    <select id="findCompleteExportObject" resultMap="dcsExportObjectVector3DMap">
+        select os.is_active,
+               os.status_name,
+               own_bank,
+               coalition,
+               coalition_id,
+               country_id,
+               group_name,
+               own_heading, own_name,
+               own_pitch,
+               runtime_id,
+               unit_name,
+
+               vector3d_id vector_id,
+               v3d.x vector_x,
+               v3d.y vector_y,
+               v3d.z vector_z,
+
+               geoposition_id position_id,
+               gp.altitude position_altitude,
+               gp.latitude position_latitude,
+               gp.longitude position_longitude
+        from object_status os
+                 left join export_object eo on os.id = eo.id
+                 inner join vector3d v3d on eo.vector3d_id = v3d.id
+                 inner join geo_position gp on eo.geoposition_id = gp.id
+        where eo.id = 233
+    </select>
 
     <select id="findById" resultMap="dcsExportObjectMap">
         select id,
@@ -62,6 +95,7 @@
         from export_object eo
         inner join vector3d vd on eo.VECTOR3D_ID = vd.id
         inner join geo_position gp on eo.geoposition_id = gp.id
+
         where eo.id=#{id}
     </select>
 </mapper>
