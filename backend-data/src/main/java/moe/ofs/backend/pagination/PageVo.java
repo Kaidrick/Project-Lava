@@ -1,4 +1,4 @@
-package moe.ofs.backend.config.model;
+package moe.ofs.backend.pagination;
 
 import lombok.Data;
 
@@ -6,11 +6,11 @@ import java.util.List;
 
 @Data
 public class PageVo<T> {
-    //    当前页数
+    // current page number
     private Long current;
-    //    总页数
+    // total number of entries in the data source
     private Long total;
-    //    结果
+    // result
     private List<T> data;
 
     public PageVo(Long current, Long total, List<T> data) {

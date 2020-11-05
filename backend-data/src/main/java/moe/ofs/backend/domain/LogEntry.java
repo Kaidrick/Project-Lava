@@ -11,6 +11,7 @@ import moe.ofs.backend.object.LogLevel;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -23,7 +24,7 @@ public class LogEntry implements Serializable {
     private Long id;
 
     @TableField("time")
-    private String time;
+    private Date time;
 
     @TableField("level")
     private LogLevel logLevel;
