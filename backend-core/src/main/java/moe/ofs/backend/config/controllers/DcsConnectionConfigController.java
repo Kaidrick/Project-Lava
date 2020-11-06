@@ -1,10 +1,5 @@
 package moe.ofs.backend.config.controllers;
 
-import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
-import com.github.xiaoymin.knife4j.annotations.DynamicResponseParameters;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.object.PortConfig;
@@ -22,7 +17,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/config")
-@Api("配置")
 public class DcsConnectionConfigController {
 
     private final ConnectionManager connectionManager;
@@ -33,11 +27,7 @@ public class DcsConnectionConfigController {
         this.connectionManager = connectionManager;
     }
 
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
-    @ApiOperation("获取当前配置")
-    @DynamicResponseParameters(properties = {
-            @DynamicParameter(name = "portMapping", value = "Map<Level, Integer>", dataTypeClass = HashMap.class)
-    })
+    @GetMapping("/get")
     public PortConfig getCurrentConfiguration() {
         Map<Level, Integer> portMapping = connectionManager.getPortOverrideMap();
         return PortConfig.builder()
@@ -49,12 +39,7 @@ public class DcsConnectionConfigController {
     }
 
     @RequestMapping(value = "/port", method = RequestMethod.POST)
-    @ApiOperation("设置配置")
-    @DynamicResponseParameters(properties = {
-            @DynamicParameter(value = "PortConfig", dataTypeClass = PortConfig.class)
-    })
     public PortConfig setConnectionPort(
-            @ApiParam(value = "PortConfig")
             @RequestBody PortConfig config
     ) {
         log.info(config.toString());

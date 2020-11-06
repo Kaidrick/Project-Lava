@@ -1,8 +1,5 @@
 package moe.ofs.backend.atlas.controllers;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.atlas.services.AtlasService;
 import org.springframework.http.MediaType;
@@ -16,7 +13,7 @@ import java.io.IOException;
 
 @Slf4j
 @Controller
-@Api(tags = "Atlas Map APIs for PIXI.js game map", value = "Provides endpoints for retrieving map data.")
+//@Api(tags = "Atlas Map APIs for PIXI.js game map", value = "Provides endpoints for retrieving map data.")
 @RequestMapping("atlas")
 public class AtlasController {
 
@@ -26,14 +23,23 @@ public class AtlasController {
         this.atlasService = atlasService;
     }
 
-    @ApiOperation(value = "Retrieves map tile image by theater, level, x, and y")
+    //    @ApiOperation(value = "Retrieves map tile image by theater, level, x, and y")
     @RequestMapping(value = "{theater}/{level}/{x}/{y}",
             method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
-    public @ResponseBody byte[] getTile(
-            @PathVariable @ApiParam(value = "Game map theater name", example = "Nevada") String theater,
-            @PathVariable @ApiParam(value = "Resolution level of tile", example = "20") int level,
-            @PathVariable @ApiParam(value = "Zero-based x-th column from the upper left corner of the map") int x,
-            @PathVariable @ApiParam(value = "Zero-based y-th row from the upper left corner of the map") int y)
+    public @ResponseBody
+    byte[] getTile(
+            @PathVariable
+//            @ApiParam(value = "Game map theater name", example = "Nevada")
+                    String theater,
+            @PathVariable
+//            @ApiParam(value = "Resolution level of tile", example = "20")
+                    int level,
+            @PathVariable
+//            @ApiParam(value = "Zero-based x-th column from the upper left corner of the map")
+                    int x,
+            @PathVariable
+//            @ApiParam(value = "Zero-based y-th row from the upper left corner of the map")
+                    int y)
             throws IOException {
 
         log.info("{}, {}, {}, {}", theater, level, x, y);

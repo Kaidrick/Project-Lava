@@ -1,9 +1,9 @@
 package moe.ofs.backend.repositories;
 
 import moe.ofs.backend.domain.ExportObject;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
+import java.util.Set;
 
 public interface ExportObjectRepository // extends JpaRepository<ExportObject, Long>
 {
@@ -13,4 +13,6 @@ public interface ExportObjectRepository // extends JpaRepository<ExportObject, L
     Optional<ExportObject> findByRuntimeID(Long runtimeId);
 
     void deleteByRuntimeID(Long runtimeId);
+
+    Set<ExportObject> findAll();
 }

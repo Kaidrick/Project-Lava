@@ -1,6 +1,5 @@
 package moe.ofs.backend.debug.controllers;
 
-import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.debug.model.LuaCommand;
 import moe.ofs.backend.request.RequestToServer;
@@ -15,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("/lua")
-@Api(
-        tags = "DCS Lua state debug APIs",
-        value = "Provides APIs to loadstring in different DCS Lua environment")
+//@Api(
+//        tags = "DCS Lua state debug APIs",
+//        value = "Provides APIs to loadstring in different DCS Lua environment")
 public class LuaDebugConsoleController {
 
     private final RequestTransmissionService requestTransmissionService;
@@ -31,18 +30,19 @@ public class LuaDebugConsoleController {
      * Debug Lua string execution should always return a value.
      * The debug command should only be executed if the connection between backend and DCS lua server is established.
      * FIXME: get() method will keep blocking; it should fail fast if connection cannot be made or timeout
-     *
      * @param luaCommand the lua command object that contains the actual string, timestamp, and debug environment.
      * @return the String value that is returned from the dcs Lua server.
      */
     @RequestMapping(value = "/debug", method = RequestMethod.POST)
-    @ApiOperation(value = "Sends Lua string to DCS and return a result if necessary")
+//    @ApiOperation(value = "Sends Lua string to DCS and return a result if necessary")
     public String sendDebugString(
-            @RequestBody @ApiParam(value = "JSON string that contains the string to be loaded in specified Lua state",
-                    examples = @Example({@ExampleProperty(
-                            mediaType = "application/json",
-                            value = "{'luaString': 'return env.mission.theatre, 'level': 0, 'timeStamp': '2020-10-15T13:07:52.110Z'}"
-            )})) LuaCommand luaCommand) {
+            @RequestBody
+//            @ApiParam(value = "JSON string that contains the string to be loaded in specified Lua state",
+//                    examples = @Example({@ExampleProperty(
+//                            mediaType = "application/json",
+//                            value = "{'luaString': 'return env.mission.theatre, 'level': 0, 'timeStamp': '2020-10-15T13:07:52.110Z'}"
+//            )}))
+                    LuaCommand luaCommand) {
 
         log.info(luaCommand.toString());
 
@@ -60,7 +60,7 @@ public class LuaDebugConsoleController {
             default:  // default to miz env, as the same as case 0
                 return ((ServerDataRequest) requestTransmissionService.send(
                         (new ServerDataRequest(luaCommand.getLuaString())
-                ))).get();
+                        ))).get();
         }
     }
 

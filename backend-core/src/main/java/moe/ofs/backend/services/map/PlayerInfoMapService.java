@@ -7,6 +7,7 @@ import moe.ofs.backend.services.UpdatableService;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -24,6 +25,16 @@ public class PlayerInfoMapService extends AbstractMapService<PlayerInfo>
     @Override
     public Optional<PlayerInfo> findByNetId(int netId) {
         return map.values().stream().filter(playerInfo -> playerInfo.getNetId() == netId).findAny();
+    }
+
+    @Override
+    public boolean detectSlotChange(PlayerInfo previous, PlayerInfo current) {
+        return false;
+    }
+
+    @Override
+    public Set<PlayerInfo> findAll() {
+        return new HashSet<>(map.values());
     }
 
     @Override
