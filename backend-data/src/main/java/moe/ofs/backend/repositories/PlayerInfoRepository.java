@@ -22,6 +22,4 @@ public interface PlayerInfoRepository // extends JpaRepository<PlayerInfo, Long>
 
     Set<PlayerInfo> findByPingGreaterThan(int ping);
 
-    Set<PlayerInfo> findAll();
-
 }

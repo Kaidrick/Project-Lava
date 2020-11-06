@@ -7,10 +7,8 @@ import moe.ofs.backend.services.UpdatableService;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Repository
 @Primary
@@ -24,11 +22,6 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
     @Override
     public Optional<ExportObject> findByRuntimeID(Long runtimeId) {
         return map.values().stream().filter(exportObject -> exportObject.getRuntimeID() == runtimeId).findAny();
-    }
-
-    @Override
-    public Set<ExportObject> findAll() {
-        return new HashSet<>(map.values());
     }
 
     /**

@@ -13,6 +13,4 @@ public interface ExportObjectRepository // extends JpaRepository<ExportObject, L
     Optional<ExportObject> findByRuntimeID(Long runtimeId);
 
     void deleteByRuntimeID(Long runtimeId);
-
-    Set<ExportObject> findAll();
 }

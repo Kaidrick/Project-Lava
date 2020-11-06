@@ -8,7 +8,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-//@Import(BeanValidatorPluginsConfiguration.class)
 public class BackendApplication {
 
     public static void main(String[] args) {
