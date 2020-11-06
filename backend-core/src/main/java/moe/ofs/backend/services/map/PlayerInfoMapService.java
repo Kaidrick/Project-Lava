@@ -27,11 +27,6 @@ public class PlayerInfoMapService extends AbstractMapService<PlayerInfo>
     }
 
     @Override
-    public boolean detectSlotChange(PlayerInfo previous, PlayerInfo current) {
-        return false;
-    }
-
-    @Override
     public Set<PlayerInfo> findAllByLang(String lang) {
         return map.values().stream()
                 .filter(playerInfo -> playerInfo.getLang().equals(lang))
