@@ -7,6 +7,7 @@ import moe.ofs.backend.object.LogLevel;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.Date;
 
 @Component
 @Slf4j
@@ -36,7 +37,7 @@ public class LavaLog {
                     .logLevel(logLevel)
                     .message(string)
                     .source(source)
-                    .time(instant.toString()).build();
+                    .time(Date.from(instant)).build();
 
             sender.sendToTopic(TOPIC, logEntry, null);
             log.debug(logEntry.toString());

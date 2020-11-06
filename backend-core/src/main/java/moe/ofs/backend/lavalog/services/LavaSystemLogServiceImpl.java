@@ -1,4 +1,4 @@
-package moe.ofs.backend.lavalog;
+package moe.ofs.backend.lavalog.services;
 
 import cn.hutool.core.text.csv.CsvUtil;
 import cn.hutool.core.text.csv.CsvWriter;
@@ -6,7 +6,7 @@ import cn.hutool.core.util.CharsetUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
-import moe.ofs.backend.config.model.PageVo;
+import moe.ofs.backend.pagination.PageVo;
 import moe.ofs.backend.dao.LogEntryDao;
 import moe.ofs.backend.domain.LogEntry;
 import org.springframework.jms.annotation.JmsListener;
@@ -18,7 +18,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,10 +44,14 @@ public class LavaSystemLogServiceImpl implements LavaSystemLogService {
     public PageVo<LogEntry> findAllForCurrentSession(Date date, Long current, Integer size) {
 
         Page<LogEntry> page = new Page<>(current, size);
+//        page.setSearchCount(false);
         entryDao.selectPage(page,
                 Wrappers.<LogEntry>lambdaQuery().gt(LogEntry::getTime, date)
         );
-        return new PageVo<>(current, page.getTotal(), page.hasNext(), page.hasPrevious(), page.getRecords());
+
+        return new PageVo<>(current, page.getTotal(), page.getRecords());
+//        return new PageVo<>(current, page.getTotal(), page.hasNext(), page.hasPrevious(), page.getRecords());
+
     }
 
     @Override

@@ -2,17 +2,19 @@ package moe.ofs.backend.system.controllers;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.dispatcher.services.LavaTaskDispatcher;
 import moe.ofs.backend.domain.LogEntry;
 import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.object.LogLevel;
+import moe.ofs.backend.system.FrontendStatusMonitor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
-import javax.annotation.PreDestroy;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import javax.jms.ObjectMessage;
+import javax.jms.TextMessage;
 
 @Controller
 @Slf4j
@@ -20,13 +22,28 @@ public class FrontendExchangeController {
 
     private final Sender sender;
 
-    public FrontendExchangeController(Sender sender) {
+    private final FrontendStatusMonitor monitor;
+
+    private final static String FRONTEND_REGISTER_MESSAGE_ENDPOINT = "/frontend.exchange";
+    private final static String FRONTEND_BUS_TOPIC = "/topic/frontend.bus";
+
+    @Autowired
+    private JmsTemplate jmsTemplate;
+
+    public FrontendExchangeController(Sender sender, FrontendStatusMonitor monitor) {
         this.sender = sender;
+        this.monitor = monitor;
     }
 
-    @MessageMapping("/frontend.exchange")  // process request send to /app/front.exchange
-    @SendTo("/topic/greetings")            // process and return value to /topic/greetings
-    public String greeting(String message) {
+
+    /**
+     * - @MessageMapping: Performs mapping of Spring Message with message handling methods.
+     * - @SendTo: Converts method return value to Spring Message and send it to specified destination.
+     */
+//    @MessageMapping("/frontend.exchange")  // - receive message from /app/front.exchange
+//    @SendTo("/topic/frontend.bus")            // - process and return value to /topic/greetings
+    public String exchangeRegistry(String message) {
+        monitor.changeStatus(FrontendStatusMonitor.Status.CONNECTED);
 //        Thread.sleep(1000);
         LogEntry testEntry = LogEntry.builder()
                 .id(1L)
@@ -34,11 +51,24 @@ public class FrontendExchangeController {
                 .message(message)
                 .source(this.getClass().toString())
                 .build();
-
-//        executorService.scheduleWithFixedDelay(() ->
-//                sender.sendToTopicAsJson("greetings", testEntry.toString(), "greeting_type"),
-//                1000, 1000, TimeUnit.MILLISECONDS);
-
         return new Gson().toJson(testEntry);
+    }
+
+    @MessageMapping("/frontend.exchange")
+    public void registerExchange(@Payload String message) {
+        log.info(message);
+        jmsTemplate.send("frontend.bus", session -> {
+            LogEntry testEntry = LogEntry.builder()
+                    .id(1L)
+                    .logLevel(LogLevel.DEBUG)
+                    .message(message)
+                    .source(this.getClass().toString())
+                    .build();
+            TextMessage textMessage = session.createTextMessage(new Gson().toJson(testEntry));
+
+            textMessage.setStringProperty("content-category", "confirmation");
+
+            return textMessage;
+        });
     }
 }
