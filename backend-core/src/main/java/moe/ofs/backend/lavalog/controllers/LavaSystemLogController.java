@@ -1,5 +1,6 @@
 package moe.ofs.backend.lavalog.controllers;
 
+import moe.ofs.backend.pagination.LavaSystemLogPageObject;
 import moe.ofs.backend.pagination.PageVo;
 import moe.ofs.backend.domain.LogEntry;
 import moe.ofs.backend.lavalog.services.LavaSystemLogService;
@@ -17,9 +18,13 @@ public class LavaSystemLogController {
         this.service = service;
     }
 
+    @PostMapping("current")
+    public PageVo<LogEntry> findByPage(@RequestBody LavaSystemLogPageObject object) {
+        return service.findAllForCurrentSession(object.getCurrentPageNo(), object.getPageSize());
+    }
+
     @PostMapping("page")
-    public PageVo<LogEntry> findByPage(@RequestBody Map<String, String> map) {
-        System.out.println("map = " + map);
-        return service.findAllForCurrentSession(new Date(Long.parseLong(map.get("date"))), Long.parseLong(map.get("current")), Integer.parseInt(map.get("size")));
+    public PageVo<LogEntry> findByCriteria(@RequestBody LavaSystemLogPageObject object) {
+        return service.findLogsWithCriteria(object);
     }
 }

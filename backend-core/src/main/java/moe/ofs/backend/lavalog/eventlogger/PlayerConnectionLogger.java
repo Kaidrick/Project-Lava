@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 public class PlayerConnectionLogger {
 
-    private final LavaLog.Logger logger = LavaLog.getLogger(SpawnControlLogger.class);
+    private final LavaLog.Logger logger = LavaLog.getLogger(PlayerConnectionLogger.class);
 
     @JmsListener(destination = "player.connection", containerFactory = "jmsListenerContainerFactory",
             selector = "type = 'connect'")

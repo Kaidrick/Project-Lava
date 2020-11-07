@@ -1,5 +1,6 @@
 package moe.ofs.backend.lavalog.services;
 
+import moe.ofs.backend.pagination.LavaSystemLogPageObject;
 import moe.ofs.backend.pagination.PageVo;
 import moe.ofs.backend.domain.LogEntry;
 
@@ -33,7 +34,14 @@ public interface LavaSystemLogService {
      *
      * @return
      */
-    PageVo<LogEntry> findAllForCurrentSession(Date date, Long current, Integer size);
+    PageVo<LogEntry> findAllForCurrentSession(Long current, Integer size);
+
+    /**
+     * Retrieve all log entries with timestamp greater or equal to start date and less or equal to end date
+     * @param object start date
+     * @return page view object for LogEntry
+     */
+    PageVo<LogEntry> findLogsWithCriteria(LavaSystemLogPageObject object);
 
     /**
      * Write selected logs to json (default) or csv file. Takes a File or Path.

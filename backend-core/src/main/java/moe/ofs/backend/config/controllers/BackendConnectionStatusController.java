@@ -74,26 +74,8 @@ public class BackendConnectionStatusController {
         }
     }
 
-    @JmsListener(destination = "player.connection", containerFactory = "jmsListenerContainerFactory",
-            selector = "type = 'connect'")
-    private void logPlayerConnect(ObjectMessage objectMessage) throws JMSException {
-        Serializable object = objectMessage.getObject();
-        if (object instanceof PlayerInfo) {
-            connectedPlayerCount.incrementAndGet();
-        }
-    }
-
-    @JmsListener(destination = "player.connection", containerFactory = "jmsListenerContainerFactory",
-            selector = "type = 'disconnect'")
-    private void logPlayerDisconnect(ObjectMessage objectMessage) throws JMSException {
-        Serializable object = objectMessage.getObject();
-        if (object instanceof PlayerInfo) {
-            connectedPlayerCount.decrementAndGet();
-        }
-    }
-
-    @GetMapping("syslog")
-    public List<LogEntry> getSystemLogs() {
-        return logEntryDao.selectList(null);
-    }
+//    @GetMapping("syslog")
+//    public List<LogEntry> getSystemLogs() {
+//        return logEntryDao.selectList(null);
+//    }
 }

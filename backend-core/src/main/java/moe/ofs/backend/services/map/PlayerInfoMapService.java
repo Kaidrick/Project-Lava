@@ -27,6 +27,11 @@ public class PlayerInfoMapService extends AbstractMapService<PlayerInfo>
     }
 
     @Override
+    public boolean detectSlotChange(PlayerInfo previous, PlayerInfo current) {
+        return previous.getUcid().equals(current.getUcid()) && !previous.getSlot().equals(current.getSlot());
+    }
+
+    @Override
     public Set<PlayerInfo> findAllByLang(String lang) {
         return map.values().stream()
                 .filter(playerInfo -> playerInfo.getLang().equals(lang))
@@ -60,7 +65,21 @@ public class PlayerInfoMapService extends AbstractMapService<PlayerInfo>
 
     @Override
     public PlayerInfo update(PlayerInfo updateObject) {
-        return null;
+        Optional<PlayerInfo> optionalRecord = findByUcid(updateObject.getUcid());  // search for previous object
+        if (optionalRecord.isPresent()) {  // if previous object is found
+            PlayerInfo record = new PlayerInfo(optionalRecord.get());  // store previous object
+            findByUcid(updateObject.getUcid()).ifPresent(hold -> {  // update previous object to update object values
+                hold.setSlot(updateObject.getSlot());
+                hold.setNetId(updateObject.getNetId());
+                hold.setStarted(updateObject.isStarted());
+                hold.setSide(updateObject.getSide());
+                hold.setPing(updateObject.getPing());
+            });
+
+            return record;  // return previous object
+        }
+
+        return optionalRecord.orElse(updateObject);  // if optional record is not present somehow, return update object
     }
 
     @Override

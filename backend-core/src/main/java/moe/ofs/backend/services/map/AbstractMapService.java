@@ -47,6 +47,7 @@ public abstract class AbstractMapService <T extends BaseEntity> implements CrudS
         return Optional.ofNullable(map.get(id));
     }
 
+    @Override
     public void delete(T t) {
         map.entrySet().removeIf(entry -> entry.getValue().equals(t));
     }

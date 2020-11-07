@@ -6,14 +6,11 @@ import moe.ofs.backend.domain.LogEntry;
 import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.object.LogLevel;
 import moe.ofs.backend.system.FrontendStatusMonitor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
-import javax.jms.ObjectMessage;
 import javax.jms.TextMessage;
 
 @Controller
@@ -27,14 +24,13 @@ public class FrontendExchangeController {
     private final static String FRONTEND_REGISTER_MESSAGE_ENDPOINT = "/frontend.exchange";
     private final static String FRONTEND_BUS_TOPIC = "/topic/frontend.bus";
 
-    @Autowired
-    private JmsTemplate jmsTemplate;
+    private final JmsTemplate jmsTemplate;
 
-    public FrontendExchangeController(Sender sender, FrontendStatusMonitor monitor) {
+    public FrontendExchangeController(Sender sender, FrontendStatusMonitor monitor, JmsTemplate jmsTemplate) {
         this.sender = sender;
         this.monitor = monitor;
+        this.jmsTemplate = jmsTemplate;
     }
-
 
     /**
      * - @MessageMapping: Performs mapping of Spring Message with message handling methods.

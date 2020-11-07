@@ -28,12 +28,11 @@ public class Response<T> {
         return response;
     }
 
-    public static Response<Object> fail(Object data) {
+    public static Response<Object> fail() {
         Response<Object> response = new Response<>();
         response.success = 1;
         response.status = 500;
         response.timestamp = ZonedDateTime.now();
-        response.data = data;
 
         return response;
     }

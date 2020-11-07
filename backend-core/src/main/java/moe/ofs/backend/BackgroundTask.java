@@ -34,6 +34,7 @@ import javax.jms.TextMessage;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -149,6 +150,12 @@ public class BackgroundTask {
         return currentTask;
     }
 
+    private static Instant taskStartTime;
+
+    public static Instant getTaskStartTime() {
+        return taskStartTime;
+    }
+
     public boolean isStarted() {
         return started;
     }
@@ -160,6 +167,8 @@ public class BackgroundTask {
         if(started) {
 
             log.info("Starting Background Task...");
+
+            taskStartTime = Instant.now();
 
             // there can only be one background thread
             // how to ensure this is a singleton?

@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("playerInfoBulk")
@@ -98,18 +95,17 @@ public final class ServerBulkPollHandlerService implements PollHandlerService {
 //                                .orElseThrow(() -> new RuntimeException("Unable to find target record PlayerInfo"))));
 
 //        intersection.forEach(this::processUpdateData);
+
                         obsoletePlayers.forEach(service::remove);
                         newPlayers.forEach(service::add);
-                        intersection.forEach(playerInfo -> {
-                           PlayerInfo previous = service.update(
-                                   update.stream()
-                                           .filter(f -> f.equals(playerInfo)).findFirst()
-                                           .orElseThrow(() -> new RuntimeException("Unable to find target record PlayerInfo"))
-                           );
 
-                           if (service.detectSlotChange(previous, playerInfo)) {  // returns a boolean value
+                        // use update value
+                        update.stream().filter(intersection::contains).forEach(playerInfo -> {
+                            PlayerInfo previous = service.update(playerInfo);
+
+                            if (service.detectSlotChange(previous, playerInfo)) {  // returns a boolean value
                                System.out.println("Player slot change -> " + previous + ", " + playerInfo);
-                           }
+                            }
                         });
 
                         requestCompleted = true;

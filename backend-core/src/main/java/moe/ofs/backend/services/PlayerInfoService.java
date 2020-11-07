@@ -15,7 +15,5 @@ public interface PlayerInfoService extends UpdatableService<PlayerInfo>, CrudSer
 
     Set<PlayerInfo> findAll();
 
-    default boolean detectSlotChange(PlayerInfo previous, PlayerInfo current) {
-        return !previous.getSlot().equals(current.getSlot());
-    }
+    boolean detectSlotChange(PlayerInfo previous, PlayerInfo current);
 }

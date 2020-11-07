@@ -17,12 +17,11 @@ public class PlayerInfoSlotChangeAspect {
         this.sender = sender;
     }
 
-    @Pointcut("execution(public void moe.ofs.backend.services.map.PlayerInfoMapService.detectSlotChange(..))")
+    @Pointcut("execution(public boolean moe.ofs.backend.services.map.PlayerInfoMapService.detectSlotChange(..))")
     public void playerSlotChange() {}
 
     @AfterReturning(value = "playerSlotChange()", returning = "change")
     public void logPlayerSlotChange(JoinPoint joinPoint, boolean change) {
-
         if (change) {
             PlayerInfo previousPlayerInfo = (PlayerInfo) joinPoint.getArgs()[0];
             PlayerInfo currentPlayerInfo = (PlayerInfo) joinPoint.getArgs()[1];

@@ -68,7 +68,7 @@ public class TaskControllerImpl implements TaskController {
     public void runTask(LavaTask task) {
         service.submit(task.getTask());
         task.getCycles().incrementAndGet();
-        log.info("Dispatched " + task);
+//        log.info("Dispatched " + task);
     }
 
     public List<LavaTask> allocate(Map<Long, LavaTask> map) {

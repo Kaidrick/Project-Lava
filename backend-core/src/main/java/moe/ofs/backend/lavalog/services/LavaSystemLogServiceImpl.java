@@ -6,9 +6,13 @@ import cn.hutool.core.util.CharsetUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
+import moe.ofs.backend.BackgroundTask;
+import moe.ofs.backend.object.LogLevel;
+import moe.ofs.backend.pagination.LavaSystemLogPageObject;
 import moe.ofs.backend.pagination.PageVo;
 import moe.ofs.backend.dao.LogEntryDao;
 import moe.ofs.backend.domain.LogEntry;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.Charset;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -41,17 +46,37 @@ public class LavaSystemLogServiceImpl implements LavaSystemLogService {
     }
 
     @Override
-    public PageVo<LogEntry> findAllForCurrentSession(Date date, Long current, Integer size) {
+    public PageVo<LogEntry> findAllForCurrentSession(Long current, Integer size) {
 
         Page<LogEntry> page = new Page<>(current, size);
 //        page.setSearchCount(false);
         entryDao.selectPage(page,
-                Wrappers.<LogEntry>lambdaQuery().gt(LogEntry::getTime, date)
+                Wrappers.<LogEntry>lambdaQuery().gt(LogEntry::getTime, BackgroundTask.getTaskStartTime())
         );
 
         return new PageVo<>(current, page.getTotal(), page.getRecords());
-//        return new PageVo<>(current, page.getTotal(), page.hasNext(), page.hasPrevious(), page.getRecords());
+    }
 
+    @Override
+    public PageVo<LogEntry> findLogsWithCriteria(LavaSystemLogPageObject object) {
+        Page<LogEntry> page = new Page<>(object.getCurrentPageNo(), object.getPageSize());
+
+        // TODO: use a page object time field processor to deal with null Date or epoch date
+        // TODO: aspect
+        if (object.getTo().equals(Date.from(Instant.EPOCH))) {
+            object.setTo(Date.from(Instant.now()));
+        }
+
+        entryDao.selectPage(page,
+                Wrappers.<LogEntry>lambdaQuery()
+                        .gt(LogEntry::getTime, object.getFrom())
+                        .lt(LogEntry::getTime, object.getTo())
+                        .like(LogEntry::getMessage, object.getKeyword())
+                        .like(LogEntry::getLogLevel,
+                                object.getLogLevel() != null ? LogLevel.valueOf(object.getLogLevel()) : Strings.EMPTY)
+        );
+
+        return new PageVo<>(page.getCurrent(), page.getTotal(), page.getRecords());
     }
 
     @Override
