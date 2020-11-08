@@ -4,6 +4,7 @@ import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
+import moe.ofs.backend.services.DestructiveService;
 import moe.ofs.backend.util.LuaScripts;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +16,12 @@ public class PlayerDisciplineServiceImpl implements PlayerDisciplineService {
     private static final String DEFAULT_BAN_REASON = "Server specified no reason for this ban.";
 
     private final RequestTransmissionService requestTransmissionService;
+    private final DestructiveService destructiveService;
 
-    public PlayerDisciplineServiceImpl(RequestTransmissionService requestTransmissionService) {
+    public PlayerDisciplineServiceImpl(RequestTransmissionService requestTransmissionService,
+                                       DestructiveService destructiveService) {
         this.requestTransmissionService = requestTransmissionService;
+        this.destructiveService = destructiveService;
     }
 
     @Override
@@ -70,5 +74,10 @@ public class PlayerDisciplineServiceImpl implements PlayerDisciplineService {
         requestTransmissionService.send(
                 new ServerExecRequest(RequestToServer.State.DEBUG, luaString)
         );
+    }
+
+    @Override
+    public void destroy(PlayerInfo playerInfo) {
+        destructiveService.destroy(playerInfo);
     }
 }

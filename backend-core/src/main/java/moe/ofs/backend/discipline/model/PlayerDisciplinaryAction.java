@@ -7,7 +7,7 @@ import java.time.Duration;
 
 @Data
 public class PlayerDisciplinaryAction {
-    private PlayerInfo playerInfo;
+    private String ucid;
     private Punishment punishment;
     private Duration duration;
     private String reason;  // the reason provided to a banned player when s/he tries to connect to server

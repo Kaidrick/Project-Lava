@@ -43,10 +43,11 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
     @Override
     public ExportObject update(ExportObject updateObject) {
         // find id and then update
-        Long id = map.entrySet().stream()
-                .filter(entry -> entry.getValue().equals(updateObject)).findAny()
-                .orElseThrow(RuntimeException::new).getKey();
-        return map.put(id, updateObject);
+//        Long id = map.entrySet().stream()
+//                .filter(entry -> entry.getValue().equals(updateObject)).findAny()
+//                .orElseThrow(RuntimeException::new).getKey();
+//        return map.put(id, updateObject);
+        return updateObject;
     }
 
     @Override

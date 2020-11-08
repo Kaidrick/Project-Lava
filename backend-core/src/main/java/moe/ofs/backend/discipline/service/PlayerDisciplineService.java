@@ -34,4 +34,6 @@ public interface PlayerDisciplineService {
     void kick(PlayerInfo player);
 
     void kick(PlayerInfo player, String reason);
+
+    void destroy(PlayerInfo playerInfo);
 }

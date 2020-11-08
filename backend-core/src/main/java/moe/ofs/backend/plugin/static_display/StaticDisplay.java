@@ -61,7 +61,8 @@ public class StaticDisplay implements Plugin {
     }
 
     private static final String luaStringAddStatic = LuaScripts.load("add_static_object.lua");
-    private static final String luaStringRemoveObject = LuaScripts.load("remove_object_by_runtime_id.lua");
+    private static final String luaStringRemoveObject =
+            LuaScripts.load("spawn_control/remove_object_by_runtime_id.lua");
 
     private final FlyableUnitService flyableUnitService;
     private final ParkingInfoService parkingInfoService;
