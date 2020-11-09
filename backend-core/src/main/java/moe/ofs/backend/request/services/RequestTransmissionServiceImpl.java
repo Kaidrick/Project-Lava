@@ -22,7 +22,6 @@ public class RequestTransmissionServiceImpl implements RequestTransmissionServic
 
     @Override
     public BaseRequest send(BaseRequest request) {
-        requestHandler.take(request);
         if(request.isSent()) {
             throw new RequestInvalidStateException();
         } else {
