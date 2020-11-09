@@ -43,6 +43,8 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
     @Override
     public ExportObject update(ExportObject updateObject) {
         // find id and then update
+        // FIXME --> update object does not contains full info
+        System.out.println("updateObject = " + updateObject);
         Long id = map.entrySet().stream()
                 .filter(entry -> entry.getValue().getRuntimeID() == updateObject.getRuntimeID()).findAny()
                 .orElseThrow(RuntimeException::new).getKey();
