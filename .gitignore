@@ -41,4 +41,3 @@ hs_err_pid*
 # exclude vue project dist from vcs for now
 /backend-core/src/main/resources/static/
 /.mvn/
-/.circleci/
