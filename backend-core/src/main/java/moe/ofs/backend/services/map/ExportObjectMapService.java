@@ -2,6 +2,7 @@ package moe.ofs.backend.services.map;
 
 import moe.ofs.backend.domain.ExportObject;
 import moe.ofs.backend.repositories.ExportObjectRepository;
+import moe.ofs.backend.services.ExportObjectNotFoundException;
 import moe.ofs.backend.services.ExportObjectService;
 import moe.ofs.backend.services.UpdatableService;
 import org.springframework.context.annotation.Primary;
@@ -37,19 +38,28 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
     /**
      * TODO: since update is rather frequent, maybe use a hash map to store runtime id -> Long id mapping?
      * TODO: what are the potential concurrent issues?
-     * @param updateObject
-     * @return
+     * Maybe there is an api request that searches the map while the object has just been destroy
+     * But export object can only be deleted by 'delete' command from lua; need more investigation
+     * @param updateObject the export object whose values are to be insert to record object
+     * @return ExportObject which is the updated record object
      */
     @Override
     public ExportObject update(ExportObject updateObject) {
         // find id and then update
         // FIXME --> update object does not contains full info
-        System.out.println("updateObject = " + updateObject);
-        Long id = map.entrySet().stream()
-                .filter(entry -> entry.getValue().getRuntimeID() == updateObject.getRuntimeID()).findAny()
-                .orElseThrow(RuntimeException::new).getKey();
-        return map.put(id, updateObject);
-//        return updateObject;
+//        System.out.println("updateObject = " + updateObject);
+//        Long id = map.entrySet().stream()
+//                .filter(entry -> entry.getValue().getRuntimeID() == updateObject.getRuntimeID()).findAny()
+//                .orElseThrow(RuntimeException::new).getKey();
+//        return map.put(id, updateObject);
+
+        Optional<ExportObject> optional = findByRuntimeID(updateObject.getRuntimeID());
+        optional.ifPresent(exportObject -> fieldUpdate(exportObject, updateObject));
+        return optional.orElseThrow(() -> {
+            String message = "No export object can be found matching update runtime id: " +
+                    updateObject.getRuntimeID();
+            return new ExportObjectNotFoundException(message);
+        });
     }
 
     @Override
