@@ -33,19 +33,19 @@ public class ParkingInfoMapService extends AbstractMapService<ParkingInfo> imple
 
     @Override
     public Optional<ParkingInfo> getParking(int airdromeId, int parkingId) {
-        return map.values().parallelStream()
+        return findAll().parallelStream()
                 .filter(p -> p.getAirdromeId() == airdromeId && p.getParkingId() == parkingId)
                 .findAny();
     }
 
     @Override
     public List<ParkingInfo> getAllParking() {
-        return new ArrayList<>(map.values());
+        return new ArrayList<>(findAll());
     }
 
     @Override
     public void dispose() {
-        map.clear();
+        deleteAll();
     }
 
     @Override

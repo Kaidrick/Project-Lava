@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * A cached thread pool is maintained to receive work from a controller.
@@ -31,6 +28,8 @@ public class LavaTaskDispatcherImpl extends AbstractMapService<LavaTask> impleme
     private ScheduledExecutorService timer;
 
     private TaskController taskController;
+
+    private ConcurrentHashMap<Long, LavaTask> map = new ConcurrentHashMap<>();
 
 
     public LavaTaskDispatcherImpl(TaskController taskController) {

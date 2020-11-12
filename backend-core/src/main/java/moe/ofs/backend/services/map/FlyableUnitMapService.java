@@ -33,7 +33,7 @@ public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> imple
 
     @Override
     public Optional<FlyableUnit> findByUnitName(String name) {
-        return map.values().stream().filter(e -> e.getUnit_name().equals(name)).findAny();
+        return findAll().stream().filter(e -> e.getUnit_name().equals(name)).findAny();
     }
 
     @Override
@@ -52,30 +52,30 @@ public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> imple
             }
         }
 
-        return map.values().stream()
+        return findAll().stream()
                 .filter(e -> e.getUnit_id() == id)
                 .findAny();
     }
 
     @Override
     public Optional<FlyableUnit> findByUnitId(Long id) {
-        return map.values().stream()
+        return findAll().stream()
                 .filter(e -> e.getUnit_id() == id)
                 .findAny();
     }
 
     @Override
     public Optional<Integer> findGroupIdByName(String name) {
-        Optional<Map.Entry<Long, FlyableUnit>> optional =
-                map.entrySet().stream()
-                        .filter(e -> e.getValue().getGroup_name().equals(name))
+        Optional<FlyableUnit> optional =
+                findAll().stream()
+                        .filter(e -> e.getGroup_name().equals(name))
                         .findAny();
-        return optional.map(stringFlyableUnitEntry -> stringFlyableUnitEntry.getValue().getGroup_id());
+        return optional.map(FlyableUnit::getGroup_id);
     }
 
     @Override
     public void dispose() {
-        map.clear();
+        deleteAll();
     }
 
     @Override

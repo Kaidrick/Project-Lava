@@ -18,12 +18,12 @@ public class PlayerInfoMapService extends AbstractMapService<PlayerInfo>
         implements PlayerInfoRepository, UpdatableService<PlayerInfo>, PlayerInfoService {
     @Override
     public Optional<PlayerInfo> findByName(String playerName) {
-        return map.values().stream().filter(playerInfo -> playerInfo.getName().equals(playerName)).findAny();
+        return findAll().stream().filter(playerInfo -> playerInfo.getName().equals(playerName)).findAny();
     }
 
     @Override
     public Optional<PlayerInfo> findByNetId(int netId) {
-        return map.values().stream().filter(playerInfo -> playerInfo.getNetId() == netId).findAny();
+        return findAll().stream().filter(playerInfo -> playerInfo.getNetId() == netId).findAny();
     }
 
     @Override
@@ -33,34 +33,34 @@ public class PlayerInfoMapService extends AbstractMapService<PlayerInfo>
 
     @Override
     public Set<PlayerInfo> findAllByLang(String lang) {
-        return map.values().stream()
+        return findAll().stream()
                 .filter(playerInfo -> playerInfo.getLang().equals(lang))
                 .collect(Collectors.toSet());
     }
 
     @Override
     public void dispose() {
-        map.clear();
+        deleteAll();
     }
 
     @Override
     public Optional<PlayerInfo> findByUcid(String ucid) {
-        return map.values().stream().filter(playerInfo -> playerInfo.getUcid().equals(ucid)).findAny();
+        return findAll().stream().filter(playerInfo -> playerInfo.getUcid().equals(ucid)).findAny();
     }
 
     @Override
     public Optional<PlayerInfo> findBySlot(String slot) {
-        return map.values().stream().filter(playerInfo -> playerInfo.getSlot().equals(slot)).findAny();
+        return findAll().stream().filter(playerInfo -> playerInfo.getSlot().equals(slot)).findAny();
     }
 
     @Override
     public Set<PlayerInfo> findAllBySide(int side) {
-        return map.values().stream().filter(playerInfo -> playerInfo.getSide() == side).collect(Collectors.toSet());
+        return findAll().stream().filter(playerInfo -> playerInfo.getSide() == side).collect(Collectors.toSet());
     }
 
     @Override
     public Set<PlayerInfo> findByPingGreaterThan(int ping) {
-        return map.values().stream().filter(playerInfo -> playerInfo.getPing() > ping).collect(Collectors.toSet());
+        return findAll().stream().filter(playerInfo -> playerInfo.getPing() > ping).collect(Collectors.toSet());
     }
 
     @Override

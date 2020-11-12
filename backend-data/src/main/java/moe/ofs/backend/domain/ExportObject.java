@@ -1,10 +1,7 @@
 package moe.ofs.backend.domain;
 
 import com.google.gson.annotations.SerializedName;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import moe.ofs.backend.object.Vector3D;
 import moe.ofs.backend.object.map.GeoPosition;
 
@@ -19,6 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @LuaState(Level.EXPORT_POLL)
 @Entity
+@ToString
 @Table(name = "export_object")
 public final class ExportObject extends BaseEntity implements Serializable {
     @Column(name = "own_bank")
@@ -100,7 +98,8 @@ public final class ExportObject extends BaseEntity implements Serializable {
     private Map<String, Integer> type;
 
     @Builder
-    public ExportObject(Long id, double bank, String coalition, int coalitionID, int country, String groupName, double heading,
+    public ExportObject(Long id, double bank, String coalition, int coalitionID, int country,
+                        String groupName, double heading,
                         String name, double pitch, int runtimeID, String unitName,
                         Map<String, Boolean> status, GeoPosition geoPosition,
                         Vector3D position, Map<String, Integer> type) {
