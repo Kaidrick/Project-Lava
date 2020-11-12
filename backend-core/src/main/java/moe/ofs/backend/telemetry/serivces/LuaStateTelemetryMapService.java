@@ -14,6 +14,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class LuaStateTelemetryMapService
@@ -22,6 +23,8 @@ public class LuaStateTelemetryMapService
 
     @Value("${telemetry.data.size}")
     private long maxTelemetryEntrySize;
+
+    private ConcurrentHashMap<Long, TelemetryData> map = new ConcurrentHashMap<>();
 
     private final RequestTransmissionService requestTransmissionService;
 

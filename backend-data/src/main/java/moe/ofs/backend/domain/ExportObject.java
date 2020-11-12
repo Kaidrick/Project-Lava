@@ -98,7 +98,8 @@ public final class ExportObject extends BaseEntity implements Serializable {
     private Map<String, Integer> type;
 
     @Builder
-    public ExportObject(Long id, double bank, String coalition, int coalitionID, int country, String groupName, double heading,
+    public ExportObject(Long id, double bank, String coalition, int coalitionID, int country,
+                        String groupName, double heading,
                         String name, double pitch, int runtimeID, String unitName,
                         Map<String, Boolean> status, GeoPosition geoPosition,
                         Vector3D position, Map<String, Integer> type) {

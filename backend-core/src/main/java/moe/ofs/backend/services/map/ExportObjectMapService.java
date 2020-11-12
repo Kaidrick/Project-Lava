@@ -17,12 +17,12 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
         implements ExportObjectRepository, UpdatableService<ExportObject>, ExportObjectService {
     @Override
     public Optional<ExportObject> findByUnitName(String name) {
-        return map.values().stream().filter(exportObject -> exportObject.getUnitName().equals(name)).findAny();
+        return findAll().stream().filter(exportObject -> exportObject.getUnitName().equals(name)).findAny();
     }
 
     @Override
     public Optional<ExportObject> findByRuntimeID(Long runtimeId) {
-        return map.values().stream().filter(exportObject -> exportObject.getRuntimeID() == runtimeId).findAny();
+        return findAll().stream().filter(exportObject -> exportObject.getRuntimeID() == runtimeId).findAny();
     }
 
     /**
@@ -54,7 +54,13 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
 //        return map.put(id, updateObject);
 
         Optional<ExportObject> optional = findByRuntimeID(updateObject.getRuntimeID());
-        optional.ifPresent(exportObject -> fieldUpdate(exportObject, updateObject));
+        optional.ifPresent(exportObject -> {
+            if (updateObject.getPosition() != null) {
+                exportObject.setPosition(updateObject.getPosition());
+            }
+
+//            fieldUpdate(exportObject, updateObject);
+        });
         return optional.orElseThrow(() -> {
             String message = "No export object can be found matching update runtime id: " +
                     updateObject.getRuntimeID();
@@ -84,6 +90,6 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
 
     @Override
     public void dispose() {
-        map.clear();
+        deleteAll();
     }
 }
