@@ -60,9 +60,9 @@ public final class ExportObject extends BaseEntity implements Serializable {
     private String unitName;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="status_name")
-    @Column(name="is_active")
-    @CollectionTable(name="object_status", joinColumns=@JoinColumn(name="id"))
+    @MapKeyColumn(name = "status_name")
+    @Column(name = "is_active")
+    @CollectionTable(name = "object_status", joinColumns = @JoinColumn(name = "id"))
     @SerializedName("Flags")
     private Map<String, Boolean> status;
 
@@ -91,9 +91,9 @@ public final class ExportObject extends BaseEntity implements Serializable {
     private Vector3D position;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="attribute_key")
-    @Column(name="attribute_value")
-    @CollectionTable(name="object_attribute", joinColumns=@JoinColumn(name="id"))
+    @MapKeyColumn(name = "attribute_key")
+    @Column(name = "attribute_value")
+    @CollectionTable(name = "object_attribute", joinColumns = @JoinColumn(name = "id"))
     @SerializedName("Type")
     private Map<String, Integer> type;
 
@@ -142,6 +142,7 @@ public final class ExportObject extends BaseEntity implements Serializable {
 
     /**
      * Two ExportObject is consider equal if runtime id and unitName is the same.
+     *
      * @param o the object to be tested equality with.
      * @return boolean value indicating whether two ExportObject are equal.
      */
@@ -161,5 +162,14 @@ public final class ExportObject extends BaseEntity implements Serializable {
         int result = (int) (runtimeID ^ (runtimeID >>> 32));
         result = 31 * result + (unitName != null ? unitName.hashCode() : 0);
         return result;
+    }
+
+    public GeoPosition getGeoPosition() {
+        return geoPosition;
+    }
+
+
+    public Vector3D getPosition() {
+        return position;
     }
 }

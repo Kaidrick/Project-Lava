@@ -3,11 +3,13 @@ package moe.ofs.backend.system.config;
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.pagination.optimize.JsqlParserCountOptimize;
 import org.mybatis.spring.annotation.MapperScan;
+import org.mybatis.spring.annotation.MapperScans;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@MapperScan("moe.ofs.backend.dao")
+@MapperScans({@MapperScan("moe.ofs.backend.mybatis.dao"), @MapperScan("moe.ofs.backend.dao")}
+)
 public class MyBatisPlusConfig {
     //Mybtais-Plus分页插件配置
     @Bean
