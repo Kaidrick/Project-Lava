@@ -95,7 +95,7 @@ public class BackgroundTask {
     @PostConstruct
     private void loadPlugins() {
         Plugin.loadedPlugins.addAll(plugins);
-        Plugin.loadedPlugins.forEach(Plugin::load);
+        Plugin.loadedPlugins.forEach(Plugin::load);  // FIXME: this is so bad
     }
 
 
@@ -112,7 +112,9 @@ public class BackgroundTask {
             ExportObjectService exportObjectService,
             PlayerInfoService playerInfoService,
             FlyableUnitService flyableUnitService,
-            ParkingInfoService parkingInfoService, LavaTaskDispatcher lavaTaskDispatcher, List<Plugin> plugins, Sender sender, RequestTransmissionService requestTransmissionService) {
+            ParkingInfoService parkingInfoService, LavaTaskDispatcher lavaTaskDispatcher,
+            List<Plugin> plugins,
+            Sender sender, RequestTransmissionService requestTransmissionService) {
         this.requestHandler = requestHandler;
         this.connectionManager = connectionManager;
 

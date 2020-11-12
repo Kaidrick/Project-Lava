@@ -73,6 +73,7 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
         });
 
         if (optional.isPresent()) {
+            log.info("update!");
             sender.sendToTopic("unit.spawncontrol", optional.get(), "update");
         } else {
             log.info("******" + new Gson().toJson(updateObject));

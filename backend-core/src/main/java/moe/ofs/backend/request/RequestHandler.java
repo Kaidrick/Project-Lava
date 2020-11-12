@@ -279,7 +279,7 @@ public final class RequestHandler {
                 Gson gson = new Gson();
                 String json = gson.toJson(queue);
 //                if(!json.equals("[]"))
-//                    System.out.println(level + " -> cycle -> " + json);
+                    System.out.println(level + " -> cycle -> " + json);
 //                waitMap.forEach(((s, request) -> System.out.println(s + " -> " + request.getLevel() + request.params)));
 
                 String responseJsonString;
