@@ -19,21 +19,24 @@ public class ExportObjectAspect {
     }
 
     @Pointcut("execution(public void moe.ofs.backend.services.map.ExportObjectMapService.remove(moe.ofs.backend.domain.ExportObject))")
-    public void exportObjectDataRemove() {}
+    public void exportObjectDataRemove() {
+    }
 
     @Pointcut("execution(public void moe.ofs.backend.services.map.ExportObjectMapService.add(moe.ofs.backend.domain.ExportObject))")
-    public void exportObjectDataAdd() {}
+    public void exportObjectDataAdd() {
+    }
 
-//    @Pointcut("execution(public void moe.ofs.backend.services.jpa.ExportObjectDeltaJpaService." +
+    //    @Pointcut("execution(public void moe.ofs.backend.services.jpa.ExportObjectDeltaJpaService." +
 //            "update(moe.ofs.backend.domain.ExportObject))")
-@Pointcut("execution(public void moe.ofs.backend.services.map.ExportObjectMapService" +
-        ".update(moe.ofs.backend.domain.ExportObject))")
-    public void exportObjectDataUpdate() {}  // example of export object update listener
+    @Pointcut("execution(public void moe.ofs.backend.services.map.ExportObjectMapService" +
+            ".update(..))")
+    public void exportObjectDataUpdate() {
+    }  // example of export object update listener
 
     @After("exportObjectDataAdd()")
     public void logExportUnitSpawn(JoinPoint joinPoint) {
         Object object = joinPoint.getArgs()[0];
-        if(object instanceof ExportObject) {
+        if (object instanceof ExportObject) {
             sender.sendToTopic("unit.spawncontrol", (ExportObject) object, "spawn");
         }
     }
@@ -41,14 +44,17 @@ public class ExportObjectAspect {
     @After("exportObjectDataRemove()")
     private void logExportUnitDespawn(JoinPoint joinPoint) {
         Object object = joinPoint.getArgs()[0];
-        if(object instanceof ExportObject) {
+        if (object instanceof ExportObject) {
             sender.sendToTopic("unit.spawncontrol", (ExportObject) object, "despawn");
         }
     }
 
     @After("exportObjectDataUpdate()")
-    private void logExportObjectDataUpdate() {
-
+    private void logExportObjectDataUpdate(JoinPoint joinPoint) {
+        Object object = joinPoint.getArgs()[0];
+        if (object instanceof ExportObject) {
+            sender.sendToTopic("unit.spawncontrol", (ExportObject) object, "update");
+        }
     }
 
 }

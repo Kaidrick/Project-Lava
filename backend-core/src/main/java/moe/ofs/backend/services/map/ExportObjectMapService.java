@@ -1,6 +1,9 @@
 package moe.ofs.backend.services.map;
 
+import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.ExportObject;
+import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.repositories.ExportObjectRepository;
 import moe.ofs.backend.services.ExportObjectNotFoundException;
 import moe.ofs.backend.services.ExportObjectService;
@@ -13,8 +16,15 @@ import java.util.Optional;
 
 @Repository
 @Primary
+@Slf4j
 public class ExportObjectMapService extends AbstractMapService<ExportObject>
         implements ExportObjectRepository, UpdatableService<ExportObject>, ExportObjectService {
+    private final Sender sender;
+
+    public ExportObjectMapService(Sender sender) {
+        this.sender = sender;
+    }
+
     @Override
     public Optional<ExportObject> findByUnitName(String name) {
         return findAll().stream().filter(exportObject -> exportObject.getUnitName().equals(name)).findAny();
@@ -27,6 +37,7 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
 
     /**
      * TODO: is delete by runtime id really that often?
+     *
      * @param runtimeId Unique runtime id of the object
      */
     @Override
@@ -40,6 +51,7 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
      * TODO: what are the potential concurrent issues?
      * Maybe there is an api request that searches the map while the object has just been destroy
      * But export object can only be deleted by 'delete' command from lua; need more investigation
+     *
      * @param updateObject the export object whose values are to be insert to record object
      * @return ExportObject which is the updated record object
      */
@@ -58,9 +70,14 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
             if (updateObject.getPosition() != null) {
                 exportObject.setPosition(updateObject.getPosition());
             }
-
-//            fieldUpdate(exportObject, updateObject);
         });
+
+        if (optional.isPresent()) {
+            sender.sendToTopic("unit.spawncontrol", optional.get(), "update");
+        } else {
+            log.info("******" + new Gson().toJson(updateObject));
+        }
+
         return optional.orElseThrow(() -> {
             String message = "No export object can be found matching update runtime id: " +
                     updateObject.getRuntimeID();
