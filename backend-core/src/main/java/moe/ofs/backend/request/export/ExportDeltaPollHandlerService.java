@@ -1,6 +1,5 @@
 package moe.ofs.backend.request.export;
 
-import moe.ofs.backend.connector.model.DcsExportObjectDataUpdateBundle;
 import moe.ofs.backend.connector.services.ExportObjectDataService;
 import moe.ofs.backend.domain.ExportObject;
 import moe.ofs.backend.domain.Level;
@@ -14,7 +13,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service("exportObjectDelta")
 public final class ExportDeltaPollHandlerService implements PollHandlerService {
@@ -102,35 +104,47 @@ public final class ExportDeltaPollHandlerService implements PollHandlerService {
                 List<JsonRpcResponse<List<DataUpdateBundle>>> jsonRpcResponseList =
                         ConnectionManager.parseJsonResponse(s, DataUpdateBundle.class);
 
-                List<JsonRpcResponse<List<DcsExportObjectDataUpdateBundle>>> testResponseList =
-                        ConnectionManager.parseJsonResponse(s, DcsExportObjectDataUpdateBundle.class);
+//                List<JsonRpcResponse<List<DcsExportObjectDataUpdateBundle>>> testResponseList =
+//                        ConnectionManager.parseJsonResponse(s, DcsExportObjectDataUpdateBundle.class);
 
                 List<DataUpdateBundle> bundleList = ConnectionManager.flattenResponse(jsonRpcResponseList);
                 list.addAll(bundleList);
 
-                List<DcsExportObjectDataUpdateBundle> testBundleResponseList = ConnectionManager.flattenResponse(testResponseList);
+//                List<DcsExportObjectDataUpdateBundle> testBundleResponseList = ConnectionManager.flattenResponse(testResponseList);
 //                System.out.println("testBundleResponseList.size() = " + testBundleResponseList.size());
 
                 jsonRpcResponseList.forEach(r -> {
                     if(r.getResult() != null && r.getResult().isIs_tail()) {
-                        list.parallelStream().forEach(bundle -> {
-                            switch (bundle.getAction()) {
-                                case "create":
-//                                    executorService.submit(() -> service.add(bundle.getData()));
-                                    service.add(bundle.getData());
-                                    break;
-                                case "update":
-//                                    executorService.submit(() -> service.update(bundle.getData()));
-                                    service.update(bundle.getData());
-                                    break;
-                                case "delete":
-//                                    executorService.submit(() -> service.remove(bundle.getData()));
-                                    service.remove(bundle.getData());
-                                    break;
-                                default:
-                                    throw new UnsupportedOperationException();
-                            }
-                        });
+                        Map<String, List<DataUpdateBundle>> map = list.parallelStream().unordered()
+                                .collect(Collectors.groupingBy(DataUpdateBundle::getAction));
+
+                        map.getOrDefault("create", Collections.emptyList()).forEach(dataUpdateBundle ->
+                                service.add(dataUpdateBundle.getData()));
+
+                        map.getOrDefault("update", Collections.emptyList()).forEach(dataUpdateBundle ->
+                                service.update(dataUpdateBundle.getData()));
+
+                        map.getOrDefault("delete", Collections.emptyList()).forEach(dataUpdateBundle ->
+                                service.remove(dataUpdateBundle.getData()));
+
+//                        list.parallelStream().forEach(bundle -> {
+//                            switch (bundle.getAction()) {
+//                                case "create":
+////                                    executorService.submit(() -> service.add(bundle.getData()));
+//                                    service.add(bundle.getData());
+//                                    break;
+//                                case "update":
+////                                    executorService.submit(() -> service.update(bundle.getData()));
+//                                    service.update(bundle.getData());
+//                                    break;
+//                                case "delete":
+////                                    executorService.submit(() -> service.remove(bundle.getData()));
+//                                    service.remove(bundle.getData());
+//                                    break;
+//                                default:
+//                                    throw new UnsupportedOperationException();
+//                            }
+//                        });
 
                         // add a lock so that next iter is run only after batch update finishes?
 
