@@ -303,7 +303,10 @@ public final class RequestHandler {
 
                                     // resolve Resolvable only
                                     if(request instanceof Resolvable) {
-                                        ((Resolvable) request).resolve(response.getResult().getData());
+                                        // sync call will cause resolve to be blocked if any
+                                        // busy waiting method such as ServerDataRequest#get to block is executed
+                                        executorService.submit(() ->
+                                                ((Resolvable) request).resolve(response.getResult().getData()));
                                     }
                                 }
                         );
