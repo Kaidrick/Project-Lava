@@ -11,6 +11,7 @@ import moe.ofs.backend.message.connection.ConnectionStatus;
 import moe.ofs.backend.util.ConnectionManager;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -60,6 +61,11 @@ public final class RequestHandler {
 
     public RequestHandler(Sender sender) {
         this.sender = sender;
+    }
+
+    @PreDestroy
+    private void shutdown() {
+        executorService.shutdownNow();
     }
 
     /**
@@ -279,7 +285,7 @@ public final class RequestHandler {
                 Gson gson = new Gson();
                 String json = gson.toJson(queue);
 //                if(!json.equals("[]"))
-                    System.out.println(level + " -> cycle -> " + json);
+//                    System.out.println(level + " -> cycle -> " + json);
 //                waitMap.forEach(((s, request) -> System.out.println(s + " -> " + request.getLevel() + request.params)));
 
                 String responseJsonString;
