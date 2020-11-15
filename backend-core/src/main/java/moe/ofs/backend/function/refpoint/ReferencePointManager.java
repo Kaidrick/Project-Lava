@@ -9,7 +9,6 @@ import moe.ofs.backend.util.LuaScripts;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -27,30 +26,15 @@ public class ReferencePointManager {
         //
     }
 
-
     // get ref point from dcs
     public List<ReferencePoint> getAll() {
         String luaString = LuaScripts.loadAndPrepare("refpoints/get_coalition_ref_points.lua", 2);
 
-//        String s = ((ServerDataRequest) requestTransmissionService.send(
-//                 new ServerDataRequest(luaString)
-//        )).get();
-
-        System.out.println("luaString = " + luaString);
-
         String s = ((ServerDataRequest) requestTransmissionService.send(
-                (new ServerDataRequest(luaString)
-                ))).get();
+                new ServerDataRequest(luaString))).get();
 
-        requestTransmissionService.send(new ServerDataRequest(luaString).addProcessable(f -> {
-            System.out.println("f = " + f);
-        }));
-
-        System.out.println("s = " + s);
-
-//        Type referencePointListType = new TypeToken<List<ReferencePoint>>() {}.getType();
-//        return gson.fromJson(s, referencePointListType);
-        return Collections.emptyList();
+        Type referencePointListType = new TypeToken<List<ReferencePoint>>() {}.getType();
+        return gson.fromJson(s, referencePointListType);
     }
 
 }

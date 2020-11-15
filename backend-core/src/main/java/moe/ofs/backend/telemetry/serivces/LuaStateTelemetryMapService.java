@@ -24,8 +24,6 @@ public class LuaStateTelemetryMapService
     @Value("${telemetry.data.size}")
     private long maxTelemetryEntrySize;
 
-    private ConcurrentHashMap<Long, TelemetryData> map = new ConcurrentHashMap<>();
-
     private final RequestTransmissionService requestTransmissionService;
 
     public LuaStateTelemetryMapService(RequestTransmissionService requestTransmissionService) {

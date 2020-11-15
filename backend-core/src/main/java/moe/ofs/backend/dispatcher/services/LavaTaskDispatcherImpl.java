@@ -29,9 +29,6 @@ public class LavaTaskDispatcherImpl extends AbstractMapService<LavaTask> impleme
 
     private TaskController taskController;
 
-    private ConcurrentHashMap<Long, LavaTask> map = new ConcurrentHashMap<>();
-
-
     public LavaTaskDispatcherImpl(TaskController taskController) {
         this.taskController = taskController;
     }

@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public abstract class AbstractMapService <T extends BaseEntity> implements CrudService<T> {
 
-    private final ConcurrentMap<Long, T> map = new ConcurrentHashMap<>();
+    protected final ConcurrentMap<Long, T> map = new ConcurrentHashMap<>();
 
     protected Long getNextId() {
         return map.keySet().isEmpty() ? 1L : Collections.max(map.keySet()) + 1;
