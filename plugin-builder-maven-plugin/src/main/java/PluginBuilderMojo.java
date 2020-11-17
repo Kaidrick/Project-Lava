@@ -53,15 +53,16 @@ public class PluginBuilderMojo extends AbstractMojo {
 
             // find where META-INF is
             // if absent, create such directory
-            String metaInfoRoot = resources.stream().map(FileSet::getDirectory).findFirst().orElseThrow(() ->
-                    new RuntimeException("Unable to locate any resource directory"));
+            String metaInfoRoot = resources.stream().map(FileSet::getDirectory).findAny().get();
+//                    .orElseThrow(() -> new RuntimeException("Unable to locate any resource directory"));
 
             Path metaInf = Files.createDirectories(Paths.get(metaInfoRoot).resolve("META-INF"));
 
             Path metaInfOutput = Files.createDirectories(Paths.get(
                     project.getCompileClasspathElements().stream()
-                            .filter(cp -> cp.endsWith("\\target\\classes"))
+                            .filter(cp -> cp.endsWith("\\target\\classes") || cp.endsWith("/target/classes"))
                             .findAny()
+//                            .get()
                             .orElseThrow(() -> new RuntimeException("Unable to locate class output directory"))
             )).resolve("META-INF");
 
@@ -78,8 +79,11 @@ public class PluginBuilderMojo extends AbstractMojo {
                                     .filter(j -> j.getFileName().toString().endsWith(".java"))
                                     .forEach(j -> {
                                         String name = j.toString()
-                                                .substring(j.toString().indexOf("java\\") + 5)
-                                                .replace("\\", ".");
+                                                // FIXME: bad, really bad
+                                                .substring(j.toString().indexOf(
+                                                        j.toString().contains("\\") ? "java\\" : "java/"
+                                                ) + 5)
+                                                .replace(j.toString().contains("\\") ? "\\" : "/", ".");
 
                                         String className = name.substring(0, name.length() - 5);
                                         try {
