@@ -1,4 +1,4 @@
-package moe.ofs.backend.connector;
+package moe.ofs.backend.addons.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +17,6 @@ public class LavaViewController {
             value = "/view/{ident}")
     public String test(@PathVariable String ident) {
         System.out.println("ident = " + ident);
-        return "forward:/moe.ofs.addon-NavData-1.0-SNAPSHOT/index.html";
+        return "forward:/" + ident + "/index.html";
     }
 }

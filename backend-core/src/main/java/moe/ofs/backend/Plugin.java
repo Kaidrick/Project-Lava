@@ -115,7 +115,7 @@ public interface Plugin extends Configurable {
             return content;
         } else {
 //            throw new RuntimeException("Plugin identification must be specified or auto-generated");
-            return null;
+            return null;  // TODO: enforce this later
         }
     }
 }
