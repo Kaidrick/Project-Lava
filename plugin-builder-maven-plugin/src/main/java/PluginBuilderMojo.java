@@ -116,6 +116,22 @@ public class PluginBuilderMojo extends AbstractMojo {
             Files.createDirectories(metaInfOutput);
             Files.copy(sourceSpringFactory, outputSpringFactory, StandardCopyOption.REPLACE_EXISTING);
 
+
+            // generate ident in meta info
+            Path sourceIdent = metaInf.resolve("ident");
+            Path outputIdent = metaInfOutput.resolve("ident");
+            String ident = String.format("%s-%s-%s",
+                    project.getGroupId(), project.getArtifactId(), project.getVersion());
+
+            getLog().info("Project is identified as " + ident);
+
+            try (BufferedWriter writer = Files.newBufferedWriter(sourceIdent)) {
+                writer.write(ident);
+            }
+
+            Files.copy(sourceIdent, outputIdent, StandardCopyOption.REPLACE_EXISTING);
+
+
         } catch (IOException | DependencyResolutionRequiredException e) {
             e.printStackTrace();
         }

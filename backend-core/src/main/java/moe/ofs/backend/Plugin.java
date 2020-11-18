@@ -1,8 +1,17 @@
 package moe.ofs.backend;
 
+import moe.ofs.backend.domain.Level;
+import moe.ofs.backend.util.ConnectionManager;
+
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A plugin is an addon to core functionality of Lava. It can be developed an maintained independent of core features
@@ -95,5 +104,18 @@ public interface Plugin extends Configurable {
 
     default String getLocalizedDescription() {
         return null;
+    }
+
+    default String getFullName() {
+        InputStream in = this.getClass().getResourceAsStream("/META-INF/ident");
+        if(in != null) {
+            String content = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)).lines()
+                    .collect(Collectors.joining("\n"));
+            System.out.println("content = " + content);
+            return content;
+        } else {
+//            throw new RuntimeException("Plugin identification must be specified or auto-generated");
+            return null;
+        }
     }
 }
