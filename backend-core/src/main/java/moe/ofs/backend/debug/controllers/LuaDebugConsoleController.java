@@ -56,6 +56,11 @@ public class LuaDebugConsoleController {
                 return ((ExportDataRequest) requestTransmissionService.send((
                         new ExportDataRequest(luaCommand.getLuaString())))).get();
 
+            case 3:  // api env
+                return ((ServerDataRequest) requestTransmissionService.send((
+                        new ServerDataRequest(RequestToServer.State.MISSION,
+                                luaCommand.getLuaString())))).get();
+
 
             default:  // default to miz env, as the same as case 0
                 return ((ServerDataRequest) requestTransmissionService.send(
