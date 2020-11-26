@@ -39,7 +39,10 @@ public class LavaLog {
                     .source(source)
                     .time(Date.from(instant)).build();
 
-            sender.sendToTopic(TOPIC, logEntry, null);
+            if (logLevel != LogLevel.DEBUG) {
+                sender.sendToTopic(TOPIC, logEntry, null);
+            }
+
             log.debug(logEntry.toString());
         }
 

@@ -94,6 +94,32 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
     }
 
     @Override
+    public Set<T> fetchAll(Class<T> tClass) {
+        Gson gson = new Gson();
+
+        String dataJson = ((ServerDataRequest) requestTransmissionService
+                .send(new ServerDataRequest(LuaScripts.loadAndPrepare("mizdb/table_fetch_all.lua",
+                        getRepositoryName())))).get();
+
+        System.out.println("dataJson = " + dataJson);
+        Type type = TypeToken.getParameterized(ArrayList.class, tClass).getType();
+
+        ArrayList<T> list = gson.fromJson(dataJson, type);
+
+        return new HashSet<>(list);
+    }
+
+    @Override
+    public Optional<T> fetchById(Long id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<T> fetchBy(String attributeName, Object value, Class<T> tClass) {
+        return Optional.empty();
+    }
+
+    @Override
     public void deleteById(Long id) {
 
     }
