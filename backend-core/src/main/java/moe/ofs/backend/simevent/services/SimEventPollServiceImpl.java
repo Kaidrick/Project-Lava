@@ -24,7 +24,8 @@ public class SimEventPollServiceImpl extends AbstractMissionDataService<SimEvent
 
     @Override
     public void poll() throws IOException {
-        fetchAll(SimEvent.class).forEach(System.out::println);
+        fetchMapAll(LuaScripts.load("simevent/mapper/event_id_flat_map.lua"), SimEvent.class)
+                .forEach(System.out::println);
     }
 
     @Override

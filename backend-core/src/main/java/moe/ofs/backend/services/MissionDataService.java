@@ -22,6 +22,8 @@ public interface MissionDataService<T> extends MissionPersistenceService {
 
     Set<T> fetchAll(Class<T> tClass);
 
+    Set<T> fetchMapAll(String mapper, Class<T> tClass);
+
     Optional<T> fetchById(Long id);
 
     Optional<T> fetchBy(String attributeName, Object value, Class<T> tClass);
