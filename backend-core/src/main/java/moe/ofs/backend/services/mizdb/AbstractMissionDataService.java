@@ -1,6 +1,7 @@
 package moe.ofs.backend.services.mizdb;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.server.ServerExecRequest;
@@ -26,7 +27,7 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
                 .send(new ServerDataRequest(LuaScripts.loadAndPrepare("mizdb/table_find_all.lua",
                         getRepositoryName())))).get();
 
-        System.out.println("dataJson = " + dataJson);
+//        System.out.println("dataJson = " + dataJson);
         Type type = TypeToken.getParameterized(ArrayList.class, tClass).getType();
 
         ArrayList<T> list = gson.fromJson(dataJson, type);
@@ -101,7 +102,7 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
                 .send(new ServerDataRequest(LuaScripts.loadAndPrepare("mizdb/table_fetch_all.lua",
                         getRepositoryName())))).get();
 
-        System.out.println("dataJson = " + dataJson);
+//        System.out.println("dataJson = " + dataJson);
         Type type = TypeToken.getParameterized(ArrayList.class, tClass).getType();
 
         ArrayList<T> list = gson.fromJson(dataJson, type);
@@ -115,14 +116,20 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
 
         String dataJson = ((ServerDataRequest) requestTransmissionService
                 .send(new ServerDataRequest(LuaScripts.loadAndPrepare("mizdb/table_fetch_mapping_all.lua",
-                        getRepositoryName())))).get();
+                        getRepositoryName(), mapper)))).get();
 
-        System.out.println("dataJson = " + dataJson);
         Type type = TypeToken.getParameterized(ArrayList.class, tClass).getType();
 
-        ArrayList<T> list = gson.fromJson(dataJson, type);
+        ArrayList<T> list;
+        try {
+            list = gson.fromJson(dataJson, type);
+            return new HashSet<>(list);
+        } catch (JsonSyntaxException e) {
+            System.out.println("dataJson = " + dataJson);
+            e.printStackTrace();
 
-        return new HashSet<>(list);
+            return Collections.emptySet();
+        }
     }
 
     @Override

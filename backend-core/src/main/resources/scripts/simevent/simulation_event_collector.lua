@@ -16,9 +16,9 @@ local collection = {
     --[world.event.S_EVENT_REFUELING] = true,
     --[world.event.S_EVENT_REFUELING_STOP] = true,
 
-    [world.event.S_EVENT_DEAD] = true,
+    --[world.event.S_EVENT_DEAD] = true,
     [world.event.S_EVENT_PILOT_DEAD] = true,
-    [world.event.S_EVENT_UNIT_LOST] = true,
+    --[world.event.S_EVENT_UNIT_LOST] = true,
     [world.event.S_EVENT_LANDING_AFTER_EJECTION] = true,
 
 
@@ -29,13 +29,19 @@ local collection = {
     [world.event.S_EVENT_PLAYER_COMMENT] = true
 }
 
-
 handler.ident = "simulationEventCollectorHandler"
+
+-- iterate through world.eventHandlers table to check if there is already an existing collector handler
+for _, eventHandler in pairs(world.eventHandlers) do
+    if eventHandler.ident == handler.ident then
+        return
+    end
+end
+
 handler.f = function(event)
-    --trigger.action.outText(event.id, 10)
-    --if collection(event.id) then
+    if collection[event.id] then
         db_table:save(event)
-    --end
+    end
 end
 
 function handler:onEvent(event)

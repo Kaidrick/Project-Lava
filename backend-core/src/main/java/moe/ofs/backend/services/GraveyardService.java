@@ -1,6 +1,9 @@
 package moe.ofs.backend.services;
 
 import moe.ofs.backend.domain.ExportObject;
+import moe.ofs.backend.domain.GraveyardRecord;
+
+import java.util.Optional;
 
 /**
  * Graveyard is where obsolete ExportObject moves when it is no longer active in the sim environment.
@@ -21,5 +24,7 @@ public interface GraveyardService {
      * Remove expired entries periodically from the graveyard for garbage collection.
      */
     void dispose();
+
+    Optional<GraveyardRecord> findByRecordRuntimeId(long runtimeId);
 
 }

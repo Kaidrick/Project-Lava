@@ -1,7 +1,9 @@
 package moe.ofs.backend.simevent.services;
 
-import moe.ofs.backend.request.PollHandlerService;
+import moe.ofs.backend.domain.SimEvent;
 
-public interface SimEventPollService extends PollHandlerService {
+import java.util.Set;
 
+public interface SimEventPollService {
+    Set<SimEvent> poll();
 }

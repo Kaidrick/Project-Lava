@@ -31,6 +31,17 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
     }
 
     @Override
+    public Optional<ExportObject> findByRuntimeId(Long runtimeId) {
+        return findAll().stream().filter(exportObject -> exportObject.getRuntimeID() == runtimeId).findAny();
+    }
+
+    @Override
+    public Optional<ExportObject> findByRuntimeId(String runtimeIdString) {
+        long runtimeId = Long.parseLong(runtimeIdString);
+        return findByRuntimeID(runtimeId);
+    }
+
+    @Override
     public Optional<ExportObject> findByRuntimeID(Long runtimeId) {
         return findAll().stream().filter(exportObject -> exportObject.getRuntimeID() == runtimeId).findAny();
     }
@@ -73,7 +84,6 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
         });
 
         if (optional.isPresent()) {
-            log.info("update!");
             sender.sendToTopic("unit.spawncontrol", optional.get(), "update");
         } else {
             log.info("******" + new Gson().toJson(updateObject));

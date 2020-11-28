@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Optional;
 
 @Service
 public class GraveyardMapService extends AbstractMapService<GraveyardRecord>
@@ -28,6 +29,11 @@ public class GraveyardMapService extends AbstractMapService<GraveyardRecord>
     @Scheduled(fixedDelay = 10000L)
     public void dispose() {
         map.values().stream().filter(this::isExpired).forEach(record -> deleteById(record.getId()));
+    }
+
+    @Override
+    public Optional<GraveyardRecord> findByRecordRuntimeId(long runtimeId) {
+        return findAll().parallelStream().filter(record -> record.getRecord().getRuntimeID() == runtimeId).findAny();
     }
 
     private boolean isExpired(GraveyardRecord record) {
