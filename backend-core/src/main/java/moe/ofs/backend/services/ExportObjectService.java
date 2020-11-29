@@ -10,4 +10,8 @@ public interface ExportObjectService extends UpdatableService<ExportObject>, Cru
 
     Optional<ExportObject> findByUnitName(String unitName);
 
+    Optional<ExportObject> findByRuntimeId(Long runtimeId);
+
+    Optional<ExportObject> findByRuntimeId(String runtimeId);
+
 }

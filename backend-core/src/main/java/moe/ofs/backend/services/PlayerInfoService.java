@@ -13,6 +13,10 @@ public interface PlayerInfoService extends UpdatableService<PlayerInfo>, CrudSer
 
     Optional<PlayerInfo> findByNetId(int netId);
 
+    Optional<PlayerInfo> findBySlot(String slot);
+
+    Optional<PlayerInfo> findByName(String playerName);
+
     Set<PlayerInfo> findAll();
 
     boolean detectSlotChange(PlayerInfo previous, PlayerInfo current);

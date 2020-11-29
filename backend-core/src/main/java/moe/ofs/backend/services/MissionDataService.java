@@ -19,4 +19,12 @@ public interface MissionDataService<T> extends MissionPersistenceService {
     void deleteById(Long id);
 
     void deleteBy(String attributeName, Object value);
+
+    Set<T> fetchAll(Class<T> tClass);
+
+    Set<T> fetchMapAll(String mapper, Class<T> tClass);
+
+    Optional<T> fetchById(Long id);
+
+    Optional<T> fetchBy(String attributeName, Object value, Class<T> tClass);
 }
