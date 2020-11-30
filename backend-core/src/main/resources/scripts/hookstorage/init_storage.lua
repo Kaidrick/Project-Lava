@@ -1,19 +1,8 @@
 -- create global db table
-missionDatabase = missionDatabase or {}
+hookStorage = hookStorage or {}
 
--- add handler to drop database on mission restart
-local handler = {}
-handler.ident = "missionDataBaseDropOnMissionRestart"
-handler.f = function(event)
-    if event.id == world.event.S_EVENT_MISSION_START then
-        missionDatabase = {}
-    end
-end
-
-function handler:onEvent(event)
-    self.f(event)
-end
-world.addEventHandler(handler)
+-- hook storage can only be clean explicitly
+hookStorage.clear =
 
 -- Meta class
 DataTable = {

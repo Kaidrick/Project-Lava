@@ -1,12 +1,12 @@
 -- create global db table
-missionDatabase = missionDatabase or {}
+__storage = __storage or {}
 
 -- add handler to drop database on mission restart
 local handler = {}
-handler.ident = "missionDataBaseDropOnMissionRestart"
+handler.ident = "__storageDropOnMissionRestart"
 handler.f = function(event)
     if event.id == world.event.S_EVENT_MISSION_START then
-        missionDatabase = {}
+        __storage = {}
     end
 end
 
