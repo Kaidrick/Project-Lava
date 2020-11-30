@@ -25,7 +25,9 @@ end
 slot_validator.onPlayerTryChangeSlot = function(playerID, side, slotID) -- -> true | false
     local current_side, current_slotID = net.get_slot(playerID)
     slot_validator._request[playerID] = { side, current_side, slotID, current_slotID }  -- array
-    return false  -- always reject
+
+    --if __lava_hand_off then return true else return false end
+    return __lava_hand_off  -- reject if not handed off
 end
 
 DCS.setUserCallbacks(slot_validator)
