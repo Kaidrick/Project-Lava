@@ -10,6 +10,7 @@ import moe.ofs.backend.request.RequestInvalidStateException;
 import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.Resolvable;
 
+import java.lang.reflect.Type;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,6 +106,14 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
 
     // TODO --> generify server data request, see ConnectionManager for detail
     public <T> T getAs(Class<T> type) {
+        Gson gson = new Gson();
+        if(!isSent()) {
+            throw new RequestInvalidStateException("Request has never been sent and thus has no result.");
+        }
+        return gson.fromJson(get(), type);
+    }
+
+    public <T> T getAs(Type type) {
         Gson gson = new Gson();
         if(!isSent()) {
             throw new RequestInvalidStateException("Request has never been sent and thus has no result.");
