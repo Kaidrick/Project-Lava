@@ -3,6 +3,8 @@ package moe.ofs.backend.chatcmd.services;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.BackgroundTask;
+import moe.ofs.backend.chatcmd.model.ChatCommandDefinition;
+import moe.ofs.backend.chatcmd.model.ScanStrategy;
 import moe.ofs.backend.domain.ChatCommand;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.handlers.MissionStartObservable;
@@ -20,11 +22,15 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class ChatCommandProcessServiceImpl implements ChatCommandProcessService {
     private final List<Processable> processors = new ArrayList<>();
+
+    // TODO: keyword should be unique; use set instead
+    private final List<ChatCommandDefinition> definitions = new ArrayList<>();
 
     private final RequestTransmissionService requestTransmissionService;
     private final PlayerInfoService playerInfoService;
@@ -41,8 +47,25 @@ public class ChatCommandProcessServiceImpl implements ChatCommandProcessService 
                     LuaScripts.load("chat_command_processor/chat_command_processor.lua")));
 
             log.info("Setting up chat command processor");
+
+            String batchKwString = definitions.stream()
+                    .map(definition -> String.format("\"%s\"", definition.getKeyword()))
+                    .collect(Collectors.joining(", "));
+
+            requestTransmissionService
+                    .send(new ServerDataRequest(RequestToServer.State.DEBUG,
+                            LuaScripts.loadAndPrepare("chat_command_processor/add_command_keyword_batch.lua",
+                                    batchKwString)));
+
         };
         missionStartObservable.register();
+
+        addDefinition(ChatCommandDefinition.builder()
+                .consumer(chatCommand -> System.out.println("chatCommand = " + chatCommand))
+                .name("test chat command intercept")
+                .keyword("/test")
+                .strategy(ScanStrategy.STARTS_WITH)
+                .build());
     }
 
     @Scheduled(fixedDelay = 200L)
@@ -57,17 +80,19 @@ public class ChatCommandProcessServiceImpl implements ChatCommandProcessService 
         Type type = TypeToken.getParameterized(ArrayList.class, ChatCommand.class).getType();
         return ((ServerDataRequest) requestTransmissionService
                 .send(new ServerDataRequest(RequestToServer.State.DEBUG,
-                    LuaScripts.load("chat_command_processor/fetch_commands.lua")))).getAs(type);
+                    LuaScripts.load("chat_command_processor/fetch_commands.lua"))))
+                .getAs(type);
     }
 
     @Override
     public void analysis(ChatCommand command) {
         // which player is initiating this command
         Optional<PlayerInfo> optional = playerInfoService.findByNetId(command.getNetId());
-        optional.ifPresent(playerInfo -> {
-            command.setPlayer(optional.get());
-            processors.forEach(processable -> processable.process(command));
-        });
+        optional.ifPresent(playerInfo -> command.setPlayer(optional.get()));
+
+        definitions.stream()
+                .filter(definition -> definition.getKeyword().equals(command.getKeyword()))
+                .forEach(definition -> definition.getConsumer().accept(command));
     }
 
     @Override
@@ -88,5 +113,16 @@ public class ChatCommandProcessServiceImpl implements ChatCommandProcessService 
     @Override
     public void removeProcessors(List<Processable> processors) {
         this.processors.removeAll(processors);
+    }
+
+    @Override
+    public ChatCommandDefinition addDefinition(ChatCommandDefinition definition) {
+        definitions.add(definition);
+//        requestTransmissionService
+//                .send(new ServerDataRequest(RequestToServer.State.DEBUG,
+//                        LuaScripts.loadAndPrepare("chat_command_processor/add_command_keyword.lua",
+//                                definition.getKeyword())));
+
+        return definition;
     }
 }

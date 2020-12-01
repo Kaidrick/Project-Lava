@@ -21,16 +21,20 @@ local function ends_with(str, ending)
 end
 
 chat_command_processor.onPlayerTrySendChat = function(playerID, msg, all)
-    for _, keyword in pairs(_keywords) do
+    for _, keyword in pairs(chat_command_processor._keywords) do
         if starts_with(msg, keyword) then
             local data = {
                 playerID = playerID,
-                msg = msg
+                msg = msg,
+                time = os.time(),
+                kw = keyword
             }
-            table.insert(chat_command_processor._commands, )
+            table.insert(chat_command_processor._commands, data)
             return ""  -- drop the message from chat
         end
     end
 
     return msg
 end
+
+DCS.setUserCallbacks(chat_command_processor)
