@@ -1,19 +1,7 @@
 -- create global db table
 __storage = __storage or {}
 
--- add handler to drop database on mission restart
-local handler = {}
-handler.ident = "__storageDropOnMissionRestart"
-handler.f = function(event)
-    if event.id == world.event.S_EVENT_MISSION_START then
-        __storage = {}
-    end
-end
-
-function handler:onEvent(event)
-    self.f(event)
-end
-world.addEventHandler(handler)
+-- mission state storage can only be clean manually and explicitly
 
 -- Meta class
 DataTable = {

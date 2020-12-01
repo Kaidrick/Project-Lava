@@ -23,7 +23,11 @@ end
 chat_command_processor.onPlayerTrySendChat = function(playerID, msg, all)
     for _, keyword in pairs(_keywords) do
         if starts_with(msg, keyword) then
-            table.insert(chat_command_processor._commands, msg)
+            local data = {
+                playerID = playerID,
+                msg = msg
+            }
+            table.insert(chat_command_processor._commands, )
             return ""  -- drop the message from chat
         end
     end

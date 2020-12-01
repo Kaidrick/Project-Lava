@@ -62,6 +62,7 @@ public class ChatCommandProcessServiceImpl implements ChatCommandProcessService 
 
     @Override
     public void analysis(ChatCommand command) {
+        // which player is initiating this command
         Optional<PlayerInfo> optional = playerInfoService.findByNetId(command.getNetId());
         optional.ifPresent(playerInfo -> {
             command.setPlayer(optional.get());
