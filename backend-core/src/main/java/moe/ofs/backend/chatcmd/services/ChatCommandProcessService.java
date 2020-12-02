@@ -1,5 +1,6 @@
 package moe.ofs.backend.chatcmd.services;
 
+import moe.ofs.backend.chatcmd.model.ChatCommandDefinition;
 import moe.ofs.backend.domain.ChatCommand;
 
 import java.io.IOException;
@@ -17,4 +18,6 @@ public interface ChatCommandProcessService {
     void removeProcessor(Processable processor);
 
     void removeProcessors(List<Processable> processors);
+
+    ChatCommandDefinition addDefinition(ChatCommandDefinition definition);
 }

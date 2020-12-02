@@ -14,6 +14,7 @@ import java.lang.reflect.Type;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class ServerDataRequest extends RequestToServer implements Resolvable {
 

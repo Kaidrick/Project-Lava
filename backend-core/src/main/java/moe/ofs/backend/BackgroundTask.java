@@ -337,7 +337,7 @@ public class BackgroundTask {
                 e.printStackTrace();
 
                 // shutdown
-                requestHandler.shutdownConnections();
+//                requestHandler.shutdownConnections();
             }
         };
 
