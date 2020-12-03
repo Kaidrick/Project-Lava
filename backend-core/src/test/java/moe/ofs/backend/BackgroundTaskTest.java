@@ -1,13 +1,17 @@
 package moe.ofs.backend;
 
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.object.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+@Slf4j
 class BackgroundTaskTest {
 
     @BeforeEach
@@ -42,5 +46,13 @@ class BackgroundTaskTest {
         Group reverseGroup = gson.fromJson(testJsonString, Group.class);
         System.out.println("reverseGroup = " + reverseGroup);
         reverseGroup.getUnits().forEach(item -> System.out.println(item.getName()));
+    }
+
+    @Test
+    void test2() {
+        List<String> a = new ArrayList<>();
+        a.add("AAA");
+        a.add("AA=1");
+        log.info("******"+a.contains("AA="));
     }
 }
