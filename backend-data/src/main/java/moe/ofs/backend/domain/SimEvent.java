@@ -15,13 +15,10 @@ public class SimEvent extends BaseEntity {
 
     protected double time;  // DCS event time may be decimals
 
-    @SerializedName("initiator")
     protected long initiatorId;
 
-    @SerializedName("target")
     protected long targetId;
 
-    @SerializedName("weapon")
     protected long weaponId;
 
     private transient boolean associated;
