@@ -1,17 +1,20 @@
 package moe.ofs.backend.function.newslotcontrol.services;
 
 import moe.ofs.backend.domain.ExportObject;
+import moe.ofs.backend.domain.PlayerInfo;
+
+import java.util.Optional;
 
 public interface SlotManageService {
-    void forceSlot(int id);
+    void forceSlot(PlayerInfo playerInfo, String slotId);
 
-    ExportObject getSlotExportObject(int id);
+    Optional<ExportObject> getSlotExportObject(String slotId);
 
-    void lockSlot(int id);
+    void lockSlot(String slotId);
 
-    void releaseSlot(int id);
+    void releaseSlot(String slotId);
 
-    void cleanSlot(int id);
+    void emptySlot(String slotId);
 
-    void cleanAllSlots();
+    void emptyAllSlots();
 }

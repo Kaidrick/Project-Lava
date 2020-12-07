@@ -33,6 +33,12 @@ function DataTable:new(table_name)
    return o
 end
 
+function DataTable:allocate(table_name)
+    local table = DataTable:new(table_name)
+    __storage[table_name] = table
+    return __storage[table_name]
+end
+
 function DataTable:save(object)
   self.nextId = self.nextId + 1
   self.repository[self.nextId] = object

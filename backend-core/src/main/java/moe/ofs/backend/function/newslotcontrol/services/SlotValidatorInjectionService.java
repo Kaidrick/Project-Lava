@@ -1,5 +1,7 @@
 package moe.ofs.backend.function.newslotcontrol.services;
 
+import com.google.gson.reflect.TypeToken;
+import moe.ofs.backend.domain.ChatCommand;
 import moe.ofs.backend.function.newslotcontrol.model.SlotChangeData;
 import moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService;
 import moe.ofs.backend.request.RequestToServer;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,7 +54,8 @@ public class SlotValidatorInjectionService extends AbstractHookInterceptorProces
 
         requestTransmissionService.send(
                 new ServerDataRequest(RequestToServer.State.DEBUG,
-                        LuaScripts.load("slotchange/new/player_try_change_slot_hook.lua")));
+                        LuaScripts.loadAndPrepare("slotchange/new/player_try_change_slot_hook.lua",
+                                getClass().getName())));
     }
 
     /**
@@ -60,6 +65,10 @@ public class SlotValidatorInjectionService extends AbstractHookInterceptorProces
      */
     @Override
     public List<SlotChangeData> poll() throws IOException {
-        return null;
+        Type type = TypeToken.getParameterized(ArrayList.class, SlotChangeData.class).getType();
+        return ((ServerDataRequest) requestTransmissionService.send(
+                new ServerDataRequest(RequestToServer.State.DEBUG,
+                        LuaScripts.loadAndPrepare("slotchange/new/fetch_player_slot_request.lua"))
+        )).getAs(type);
     }
 }

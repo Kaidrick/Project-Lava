@@ -1,5 +1,6 @@
 package moe.ofs.backend.function.mizdb;
 
+import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.handlers.LuaScriptInjectionObservable;
 import moe.ofs.backend.request.RequestToServer;
 import moe.ofs.backend.request.server.ServerActionRequest;
@@ -11,11 +12,12 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-public class MissionPersistenceDatabaseBootstrap {
+@Slf4j
+public class PersistentStructuredDataInjectionBootstrap {
 
     private final RequestTransmissionService requestTransmissionService;
 
-    public MissionPersistenceDatabaseBootstrap(RequestTransmissionService requestTransmissionService) {
+    public PersistentStructuredDataInjectionBootstrap(RequestTransmissionService requestTransmissionService) {
         this.requestTransmissionService = requestTransmissionService;
     }
 
@@ -26,10 +28,20 @@ public class MissionPersistenceDatabaseBootstrap {
     }
 
     private void databaseInit() {
+//        requestTransmissionService.send(
+//                new ServerDataRequest(LuaScripts.load("mizdb/init_mizdb.lua"))
+//        );
+
         requestTransmissionService.send(
-                new ServerDataRequest(LuaScripts.load("mizdb/init_mizdb.lua"))
+                new ServerDataRequest(RequestToServer.State.DEBUG,
+                        LuaScripts.load("storage/mission/init.lua"))
         );
 
-        System.out.println("init mizdb");
+        requestTransmissionService.send(
+                new ServerDataRequest(RequestToServer.State.DEBUG,
+                        LuaScripts.load("storage/server/init.lua"))
+        );
+
+        log.info("Persistent Structured Storage Initialized");
     }
 }

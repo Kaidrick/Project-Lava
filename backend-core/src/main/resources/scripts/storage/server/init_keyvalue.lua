@@ -20,6 +20,12 @@ function KwPair:new(table_name)
    return o
 end
 
+function KwPair:allocate(table_name)
+    local table = KwPair:new(table_name)
+    __storage[table_name] = table
+    return __storage[table_name]
+end
+
 function KwPair:save(key, value)
   self.repository[key] = value
   return key
