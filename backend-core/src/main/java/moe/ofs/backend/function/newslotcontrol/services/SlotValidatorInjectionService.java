@@ -51,11 +51,10 @@ public class SlotValidatorInjectionService extends AbstractHookInterceptorProces
 
     @PostConstruct
     public void init() {
-
-        requestTransmissionService.send(
-                new ServerDataRequest(RequestToServer.State.DEBUG,
-                        LuaScripts.loadAndPrepare("slotchange/new/player_try_change_slot_hook.lua",
-                                getClass().getName())));
+//        requestTransmissionService.send(
+//                new ServerDataRequest(RequestToServer.State.DEBUG,
+//                        LuaScripts.loadAndPrepare("slotchange/new/player_slot_record_hook.lua",
+//                                getClass().getName())));
     }
 
     /**

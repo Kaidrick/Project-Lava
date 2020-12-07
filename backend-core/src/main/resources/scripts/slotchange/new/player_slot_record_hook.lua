@@ -3,18 +3,18 @@ local db_table_name = '%s'
 local requests = DataTable:allocate(db_table_name .. '_request')
 local slotMoves = DataTable:allocate(db_table_name .. '_slot_move')
 
-slot_validator = {}
+slot_change_manager = {}
 
 --[[
     criteria are functions that are run for each try change slot action.
     if any of them returns false, reject the slot change immediately
 --]]
 
-slot_validator._criteria = {}
+slot_change_manager._criteria = {}
 
-slot_validator._slot_confirm_callback = {}
+slot_change_manager._slot_confirm_callback = {}
 
-slot_validator.fetch_records = function()
+slot_change_manager.fetch_records = function()
     local array = {}
 
     for _, req in pairs(requests:findAll()) do
@@ -34,7 +34,7 @@ slot_validator.fetch_records = function()
             player_id = mv[1],    -- number
             cur_side = mv[2],    -- number
             cur_slot_id = mv[3]  -- string
-
+        }
         table.insert(array, data)
     end
     slotMoves:deleteAll()
@@ -42,14 +42,14 @@ slot_validator.fetch_records = function()
     return array
 end
 
-slot_validator.fetch_slot_move = function()
+slot_change_manager.fetch_slot_move = function()
     local array = {}
     for _, mv in pairs(slotMoves:findAll()) do
         local data = {
             player_id = mv[1],    -- number
             cur_side = mv[2],    -- number
             cur_slot_id = mv[3]  -- string
-
+        }
         table.insert(array, data)
     end
     slotMoves:deleteAll()
@@ -57,7 +57,7 @@ slot_validator.fetch_slot_move = function()
     return array
 end
 
-slot_validator.fetch_slot_request = function()
+slot_change_manager.fetch_slot_request = function()
     local array = {}
     for _, req in pairs(requests:findAll()) do
         local data = {
@@ -74,7 +74,7 @@ slot_validator.fetch_slot_request = function()
     return array
 end
 
-slot_validator.onPlayerTryChangeSlot = function(playerID, side, slotID) -- -> true | false
+slot_change_manager.onPlayerTryChangeSlot = function(playerID, side, slotID) -- -> true | false
 
     -- collect try change slot info and push to _slot_move table
     -- but if __lava_hand_off then no need to record any info
@@ -88,7 +88,7 @@ slot_validator.onPlayerTryChangeSlot = function(playerID, side, slotID) -- -> tr
     if __lava_hand_off then
         return
     else
-        for _, predicate in pairs(slot_validator._criteria) do
+        for _, predicate in pairs(slot_change_manager._criteria) do
             if not predicate(playerID, side, slotID) then
                 return false
             end
@@ -96,10 +96,10 @@ slot_validator.onPlayerTryChangeSlot = function(playerID, side, slotID) -- -> tr
     end
 end
 
-slot_validator.onPlayerChangeSlot = function(id)  -- net id
+slot_change_manager.onPlayerChangeSlot = function(id)  -- net id
     local current_side, current_slotID = net.get_slot(id)
 
-    for _, callback in pairs(slot_validator._slot_confirm_callback) do
+    for _, callback in pairs(slot_change_manager._slot_confirm_callback) do
         local success, err = pcall(callback, id, current_side, current_slotID)
         if not success then
             net.log(err)
@@ -109,4 +109,4 @@ slot_validator.onPlayerChangeSlot = function(id)  -- net id
     slotMoves:save({ id, current_side, current_slotID })
 end
 
-DCS.setUserCallbacks(slot_validator)
+DCS.setUserCallbacks(slot_change_manager)

@@ -1,3 +1,3 @@
-if slot_validator then
-    slot_validator._criteria['%s'] = nil
+if slot_change_manager then
+    slot_change_manager._criteria['%s'] = nil
 end

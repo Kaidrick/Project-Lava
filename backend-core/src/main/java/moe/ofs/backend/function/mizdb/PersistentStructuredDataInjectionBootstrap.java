@@ -33,8 +33,7 @@ public class PersistentStructuredDataInjectionBootstrap {
 //        );
 
         requestTransmissionService.send(
-                new ServerDataRequest(RequestToServer.State.DEBUG,
-                        LuaScripts.load("storage/mission/init.lua"))
+                new ServerDataRequest(LuaScripts.load("storage/mission/init.lua"))
         );
 
         requestTransmissionService.send(

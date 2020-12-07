@@ -1,3 +1,3 @@
-if slot_validator then
-    slot_validator._criteria['%s'] = %s  -- function
+if slot_change_manager then
+    slot_change_manager._criteria['%s'] = %s  -- function
 end
