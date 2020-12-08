@@ -92,6 +92,7 @@ public class PluginBuilderMojo extends AbstractMojo {
                                                     .map(annotation -> annotation.annotationType().getName())
                                                     .anyMatch(typeName ->
                                                             typeName.contains("org.springframework.web.bind.annotation") ||
+                                                            typeName.contains("org.springframework.context.annotation") ||
                                                             typeName.contains("org.springframework.stereotype"))) {
                                                 // spring context needs to include this one
                                                 getLog().info("Found component:" + className);

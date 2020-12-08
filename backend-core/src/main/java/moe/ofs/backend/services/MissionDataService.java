@@ -1,5 +1,7 @@
 package moe.ofs.backend.services;
 
+import moe.ofs.backend.domain.Level;
+
 import java.util.Optional;
 import java.util.Set;
 
@@ -27,4 +29,6 @@ public interface MissionDataService<T> extends MissionPersistenceService {
     Optional<T> fetchById(Long id);
 
     Optional<T> fetchBy(String attributeName, Object value, Class<T> tClass);
+
+//    Level getServiceLuaState();
 }

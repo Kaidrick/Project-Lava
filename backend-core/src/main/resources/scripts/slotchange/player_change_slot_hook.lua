@@ -23,11 +23,21 @@ slot_validator.get_request_list = function()
 end
 
 slot_validator.onPlayerTryChangeSlot = function(playerID, side, slotID) -- -> true | false
-    local current_side, current_slotID = net.get_slot(playerID)
-    slot_validator._request[playerID] = { side, current_side, slotID, current_slotID }  -- array
 
-    --if __lava_hand_off then return true else return false end
-    return __lava_hand_off  -- reject if not handed off
+    -- collect try change slot info and push to _request table
+    -- but if __lava_hand_off then no need to record any info
+    -- pass control to next validator in chain
+
+    if not __lava_hand_off then
+        local current_side, current_slotID = net.get_slot(playerID)
+        slot_validator._request[playerID] = { side, current_side, slotID, current_slotID }  -- array
+    end
+
+    if __lava_hand_off then
+        -- do nothing
+    else
+
+    end
 end
 
 DCS.setUserCallbacks(slot_validator)

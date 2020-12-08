@@ -1,5 +1,6 @@
 local table_name = '%s'
-local db_table = missionDatabase[table_name]
+--local db_table = missionDatabase[table_name]
+local db_table = DataTable:allocate(table_name)
 local handler = {}
 local collection = {
     [world.event.S_EVENT_SHOT] = true,
