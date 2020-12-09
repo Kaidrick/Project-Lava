@@ -1,8 +1,8 @@
 package moe.ofs.backend.util;
 
-import com.google.gson.reflect.TypeToken;
+import moe.ofs.backend.request.BaseRequest;
 import moe.ofs.backend.request.LuaResponse;
-import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.request.export.ExportDataRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
@@ -11,11 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class LuaScripts {
@@ -55,8 +51,8 @@ public class LuaScripts {
     }
 
     // short hand methods for sending requests dcs lua env
-    public static LuaResponse request(RequestToServer.State state, String luaString) {
-        if (RequestToServer.State.EXPORT.equals(state)) {
+    public static LuaResponse request(DataRequest.State state, String luaString) {
+        if (DataRequest.State.EXPORT.equals(state)) {
             return (LuaResponse) requestTransmissionService.send(
                     new ExportDataRequest(luaString)
             );
@@ -66,26 +62,20 @@ public class LuaScripts {
                 .send(new ServerDataRequest(state, luaString));
     }
 
-    public static String query(RequestToServer.State state, String luaString) {
+    public static LuaResponse requestWithFile(DataRequest.State state, String pathFromScripts, Object... args) {
+        String luaString = loadAndPrepare(pathFromScripts, args);
+        BaseRequest baseRequest = DataRequest.State.EXPORT.equals(state) ?
+                new ExportDataRequest(luaString) : new ServerDataRequest(state, luaString);
+        return (LuaResponse) requestTransmissionService
+                .send(baseRequest);
+    }
+
+    public static String query(DataRequest.State state, String luaString) {
         return request(state, luaString).get();
     }
 
-    public static Object queryForObject(RequestToServer.State state, String luaString, Class<?> tClass) {
-        return request(state, luaString).getAs(tClass);
-    }
-
-    public static List<?> queryForList(RequestToServer.State state, String luaString, Class<?> tClass) {
-        Type type = TypeToken.getParameterized(ArrayList.class, tClass).getType();
-        return request(state, luaString).getAs(type);
-    }
-
-    public static Set<?> queryForSet(RequestToServer.State state, String luaString, Class<?> tClass) {
-        Type type = TypeToken.getParameterized(Set.class, tClass).getType();
-        return request(state, luaString).getAs(type);
-    }
-
     // FIXME: need further testing; also, is this really useful?
-    public static Map<?, ?> queryForMap(RequestToServer.State state, String luaString, Class<?> tClass) {
+    public static Map<?, ?> queryForMap(DataRequest.State state, String luaString, Class<?> tClass) {
         return request(state, luaString).getAs(Map.class);
     }
 }

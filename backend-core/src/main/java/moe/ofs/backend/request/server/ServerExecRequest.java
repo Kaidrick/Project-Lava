@@ -3,14 +3,14 @@ package moe.ofs.backend.request.server;
 import moe.ofs.backend.domain.Handle;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.LavaLog;
-import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.request.Resolvable;
 
 /**
  * The constructor of ServerExecRequest can take a RequestToMission
  */
 
-public class ServerExecRequest extends RequestToServer implements Resolvable {
+public class ServerExecRequest extends DataRequest implements Resolvable {
     {
         handle = Handle.EXEC;
         port = 3010;

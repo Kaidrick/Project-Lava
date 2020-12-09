@@ -5,11 +5,11 @@ import moe.ofs.backend.config.services.DcsSimulationControlService;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.util.lua.LuaQueryCapable;
 import moe.ofs.backend.util.lua.LuaQueryState;
-import moe.ofs.backend.util.lua.QueryEnv;
+import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.stereotype.Service;
 
 @Service
-@LuaQueryState(QueryEnv.SERVER_CONTROL)
+@LuaQueryState(LuaQueryEnv.SERVER_CONTROL)
 public class DcsSimulationControlServiceImpl
         implements DcsSimulationControlService, LuaQueryCapable {
 

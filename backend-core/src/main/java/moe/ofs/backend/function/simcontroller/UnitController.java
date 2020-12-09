@@ -6,7 +6,7 @@ import lombok.Setter;
 import moe.ofs.backend.object.Unit;
 import moe.ofs.backend.object.command.Command;
 import moe.ofs.backend.object.tasks.Task;
-import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.request.server.ServerActionRequest;
 import moe.ofs.backend.util.LuaScripts;
 
@@ -26,7 +26,7 @@ public class UnitController implements Controller {
     @Override
     public void setTask(Task task) {
         Gson gson = new Gson();
-        ServerActionRequest request = new ServerActionRequest(RequestToServer.State.MISSION,
+        ServerActionRequest request = new ServerActionRequest(DataRequest.State.MISSION,
                 LuaScripts.loadAndPrepare("simcontroller/controller_set_task_for_unit.lua",
                         unit.getId(), gson.toJson(task)));
         System.out.println("request = " + request);

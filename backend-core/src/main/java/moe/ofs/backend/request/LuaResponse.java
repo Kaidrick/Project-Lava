@@ -1,12 +1,14 @@
 package moe.ofs.backend.request;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import moe.ofs.backend.BackgroundTask;
 import moe.ofs.backend.message.OperationPhase;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
+import java.util.*;
 
 public interface LuaResponse extends Resolvable {
     boolean isSent();
@@ -73,6 +75,22 @@ public interface LuaResponse extends Resolvable {
             throw new RequestInvalidStateException("Request has never been sent and thus has no result.");
         }
         return gson.fromJson(get(), type);
+    }
+
+    default <T> List<T> getAsListFor(Class<T> tClass) {
+        if(!isSent()) {
+            throw new RequestInvalidStateException("Request has never been sent and thus has no result.");
+        }
+        Type type = TypeToken.getParameterized(ArrayList.class, tClass).getType();
+        return getAs(type);
+    }
+
+    default <T> Set<T> getAsSetFor(Class<T> tClass) {
+        if(!isSent()) {
+            throw new RequestInvalidStateException("Request has never been sent and thus has no result.");
+        }
+        Type type = TypeToken.getParameterized(HashSet.class, tClass).getType();
+        return getAs(type);
     }
 
     default <T> T getAs(Type type) {

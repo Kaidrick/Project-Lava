@@ -1,15 +1,14 @@
 package moe.ofs.backend.request.server;
 
-import com.google.gson.Gson;
 import moe.ofs.backend.domain.Handle;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.request.Processable;
-import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.DataRequest;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerActionRequest extends RequestToServer {
+public class ServerActionRequest extends DataRequest {
     {
         handle = Handle.EXEC;
         port = 3010;

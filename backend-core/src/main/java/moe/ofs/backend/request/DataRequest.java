@@ -2,7 +2,7 @@ package moe.ofs.backend.request;
 
 import moe.ofs.backend.domain.Level;
 
-public abstract class RequestToServer extends BaseRequest {
+public abstract class DataRequest extends BaseRequest {
 
     protected State state;
 
@@ -10,7 +10,7 @@ public abstract class RequestToServer extends BaseRequest {
         SERVER, CONFIG, MISSION, EXPORT, DEBUG
     }
 
-    public RequestToServer(Level level) {
+    public DataRequest(Level level) {
         super(level);
     }
 }

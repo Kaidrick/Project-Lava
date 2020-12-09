@@ -4,13 +4,13 @@ import moe.ofs.backend.domain.Handle;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.request.LuaResponse;
 import moe.ofs.backend.request.Processable;
-import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.request.Resolvable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerDataRequest extends RequestToServer implements Resolvable, LuaResponse {
+public class ServerDataRequest extends DataRequest implements Resolvable, LuaResponse {
 
     {
         handle = Handle.EXEC;

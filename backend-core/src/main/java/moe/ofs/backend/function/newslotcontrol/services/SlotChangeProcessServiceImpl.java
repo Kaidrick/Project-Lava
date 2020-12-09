@@ -2,10 +2,9 @@ package moe.ofs.backend.function.newslotcontrol.services;
 
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.domain.ChatCommand;
 import moe.ofs.backend.function.newslotcontrol.model.SlotChangeData;
 import moe.ofs.backend.handlers.MissionStartObservable;
-import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.util.LuaScripts;
@@ -29,7 +28,7 @@ public class SlotChangeProcessServiceImpl implements SlotChangeProcessService {
     public void init() {
         MissionStartObservable missionStartObservable = s -> {
             requestTransmissionService.send(
-                    new ServerDataRequest(RequestToServer.State.DEBUG,
+                    new ServerDataRequest(DataRequest.State.DEBUG,
                             LuaScripts.loadAndPrepare("slotchange/new/player_slot_record_hook.lua",
                                     getClass().getName())));
 
@@ -42,7 +41,7 @@ public class SlotChangeProcessServiceImpl implements SlotChangeProcessService {
     public List<SlotChangeData> poll() {
         Type type = TypeToken.getParameterized(ArrayList.class, SlotChangeData.class).getType();
         return ((ServerDataRequest) requestTransmissionService
-                .send(new ServerDataRequest(RequestToServer.State.DEBUG,
+                .send(new ServerDataRequest(DataRequest.State.DEBUG,
                         LuaScripts.load("slotchange/new/fetch_player_slot_records.lua"))))
                 .getAs(type);
     }

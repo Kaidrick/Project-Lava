@@ -2,10 +2,11 @@ package moe.ofs.backend.debug.controllers;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.debug.model.LuaCommand;
-import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.request.export.ExportDataRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
+import moe.ofs.backend.util.LuaScripts;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,13 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 //        tags = "DCS Lua state debug APIs",
 //        value = "Provides APIs to loadstring in different DCS Lua environment")
 public class LuaDebugConsoleController {
-
-    private final RequestTransmissionService requestTransmissionService;
-
-    public LuaDebugConsoleController(RequestTransmissionService requestTransmissionService) {
-        this.requestTransmissionService = requestTransmissionService;
-    }
-
     /**
      * Basic console debug do string method used to load lua string in DCS lua server.
      * Debug Lua string execution should always return a value.
@@ -48,24 +42,16 @@ public class LuaDebugConsoleController {
 
         switch (luaCommand.getLevel()) {
             case 1:  // api env
-                return ((ServerDataRequest) requestTransmissionService.send((
-                        new ServerDataRequest(RequestToServer.State.DEBUG,
-                                luaCommand.getLuaString())))).get();
+                return LuaScripts.request(DataRequest.State.DEBUG, luaCommand.getLuaString()).get();
 
             case 2:  // export env
-                return ((ExportDataRequest) requestTransmissionService.send((
-                        new ExportDataRequest(luaCommand.getLuaString())))).get();
+                return LuaScripts.request(DataRequest.State.EXPORT, luaCommand.getLuaString()).get();
 
             case 3:  // api env
-                return ((ServerDataRequest) requestTransmissionService.send((
-                        new ServerDataRequest(RequestToServer.State.MISSION,
-                                luaCommand.getLuaString())))).get();
-
+                return LuaScripts.request(DataRequest.State.MISSION, luaCommand.getLuaString()).get();
 
             default:  // default to miz env, as the same as case 0
-                return ((ServerDataRequest) requestTransmissionService.send(
-                        (new ServerDataRequest(luaCommand.getLuaString())
-                        ))).get();
+                return LuaScripts.request(DataRequest.State.SERVER, luaCommand.getLuaString()).get();
         }
     }
 

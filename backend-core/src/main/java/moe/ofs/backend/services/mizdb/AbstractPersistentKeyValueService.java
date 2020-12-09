@@ -3,11 +3,8 @@ package moe.ofs.backend.services.mizdb;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import moe.ofs.backend.domain.Level;
-import moe.ofs.backend.domain.LuaState;
-import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
-import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.MissionKeyValueService;
 import moe.ofs.backend.util.LuaScripts;
@@ -30,7 +27,7 @@ public abstract class AbstractPersistentKeyValueService<T> implements MissionKey
                         .send(new ServerDataRequest(debugString))).get();
             case HOOK:
                 return ((ServerDataRequest) requestTransmissionService
-                        .send(new ServerDataRequest(RequestToServer.State.DEBUG, debugString))).get();
+                        .send(new ServerDataRequest(DataRequest.State.DEBUG, debugString))).get();
             case EXPORT:
                 throw new RuntimeException("EXPORT NOT IMPLEMENTED");
             case TRIGGER:
@@ -47,7 +44,7 @@ public abstract class AbstractPersistentKeyValueService<T> implements MissionKey
                 requestTransmissionService.send(new ServerDataRequest(debugString));
                 break;
             case HOOK:
-                requestTransmissionService.send(new ServerDataRequest(RequestToServer.State.DEBUG, debugString));
+                requestTransmissionService.send(new ServerDataRequest(DataRequest.State.DEBUG, debugString));
                 break;
             case EXPORT:
                 throw new RuntimeException("EXPORT NOT IMPLEMENTED");
