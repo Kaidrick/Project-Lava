@@ -1,7 +1,9 @@
 package moe.ofs.backend.util;
 
 import com.google.gson.reflect.TypeToken;
+import moe.ofs.backend.request.LuaResponse;
 import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.export.ExportDataRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 
@@ -53,9 +55,15 @@ public class LuaScripts {
     }
 
     // short hand methods for sending requests dcs lua env
-    public static ServerDataRequest request(RequestToServer.State state, String luaString) {
-        return ((ServerDataRequest) requestTransmissionService
-                .send(new ServerDataRequest(state, luaString)));
+    public static LuaResponse request(RequestToServer.State state, String luaString) {
+        if (RequestToServer.State.EXPORT.equals(state)) {
+            return (LuaResponse) requestTransmissionService.send(
+                    new ExportDataRequest(luaString)
+            );
+        }
+
+        return (LuaResponse) requestTransmissionService
+                .send(new ServerDataRequest(state, luaString));
     }
 
     public static String query(RequestToServer.State state, String luaString) {

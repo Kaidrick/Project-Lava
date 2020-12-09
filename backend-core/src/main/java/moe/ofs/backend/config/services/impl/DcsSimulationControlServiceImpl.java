@@ -2,22 +2,16 @@ package moe.ofs.backend.config.services.impl;
 
 import moe.ofs.backend.config.model.ResetType;
 import moe.ofs.backend.config.services.DcsSimulationControlService;
-import moe.ofs.backend.request.RequestToServer;
-import moe.ofs.backend.request.server.ServerDataRequest;
-import moe.ofs.backend.request.server.ServerExecRequest;
-import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.util.lua.LuaQueryCapable;
+import moe.ofs.backend.util.lua.LuaQueryState;
+import moe.ofs.backend.util.lua.QueryEnv;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DcsSimulationControlServiceImpl implements DcsSimulationControlService {
-
-    // TODO: replace with lua script do service interface
-    private final RequestTransmissionService requestTransmissionService;
-
-    public DcsSimulationControlServiceImpl(RequestTransmissionService requestTransmissionService) {
-        this.requestTransmissionService = requestTransmissionService;
-    }
+@LuaQueryState(QueryEnv.SERVER_CONTROL)
+public class DcsSimulationControlServiceImpl
+        implements DcsSimulationControlService, LuaQueryCapable {
 
     @Override
     public boolean restart(ResetType type) {
@@ -34,8 +28,8 @@ public class DcsSimulationControlServiceImpl implements DcsSimulationControlServ
         }
 
         String luaString = LuaScripts.load("api/reload_current_mission.lua");
-        return ((ServerDataRequest) requestTransmissionService.send(
-                new ServerDataRequest(RequestToServer.State.DEBUG, luaString))).getAsBoolean();
+
+        return query(luaString).getAsBoolean();
     }
 
     @Override
