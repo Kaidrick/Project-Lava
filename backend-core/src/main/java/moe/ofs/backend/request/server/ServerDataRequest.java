@@ -98,7 +98,7 @@ public class ServerDataRequest extends RequestToServer implements Resolvable {
             }
 
             try {
-                Thread.sleep(1);
+                Thread.sleep(1);  // TODO: maybe use message in the future?
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
