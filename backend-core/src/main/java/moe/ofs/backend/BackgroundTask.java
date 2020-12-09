@@ -278,6 +278,9 @@ public class BackgroundTask {
         connectionManager.sanitizeDataPipeline();
 
         log.info("Initializing data services");
+
+        // FIXME: use autowired list for services to call dispose();
+        // FIXME: is a dispose method really necessary?
         // dispose obsolete data if any
         flyableUnitService.dispose();
         parkingInfoService.dispose();

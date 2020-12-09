@@ -7,6 +7,7 @@ import moe.ofs.backend.request.export.ExportDataRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,16 +43,16 @@ public class LuaDebugConsoleController {
 
         switch (luaCommand.getLevel()) {
             case 1:  // api env
-                return LuaScripts.request(DataRequest.State.DEBUG, luaCommand.getLuaString()).get();
+                return LuaScripts.request(LuaQueryEnv.SERVER_CONTROL, luaCommand.getLuaString()).get();
 
             case 2:  // export env
-                return LuaScripts.request(DataRequest.State.EXPORT, luaCommand.getLuaString()).get();
+                return LuaScripts.request(LuaQueryEnv.EXPORT, luaCommand.getLuaString()).get();
 
             case 3:  // api env
-                return LuaScripts.request(DataRequest.State.MISSION, luaCommand.getLuaString()).get();
+                return LuaScripts.request(LuaQueryEnv.TRIGGER, luaCommand.getLuaString()).get();
 
             default:  // default to miz env, as the same as case 0
-                return LuaScripts.request(DataRequest.State.SERVER, luaCommand.getLuaString()).get();
+                return LuaScripts.request(LuaQueryEnv.MISSION_SCRIPTING, luaCommand.getLuaString()).get();
         }
     }
 

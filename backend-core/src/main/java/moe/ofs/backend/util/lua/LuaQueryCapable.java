@@ -5,7 +5,7 @@ import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.util.LuaScripts;
 
 public interface LuaQueryCapable {
-    default LuaResponse query(DataRequest.State state, String luaString) {
+    default LuaResponse query(LuaQueryEnv state, String luaString) {
         return LuaScripts.request(state, luaString);
     }
 
@@ -20,9 +20,9 @@ public interface LuaQueryCapable {
         if (luaState != null) {
             switch (luaState.value()) {
                 case MISSION_SCRIPTING:
-                    return query(DataRequest.State.MISSION, luaString);
+                    return query(LuaQueryEnv.MISSION_SCRIPTING, luaString);
                 case SERVER_CONTROL:
-                    return query(DataRequest.State.DEBUG, luaString);
+                    return query(LuaQueryEnv.SERVER_CONTROL, luaString);
                 case EXPORT:
                     break;
                 case TRIGGER:
@@ -33,7 +33,7 @@ public interface LuaQueryCapable {
         }
 
         // default to mission scripting environment
-        return query(DataRequest.State.MISSION, luaString);
+        return query(LuaQueryEnv.MISSION_SCRIPTING, luaString);
     }
 
 }

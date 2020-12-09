@@ -4,6 +4,7 @@ import moe.ofs.backend.object.TelemetryData;
 import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.services.map.AbstractMapService;
 import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -30,13 +31,13 @@ public class LuaStateTelemetryMapService extends AbstractMapService<TelemetryDat
         TelemetryData.TelemetryDataBuilder builder = TelemetryData.builder();
 
         double missionStateLuaMem = Double.parseDouble(
-                LuaScripts.requestWithFile(DataRequest.State.SERVER, TELEMETRY_SCRIPT_PATH).get());
+                LuaScripts.requestWithFile(LuaQueryEnv.MISSION_SCRIPTING, TELEMETRY_SCRIPT_PATH).get());
 
         double hookStateLuaMem = Double.parseDouble(
-                LuaScripts.requestWithFile(DataRequest.State.DEBUG, TELEMETRY_SCRIPT_PATH).get());
+                LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL, TELEMETRY_SCRIPT_PATH).get());
 
         double exportStateLuaMem = Double.parseDouble(
-                LuaScripts.requestWithFile(DataRequest.State.EXPORT, TELEMETRY_SCRIPT_PATH).get());
+                LuaScripts.requestWithFile(LuaQueryEnv.EXPORT, TELEMETRY_SCRIPT_PATH).get());
 
         builder.missionStateLuaMemory(missionStateLuaMem)
                .hookStateLuaMemory(hookStateLuaMem)

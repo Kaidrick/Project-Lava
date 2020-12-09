@@ -8,6 +8,7 @@ import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -28,7 +29,7 @@ public class SlotChangeProcessServiceImpl implements SlotChangeProcessService {
     public void init() {
         MissionStartObservable missionStartObservable = s -> {
             requestTransmissionService.send(
-                    new ServerDataRequest(DataRequest.State.DEBUG,
+                    new ServerDataRequest(LuaQueryEnv.SERVER_CONTROL,
                             LuaScripts.loadAndPrepare("slotchange/new/player_slot_record_hook.lua",
                                     getClass().getName())));
 
@@ -41,7 +42,7 @@ public class SlotChangeProcessServiceImpl implements SlotChangeProcessService {
     public List<SlotChangeData> poll() {
         Type type = TypeToken.getParameterized(ArrayList.class, SlotChangeData.class).getType();
         return ((ServerDataRequest) requestTransmissionService
-                .send(new ServerDataRequest(DataRequest.State.DEBUG,
+                .send(new ServerDataRequest(LuaQueryEnv.SERVER_CONTROL,
                         LuaScripts.load("slotchange/new/fetch_player_slot_records.lua"))))
                 .getAs(type);
     }

@@ -6,6 +6,7 @@ import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.request.export.ExportDataRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
+import moe.ofs.backend.util.lua.LuaQueryEnv;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,8 +52,8 @@ public class LuaScripts {
     }
 
     // short hand methods for sending requests dcs lua env
-    public static LuaResponse request(DataRequest.State state, String luaString) {
-        if (DataRequest.State.EXPORT.equals(state)) {
+    public static LuaResponse request(LuaQueryEnv state, String luaString) {
+        if (LuaQueryEnv.EXPORT.equals(state)) {
             return (LuaResponse) requestTransmissionService.send(
                     new ExportDataRequest(luaString)
             );
@@ -62,20 +63,20 @@ public class LuaScripts {
                 .send(new ServerDataRequest(state, luaString));
     }
 
-    public static LuaResponse requestWithFile(DataRequest.State state, String pathFromScripts, Object... args) {
+    public static LuaResponse requestWithFile(LuaQueryEnv state, String pathFromScripts, Object... args) {
         String luaString = loadAndPrepare(pathFromScripts, args);
-        BaseRequest baseRequest = DataRequest.State.EXPORT.equals(state) ?
+        BaseRequest baseRequest = LuaQueryEnv.EXPORT.equals(state) ?
                 new ExportDataRequest(luaString) : new ServerDataRequest(state, luaString);
         return (LuaResponse) requestTransmissionService
                 .send(baseRequest);
     }
 
-    public static String query(DataRequest.State state, String luaString) {
+    public static String query(LuaQueryEnv state, String luaString) {
         return request(state, luaString).get();
     }
 
     // FIXME: need further testing; also, is this really useful?
-    public static Map<?, ?> queryForMap(DataRequest.State state, String luaString, Class<?> tClass) {
+    public static Map<?, ?> queryForMap(LuaQueryEnv state, String luaString, Class<?> tClass) {
         return request(state, luaString).getAs(Map.class);
     }
 }

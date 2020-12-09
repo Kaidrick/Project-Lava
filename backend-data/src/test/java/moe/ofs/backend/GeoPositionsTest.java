@@ -56,7 +56,7 @@ class GeoPositionsTest {
 //        System.out.println(Arrays.toString(GeoPositions.formatStringArray(compareGeoPosition, false)));
     }
 
-    @Test
+
     void generator() {
 // 需要构建一个 代码自动生成器 对象
         AutoGenerator mpg = new AutoGenerator();

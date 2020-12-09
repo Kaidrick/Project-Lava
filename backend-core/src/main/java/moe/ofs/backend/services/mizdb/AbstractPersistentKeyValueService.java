@@ -8,6 +8,7 @@ import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.MissionKeyValueService;
 import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.util.lua.LuaQueryEnv;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -27,7 +28,7 @@ public abstract class AbstractPersistentKeyValueService<T> implements MissionKey
                         .send(new ServerDataRequest(debugString))).get();
             case HOOK:
                 return ((ServerDataRequest) requestTransmissionService
-                        .send(new ServerDataRequest(DataRequest.State.DEBUG, debugString))).get();
+                        .send(new ServerDataRequest(LuaQueryEnv.SERVER_CONTROL, debugString))).get();
             case EXPORT:
                 throw new RuntimeException("EXPORT NOT IMPLEMENTED");
             case TRIGGER:
@@ -44,7 +45,7 @@ public abstract class AbstractPersistentKeyValueService<T> implements MissionKey
                 requestTransmissionService.send(new ServerDataRequest(debugString));
                 break;
             case HOOK:
-                requestTransmissionService.send(new ServerDataRequest(DataRequest.State.DEBUG, debugString));
+                requestTransmissionService.send(new ServerDataRequest(LuaQueryEnv.SERVER_CONTROL, debugString));
                 break;
             case EXPORT:
                 throw new RuntimeException("EXPORT NOT IMPLEMENTED");

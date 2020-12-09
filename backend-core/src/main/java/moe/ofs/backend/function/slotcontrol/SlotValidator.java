@@ -12,6 +12,7 @@ import moe.ofs.backend.request.server.ServerActionRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -82,14 +83,14 @@ public class SlotValidator {
     }
 
     public void setUp() {
-        requestTransmissionService.send(new ServerDataRequest(DataRequest.State.DEBUG,
+        requestTransmissionService.send(new ServerDataRequest(LuaQueryEnv.SERVER_CONTROL,
                 LuaScripts.load("slotchange/player_change_slot_hook.lua")));
 
         log.info("Setting up playable slot validator");
 
         Runnable getSlotEntryRequest = () -> {
             requestTransmissionService.send(
-                    new ServerDataRequest(DataRequest.State.DEBUG,
+                    new ServerDataRequest(LuaQueryEnv.SERVER_CONTROL,
                             LuaScripts.load("slotchange/pull_slot_entry_request.lua"))
                             .addProcessable(s -> {
                                 Type entryRequestListType = new TypeToken<List<SlotChangeRequest>>() {}.getType();
@@ -112,7 +113,7 @@ public class SlotValidator {
                                     if(playerSlotControls.isEmpty()) {
                                         // if no criteria, pass the check immediately
                                         requestTransmissionService.send(
-                                                new ServerDataRequest(DataRequest.State.DEBUG,
+                                                new ServerDataRequest(LuaQueryEnv.SERVER_CONTROL,
                                                         LuaScripts.loadAndPrepare("slotchange/force_player_slot.lua",
                                                                 slotChangeRequest.getNetId(),
                                                                 slotChangeRequest.getSide(),
@@ -126,7 +127,7 @@ public class SlotValidator {
 
                                         if(list.isEmpty()) {
                                             requestTransmissionService.send(
-                                                    new ServerDataRequest(DataRequest.State.DEBUG,
+                                                    new ServerDataRequest(LuaQueryEnv.SERVER_CONTROL,
                                                             LuaScripts.loadAndPrepare("slotchange/force_player_slot.lua",
                                                                     slotChangeRequest.getNetId(),
                                                                     slotChangeRequest.getSide(),
@@ -155,7 +156,7 @@ public class SlotValidator {
             slotEntryPullExecutorService.shutdownNow();
         }
 
-        requestTransmissionService.send(new ServerActionRequest(DataRequest.State.DEBUG,
+        requestTransmissionService.send(new ServerActionRequest(LuaQueryEnv.SERVER_CONTROL,
                 LuaScripts.load("slotchange/clean_request_table.lua")));
     }
 }
