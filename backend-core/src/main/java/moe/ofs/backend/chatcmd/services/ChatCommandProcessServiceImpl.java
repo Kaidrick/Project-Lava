@@ -9,11 +9,12 @@ import moe.ofs.backend.domain.ChatCommand;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.message.OperationPhase;
-import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -43,8 +44,8 @@ public class ChatCommandProcessServiceImpl implements ChatCommandProcessService 
     @PostConstruct
     public void setup() {
         MissionStartObservable missionStartObservable = s -> {
-            requestTransmissionService.send(new ServerDataRequest(RequestToServer.State.DEBUG,
-                    LuaScripts.load("chat_command_processor/chat_command_processor.lua")));
+            LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,
+                    "chat_command_processor/chat_command_processor.lua");
 
             log.info("Setting up chat command processor");
 
@@ -53,7 +54,7 @@ public class ChatCommandProcessServiceImpl implements ChatCommandProcessService 
                     .collect(Collectors.joining(", "));
 
             requestTransmissionService
-                    .send(new ServerDataRequest(RequestToServer.State.DEBUG,
+                    .send(new ServerDataRequest(LuaQueryEnv.SERVER_CONTROL,
                             LuaScripts.loadAndPrepare("chat_command_processor/add_command_keyword_batch.lua",
                                     batchKwString)));
 
@@ -79,7 +80,7 @@ public class ChatCommandProcessServiceImpl implements ChatCommandProcessService 
     public List<ChatCommand> poll() {
         Type type = TypeToken.getParameterized(ArrayList.class, ChatCommand.class).getType();
         return ((ServerDataRequest) requestTransmissionService
-                .send(new ServerDataRequest(RequestToServer.State.DEBUG,
+                .send(new ServerDataRequest(LuaQueryEnv.SERVER_CONTROL,
                     LuaScripts.load("chat_command_processor/fetch_commands.lua"))))
                 .getAs(type);
     }

@@ -1,11 +1,12 @@
 package moe.ofs.backend.discipline.service;
 
 import moe.ofs.backend.domain.PlayerInfo;
-import moe.ofs.backend.request.RequestToServer;
+import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.DestructiveService;
 import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -29,7 +30,7 @@ public class PlayerDisciplineServiceImpl implements PlayerDisciplineService {
         String luaString = LuaScripts.loadAndPrepare("api/ban_net_player.lua",
                 player.getNetId(), DEFAULT_BAN_SECONDS, DEFAULT_BAN_REASON);
         requestTransmissionService.send(
-                new ServerExecRequest(RequestToServer.State.DEBUG, luaString)
+                new ServerExecRequest(LuaQueryEnv.SERVER_CONTROL, luaString)
         );
     }
 
@@ -38,7 +39,7 @@ public class PlayerDisciplineServiceImpl implements PlayerDisciplineService {
         String luaString = LuaScripts.loadAndPrepare("api/ban_net_player.lua",
                 player.getNetId(), duration.getSeconds(), DEFAULT_BAN_REASON);
         requestTransmissionService.send(
-                new ServerExecRequest(RequestToServer.State.DEBUG, luaString)
+                new ServerExecRequest(LuaQueryEnv.SERVER_CONTROL, luaString)
         );
     }
 
@@ -46,7 +47,7 @@ public class PlayerDisciplineServiceImpl implements PlayerDisciplineService {
     public void ban(PlayerInfo player, String reason) {
         String luaString = LuaScripts.loadAndPrepare("api/ban_net_player.lua",
                 player.getNetId(), DEFAULT_BAN_SECONDS, reason);
-        requestTransmissionService.send(new ServerExecRequest(RequestToServer.State.DEBUG, luaString));
+        requestTransmissionService.send(new ServerExecRequest(LuaQueryEnv.SERVER_CONTROL, luaString));
     }
 
     @Override
@@ -54,7 +55,7 @@ public class PlayerDisciplineServiceImpl implements PlayerDisciplineService {
         String luaString = LuaScripts.loadAndPrepare("api/ban_net_player.lua",
                 player.getNetId(), duration.getSeconds(), reason);
         requestTransmissionService.send(
-                new ServerExecRequest(RequestToServer.State.DEBUG, luaString)
+                new ServerExecRequest(LuaQueryEnv.SERVER_CONTROL, luaString)
         );
     }
 
@@ -63,7 +64,7 @@ public class PlayerDisciplineServiceImpl implements PlayerDisciplineService {
         String luaString = LuaScripts.loadAndPrepare("api/kick_net_player.lua",
                 player.getNetId(), "Server specifies no kick reason.");
         requestTransmissionService.send(
-                new ServerExecRequest(RequestToServer.State.DEBUG, luaString)
+                new ServerExecRequest(LuaQueryEnv.SERVER_CONTROL, luaString)
         );
     }
 
@@ -72,7 +73,7 @@ public class PlayerDisciplineServiceImpl implements PlayerDisciplineService {
         String luaString = LuaScripts.loadAndPrepare("api/kick_net_player.lua",
                 player.getNetId(), !reason.equals("") ? reason : "Server specifies no kick reason.");
         requestTransmissionService.send(
-                new ServerExecRequest(RequestToServer.State.DEBUG, luaString)
+                new ServerExecRequest(LuaQueryEnv.SERVER_CONTROL, luaString)
         );
     }
 

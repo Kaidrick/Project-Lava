@@ -7,8 +7,8 @@ import java.time.Instant;
 
 @Data
 @AllArgsConstructor
-public class ServerRestartDetail {
+public class ServerResetAction {
     private Instant restartTime;
     private String reason;
-    private RestartType restartType;
+    private ResetType resetType;
 }

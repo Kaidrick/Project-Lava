@@ -3,6 +3,7 @@ package moe.ofs.backend.request.export;
 import moe.ofs.backend.domain.Handle;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.request.BaseRequest;
+import moe.ofs.backend.request.LuaResponse;
 import moe.ofs.backend.request.Processable;
 import moe.ofs.backend.request.Resolvable;
 
@@ -10,7 +11,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExportDataRequest extends BaseRequest implements Resolvable {
+public class ExportDataRequest extends BaseRequest implements Resolvable, LuaResponse {
 
     private transient String luaString;
 

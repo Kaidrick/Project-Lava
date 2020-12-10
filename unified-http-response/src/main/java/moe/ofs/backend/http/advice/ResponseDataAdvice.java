@@ -57,8 +57,7 @@ public class ResponseDataAdvice implements ResponseBodyAdvice<Object> {
             return success();
         }
 
-//        System.out.println("serverHttpRequest.getURI().getPath() = " + serverHttpRequest.getURI().getPath());
-
+        // url based bypass
         if (serverHttpRequest.getURI().getPath().startsWith("/atlas")) {
             return o;
         }
@@ -71,8 +70,6 @@ public class ResponseDataAdvice implements ResponseBodyAdvice<Object> {
             return o;
         }
 
-
-
         if (serverHttpRequest.getURI().getPath().equals("/error")) {
             // check source
             if (o instanceof LinkedHashMap) {
@@ -83,6 +80,11 @@ public class ResponseDataAdvice implements ResponseBodyAdvice<Object> {
                 System.out.println("response = " + response);
                 return failResponse;
             }
+        }
+
+        // ignore advise if annotated by @IgnoreResponseAdvice
+        if (!supports(methodParameter, aClass)) {
+            return o;
         }
 
         if (o != null && methodParameter.getParameterType().getName().equals("moe.ofs.backend.pagination.PageVo")) {

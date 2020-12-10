@@ -5,8 +5,10 @@ import moe.ofs.backend.request.BaseRequest;
 import moe.ofs.backend.request.JsonRpcRequest;
 import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.request.RequestInvalidStateException;
+import moe.ofs.backend.util.LuaScripts;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -18,6 +20,11 @@ public class RequestTransmissionServiceImpl implements RequestTransmissionServic
 
     public RequestTransmissionServiceImpl(RequestHandler requestHandler) {
         this.requestHandler = requestHandler;
+    }
+
+    @PostConstruct
+    public void injectLuaScriptsStaticReference() {
+        LuaScripts.setRequestTransmissionService(this);
     }
 
     @Override

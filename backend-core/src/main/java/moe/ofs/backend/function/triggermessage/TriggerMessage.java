@@ -2,7 +2,6 @@ package moe.ofs.backend.function.triggermessage;
 
 import lombok.Data;
 import moe.ofs.backend.util.LuaScripts;
-import moe.ofs.backend.request.server.ServerExecRequest;
 
 @Data
 public final class TriggerMessage {
