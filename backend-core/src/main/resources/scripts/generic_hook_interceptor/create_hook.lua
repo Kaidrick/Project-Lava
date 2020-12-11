@@ -1,24 +1,9 @@
 local hook_name = '%s'
-local useDedicatedStorage = %s  -- save to db or kv storage
 
-_G[hook_name] = {}  -- create hook lua table
+_G[hook_name] = {
 
--- MOCK
-_G[hook_name].predicates = {
-    function(%s)  -- signature provided by java
-        return id > 5
-    end,
-}
+    predicate = {},  -- creation is always destructive
 
-_G[hook_name].localstorage = {}
-
-
-
-
-
--- for each hook defined through lava
--- _G[hook_name].%s(%s)
---
--- end
+}  -- create hook lua table
 
 DCS.setUserCallbacks(_G[hook_name])

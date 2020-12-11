@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.ExportObject;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.object.FlyableUnit;
-import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.ExportObjectService;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.services.PlayerInfoService;
@@ -17,18 +16,19 @@ import java.util.Optional;
 @Slf4j
 public class SlotManageServiceImpl implements SlotManageService {
 
-    private final RequestTransmissionService requestTransmissionService;
     private final PlayerInfoService playerInfoService;
     private final FlyableUnitService flyableUnitService;
     private final ExportObjectService exportObjectService;
 
-    public SlotManageServiceImpl(RequestTransmissionService requestTransmissionService,
-                                 PlayerInfoService playerInfoService,
-                                 FlyableUnitService flyableUnitService, ExportObjectService exportObjectService) {
-        this.requestTransmissionService = requestTransmissionService;
+    private final SlotValidatorService slotValidatorService;
+
+    public SlotManageServiceImpl(PlayerInfoService playerInfoService,
+                                 FlyableUnitService flyableUnitService, ExportObjectService exportObjectService, SlotValidatorService slotValidatorService) {
         this.playerInfoService = playerInfoService;
         this.flyableUnitService = flyableUnitService;
         this.exportObjectService = exportObjectService;
+
+        this.slotValidatorService = slotValidatorService;
     }
 
     @PostConstruct

@@ -59,3 +59,7 @@ function KwPair:findAll()
   end
   return data
 end
+
+function KwPair:entries()
+    return self.repository
+end
