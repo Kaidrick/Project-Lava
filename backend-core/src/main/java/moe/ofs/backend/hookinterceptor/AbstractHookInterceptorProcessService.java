@@ -1,7 +1,6 @@
 package moe.ofs.backend.hookinterceptor;
 
 import com.google.gson.internal.LinkedTreeMap;
-import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
 
@@ -19,6 +18,10 @@ public abstract class AbstractHookInterceptorProcessService
 
     private String name;
 
+    protected String getName() {
+        return name;
+    }
+
     @Override
     public void createHook(String name, HookType hookType) {
         this.name = name;
@@ -33,7 +36,7 @@ public abstract class AbstractHookInterceptorProcessService
     public List<HookProcessEntity> poll() throws IOException {
         return LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,
                 "generic_hook_interceptor/fetch_decisions.lua",
-                getClass().getName()).getAsListFor(LinkedTreeMap.class).stream()
+                getName()).getAsListFor(LinkedTreeMap.class).stream()
                 .map(linkedTreeMap -> {
                     HookProcessEntity entity = new HookProcessEntity();
                     if (linkedTreeMap.containsKey("__entity_player_id")) {
