@@ -18,6 +18,11 @@ public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueServi
     protected String name;
     protected LuaQueryEnv env;
 
+    @Override
+    public String getRepositoryName() {
+        return name;
+    }
+
     public AbstractKeyValueStorage(String name, LuaQueryEnv env) {
         this.name = name;
         this.env = env;

@@ -1,21 +1,19 @@
 package moe.ofs.backend.function.newslotcontrol.services;
 
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.function.newslotcontrol.model.SlotChangeData;
-import moe.ofs.backend.function.newslotcontrol.model.SlotChangeInterceptor;
+import moe.ofs.backend.BackgroundTask;
 import moe.ofs.backend.handlers.MissionStartObservable;
-import moe.ofs.backend.hookinterceptor.HookInterceptorDefinition;
-import moe.ofs.backend.hookinterceptor.HookInterceptorProcessService;
+import moe.ofs.backend.hookinterceptor.*;
+import moe.ofs.backend.message.OperationPhase;
 import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.services.mizdb.SimpleKeyValueStorage;
-import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
 import moe.ofs.backend.util.lua.LuaQueryState;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * When a player tries to enter a slot, the callback is executed.
@@ -43,8 +41,9 @@ import java.util.List;
 @Service
 @Slf4j
 @LuaQueryState(LuaQueryEnv.SERVER_CONTROL)
-public class SlotValidatorHookInterceptService implements SlotValidatorService,
-        HookInterceptorProcessService<SlotChangeData, HookInterceptorDefinition> {
+public class SlotValidatorHookInterceptService
+        extends AbstractHookInterceptorProcessService<HookProcessEntity, HookInterceptorDefinition>
+        implements SlotValidatorService, HookInterceptorProcessService<HookProcessEntity, HookInterceptorDefinition> {
 
     private final PlayerInfoService playerInfoService;
 
@@ -61,12 +60,12 @@ public class SlotValidatorHookInterceptService implements SlotValidatorService,
     @PostConstruct
     public void init() {
         MissionStartObservable missionStartObservable = s -> {
-//            LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,
-//                    "slotchange/new/player_slot_record_hook.lua", getClass().getName());
+            createHook(getClass().getName(), HookType.ON_PLAYER_TRY_CHANGE_SLOT);
 
-            SlotChangeInterceptor interceptor =
-                    new SlotChangeInterceptor("lava-slot-change-interceptor",
-                            "function(...) return true end", storage);
+            HookInterceptorDefinition interceptor =
+                    new HookInterceptorDefinition("lava-slot-change-interceptor",
+                            HookInterceptorProcessService.FUNCTION_RETURN_ORIGINAL_ARGS, storage,
+                            null, null);
 
             addDefinition(interceptor);
 
@@ -75,36 +74,13 @@ public class SlotValidatorHookInterceptService implements SlotValidatorService,
         missionStartObservable.register();
     }
 
-    @Override
-    public void createHook(String name) {
-        LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,
-                "generic_hook_interceptor/create_hook.lua", name);
-    }
-
-    /**
-     * Pull record data from dcs, logs only
-     * @return
-     * @throws IOException
-     */
-    @Override
-    public List<SlotChangeData> poll() throws IOException {
-
-        // TODO: associate in player info service?
-        return LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,
-                "slotchange/new/fetch_player_slot_request.lua").getAsListFor(SlotChangeData.class);
-    }
-
-    @Override
-    public void addDefinition(HookInterceptorDefinition definition) {
-        LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,
-                "generic_hook_interceptor/add_definition.lua",
-                getClass().getName(), definition.getName(),
-                definition.getHookType().getFunctionName(), storage.getRepositoryName(),
-                definition.getPredicateFunction());
-    }
-
-    @Override
-    public void removeDefinition(HookInterceptorDefinition definition) {
+    @Scheduled(fixedDelay = 1000L)
+    public void gather() throws IOException {
+        if (BackgroundTask.getCurrentTask().getPhase().equals(OperationPhase.RUNNING)) {
+            poll().stream().peek(entity ->
+                    playerInfoService.findByNetId(entity.getNetId()).ifPresent(entity::setPlayer))
+                    .forEach(System.out::println);
+        }
 
     }
 }

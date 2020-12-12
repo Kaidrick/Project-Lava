@@ -1,5 +1,7 @@
 package moe.ofs.backend.hookinterceptor;
 
+import moe.ofs.backend.util.LuaScripts;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -16,14 +18,17 @@ import java.util.List;
 public interface HookInterceptorProcessService
         <T extends HookProcessEntity, D extends HookInterceptorDefinition> {
 
-    void createHook(String name);
+    String FUNCTION_RETURN_ORIGINAL_ARGS =
+            LuaScripts.load("generic_hook_interceptor/function_template_return_orginal_arguments.lua");
+
+    void createHook(String name, HookType hookType);
 
     /**
      * Fetch decisions made by the interceptor predicates
      * @return
      * @throws IOException
      */
-    List<T> poll() throws IOException;
+    List<HookProcessEntity> poll() throws IOException;
 
     /**
      * Add definition of a interceptor to list, then inject predicate function to Lua hook

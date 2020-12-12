@@ -14,11 +14,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.io.File;
 
 @SpringBootApplication
 @EnableAsync
+@EnableScheduling
 @Slf4j
 public class BackendApplication {
     private static Environment environment;
