@@ -4,21 +4,16 @@ __storage = __storage or {}
 -- mission state storage can only be clean manually and explicitly
 
 -- Meta class
-DataTable = {
-  name = nil,
-  nextId = 0,
-  repository = nil
-}
+DataTable = {}
+DataTable.__index = DataTable
 
 -- Base class method new
 function DataTable:new(table_name)
-   o = o or {}
-   setmetatable(o, self)
-   self.__index = self
-   self.name = table_name
-   self.repository = {}
-
-   return o
+  return setmetatable({
+    name = table_name,
+    nextId = 0,
+    repository = {}
+  }, DataTable)
 end
 
 function DataTable:allocate(table_name)
@@ -80,3 +75,5 @@ function DataTable:findAll()
   end
   return data
 end
+
+setmetatable(DataTable, { __call = DataTable.new })

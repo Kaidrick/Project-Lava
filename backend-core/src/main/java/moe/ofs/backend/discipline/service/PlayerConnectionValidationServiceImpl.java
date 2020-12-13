@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.discipline.exceptions.ValidatorNotSpecifiedException;
 import moe.ofs.backend.discipline.model.ConnectionValidator;
 import moe.ofs.backend.handlers.MissionStartObservable;
-import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.util.LuaScripts;
@@ -37,7 +36,7 @@ public class PlayerConnectionValidationServiceImpl implements PlayerConnectionVa
     @Override
     public void addValidator(ConnectionValidator validator) throws ValidatorNotSpecifiedException {
         requestTransmissionService.send(new ServerDataRequest(LuaQueryEnv.SERVER_CONTROL,
-                LuaScripts.loadAndPrepare("connection_validation/player_try_connect_hook.lua",
+                LuaScripts.loadAndPrepare("connection_validation/add_predicate.lua",
                         this.getClass().getName() + ":" + validator.getName(),
                         validator.getFunction())));
     }

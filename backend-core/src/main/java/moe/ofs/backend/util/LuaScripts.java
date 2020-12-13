@@ -39,6 +39,10 @@ public class LuaScripts {
         }
     }
 
+    public static String safeLoad(String scriptName) {
+        return injectSafe(load(scriptName));
+    }
+
     public static String loadAndPrepare(String scriptName, Object... values) {
         try(InputStream in = LuaScripts.class.getClassLoader().getResourceAsStream("scripts/" + scriptName)) {
             assert in != null;
@@ -49,6 +53,14 @@ public class LuaScripts {
         } catch (IOException e) {
             throw new RuntimeException("Script Not Found: " + scriptName);
         }
+    }
+
+    public static String safeLoadAndPrepare(String scriptName, Object... values) {
+        return injectSafe(loadAndPrepare(scriptName, values));
+    }
+
+    public static String injectSafe(String luaCode) {
+        return luaCode.replaceAll("(?<!['\"])%[A-z](?!['\"])", "nil");
     }
 
     // short hand methods for sending requests dcs lua env

@@ -4,20 +4,15 @@ __storage = __storage or {}
 -- mission state storage can only be clean manually and explicitly
 
 -- Meta class
-KwPair = {
-  name = nil,
-  repository = nil
-}
+KwPair = {}
+KwPair.__index = KwPair
 
 -- Base class method new
 function KwPair:new(table_name)
-   o = o or {}
-   setmetatable(o, self)
-   self.__index = self
-   self.name = table_name
-   self.repository = {}
-
-   return o
+  return setmetatable({
+    name = table_name,
+    repository = {}
+  }, KwPair)
 end
 
 function KwPair:allocate(table_name)
@@ -59,3 +54,9 @@ function KwPair:findAll()
   end
   return data
 end
+
+function KwPair:entries()
+    return self.repository
+end
+
+setmetatable(KwPair, { __call = KwPair.new })

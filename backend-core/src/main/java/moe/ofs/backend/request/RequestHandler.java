@@ -281,6 +281,11 @@ public final class RequestHandler {
         // only add to wait map if result is definitely needed
         splitQueue.forEach((level, queue) -> {
             transmissionQueue.stream().filter(r -> r instanceof Resolvable).forEach(r -> waitMap.put(r.getUuidString(), r));
+
+//            if (queue.size() > 5) {
+//                System.out.println(" level + queue = " +  level + queue);
+//            }
+
             try {
                 Gson gson = new Gson();
                 String json = gson.toJson(queue);

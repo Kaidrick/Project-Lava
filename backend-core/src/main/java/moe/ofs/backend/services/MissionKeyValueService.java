@@ -1,7 +1,5 @@
 package moe.ofs.backend.services;
 
-import moe.ofs.backend.domain.Level;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
