@@ -27,9 +27,11 @@ _G[hook_name][target_function_name] = function(...)
         }
 
         if predicate.mapper then
-            verdict.__predicate_result = JSON:encode(predicate.mapper(res))
+            for k, v in pairs(predicate.mapper(unpack(res))) do
+                verdict[k] = v
+            end
         else
-            verdict.__predicate_result = JSON:encode(res)
+            verdict.__predicate_result = res
         end
 
         _G[hook_name].decisions:save(verdict)
@@ -38,8 +40,6 @@ _G[hook_name][target_function_name] = function(...)
             return unpack(res)
         end
     end
-
-    net.log(target_function_name .. " + test end")
 end
 
 DCS.setUserCallbacks(_G[hook_name])

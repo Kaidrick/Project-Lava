@@ -1,10 +1,12 @@
 package moe.ofs.backend.discipline.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.discipline.model.PlayerTryConnectRecord;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.hookinterceptor.*;
 import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.services.mizdb.SimpleKeyValueStorage;
+import moe.ofs.backend.util.LuaInteract;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -15,8 +17,8 @@ import java.io.IOException;
 @Service
 @Slf4j
 public class NewPlayerConnectionValidationServiceImpl
-        extends AbstractHookInterceptorProcessService<HookProcessEntity, HookInterceptorDefinition>
-        implements HookInterceptorProcessService<HookProcessEntity, HookInterceptorDefinition> {
+        extends AbstractHookInterceptorProcessService<PlayerTryConnectRecord, HookInterceptorDefinition>
+        implements HookInterceptorProcessService<PlayerTryConnectRecord, HookInterceptorDefinition> {
 
     private final PlayerInfoService playerInfoService;
     private final SimpleKeyValueStorage<String> connectionValidatorStorage;
@@ -39,6 +41,15 @@ public class NewPlayerConnectionValidationServiceImpl
                             .name("lava-default-player-connection-validation-hook-interceptor")
                             .storage(connectionValidatorStorage)
                             .predicateFunction(HookInterceptorProcessService.FUNCTION_RETURN_ORIGINAL_ARGS)
+                            .decisionMappingFunction("" +
+                                    "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString() + ")" +
+                                    "   local data = { " +
+                                    "       ipaddr = addr, " +
+                                    "       playerName = name, " +
+                                    "       ucid = ucid " +
+                                    "   } " +
+                                    "   return data " +
+                                    "end")
                             .build();
 
             addDefinition(hookInterceptorDefinition);
@@ -49,10 +60,9 @@ public class NewPlayerConnectionValidationServiceImpl
     }
 
     @Scheduled(fixedDelay = 100L)
-
-    // FIXME: use annotation based identifier so that the function will only run when connection is established
+    @LuaInteract
     public void gather() throws IOException {
-        poll().stream()
+        poll(PlayerTryConnectRecord.class).stream()
                 .peek(hookProcessEntity ->
                         playerInfoService.findByNetId(hookProcessEntity.getNetId())
                                 .ifPresent(hookProcessEntity::setPlayer))

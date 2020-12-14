@@ -31,6 +31,14 @@ public interface HookInterceptorProcessService
     List<HookProcessEntity> poll() throws IOException;
 
     /**
+     * Fetch decisions made by interceptor predicates and convert them to List for a specific type
+     * @param tClass
+     * @return
+     * @throws IOException
+     */
+    List<T> poll(Class<T> tClass) throws IOException;
+
+    /**
      * Add definition of a interceptor to list, then inject predicate function to Lua hook
      * @param definition
      */
