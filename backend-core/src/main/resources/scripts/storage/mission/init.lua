@@ -89,3 +89,5 @@ function DataTable:findAll()
 end
 
 setmetatable(DataTable, { __call = DataTable.new })
+
+return "true"

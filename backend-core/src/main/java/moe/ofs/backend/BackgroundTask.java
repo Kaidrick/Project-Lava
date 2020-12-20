@@ -8,6 +8,8 @@ import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.LuaScriptInjectionObservable;
 import moe.ofs.backend.handlers.MissionStartObservable;
+import moe.ofs.backend.handlers.starter.LuaScriptStarter;
+import moe.ofs.backend.handlers.starter.services.LuaScriptInjectService;
 import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.message.ConnectionStatusChange;
 import moe.ofs.backend.message.OperationPhase;
@@ -68,6 +70,10 @@ public class BackgroundTask {
 
     private final LavaTaskDispatcher lavaTaskDispatcher;
 
+    private final LuaScriptInjectService luaScriptInjectService;
+
+    private final List<LuaScriptStarter> luaScriptStarters;
+
     private final List<Plugin> plugins;
 
     private final Sender sender;
@@ -115,7 +121,7 @@ public class BackgroundTask {
             PlayerInfoService playerInfoService,
             FlyableUnitService flyableUnitService,
             ParkingInfoService parkingInfoService, LavaTaskDispatcher lavaTaskDispatcher,
-            List<Plugin> plugins,
+            LuaScriptInjectService luaScriptInjectService, List<LuaScriptStarter> luaScriptStarters, List<Plugin> plugins,
             Sender sender, RequestTransmissionService requestTransmissionService) {
         this.requestHandler = requestHandler;
         this.connectionManager = connectionManager;
@@ -130,6 +136,9 @@ public class BackgroundTask {
         this.flyableUnitService = flyableUnitService;
         this.parkingInfoService = parkingInfoService;
         this.lavaTaskDispatcher = lavaTaskDispatcher;
+
+        this.luaScriptInjectService = luaScriptInjectService;
+        this.luaScriptStarters = luaScriptStarters;
 
         this.plugins = plugins;
 
@@ -361,8 +370,6 @@ public class BackgroundTask {
         serverPollingScheduler.scheduleWithFixedDelay(serverPolling,
                 0, 100, TimeUnit.MILLISECONDS);
 
-//         initialize plugins
-        Plugin.loadedPlugins.forEach(Plugin::init);
 
         // check in lua mission env for global variable persistent initialization
         // this flag can only be reset by mission restart event handler
@@ -371,6 +378,13 @@ public class BackgroundTask {
         boolean flag = ((ServerDataRequest) requestTransmissionService.send(
                 new ServerDataRequest("return tostring(lava_mission_persistent_initialization)")))
                 .getAsBoolean();
+
+        luaScriptStarters.stream()
+                .map(LuaScriptStarter::injectScript)
+                .forEach(luaScriptInjectService::add);
+
+        luaScriptInjectService.invokeInjection();
+//                .forEach(((task, aBoolean) -> System.out.println(task.getScriptIdentName() + " -> " + aBoolean)));
 
         if(!flag) {
             log.info("injecting mission persistence");
@@ -387,9 +401,10 @@ public class BackgroundTask {
 
         }
 
-        log.info("Schedulers running, background task ready, mission data initialized");
+        //         initialize plugins
+        Plugin.loadedPlugins.forEach(Plugin::init);
 
-        phase = OperationPhase.RUNNING;
+        log.info("Schedulers running, background task ready, mission data initialized");
 
         requestTransmissionService.send(
                 // also get dcs version here
@@ -401,6 +416,8 @@ public class BackgroundTask {
                             taskDcsMapTheaterName = theater;  // store theater name
                         })
         );
+
+        phase = OperationPhase.RUNNING;
 
         // initializing task dispatcher
         lavaTaskDispatcher.init();

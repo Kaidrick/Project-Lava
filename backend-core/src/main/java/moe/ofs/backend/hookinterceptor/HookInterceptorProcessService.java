@@ -41,8 +41,9 @@ public interface HookInterceptorProcessService
     /**
      * Add definition of a interceptor to list, then inject predicate function to Lua hook
      * @param definition
+     * @return
      */
-    void addDefinition(D definition);
+    boolean addDefinition(D definition);
 
     /**
      * Remove definition of a interceptor from list, then remove predicate function from Lua hook

@@ -15,3 +15,5 @@ hook.predicates[definition_name] = {
     store = __storage[store_name],
     mapper = fm
 }
+
+return true

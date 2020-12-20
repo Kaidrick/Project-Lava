@@ -43,7 +43,7 @@ public abstract class AbstractHookInterceptorProcessService
     }
 
     @Override
-    public void addDefinition(D definition) {
+    public boolean addDefinition(D definition) {
         if (definitionSet.add(definition)) {
             String s = LuaScripts.safeLoadAndPrepare(
                     "generic_hook_interceptor/add_definition.lua",
@@ -54,7 +54,9 @@ public abstract class AbstractHookInterceptorProcessService
                     definition.getDecisionMappingFunction()
             );
 
-            LuaScripts.request(LuaQueryEnv.SERVER_CONTROL, s);
+            return LuaScripts.request(LuaQueryEnv.SERVER_CONTROL, s).getAsBoolean();
+        } else {
+            return false;
         }
     }
 
