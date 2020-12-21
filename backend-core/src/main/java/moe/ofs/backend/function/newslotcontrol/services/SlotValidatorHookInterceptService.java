@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.BackgroundTask;
 import moe.ofs.backend.function.mizdb.PersistentKeyValueInjectionBootstrap;
 import moe.ofs.backend.handlers.starter.LuaScriptStarter;
-import moe.ofs.backend.handlers.starter.ScriptInjectionTask;
+import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
 import moe.ofs.backend.hookinterceptor.*;
 import moe.ofs.backend.message.OperationPhase;
 import moe.ofs.backend.services.PlayerInfoService;

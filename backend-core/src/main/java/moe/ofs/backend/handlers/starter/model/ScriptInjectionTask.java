@@ -1,7 +1,8 @@
-package moe.ofs.backend.handlers.starter;
+package moe.ofs.backend.handlers.starter.model;
 
 import lombok.Builder;
 import lombok.Data;
+import moe.ofs.backend.handlers.starter.LuaScriptStarter;
 
 import java.util.List;
 import java.util.Objects;
