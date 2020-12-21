@@ -1,7 +1,7 @@
-package moe.ofs.backend.function.triggermessage;
+package moe.ofs.backend.function.triggermessage.model;
 
 import moe.ofs.backend.domain.ExportObject;
-import moe.ofs.backend.request.services.RequestTransmissionService;
+import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
 import moe.ofs.backend.services.FlyableUnitService;
 
 import java.util.ArrayDeque;

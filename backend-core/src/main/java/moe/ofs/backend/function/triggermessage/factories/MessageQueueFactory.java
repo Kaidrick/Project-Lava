@@ -1,6 +1,8 @@
-package moe.ofs.backend.function.triggermessage;
+package moe.ofs.backend.function.triggermessage.factories;
 
 import moe.ofs.backend.domain.ExportObject;
+import moe.ofs.backend.function.triggermessage.model.MessageQueue;
+import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
 import moe.ofs.backend.services.FlyableUnitService;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.stereotype.Component;
