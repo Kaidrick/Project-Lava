@@ -40,7 +40,10 @@ public enum HookType {
     }
 
     public String getFunctionArgsString(String argName) {
-        return String.join(",", argName, getFunctionArgsString());
+        if (argName == null) {
+            return String.join(",", functionArgs);
+        }
+        return argName + "," + String.join(",", functionArgs);
     }
 
     public static HookType ofFunctionName(String functionName) {

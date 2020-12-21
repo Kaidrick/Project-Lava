@@ -46,36 +46,36 @@ public class ChatCommandHookInterceptServiceImpl
                     HookInterceptorDefinition interceptor = HookInterceptorDefinition.builder()
                             .name("lava-chat-command-interceptor")
                             .predicateFunction("" +
-                                    "function(" + HookType.ON_PLAYER_TRY_SEND_CHAT.getFunctionArgsString() + ")" +
-                                    "   if storage then" +
-                                    "       for kw, sp in pairs(storage:entries()) do" +
-                                    "           if msg:sub(1, #kw) == kw then" +
-                                    "               return ''  -- drop the message" +
-                                    "           end" +
-                                    "       end" +
-                                    "   end" +
+                                    "function(" + HookType.ON_PLAYER_TRY_SEND_CHAT.getFunctionArgsString() + ") " +
+                                    "   if storage then " +
+                                    "       for kw, sp in pairs(storage:entries()) do " +
+                                    "           if msg:sub(1, #kw) == kw then " +
+                                    "               return '' " +
+                                    "           end " +
+                                    "       end " +
+                                    "   end " +
                                     "end")
                             .storage(storage)
                             .argPostProcessFunction("" +
-                                    "function(" + HookType.ON_PLAYER_TRY_SEND_CHAT.getFunctionArgsString() + ")" +
-                                    "   if storage then" +
-                                    "       for kw, sp in pairs(storage:entries()) do" +
-                                    "           if msg:sub(1, #kw) == kw then" +
-                                    "               return {" +
-                                    "                   keyword = kw," +
-                                    "                   message = msg" +
-                                    "               }" +
-                                    "           end" +
-                                    "       end" +
-                                    "   end" +
-                                    "end")
+                                    "function(" + HookType.ON_PLAYER_TRY_SEND_CHAT.getFunctionArgsString() + ") " +
+                                    "   if storage then " +
+                                    "       for kw, sp in pairs(storage:entries()) do " +
+                                    "           if msg:sub(1, #kw) == kw then " +
+                                    "               return { " +
+                                    "                   keyword = kw, " +
+                                    "                   message = msg " +
+                                    "               } " +
+                                    "           end " +
+                                    "       end " +
+                                    "   end " +
+                                    "end ")
                             .build();
 
                     return addDefinition(interceptor);
                 })
                 .injectionDoneCallback(aBoolean -> {
-                    if (aBoolean) log.info("Initiating Slot Validator Injection Service");
-                    else log.error("Failed to initiate Slot Validator Injection Service");
+                    if (aBoolean) log.info("Hook Interceptor Initialized: {}", getName());
+                    else log.error("Failed to initiate Chat Command Hook Intercept Injection Service");
                 })
                 .build();
     }

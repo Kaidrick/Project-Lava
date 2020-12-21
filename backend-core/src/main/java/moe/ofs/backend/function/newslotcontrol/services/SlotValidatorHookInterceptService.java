@@ -76,7 +76,7 @@ public class SlotValidatorHookInterceptService
                     return addDefinition(interceptor);
                 })
                 .injectionDoneCallback(aBoolean -> {
-                    if (aBoolean) log.info("Initiating Slot Validator Injection Service");
+                    if (aBoolean) log.info("Hook Interceptor Initialized: {}", getName());
                     else log.error("Failed to initiate Slot Validator Injection Service");
                 })
                 .build();

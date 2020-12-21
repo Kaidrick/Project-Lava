@@ -51,7 +51,7 @@ public class NewPlayerConnectionValidationServiceImpl
                                     // FIXME: looks weird; how does it even work?
                                     .predicateFunction(HookInterceptorProcessService.FUNCTION_RETURN_ORIGINAL_ARGS)
                                     .decisionMappingFunction("" +
-                                            "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString() + ")" +
+                                            "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString(null) + ") " +
                                             "   local data = { " +
                                             "       ipaddr = addr, " +
                                             "       playerName = name, " +
