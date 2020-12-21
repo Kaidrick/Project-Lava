@@ -18,6 +18,10 @@ public interface LuaResponse extends Resolvable {
 
     String getResult();
 
+    LuaResponse addProcessable(Processable processable);
+
+    void notifyProcessable(String object);
+
     /**
      * blocking call
      *

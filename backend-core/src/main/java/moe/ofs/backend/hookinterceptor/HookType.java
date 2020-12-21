@@ -36,7 +36,11 @@ public enum HookType {
     }
 
     public String getFunctionArgsString() {
-        return String.join(", ", functionArgs);
+        return getFunctionArgsString("storage");
+    }
+
+    public String getFunctionArgsString(String argName) {
+        return String.join(",", argName, getFunctionArgsString());
     }
 
     public static HookType ofFunctionName(String functionName) {

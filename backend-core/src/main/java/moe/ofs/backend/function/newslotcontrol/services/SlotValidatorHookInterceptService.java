@@ -71,7 +71,7 @@ public class SlotValidatorHookInterceptService
                     HookInterceptorDefinition interceptor =
                             new HookInterceptorDefinition("lava-slot-change-interceptor",
                                     HookInterceptorProcessService.FUNCTION_RETURN_ORIGINAL_ARGS, storage,
-                                    null, null);
+                                    null, null, null);
 
                     return addDefinition(interceptor);
                 })

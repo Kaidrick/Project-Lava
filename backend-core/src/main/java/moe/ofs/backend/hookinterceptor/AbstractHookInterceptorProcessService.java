@@ -51,7 +51,8 @@ public abstract class AbstractHookInterceptorProcessService
                     definition.getName(),
                     definition.getStorage().getRepositoryName(),
                     definition.getPredicateFunction(),
-                    definition.getDecisionMappingFunction()
+                    definition.getDecisionMappingFunction(),
+                    definition.getArgPostProcessFunction()
             );
 
             return LuaScripts.request(LuaQueryEnv.SERVER_CONTROL, s).getAsBoolean();

@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.discipline.model.PlayerTryConnectRecord;
 import moe.ofs.backend.function.mizdb.PersistentKeyValueInjectionBootstrap;
 import moe.ofs.backend.handlers.starter.LuaScriptStarter;
-import moe.ofs.backend.handlers.starter.ScriptInjectionTask;
+import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
 import moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService;
 import moe.ofs.backend.hookinterceptor.HookInterceptorDefinition;
 import moe.ofs.backend.hookinterceptor.HookInterceptorProcessService;
@@ -48,6 +48,7 @@ public class NewPlayerConnectionValidationServiceImpl
                             HookInterceptorDefinition.builder()
                                     .name("lava-default-player-connection-validation-hook-interceptor")
                                     .storage(connectionValidatorStorage)
+                                    // FIXME: looks weird; how does it even work?
                                     .predicateFunction(HookInterceptorProcessService.FUNCTION_RETURN_ORIGINAL_ARGS)
                                     .decisionMappingFunction("" +
                                             "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString() + ")" +
@@ -68,34 +69,6 @@ public class NewPlayerConnectionValidationServiceImpl
                 })
                 .build();
     }
-
-//    @PostConstruct
-//    public void init() {
-//        MissionStartObservable missionStartObservable = theaterName -> {
-//            createHook(getClass().getName(), HookType.ON_PLAYER_TRY_CONNECT);
-//
-//            HookInterceptorDefinition hookInterceptorDefinition =
-//                    HookInterceptorDefinition.builder()
-//                            .name("lava-default-player-connection-validation-hook-interceptor")
-//                            .storage(connectionValidatorStorage)
-//                            .predicateFunction(HookInterceptorProcessService.FUNCTION_RETURN_ORIGINAL_ARGS)
-//                            .decisionMappingFunction("" +
-//                                    "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString() + ")" +
-//                                    "   local data = { " +
-//                                    "       ipaddr = addr, " +
-//                                    "       playerName = name, " +
-//                                    "       ucid = ucid " +
-//                                    "   } " +
-//                                    "   return data " +
-//                                    "end")
-//                            .build();
-//
-//            addDefinition(hookInterceptorDefinition);
-//
-//            log.info("Hook Interceptor Initialized: {}", getName());
-//        };
-//        missionStartObservable.register();
-//    }
 
     @Scheduled(fixedDelay = 100L)
     @LuaInteract

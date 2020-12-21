@@ -3,20 +3,21 @@ package moe.ofs.backend.services.mizdb;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.BackgroundTask;
 import moe.ofs.backend.handlers.MissionStartObservable;
+import moe.ofs.backend.message.OperationPhase;
 import moe.ofs.backend.services.MissionKeyValueService;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueService<T> {
     protected String name;
     protected LuaQueryEnv env;
+
+    private final Map<Object, T> precachedValues = new HashMap<>();
 
     @Override
     public String getRepositoryName() {
@@ -46,15 +47,42 @@ public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueServi
                 getRepositoryName());
     }
 
+    /**
+     * If operation phase is not running, add to cache; otherwise run normally
+     * @param key Object key value of the pair
+     * @param object T to be save as the value of the pair
+     * @return object saved to key value pairs
+     */
     @Override
     public T save(Object key, T object) {
-        Gson gson = new Gson();
-        String keyJson = gson.toJson(key);
-        String objectJson = gson.toJson(object);
+        if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {
+            Gson gson = new Gson();
+            String keyJson = gson.toJson(key);
+            String objectJson = gson.toJson(object);
 
-        LuaScripts.requestWithFile(env, "storage/keyvalue/kw_pair_save.lua",
-                getRepositoryName(), keyJson, objectJson);
+            LuaScripts.requestWithFile(env, "storage/keyvalue/kw_pair_save.lua",
+                    getRepositoryName(), keyJson, objectJson);
+        } else {  // add to cache
+            precachedValues.put(key, object);
+        }
         return object;
+    }
+
+    /**
+     * If operation phase is not running, add to cache; otherwise run normally
+     * @param map
+     * @return
+     */
+    @Override
+    public List<T> saveAll(Map<Object, T> map) {
+        if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {
+            Gson gson = new Gson();
+            LuaScripts.requestWithFile(env, "storage/keyvalue/kw_pair_save_batch.lua",
+                    getRepositoryName(), gson.toJson(map));
+        } else {
+            precachedValues.putAll(map);
+        }
+        return new ArrayList<>(map.values());
     }
 
     @Override
@@ -92,6 +120,11 @@ public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueServi
     }
 
     @Override
+    public void precache() {
+        saveAll(precachedValues);
+    }
+
+    @Override
     public Set<T> fetchAll(Class<T> tClass) {
         return LuaScripts.requestWithFile(env, "storage/keyvalue/kw_pair_fetch_all.lua",
                 getRepositoryName()).getAsSetFor(tClass);
@@ -118,5 +151,7 @@ public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueServi
     public void createRepository() {
         LuaScripts.requestWithFile(env, "storage/keyvalue/kw_pair_create.lua",
                 getRepositoryName());
+
+        precache();  // always run precache when creating a new repository
     }
 }

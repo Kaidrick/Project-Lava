@@ -9,6 +9,8 @@ import moe.ofs.backend.services.mizdb.InjectionEnvironment;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -31,5 +33,15 @@ public class TestPersistentKeyValueServiceImpl extends AbstractPersistentKeyValu
     @Override
     public String getRepositoryName() {
         return this.getClass().getName();
+    }
+
+    @Override
+    public List<String> saveAll(Map<Object, String> map) {
+        return null;
+    }
+
+    @Override
+    public void precache() {
+
     }
 }
