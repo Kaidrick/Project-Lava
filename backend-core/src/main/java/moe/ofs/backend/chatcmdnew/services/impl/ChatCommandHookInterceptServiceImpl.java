@@ -45,7 +45,7 @@ public class ChatCommandHookInterceptServiceImpl
                 .initializrClass(getClass())
                 .dependencyInitializrClass(PersistentKeyValueInjectionBootstrap.class)
                 .inject(() -> {
-                    createHook(getClass().getName(), HookType.ON_PLAYER_TRY_SEND_CHAT);
+                    boolean hooked = createHook(getClass().getName(), HookType.ON_PLAYER_TRY_SEND_CHAT);
 
                     HookInterceptorDefinition interceptor = HookInterceptorDefinition.builder()
                             .name("lava-chat-command-interceptor")
@@ -76,7 +76,7 @@ public class ChatCommandHookInterceptServiceImpl
                                     "end ")
                             .build();
 
-                    return addDefinition(interceptor);
+                    return hooked && addDefinition(interceptor);
                 })
                 .injectionDoneCallback(aBoolean -> {
                     if (aBoolean) log.info("Hook Interceptor Initialized: {}", getName());

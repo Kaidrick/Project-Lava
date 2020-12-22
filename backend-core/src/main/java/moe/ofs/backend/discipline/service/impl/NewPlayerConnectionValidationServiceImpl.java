@@ -42,7 +42,9 @@ public class NewPlayerConnectionValidationServiceImpl
                 .initializrClass(getClass())
                 .dependencyInitializrClass(PersistentKeyValueInjectionBootstrap.class)
                 .inject(() -> {
-                    createHook(getClass().getName(), HookType.ON_PLAYER_TRY_CONNECT);
+                    boolean hooked = createHook(getClass().getName(), HookType.ON_PLAYER_TRY_CONNECT);
+
+                    log.info("{} Hooked? {}", getName(), hooked);
 
                     HookInterceptorDefinition hookInterceptorDefinition =
                             HookInterceptorDefinition.builder()
@@ -61,7 +63,7 @@ public class NewPlayerConnectionValidationServiceImpl
                                             "end")
                                     .build();
 
-                    return addDefinition(hookInterceptorDefinition);
+                    return hooked && addDefinition(hookInterceptorDefinition);
                 })
                 .injectionDoneCallback(aBoolean -> {
                     if (aBoolean) log.info("Hook Interceptor Initialized: {}", getName());

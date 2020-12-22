@@ -66,14 +66,14 @@ public class SlotValidatorHookInterceptService
                 .initializrClass(getClass())
                 .dependencyInitializrClass(PersistentKeyValueInjectionBootstrap.class)
                 .inject(() -> {
-                    createHook(getClass().getName(), HookType.ON_PLAYER_TRY_CHANGE_SLOT);
+                    boolean hooked = createHook(getClass().getName(), HookType.ON_PLAYER_TRY_CHANGE_SLOT);
 
                     HookInterceptorDefinition interceptor =
                             new HookInterceptorDefinition("lava-slot-change-interceptor",
                                     HookInterceptorProcessService.FUNCTION_RETURN_ORIGINAL_ARGS, storage,
                                     null, null, null);
 
-                    return addDefinition(interceptor);
+                    return hooked && addDefinition(interceptor);
                 })
                 .injectionDoneCallback(aBoolean -> {
                     if (aBoolean) log.info("Hook Interceptor Initialized: {}", getName());

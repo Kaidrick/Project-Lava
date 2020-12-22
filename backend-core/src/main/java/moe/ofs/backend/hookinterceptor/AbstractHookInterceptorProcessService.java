@@ -21,11 +21,11 @@ public abstract class AbstractHookInterceptorProcessService
     }
 
     @Override
-    public void createHook(String name, HookType hookType) {
+    public boolean createHook(String name, HookType hookType) {
         this.name = name;
-        LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,
+        return LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,
                 "generic_hook_interceptor/create_hook.lua",
-                name, hookType.getFunctionName(), hookType.getPlayerNetIdArgIndex());
+                name, hookType.getFunctionName(), hookType.getPlayerNetIdArgIndex()).getAsBoolean();
     }
 
     @Override

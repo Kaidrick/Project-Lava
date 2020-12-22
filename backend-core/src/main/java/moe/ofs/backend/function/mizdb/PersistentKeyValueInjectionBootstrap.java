@@ -19,6 +19,7 @@ public class PersistentKeyValueInjectionBootstrap implements LuaScriptStarter {
                                 "storage/mission/init_keyvalue.lua").getAsBoolean() &&
                         LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,
                                 "storage/server/init_keyvalue.lua").getAsBoolean())
+                .dependencyInitializrClass(PersistentStructuredDataInjectionBootstrap.class)
                 .injectionDoneCallback(success -> {
                     if (success) log.info("Persistent Key-Value Storage Initialized");
                     else log.error("Failed to initialize Persistent Key-Value Storage");

@@ -21,7 +21,7 @@ public interface HookInterceptorProcessService
     String FUNCTION_RETURN_ORIGINAL_ARGS =
             LuaScripts.load("generic_hook_interceptor/function_template_return_orginal_arguments.lua");
 
-    void createHook(String name, HookType hookType);
+    boolean createHook(String name, HookType hookType);
 
     /**
      * Fetch decisions made by the interceptor predicates

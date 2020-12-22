@@ -5,7 +5,7 @@ local player_id_arg_index = %d
 local JSON = require("JSON")
 
 if _G[hook_name] then
-    return  -- already initialized
+    return true  -- already initialized
 end
 
 _G[hook_name] = _G[hook_name] or {  -- should only be initialized once to avoid duplicated callbacks

@@ -37,9 +37,11 @@ public class LuaInjectionInitializr implements LuaScriptInjectService {
 
         parseDependencies();
 
-        return scriptInjectionTasks.stream().collect(Collectors.toMap(
-                Functions.identity(),
+        Map<ScriptInjectionTask, Boolean> injectionResult = new HashMap<>();
+
+        scriptInjectionTasks.stream().sorted(Comparator.comparing(ScriptInjectionTask::getOrder)).forEach(
                 task -> {
+                    log.info("************* Injecting {}", task.getScriptIdentName());
                     try {
                         boolean isInjected = service.submit(task.getInject())
                                 .get(5000, TimeUnit.MILLISECONDS);
@@ -48,17 +50,19 @@ public class LuaInjectionInitializr implements LuaScriptInjectService {
                             task.getInjectionDoneCallback().accept(isInjected);
                         }
 
-                        return isInjected;
+                        injectionResult.put(task, true);
+
+                        log.info("Injection Process Finished for {}", task.getScriptIdentName());
                     } catch (InterruptedException | ExecutionException | TimeoutException e) {
                         log.error("Failed to inject script dependency: {} from {}",
                                 task.getScriptIdentName(), task.getDependencyInitializrClass());
                         e.printStackTrace();
-                    } finally {
-                        log.info("Injection Process Finished for {}", task.getScriptIdentName());
                     }
-                    return false;
+                    injectionResult.put(task, false);
                 }
-        ));
+        );
+
+        return injectionResult;
     }
 
     private void recursivelySetLoadOrder(List<ScriptInjectionTask> list) {
