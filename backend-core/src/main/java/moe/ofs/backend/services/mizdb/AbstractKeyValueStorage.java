@@ -55,7 +55,8 @@ public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueServi
      */
     @Override
     public T save(Object key, T object) {
-        if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {
+        if (BackgroundTask.getCurrentTask() != null &&
+            BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {
             Gson gson = new Gson();
             String keyJson = gson.toJson(key);
             String objectJson = gson.toJson(object);
@@ -63,6 +64,7 @@ public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueServi
             LuaScripts.requestWithFile(env, "storage/keyvalue/kw_pair_save.lua",
                     getRepositoryName(), keyJson, objectJson);
         } else {  // add to cache
+            log.info("{} precache with key: {}, value: {}", getClass().getName(), key, object);
             precachedValues.put(key, object);
         }
         return object;

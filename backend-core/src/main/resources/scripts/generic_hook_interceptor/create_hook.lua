@@ -29,7 +29,7 @@ _G[hook_name][target_function_name] = function(...)
             }
 
             if predicate.processor then
-                for k, v in pairs(predicate.processor(unpack(args))) do
+                for k, v in pairs(predicate.processor(predicate.store, ...)) do
                     verdict[k] = v
                 end
             end
@@ -49,3 +49,5 @@ _G[hook_name][target_function_name] = function(...)
 end
 
 DCS.setUserCallbacks(_G[hook_name])
+
+return true

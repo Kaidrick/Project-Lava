@@ -15,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -32,6 +33,9 @@ public class ChatCommandHookInterceptServiceImpl
         storage = new SimpleKeyValueStorage<>(
                 "lava-chat-command-hook-intercept-service-data-storage",
                 LuaQueryEnv.SERVER_CONTROL);
+
+        storage.save("/enter", Arrays.asList("test", "best"));
+        storage.save("/whoami", Arrays.asList("123", "456"));
     }
 
     @Override
@@ -49,6 +53,7 @@ public class ChatCommandHookInterceptServiceImpl
                                     "function(" + HookType.ON_PLAYER_TRY_SEND_CHAT.getFunctionArgsString() + ") " +
                                     "   if storage then " +
                                     "       for kw, sp in pairs(storage:entries()) do " +
+                                    "           net.log(kw) " +
                                     "           if msg:sub(1, #kw) == kw then " +
                                     "               return '' " +
                                     "           end " +
