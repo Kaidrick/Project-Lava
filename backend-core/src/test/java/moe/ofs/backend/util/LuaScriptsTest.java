@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LuaScriptsTest {
 
-    String SCRIPT_NAME = "send_message_by_group_id.lua";
+    String SCRIPT_NAME = "message/send_message_by_group_id.lua";
     int GROUP_ID = 737;
     String CONTENT = "test";
     int DURATION = 10;

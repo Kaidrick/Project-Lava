@@ -3,18 +3,22 @@ package moe.ofs.backend.function.triggermessage.services.impl;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.function.triggermessage.model.TriggerMessage;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
+import moe.ofs.backend.object.FlyableUnit;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TriggerMessageServiceImpl implements TriggerMessageService {
 
-    private static final String triggerMessageByGroupId = LuaScripts.load("send_message_by_group_id.lua");
+    private static final String triggerMessageByGroupId = LuaScripts.load("message/send_message_by_group_id.lua");
 
     private final RequestTransmissionService requestTransmissionService;
     private final FlyableUnitService flyableUnitService;
@@ -49,6 +53,35 @@ public class TriggerMessageServiceImpl implements TriggerMessageService {
 
     @Override
     public void sendTriggerMessageForPlayers(TriggerMessage message, List<PlayerInfo> players) {
+        System.out.println("players = " + players);
         // concat string
+        String groupIdString = players.stream().map(player -> flyableUnitService.findByUnitId(player.getSlot()))
+                .peek(System.out::println).filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(FlyableUnit::getGroup_id)
+                .map(String::valueOf).collect(Collectors.joining(","));
+
+        System.out.println("groupIdString = " + groupIdString);
+
+        LuaScripts.requestWithFile(LuaQueryEnv.MISSION_SCRIPTING,
+                "message/send_message_by_group_id_list.lua",
+                groupIdString, message.getMessage(), message.getDuration(),  message.isClearView());
+    }
+
+    @Override
+    public void sendNetMessageForPlayer(TriggerMessage message, PlayerInfo player) {
+        LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,
+                "message/send_net_message_by_net_id.lua", message.getMessage(), player.getNetId());
+    }
+
+    @Override
+    public void sendNetMessageForPlayers(TriggerMessage message, List<PlayerInfo> players) {
+        String listString = players.stream()
+                .map(PlayerInfo::getNetId)
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
+        System.out.println("listString = " + listString);
+        LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,
+                "message/send_net_message_by_net_id_list.lua", listString, message.getMessage());
     }
 }

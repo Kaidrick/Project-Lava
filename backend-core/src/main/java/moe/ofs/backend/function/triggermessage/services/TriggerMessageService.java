@@ -13,4 +13,8 @@ public interface TriggerMessageService {
     void sendTriggerMessageForPlayer(TriggerMessage message, PlayerInfo player);
 
     void sendTriggerMessageForPlayers(TriggerMessage message, List<PlayerInfo> players);
+
+    void sendNetMessageForPlayer(TriggerMessage message, PlayerInfo player);
+
+    void sendNetMessageForPlayers(TriggerMessage message, List<PlayerInfo> players);
 }

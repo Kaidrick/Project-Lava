@@ -9,7 +9,6 @@ public final class TriggerMessage {
     private int receiverGroupId = -1;
     private int duration = 5;
     private boolean clearView = false;
-    private static String triggerMessageByGroupId = LuaScripts.load("send_message_by_group_id.lua");
 
     public static class TriggerMessageBuilder {
         private TriggerMessage triggerMessage = new TriggerMessage();

@@ -1,5 +1,5 @@
 package moe.ofs.backend.function.triggermessage.model;
 
 public enum  MessageType {
-    GROUPS, COALITION, ALL
+    ALL, BLUE, RED, NEUTRAL, GROUPS, NOT_BLUE, NOT_RED, NOT_NEUTRAL,
 }
