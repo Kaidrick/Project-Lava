@@ -39,11 +39,11 @@ public enum HookType {
         return getFunctionArgsString("storage");
     }
 
-    public String getFunctionArgsString(String argName) {
-        if (argName == null) {
+    public String getFunctionArgsString(String storageArgName) {
+        if (storageArgName == null) {
             return String.join(",", functionArgs);
         }
-        return argName + "," + String.join(",", functionArgs);
+        return storageArgName + "," + String.join(",", functionArgs);
     }
 
     public static HookType ofFunctionName(String functionName) {

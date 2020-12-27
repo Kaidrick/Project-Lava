@@ -2,6 +2,7 @@ package moe.ofs.backend.discipline.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.discipline.model.PlayerTryConnectRecord;
+import moe.ofs.backend.discipline.service.GlobalConnectionBlockService;
 import moe.ofs.backend.function.mizdb.PersistentKeyValueInjectionBootstrap;
 import moe.ofs.backend.handlers.starter.LuaScriptStarter;
 import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
@@ -22,11 +23,12 @@ import java.io.IOException;
 @Slf4j
 public class NewPlayerConnectionValidationServiceImpl
         extends AbstractHookInterceptorProcessService<PlayerTryConnectRecord, HookInterceptorDefinition>
-        implements HookInterceptorProcessService<PlayerTryConnectRecord, HookInterceptorDefinition>, LuaScriptStarter {
+        implements HookInterceptorProcessService<PlayerTryConnectRecord, HookInterceptorDefinition>,
+        LuaScriptStarter, GlobalConnectionBlockService {
 
     private final PlayerInfoService playerInfoService;
     private final SimpleKeyValueStorage<String> connectionValidatorStorage;
-    private final SimpleKeyValueStorage<Boolean> globalConnectionBlockStorage;
+    private final SimpleKeyValueStorage<Object> globalConnectionBlockStorage;
 
     public NewPlayerConnectionValidationServiceImpl(PlayerInfoService playerInfoService) {
         this.playerInfoService = playerInfoService;
@@ -56,9 +58,12 @@ public class NewPlayerConnectionValidationServiceImpl
                                     .name("lava-default-player-connection-validation-hook-interceptor")
                                     .storage(connectionValidatorStorage)
                                     // FIXME: looks weird; how does it even work?
-                                    .predicateFunction(HookInterceptorProcessService.FUNCTION_RETURN_ORIGINAL_ARGS)
-                                    .decisionMappingFunction("" +
-                                            "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString(null) + ") " +
+                                    .predicateFunction("" +
+                                            "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString("store") + ") " +
+                                            "   net.log('enter sandman') " +
+                                            "end")
+                                    .argPostProcessFunction("" +
+                                            "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString("store") + ") " +
                                             "   local data = { " +
                                             "       ipaddr = addr, " +
                                             "       playerName = name, " +
@@ -72,13 +77,14 @@ public class NewPlayerConnectionValidationServiceImpl
                             .name("lava-default-player-connection-block-hook-interceptor")
                             .storage(globalConnectionBlockStorage)
                             .predicateFunction("" +
-                                    "function(store)" +
-                                    "   if store and store:get('isBlocked') then" +
-                                    "       return false, 'Server is in maintenance mode'" +
-                                    "   end" +
-                                    "end")
-                            .decisionMappingFunction("" +
-                                    "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString(null) + ") " +
+                                    "function(store, ...) " +
+                                    "   net.log('global block function test enter') " +
+                                    "   if store and store:get('isBlocked') then " +
+                                    "       return false, store:get('blockReason') " +
+                                    "   end " +
+                                    "end ")
+                            .argPostProcessFunction("" +
+                                    "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString("store") + ") " +
                                     "   local data = { " +
                                     "       ipaddr = addr, " +
                                     "       playerName = name, " +
@@ -106,6 +112,22 @@ public class NewPlayerConnectionValidationServiceImpl
                 .peek(hookProcessEntity ->
                         playerInfoService.findByNetId(hookProcessEntity.getNetId())
                                 .ifPresent(hookProcessEntity::setPlayer))
-                .forEach(System.out::println);
+                .forEach(playerTryConnectRecord -> // TODO: send to message queue?
+                        log.info("Player {}<{}> tries to connect from {}",
+                                playerTryConnectRecord.getPlayerName(),
+                                playerTryConnectRecord.getUcid(),
+                                playerTryConnectRecord.getIpaddr()));
+    }
+
+    @Override
+    public void block(String reason) {
+        globalConnectionBlockStorage.save("isBlocked", true);
+        globalConnectionBlockStorage.save("blockReason", reason);
+    }
+
+    @Override
+    public void release() {
+        globalConnectionBlockStorage.save("isBlocked", false);
+        globalConnectionBlockStorage.delete("blockReason");
     }
 }

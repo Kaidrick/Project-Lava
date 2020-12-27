@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 
 @Slf4j
-@Service
+//@Service
 public class PlayerConnectionValidationServiceImpl implements PlayerConnectionValidationService {
 
     private final RequestTransmissionService requestTransmissionService;
