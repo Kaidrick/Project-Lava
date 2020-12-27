@@ -26,12 +26,17 @@ public class NewPlayerConnectionValidationServiceImpl
 
     private final PlayerInfoService playerInfoService;
     private final SimpleKeyValueStorage<String> connectionValidatorStorage;
+    private final SimpleKeyValueStorage<Boolean> globalConnectionBlockStorage;
 
     public NewPlayerConnectionValidationServiceImpl(PlayerInfoService playerInfoService) {
         this.playerInfoService = playerInfoService;
 
         connectionValidatorStorage =
                 new SimpleKeyValueStorage<>("lava-default-player-connection-validation-hook-kw-pair",
+                        LuaQueryEnv.SERVER_CONTROL);
+
+        globalConnectionBlockStorage =
+                new SimpleKeyValueStorage<>("lava-default-player-connection-block-hook-kw-pair",
                         LuaQueryEnv.SERVER_CONTROL);
     }
 
@@ -63,7 +68,29 @@ public class NewPlayerConnectionValidationServiceImpl
                                             "end")
                                     .build();
 
-                    return hooked && addDefinition(hookInterceptorDefinition);
+                    HookInterceptorDefinition globalBlockDefinition = HookInterceptorDefinition.builder()
+                            .name("lava-default-player-connection-block-hook-interceptor")
+                            .storage(globalConnectionBlockStorage)
+                            .predicateFunction("" +
+                                    "function(store)" +
+                                    "   if store and store:get('isBlocked') then" +
+                                    "       return false, 'Server is in maintenance mode'" +
+                                    "   end" +
+                                    "end")
+                            .decisionMappingFunction("" +
+                                    "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString(null) + ") " +
+                                    "   local data = { " +
+                                    "       ipaddr = addr, " +
+                                    "       playerName = name, " +
+                                    "       ucid = ucid " +
+                                    "   } " +
+                                    "   return data " +
+                                    "end")
+                            .build();
+
+                    return hooked &&
+                            addDefinition(hookInterceptorDefinition) &&
+                            addDefinition(globalBlockDefinition);
                 })
                 .injectionDoneCallback(aBoolean -> {
                     if (aBoolean) log.info("Hook Interceptor Initialized: {}", getName());
