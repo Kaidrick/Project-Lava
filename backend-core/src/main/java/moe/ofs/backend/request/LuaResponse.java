@@ -1,7 +1,6 @@
 package moe.ofs.backend.request;
 
 import com.google.gson.Gson;
-import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import moe.ofs.backend.BackgroundTask;
 import moe.ofs.backend.message.OperationPhase;
@@ -9,12 +8,19 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public interface LuaResponse extends Resolvable {
     boolean isSent();
 
     String getResult();
+
+    LuaResponse addProcessable(Processable processable);
+
+    void notifyProcessable(String object);
 
     /**
      * blocking call

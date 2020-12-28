@@ -14,4 +14,5 @@ public class HookInterceptorDefinition {
     private MissionPersistenceService storage;  // optional data table or kw pair name in storage
     private String decisionMappingFunction;
     private Class<?> decisionMappingClass;
+    private String argPostProcessFunction;
 }

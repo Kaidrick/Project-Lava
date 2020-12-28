@@ -60,3 +60,5 @@ function KwPair:entries()
 end
 
 setmetatable(KwPair, { __call = KwPair.new })
+
+return "true"

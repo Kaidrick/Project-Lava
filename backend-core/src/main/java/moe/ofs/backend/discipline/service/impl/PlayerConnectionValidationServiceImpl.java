@@ -1,8 +1,9 @@
-package moe.ofs.backend.discipline.service;
+package moe.ofs.backend.discipline.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.discipline.exceptions.ValidatorNotSpecifiedException;
 import moe.ofs.backend.discipline.model.ConnectionValidator;
+import moe.ofs.backend.discipline.service.PlayerConnectionValidationService;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 
 @Slf4j
-@Service
+//@Service
 public class PlayerConnectionValidationServiceImpl implements PlayerConnectionValidationService {
 
     private final RequestTransmissionService requestTransmissionService;

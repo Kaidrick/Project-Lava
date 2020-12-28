@@ -1,5 +1,6 @@
-package moe.ofs.backend.discipline.service;
+package moe.ofs.backend.discipline.service.impl;
 
+import moe.ofs.backend.discipline.service.PlayerDisciplineService;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.request.server.ServerExecRequest;

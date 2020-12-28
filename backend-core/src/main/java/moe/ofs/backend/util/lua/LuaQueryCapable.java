@@ -18,18 +18,8 @@ public interface LuaQueryCapable {
     default LuaResponse query(String luaString) {
         LuaQueryState luaState = getClass().getAnnotation(LuaQueryState.class);
         if (luaState != null) {
-            switch (luaState.value()) {
-                case MISSION_SCRIPTING:
-                    return query(LuaQueryEnv.MISSION_SCRIPTING, luaString);
-                case SERVER_CONTROL:
-                    return query(LuaQueryEnv.SERVER_CONTROL, luaString);
-                case EXPORT:
-                    break;
-                case TRIGGER:
-                    break;
-                default:
-                    break;
-            }
+
+            return query(luaState.value(), luaString);
         }
 
         // default to mission scripting environment

@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Service
+//@Service
 public class ChatCommandProcessServiceImpl implements ChatCommandProcessService {
     private final List<Processable> processors = new ArrayList<>();
 
@@ -41,7 +41,7 @@ public class ChatCommandProcessServiceImpl implements ChatCommandProcessService 
         this.playerInfoService = playerInfoService;
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void setup() {
         MissionStartObservable missionStartObservable = s -> {
             LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,

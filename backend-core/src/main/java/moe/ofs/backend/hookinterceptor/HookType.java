@@ -1,10 +1,17 @@
 package moe.ofs.backend.hookinterceptor;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Arrays;
 
 public enum HookType {
+    @SerializedName("onPlayerTryChangeSlot")
     ON_PLAYER_TRY_CHANGE_SLOT("onPlayerTryChangeSlot", new String[]{"playerID" , "side", "slotID"}, true, 1),
+
+    @SerializedName("onPlayerTrySendChat")
     ON_PLAYER_TRY_SEND_CHAT("onPlayerTrySendChat", new String[]{"playerID", "msg", "all"}, true, 1),
+
+    @SerializedName("onPlayerTryConnect")
     ON_PLAYER_TRY_CONNECT("onPlayerTryConnect", new String[]{"addr", "name", "ucid", "playerID"}, true, 4);
 
     private final String functionName;
@@ -29,7 +36,14 @@ public enum HookType {
     }
 
     public String getFunctionArgsString() {
-        return String.join(", ", functionArgs);
+        return getFunctionArgsString("storage");
+    }
+
+    public String getFunctionArgsString(String storageArgName) {
+        if (storageArgName == null) {
+            return String.join(",", functionArgs);
+        }
+        return storageArgName + "," + String.join(",", functionArgs);
     }
 
     public static HookType ofFunctionName(String functionName) {

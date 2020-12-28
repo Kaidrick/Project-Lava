@@ -2,7 +2,9 @@ package moe.ofs.backend.function.newslotcontrol.services;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.BackgroundTask;
-import moe.ofs.backend.handlers.MissionStartObservable;
+import moe.ofs.backend.function.mizdb.PersistentKeyValueInjectionBootstrap;
+import moe.ofs.backend.handlers.starter.LuaScriptStarter;
+import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
 import moe.ofs.backend.hookinterceptor.*;
 import moe.ofs.backend.message.OperationPhase;
 import moe.ofs.backend.services.PlayerInfoService;
@@ -12,7 +14,6 @@ import moe.ofs.backend.util.lua.LuaQueryState;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 /**
@@ -43,7 +44,8 @@ import java.io.IOException;
 @LuaQueryState(LuaQueryEnv.SERVER_CONTROL)
 public class SlotValidatorHookInterceptService
         extends AbstractHookInterceptorProcessService<HookProcessEntity, HookInterceptorDefinition>
-        implements SlotValidatorService, HookInterceptorProcessService<HookProcessEntity, HookInterceptorDefinition> {
+        implements SlotValidatorService, HookInterceptorProcessService<HookProcessEntity, HookInterceptorDefinition>,
+        LuaScriptStarter {
 
     private final PlayerInfoService playerInfoService;
 
@@ -57,21 +59,27 @@ public class SlotValidatorHookInterceptService
         );
     }
 
-    @PostConstruct
-    public void init() {
-        MissionStartObservable missionStartObservable = s -> {
-            createHook(getClass().getName(), HookType.ON_PLAYER_TRY_CHANGE_SLOT);
+    @Override
+    public ScriptInjectionTask injectScript() {
+        return ScriptInjectionTask.builder()
+                .scriptIdentName("SlotValidatorHookInterceptService")
+                .initializrClass(getClass())
+                .dependencyInitializrClass(PersistentKeyValueInjectionBootstrap.class)
+                .inject(() -> {
+                    boolean hooked = createHook(getClass().getName(), HookType.ON_PLAYER_TRY_CHANGE_SLOT);
 
-            HookInterceptorDefinition interceptor =
-                    new HookInterceptorDefinition("lava-slot-change-interceptor",
-                            HookInterceptorProcessService.FUNCTION_RETURN_ORIGINAL_ARGS, storage,
-                            null, null);
+                    HookInterceptorDefinition interceptor =
+                            new HookInterceptorDefinition("lava-slot-change-interceptor",
+                                    HookInterceptorProcessService.FUNCTION_RETURN_ORIGINAL_ARGS, storage,
+                                    null, null, null);
 
-            addDefinition(interceptor);
-
-            log.info("Initiating Slot Validator Injection Service");
-        };
-        missionStartObservable.register();
+                    return hooked && addDefinition(interceptor);
+                })
+                .injectionDoneCallback(aBoolean -> {
+                    if (aBoolean) log.info("Hook Interceptor Initialized: {}", getName());
+                    else log.error("Failed to initiate Slot Validator Injection Service");
+                })
+                .build();
     }
 
     @Scheduled(fixedDelay = 1000L)

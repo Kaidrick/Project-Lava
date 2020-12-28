@@ -10,7 +10,7 @@ public interface DcsSimulationControlService {
 
     @SneakyThrows
     default void loadRemoteMissionFile() {
-        throw new NoSuchMethodException();
+        throw new UnsupportedOperationException();
     }
 
     void shutdown(ResetType type);
