@@ -3,12 +3,10 @@ package moe.ofs.backend.http.advice;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import moe.ofs.backend.http.GlobalDefaultProperties;
-import moe.ofs.backend.http.PageResponse;
 import moe.ofs.backend.http.Response;
 import moe.ofs.backend.http.annotations.IgnoreResponseAdvice;
 import moe.ofs.backend.http.response.Responses;
 import org.springframework.core.MethodParameter;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
@@ -17,7 +15,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import java.time.ZonedDateTime;
 import java.util.LinkedHashMap;
 
 import static moe.ofs.backend.http.Response.success;
@@ -67,6 +64,10 @@ public class ResponseDataAdvice implements ResponseBodyAdvice<Object> {
         }
 
         if (serverHttpRequest.getURI().getPath().startsWith("/swagger")) {
+            return o;
+        }
+
+        if (serverHttpRequest.getURI().getPath().startsWith("/v2/api-docs")) {
             return o;
         }
 

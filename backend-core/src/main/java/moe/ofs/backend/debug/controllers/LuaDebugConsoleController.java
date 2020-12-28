@@ -1,11 +1,13 @@
 package moe.ofs.backend.debug.controllers;
 
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
+import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
+import com.github.xiaoymin.knife4j.annotations.DynamicResponseParameters;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.debug.model.LuaCommand;
-import moe.ofs.backend.request.DataRequest;
-import moe.ofs.backend.request.export.ExportDataRequest;
-import moe.ofs.backend.request.server.ServerDataRequest;
-import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,9 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequestMapping("/lua")
-//@Api(
-//        tags = "DCS Lua state debug APIs",
-//        value = "Provides APIs to loadstring in different DCS Lua environment")
+@Api(
+        tags = "DCS Lua state debug APIs",
+        value = "Provides APIs to loadstring in different DCS Lua environment")
+@ApiSupport(author = "北欧式的简单")
 public class LuaDebugConsoleController {
     /**
      * Basic console debug do string method used to load lua string in DCS lua server.
@@ -29,15 +32,15 @@ public class LuaDebugConsoleController {
      * @return the String value that is returned from the dcs Lua server.
      */
     @RequestMapping(value = "/debug", method = RequestMethod.POST)
-//    @ApiOperation(value = "Sends Lua string to DCS and return a result if necessary")
+    @ApiOperation(value = "Sends Lua string to DCS and return a result if necessary")
+//    这是定义返回结果的
+    @DynamicResponseParameters(properties = {
+            @DynamicParameter(name = "code", value = "状态码", example = "200", dataTypeClass = Integer.class),
+            @DynamicParameter(name = "msg", value = "信息", example = "成功", dataTypeClass = String.class),
+    })
     public String sendDebugString(
-            @RequestBody
-//            @ApiParam(value = "JSON string that contains the string to be loaded in specified Lua state",
-//                    examples = @Example({@ExampleProperty(
-//                            mediaType = "application/json",
-//                            value = "{'luaString': 'return env.mission.theatre, 'level': 0, 'timeStamp': '2020-10-15T13:07:52.110Z'}"
-//            )}))
-                    LuaCommand luaCommand) {
+            @ApiParam
+            @RequestBody LuaCommand luaCommand) {
 
         log.info(luaCommand.toString());
 
