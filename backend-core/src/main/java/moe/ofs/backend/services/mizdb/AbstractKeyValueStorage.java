@@ -28,6 +28,8 @@ public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueServi
         this.name = name;
         this.env = env;
 
+        // FIXME: won't work for new kv store after initialization
+        // TODO: if started, do createRepository(), otherwise postpone
         MissionStartObservable missionStartObservable = s -> {
             createRepository();
             log.info("Creating KeyValue Storage: {} in {}", name, env.getEnv());
