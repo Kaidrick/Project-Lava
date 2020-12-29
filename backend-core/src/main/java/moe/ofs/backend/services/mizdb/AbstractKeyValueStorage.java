@@ -28,13 +28,15 @@ public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueServi
         this.name = name;
         this.env = env;
 
-        // FIXME: won't work for new kv store after initialization
-        // TODO: if started, do createRepository(), otherwise postpone
-        MissionStartObservable missionStartObservable = s -> {
-            createRepository();
-            log.info("Creating KeyValue Storage: {} in {}", name, env.getEnv());
-        };
-        missionStartObservable.register();
+        MissionKeyValueService.super.createRepository();
+
+//        // FIXME: won't work for new kv store after initialization
+//        // TODO: if started, do createRepository(), otherwise postpone
+//        MissionStartObservable missionStartObservable = s -> {
+//            createRepository();
+//            log.info("Creating KeyValue Storage: {} in {}", name, env.getEnv());
+//        };
+//        missionStartObservable.register();
     }
 
     @Override
@@ -79,11 +81,13 @@ public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueServi
      */
     @Override
     public List<T> saveAll(Map<Object, T> map) {
-        if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {
+        if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING ||
+            BackgroundTask.getCurrentTask().getPhase() == OperationPhase.LOADING) {
             Gson gson = new Gson();
             LuaScripts.requestWithFile(env, "storage/keyvalue/kw_pair_save_batch.lua",
                     getRepositoryName(), gson.toJson(map));
         } else {
+            log.info("{} precache with map: {}", getClass().getName(), map);
             precachedValues.putAll(map);
         }
         return new ArrayList<>(map.values());
@@ -152,10 +156,14 @@ public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueServi
     }
 
     @Override
-    public void createRepository() {
-        LuaScripts.requestWithFile(env, "storage/keyvalue/kw_pair_create.lua",
-                getRepositoryName());
+    public boolean createRepository() {
+        log.info("Creating KeyValue Storage: {} in {}", name, env.getEnv());
+
+        boolean created = LuaScripts.requestWithFile(env, "storage/keyvalue/kw_pair_create.lua",
+                getRepositoryName()).getAsBoolean();
 
         precache();  // always run precache when creating a new repository
+
+        return created;
     }
 }

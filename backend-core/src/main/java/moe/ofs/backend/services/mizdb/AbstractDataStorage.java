@@ -5,6 +5,7 @@ import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.services.MissionDataService;
+import moe.ofs.backend.services.MissionPersistenceService;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
 
@@ -21,11 +22,13 @@ public abstract class AbstractDataStorage<T> implements MissionDataService<T> {
         this.name = name;
         this.env = env;
 
-        MissionStartObservable missionStartObservable = s -> {
-            createRepository();
-            log.info("Creating Data Storage: {} in {}", name, env.getEnv());
-        };
-        missionStartObservable.register();
+        MissionDataService.super.createRepository();
+
+//        MissionStartObservable missionStartObservable = s -> {
+//            createRepository();
+//            log.info("Creating Data Storage: {} in {}", name, env.getEnv());
+//        };
+//        missionStartObservable.register();
     }
 
     @Override
@@ -117,8 +120,10 @@ public abstract class AbstractDataStorage<T> implements MissionDataService<T> {
     }
 
     @Override
-    public void createRepository() {
-        LuaScripts.requestWithFile(env, "storage/common/table_create.lua",
-                        getRepositoryName());
+    public boolean createRepository() {
+        log.info("Creating Data Storage: {} in {}", name, env.getEnv());
+
+        return LuaScripts.requestWithFile(env, "storage/common/table_create.lua",
+                        getRepositoryName()).getAsBoolean();
     }
 }

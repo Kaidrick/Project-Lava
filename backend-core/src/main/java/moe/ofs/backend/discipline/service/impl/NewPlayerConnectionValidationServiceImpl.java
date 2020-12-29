@@ -10,6 +10,7 @@ import moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService;
 import moe.ofs.backend.hookinterceptor.HookInterceptorDefinition;
 import moe.ofs.backend.hookinterceptor.HookInterceptorProcessService;
 import moe.ofs.backend.hookinterceptor.HookType;
+import moe.ofs.backend.services.LuaStorageInitServiceImpl;
 import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.services.mizdb.SimpleKeyValueStorage;
 import moe.ofs.backend.util.LuaInteract;
@@ -47,7 +48,7 @@ public class NewPlayerConnectionValidationServiceImpl
         return ScriptInjectionTask.builder()
                 .scriptIdentName("PlayerConnectionValidationService")
                 .initializrClass(getClass())
-                .dependencyInitializrClass(PersistentKeyValueInjectionBootstrap.class)
+                .dependencyInitializrClass(LuaStorageInitServiceImpl.class)
                 .inject(() -> {
                     boolean hooked = createHook(getClass().getName(), HookType.ON_PLAYER_TRY_CONNECT);
 
@@ -57,11 +58,10 @@ public class NewPlayerConnectionValidationServiceImpl
                             HookInterceptorDefinition.builder()
                                     .name("lava-default-player-connection-validation-hook-interceptor")
                                     .storage(connectionValidatorStorage)
-                                    // FIXME: looks weird; how does it even work?
-                                    .predicateFunction("" +
-                                            "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString("store") + ") " +
-                                            "   net.log('enter sandman') " +
-                                            "end")
+//                                    .predicateFunction("" +
+//                                            "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString("store") + ") " +
+//                                            "   net.log('enter sandman') " +
+//                                            "end")
                                     .argPostProcessFunction("" +
                                             "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString("store") + ") " +
                                             "   local data = { " +

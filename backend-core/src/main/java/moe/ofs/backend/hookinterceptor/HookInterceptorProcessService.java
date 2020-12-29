@@ -21,6 +21,8 @@ public interface HookInterceptorProcessService
     String FUNCTION_RETURN_ORIGINAL_ARGS =
             LuaScripts.load("generic_hook_interceptor/function_template_return_orginal_arguments.lua");
 
+    String FUNCTION_EMPTY_BLOCK = "function(...) end";
+
     boolean createHook(String name, HookType hookType);
 
     /**

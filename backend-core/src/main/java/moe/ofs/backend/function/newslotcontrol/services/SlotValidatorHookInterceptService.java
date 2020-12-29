@@ -7,6 +7,7 @@ import moe.ofs.backend.handlers.starter.LuaScriptStarter;
 import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
 import moe.ofs.backend.hookinterceptor.*;
 import moe.ofs.backend.message.OperationPhase;
+import moe.ofs.backend.services.LuaStorageInitServiceImpl;
 import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.services.mizdb.SimpleKeyValueStorage;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
@@ -64,14 +65,19 @@ public class SlotValidatorHookInterceptService
         return ScriptInjectionTask.builder()
                 .scriptIdentName("SlotValidatorHookInterceptService")
                 .initializrClass(getClass())
-                .dependencyInitializrClass(PersistentKeyValueInjectionBootstrap.class)
+                .dependencyInitializrClass(LuaStorageInitServiceImpl.class)
                 .inject(() -> {
                     boolean hooked = createHook(getClass().getName(), HookType.ON_PLAYER_TRY_CHANGE_SLOT);
 
                     HookInterceptorDefinition interceptor =
-                            new HookInterceptorDefinition("lava-slot-change-interceptor",
-                                    HookInterceptorProcessService.FUNCTION_RETURN_ORIGINAL_ARGS, storage,
-                                    null, null, null);
+                            HookInterceptorDefinition.builder()
+                                    .name("lava-slot-change-interceptor")
+                                    .predicateFunction(HookInterceptorProcessService.FUNCTION_RETURN_ORIGINAL_ARGS)
+                                    .storage(storage)
+                                    .build();
+//                            new HookInterceptorDefinition("lava-slot-change-interceptor",
+//                                    HookInterceptorProcessService.FUNCTION_RETURN_ORIGINAL_ARGS, storage,
+//                                    null, null, null);
 
                     return hooked && addDefinition(interceptor);
                 })

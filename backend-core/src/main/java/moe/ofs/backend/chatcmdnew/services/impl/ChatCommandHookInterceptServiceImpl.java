@@ -7,6 +7,7 @@ import moe.ofs.backend.function.mizdb.PersistentKeyValueInjectionBootstrap;
 import moe.ofs.backend.handlers.starter.LuaScriptStarter;
 import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
 import moe.ofs.backend.hookinterceptor.*;
+import moe.ofs.backend.services.LuaStorageInitServiceImpl;
 import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.services.mizdb.SimpleKeyValueStorage;
 import moe.ofs.backend.util.LuaInteract;
@@ -43,7 +44,7 @@ public class ChatCommandHookInterceptServiceImpl
         return ScriptInjectionTask.builder()
                 .scriptIdentName("ChatCommandHookInterceptService")
                 .initializrClass(getClass())
-                .dependencyInitializrClass(PersistentKeyValueInjectionBootstrap.class)
+                .dependencyInitializrClass(LuaStorageInitServiceImpl.class)
                 .inject(() -> {
                     boolean hooked = createHook(getClass().getName(), HookType.ON_PLAYER_TRY_SEND_CHAT);
 

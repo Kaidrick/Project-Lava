@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import moe.ofs.backend.request.DataRequest;
+import moe.ofs.backend.request.LuaResponse;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.MissionKeyValueService;
@@ -14,21 +15,14 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 public abstract class AbstractPersistentKeyValueService<T> implements MissionKeyValueService<T> {
-    protected RequestTransmissionService requestTransmissionService;
 
-    public AbstractPersistentKeyValueService(RequestTransmissionService requestTransmissionService) {
-        this.requestTransmissionService = requestTransmissionService;
-    }
-
-    private String query(String debugString) {
+    private LuaResponse query(String debugString) {
         Environment environment = this.getClass().getAnnotation(InjectionEnvironment.class).value();
         switch (environment) {
             case MISSION:
-                return ((ServerDataRequest) requestTransmissionService
-                        .send(new ServerDataRequest(debugString))).get();
+                return LuaScripts.request(LuaQueryEnv.MISSION_SCRIPTING, debugString);
             case HOOK:
-                return ((ServerDataRequest) requestTransmissionService
-                        .send(new ServerDataRequest(LuaQueryEnv.SERVER_CONTROL, debugString))).get();
+                return LuaScripts.request(LuaQueryEnv.SERVER_CONTROL, debugString);
             case EXPORT:
                 throw new RuntimeException("EXPORT NOT IMPLEMENTED");
             case TRIGGER:
@@ -42,10 +36,10 @@ public abstract class AbstractPersistentKeyValueService<T> implements MissionKey
         Environment environment = this.getClass().getAnnotation(InjectionEnvironment.class).value();
         switch (environment) {
             case MISSION:
-                requestTransmissionService.send(new ServerDataRequest(debugString));
+                LuaScripts.request(LuaQueryEnv.MISSION_SCRIPTING, debugString);
                 break;
             case HOOK:
-                requestTransmissionService.send(new ServerDataRequest(LuaQueryEnv.SERVER_CONTROL, debugString));
+                LuaScripts.request(LuaQueryEnv.SERVER_CONTROL, debugString);
                 break;
             case EXPORT:
                 throw new RuntimeException("EXPORT NOT IMPLEMENTED");
@@ -58,17 +52,8 @@ public abstract class AbstractPersistentKeyValueService<T> implements MissionKey
 
     @Override
     public Set<T> findAll(Class<T> tClass) {
-        Gson gson = new Gson();
-
-        String dataJson = query(LuaScripts.loadAndPrepare("storage/keyvalue/kw_pair_get_all.lua",
-                        getRepositoryName()));
-
-//        System.out.println("dataJson = " + dataJson);
-        Type type = TypeToken.getParameterized(ArrayList.class, tClass).getType();
-
-        ArrayList<T> list = gson.fromJson(dataJson, type);
-
-        return new HashSet<>(list);
+        return query(LuaScripts.loadAndPrepare("storage/keyvalue/kw_pair_get_all.lua",
+                getRepositoryName())).getAsSetFor(tClass);
     }
 
     @Override
@@ -111,7 +96,7 @@ public abstract class AbstractPersistentKeyValueService<T> implements MissionKey
         String keyJson = gson.toJson(key);
 
         String dataJson = query(LuaScripts.loadAndPrepare("storage/keyvalue/kw_pair_get.lua",
-                                getRepositoryName(), keyJson));
+                                getRepositoryName(), keyJson)).get();
 
         return Optional.of(gson.fromJson(dataJson, tClass));
     }
@@ -122,7 +107,7 @@ public abstract class AbstractPersistentKeyValueService<T> implements MissionKey
         String keyJson = gson.toJson(key);
 
         String dataJson = query(LuaScripts.loadAndPrepare("storage/keyvalue/kw_pair_fetch.lua",
-                                getRepositoryName(), keyJson));
+                                getRepositoryName(), keyJson)).get();
 
         return Optional.of(gson.fromJson(dataJson, tClass));
     }
@@ -132,7 +117,7 @@ public abstract class AbstractPersistentKeyValueService<T> implements MissionKey
         Gson gson = new Gson();
 
         String dataJson = query(LuaScripts.loadAndPrepare("storage/keyvalue/kw_pair_fetch_all.lua",
-                        getRepositoryName()));
+                        getRepositoryName())).get();
 
         Type type = TypeToken.getParameterized(ArrayList.class, tClass).getType();
 
@@ -146,7 +131,7 @@ public abstract class AbstractPersistentKeyValueService<T> implements MissionKey
         Gson gson = new Gson();
 
         String dataJson = query(LuaScripts.loadAndPrepare("storage/keyvalue/kw_pair_fetch_mapping_all.lua",
-                        getRepositoryName(), mapper));
+                        getRepositoryName(), mapper)).get();
 
         Type type = TypeToken.getParameterized(ArrayList.class, tClass).getType();
 
@@ -168,8 +153,8 @@ public abstract class AbstractPersistentKeyValueService<T> implements MissionKey
     }
 
     @Override
-    public void createRepository() {
-        execute(LuaScripts.loadAndPrepare("storage/keyvalue/kw_pair_create.lua",
-                        getRepositoryName()));
+    public boolean createRepository() {
+        return query(LuaScripts.loadAndPrepare("storage/keyvalue/kw_pair_create.lua",
+                        getRepositoryName())).getAsBoolean();
     }
 }

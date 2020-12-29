@@ -3,46 +3,66 @@ package moe.ofs.backend.services.mizdb;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import moe.ofs.backend.request.LuaResponse;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.MissionDataService;
 import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.util.lua.LuaQueryEnv;
 
 import java.lang.reflect.Type;
 import java.util.*;
 
 public abstract class AbstractMissionDataService<T> implements MissionDataService<T> {
-    protected RequestTransmissionService requestTransmissionService;
 
-    public AbstractMissionDataService(RequestTransmissionService requestTransmissionService) {
-        this.requestTransmissionService = requestTransmissionService;
+    private LuaResponse query(String debugString) {
+        Environment environment = this.getClass().getAnnotation(InjectionEnvironment.class).value();
+        switch (environment) {
+            case MISSION:
+                return LuaScripts.request(LuaQueryEnv.MISSION_SCRIPTING, debugString);
+            case HOOK:
+                return LuaScripts.request(LuaQueryEnv.SERVER_CONTROL, debugString);
+            case EXPORT:
+                throw new RuntimeException("EXPORT NOT IMPLEMENTED");
+            case TRIGGER:
+                throw new RuntimeException("TRIGGER NOT IMPLEMENTED");
+            default:
+                throw new RuntimeException();
+        }
+    }
+
+    private void execute(String debugString) {
+        Environment environment = this.getClass().getAnnotation(InjectionEnvironment.class).value();
+        switch (environment) {
+            case MISSION:
+                LuaScripts.request(LuaQueryEnv.MISSION_SCRIPTING, debugString);
+                break;
+            case HOOK:
+                LuaScripts.request(LuaQueryEnv.SERVER_CONTROL, debugString);
+                break;
+            case EXPORT:
+                throw new RuntimeException("EXPORT NOT IMPLEMENTED");
+            case TRIGGER:
+                throw new RuntimeException("TRIGGER NOT IMPLEMENTED");
+            default:
+                throw new RuntimeException();
+        }
     }
 
     @Override
     public Set<T> findAll(Class<T> tClass) {
-        Gson gson = new Gson();
-
-        String dataJson = ((ServerDataRequest) requestTransmissionService
-                .send(new ServerDataRequest(LuaScripts.loadAndPrepare("storage/common/table_find_all.lua",
-                        getRepositoryName())))).get();
-
-//        System.out.println("dataJson = " + dataJson);
-        Type type = TypeToken.getParameterized(ArrayList.class, tClass).getType();
-
-        ArrayList<T> list = gson.fromJson(dataJson, type);
-
-        return new HashSet<>(list);
+        return query(LuaScripts.loadAndPrepare("storage/common/table_find_all.lua",
+                        getRepositoryName())).getAsSetFor(tClass);
     }
 
     @Override
     public Optional<T> findBy(String attributeName, Object value, Class<T> tClass) {
         Gson gson = new Gson();
 
-        String dataJson = ((ServerDataRequest) requestTransmissionService
-                .send(new ServerDataRequest(
+        String dataJson = query(
                         LuaScripts.loadAndPrepare("storage/common/table_find_by_attribute_name.lua",
-                                getRepositoryName(), attributeName, value)))).get();
+                                getRepositoryName(), attributeName, value)).get();
 
         T t = gson.fromJson(dataJson, tClass);
 
@@ -51,10 +71,8 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
 
     @Override
     public void deleteAll() {
-        requestTransmissionService.send(
-                new ServerExecRequest(LuaScripts.loadAndPrepare("storage/common/table_delete_all.lua",
-                        getRepositoryName()))
-        );
+        execute(LuaScripts.loadAndPrepare("storage/common/table_delete_all.lua",
+                        getRepositoryName()));
     }
 
     @Override
@@ -67,10 +85,9 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
         Gson gson = new Gson();
         String objectJson = gson.toJson(object);
 
-        requestTransmissionService.send(
-                new ServerExecRequest(LuaScripts.loadAndPrepare("storage/common/table_save.lua",
-                        getRepositoryName(), objectJson))
-        );
+        execute(LuaScripts.loadAndPrepare("storage/common/table_save.lua",
+                getRepositoryName(), objectJson));
+
         return object;
     }
 
@@ -79,28 +96,22 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
         Gson gson = new Gson();
         String objectJson = gson.toJson(object);
 
-        requestTransmissionService.send(
-                new ServerExecRequest(LuaScripts.loadAndPrepare("storage/common/table_delete.lua",
-                        getRepositoryName(), objectJson))
-        );
+        execute(LuaScripts.loadAndPrepare("storage/common/table_delete.lua",
+                getRepositoryName(), objectJson));
     }
 
     @Override
     public void deleteBy(String attributeName, Object value) {
-        requestTransmissionService.send(
-                new ServerExecRequest(
-                        LuaScripts.loadAndPrepare("storage/common/table_find_by_attribute_name.lua",
-                                getRepositoryName(), attributeName, value))
-        );
+        execute(LuaScripts.loadAndPrepare("storage/common/table_find_by_attribute_name.lua",
+                getRepositoryName(), attributeName, value));
     }
 
     @Override
     public Set<T> fetchAll(Class<T> tClass) {
         Gson gson = new Gson();
 
-        String dataJson = ((ServerDataRequest) requestTransmissionService
-                .send(new ServerDataRequest(LuaScripts.loadAndPrepare("storage/common/table_fetch_all.lua",
-                        getRepositoryName())))).get();
+        String dataJson = query(LuaScripts.loadAndPrepare("storage/common/table_fetch_all.lua",
+                        getRepositoryName())).get();
 
 //        System.out.println("dataJson = " + dataJson);
         Type type = TypeToken.getParameterized(ArrayList.class, tClass).getType();
@@ -114,9 +125,8 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
     public Set<T> fetchMapAll(String mapper, Class<T> tClass) {
         Gson gson = new Gson();
 
-        String dataJson = ((ServerDataRequest) requestTransmissionService
-                .send(new ServerDataRequest(LuaScripts.loadAndPrepare("storage/common/table_fetch_mapping_all.lua",
-                        getRepositoryName(), mapper)))).get();
+        String dataJson = query(LuaScripts.loadAndPrepare("storage/common/table_fetch_mapping_all.lua",
+                        getRepositoryName(), mapper)).get();
 
         Type type = TypeToken.getParameterized(ArrayList.class, tClass).getType();
 
@@ -153,10 +163,8 @@ public abstract class AbstractMissionDataService<T> implements MissionDataServic
     }
 
     @Override
-    public void createRepository() {
-        requestTransmissionService.send(
-                new ServerExecRequest(LuaScripts.loadAndPrepare("storage/common/table_create.lua",
-                        getRepositoryName()))
-        );
+    public boolean createRepository() {
+        return LuaScripts.requestWithFile(LuaQueryEnv.MISSION_SCRIPTING,
+                "storage/common/table_create.lua", getRepositoryName()).getAsBoolean();
     }
 }
