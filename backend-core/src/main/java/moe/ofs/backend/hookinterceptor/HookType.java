@@ -12,7 +12,26 @@ public enum HookType {
     ON_PLAYER_TRY_SEND_CHAT("onPlayerTrySendChat", new String[]{"playerID", "msg", "all"}, true, 1),
 
     @SerializedName("onPlayerTryConnect")
-    ON_PLAYER_TRY_CONNECT("onPlayerTryConnect", new String[]{"addr", "name", "ucid", "playerID"}, true, 4);
+    ON_PLAYER_TRY_CONNECT("onPlayerTryConnect", new String[]{"addr", "name", "ucid", "playerID"}, true, 4),
+
+    @SerializedName("onPlayerConnect")
+    ON_PLAYER_CONNECT("onPlayerConnect", new String[]{"id"}, false, -1),
+
+    @SerializedName("onPlayerDisconnect")
+    ON_PLAYER_DISCONNECT("onPlayerDisconnect", new String[]{"id", "err_code"}, false, -1),
+
+    @SerializedName("onPlayerStart")
+    ON_PLAYER_START("onPlayerStart", new String[]{"id"}, false, -1),
+
+    @SerializedName("onPlayerStop")
+    ON_PLAYER_STOP("onPlayerStop", new String[]{"id"}, false, -1),
+
+    @SerializedName("onPlayerChangeSlot")
+    ON_PLAYER_CHANGE_SLOT("onPlayerChangeSlot", new String[]{"id"}, false, -1),
+
+    @SerializedName("onGameEvent")
+    ON_GAME_EVENT("onGameEvent", new String[]{"eventName", "..."}, false, -1);
+
 
     private final String functionName;
     private final String[] functionArgs;

@@ -4,9 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.BackgroundTask;
-import moe.ofs.backend.handlers.MissionStartObservable;
+import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
 import moe.ofs.backend.message.OperationPhase;
-import moe.ofs.backend.services.MissionKeyValueService;
+import moe.ofs.backend.function.mizdb.services.impl.LuaStorageInitServiceImpl;
+import moe.ofs.backend.function.mizdb.services.MissionKeyValueService;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
 
@@ -29,6 +30,17 @@ public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueServi
         this.env = env;
 
         MissionKeyValueService.super.createRepository();
+
+        // check whether task ofr LuaStorageInitService has been completed, if so, call createRepository()
+        if (BackgroundTask.getCurrentTask() != null) {
+            Map<ScriptInjectionTask, Boolean> checkMap = BackgroundTask.getCurrentTask().getInjectionTaskChecks();
+            Optional<ScriptInjectionTask> taskOptional = checkMap.keySet().stream()
+                    .filter(task -> LuaStorageInitServiceImpl.class.equals(task.getInitializrClass()))
+                    .findAny();
+            if (taskOptional.isPresent() && checkMap.get(taskOptional.get())) {
+                createRepository();
+            }
+        }
 
 //        // FIXME: won't work for new kv store after initialization
 //        // TODO: if started, do createRepository(), otherwise postpone

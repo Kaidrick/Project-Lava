@@ -3,9 +3,7 @@ package moe.ofs.backend.services.mizdb;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.handlers.MissionStartObservable;
-import moe.ofs.backend.services.MissionDataService;
-import moe.ofs.backend.services.MissionPersistenceService;
+import moe.ofs.backend.function.mizdb.services.MissionDataService;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
 
@@ -52,7 +50,7 @@ public abstract class AbstractDataStorage<T> implements MissionDataService<T> {
     }
 
     @Override
-    public Optional<T> findById(Long id) {
+    public Optional<T> findById(Long id, Class<T> tClass) {
         return Optional.empty();
     }
 
@@ -100,7 +98,7 @@ public abstract class AbstractDataStorage<T> implements MissionDataService<T> {
     }
 
     @Override
-    public Optional<T> fetchById(Long id) {
+    public Optional<T> fetchById(Long id, Class<T> tClass) {
         return Optional.empty();
     }
 

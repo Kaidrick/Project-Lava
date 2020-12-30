@@ -12,13 +12,17 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
- * Inject dependency script with predefined order
+ * Manages the the execution or execution ordering of {@link ScriptInjectionTask} so that Lua script can be loaded
+ * in Lua environment in the specified order to avoid missing dependency scripts.
+ *
+ * The injection process is a blocking operation; it will wait for a boolean value indicating whether the script has
+ * been loaded without any error.
  */
 @Service
 @Slf4j
 public class LuaInjectionInitializr implements LuaScriptInjectService {
     private static final Set<ScriptInjectionTask> scriptInjectionTasks = new HashSet<>();
-    ExecutorService service = Executors.newSingleThreadExecutor();
+    private final ExecutorService service = Executors.newSingleThreadExecutor();
 
     private int nextOrderId;
 

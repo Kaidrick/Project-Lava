@@ -14,6 +14,7 @@ public class AtlasServiceImpl implements AtlasService {
     Map<String, byte[]> map;
 
     @PostConstruct
+    @SuppressWarnings("unchecked")
     public void loadData() throws IOException, ClassNotFoundException {
         InputStream in = getClass()
                 .getResourceAsStream("/data/atlas/atlas_20.ser");

@@ -9,6 +9,7 @@ import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.LuaScriptInjectionObservable;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.handlers.starter.LuaScriptStarter;
+import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
 import moe.ofs.backend.handlers.starter.services.LuaScriptInjectService;
 import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.message.ConnectionStatusChange;
@@ -38,7 +39,9 @@ import java.net.URI;
 import java.nio.file.*;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -100,8 +103,8 @@ public class BackgroundTask {
 
     @PostConstruct
     private void loadPlugins() {
-        log.info("************ Loading Plugins *************");
-        plugins.forEach(plugin -> System.out.println("plugin = " + plugin.getName()));
+//        log.info("************ Loading Plugins *************");
+//        plugins.forEach(plugin -> System.out.println("plugin = " + plugin.getName()));
         Plugin.loadedPlugins.addAll(plugins);
         Plugin.loadedPlugins.forEach(Plugin::load);  // FIXME: this is so bad
     }
@@ -149,6 +152,7 @@ public class BackgroundTask {
         this.requestTransmissionService = requestTransmissionService;
 
         currentTask = this;
+        injectionTaskChecks = new HashMap<>();
 
         phase = OperationPhase.PREPARING;
     }
@@ -167,6 +171,12 @@ public class BackgroundTask {
 
     public static Instant getTaskStartTime() {
         return taskStartTime;
+    }
+
+    private static Map<ScriptInjectionTask, Boolean> injectionTaskChecks;
+
+    public Map<ScriptInjectionTask, Boolean> getInjectionTaskChecks() {
+        return new HashMap<>(injectionTaskChecks);
     }
 
     public boolean isStarted() {
@@ -383,7 +393,8 @@ public class BackgroundTask {
                 .map(LuaScriptStarter::injectScript)
                 .forEach(luaScriptInjectService::add);
 
-        luaScriptInjectService.invokeInjection();
+        // put inject result into map that can be referenced from other sources
+        injectionTaskChecks.putAll(luaScriptInjectService.invokeInjection());
 //                .forEach(((task, aBoolean) -> System.out.println(task.getScriptIdentName() + " -> " + aBoolean)));
 
         if(!flag) {

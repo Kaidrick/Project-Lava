@@ -1,11 +1,12 @@
 local hook_name = '%s'
 local target_function_name = '%s'
 local player_id_arg_index = %d
+local is_intercept_allowed = true
 
 local JSON = require("JSON")
 
 if _G[hook_name] then
-    return true  -- already initialized
+    return true  -- already initialized, return to avoid duplicated hook
 end
 
 _G[hook_name] = _G[hook_name] or {  -- should only be initialized once to avoid duplicated callbacks

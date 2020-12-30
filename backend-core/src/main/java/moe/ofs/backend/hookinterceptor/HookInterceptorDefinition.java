@@ -1,7 +1,7 @@
 package moe.ofs.backend.hookinterceptor;
 
 import lombok.*;
-import moe.ofs.backend.services.MissionPersistenceService;
+import moe.ofs.backend.function.mizdb.services.MissionPersistenceService;
 
 @Getter
 @Setter

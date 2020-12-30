@@ -3,52 +3,14 @@ package moe.ofs.backend.services.mizdb;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import moe.ofs.backend.request.DataRequest;
-import moe.ofs.backend.request.LuaResponse;
-import moe.ofs.backend.request.server.ServerDataRequest;
-import moe.ofs.backend.request.services.RequestTransmissionService;
-import moe.ofs.backend.services.MissionKeyValueService;
+import moe.ofs.backend.function.mizdb.services.MissionKeyValueService;
 import moe.ofs.backend.util.LuaScripts;
-import moe.ofs.backend.util.lua.LuaQueryEnv;
+import moe.ofs.backend.util.lua.QueryOnAnnotation;
 
 import java.lang.reflect.Type;
 import java.util.*;
 
-public abstract class AbstractPersistentKeyValueService<T> implements MissionKeyValueService<T> {
-
-    private LuaResponse query(String debugString) {
-        Environment environment = this.getClass().getAnnotation(InjectionEnvironment.class).value();
-        switch (environment) {
-            case MISSION:
-                return LuaScripts.request(LuaQueryEnv.MISSION_SCRIPTING, debugString);
-            case HOOK:
-                return LuaScripts.request(LuaQueryEnv.SERVER_CONTROL, debugString);
-            case EXPORT:
-                throw new RuntimeException("EXPORT NOT IMPLEMENTED");
-            case TRIGGER:
-                throw new RuntimeException("TRIGGER NOT IMPLEMENTED");
-            default:
-                throw new RuntimeException();
-        }
-    }
-
-    private void execute(String debugString) {
-        Environment environment = this.getClass().getAnnotation(InjectionEnvironment.class).value();
-        switch (environment) {
-            case MISSION:
-                LuaScripts.request(LuaQueryEnv.MISSION_SCRIPTING, debugString);
-                break;
-            case HOOK:
-                LuaScripts.request(LuaQueryEnv.SERVER_CONTROL, debugString);
-                break;
-            case EXPORT:
-                throw new RuntimeException("EXPORT NOT IMPLEMENTED");
-            case TRIGGER:
-                throw new RuntimeException("TRIGGER NOT IMPLEMENTED");
-            default:
-                throw new RuntimeException();
-        }
-    }
+public abstract class AbstractPersistentKeyValueService<T> extends QueryOnAnnotation implements MissionKeyValueService<T> {
 
     @Override
     public Set<T> findAll(Class<T> tClass) {

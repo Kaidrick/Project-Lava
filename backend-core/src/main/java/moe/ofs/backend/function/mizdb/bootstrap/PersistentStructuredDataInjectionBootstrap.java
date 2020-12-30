@@ -1,4 +1,4 @@
-package moe.ofs.backend.function.mizdb;
+package moe.ofs.backend.function.mizdb.bootstrap;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.handlers.starter.LuaScriptStarter;
@@ -9,23 +9,22 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
-public class PersistentKeyValueInjectionBootstrap implements LuaScriptStarter {
+public class PersistentStructuredDataInjectionBootstrap implements LuaScriptStarter {
 
     @Override
     public ScriptInjectionTask injectScript() {
         return ScriptInjectionTask.builder()
                 .inject(() ->
                         LuaScripts.requestWithFile(LuaQueryEnv.MISSION_SCRIPTING,
-                                "storage/mission/init_keyvalue.lua").getAsBoolean() &&
+                                "storage/mission/init.lua").getAsBoolean() &&
                         LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,
-                                "storage/server/init_keyvalue.lua").getAsBoolean())
-                .dependencyInitializrClass(PersistentStructuredDataInjectionBootstrap.class)
+                                "storage/server/init.lua").getAsBoolean())
                 .injectionDoneCallback(success -> {
-                    if (success) log.info("Persistent Key-Value Storage Initialized");
-                    else log.error("Failed to initialize Persistent Key-Value Storage");
+                    if (success) log.info("Persistent Structured Storage Initialized");
+                    else log.error("Failed to initialize Persistent Structured Storage");
                 })
                 .initializrClass(getClass())
-                .scriptIdentName("LavaMissionKeyValueStorage")
+                .scriptIdentName("LavaMissionStructuredStorage")
                 .build();
     }
 }

@@ -27,7 +27,6 @@ public class LuaDebugConsoleController {
      * Basic console debug do string method used to load lua string in DCS lua server.
      * Debug Lua string execution should always return a value.
      * The debug command should only be executed if the connection between backend and DCS lua server is established.
-     * FIXME: get() method will keep blocking; it should fail fast if connection cannot be made or timeout
      * @param luaCommand the lua command object that contains the actual string, timestamp, and debug environment.
      * @return the String value that is returned from the dcs Lua server.
      */

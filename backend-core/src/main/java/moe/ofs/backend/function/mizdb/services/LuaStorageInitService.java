@@ -1,4 +1,4 @@
-package moe.ofs.backend.services;
+package moe.ofs.backend.function.mizdb.services;
 
 import java.util.Map;
 
