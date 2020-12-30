@@ -45,7 +45,11 @@ public class TriggerMessageServiceImpl implements TriggerMessageService {
     @Override
     public void sendTriggerMessageForPlayer(TriggerMessage message, PlayerInfo player) {
         String preparedString = String.format(triggerMessageByGroupId,
-                flyableUnitService.findByUnitId(player.getSlot()), message.getMessage(),
+                flyableUnitService.findByUnitId(player.getSlot()).map(FlyableUnit::getGroup_id).orElseThrow(
+                        () -> new RuntimeException("Unable to match player with an existing group id; " +
+                                "the player is probably not active in mission.")
+                ),
+                message.getMessage(),
                 message.getDuration(), message.isClearView());
         System.out.println(preparedString);
         requestTransmissionService.send(new ServerExecRequest(preparedString));

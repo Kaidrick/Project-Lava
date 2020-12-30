@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.chatcmdnew.model.ChatCommandDefinition;
 import moe.ofs.backend.chatcmdnew.model.ChatCommandProcessEntity;
 import moe.ofs.backend.chatcmdnew.services.ChatCommandHookInterceptService;
+import moe.ofs.backend.chatcmdnew.services.ChatCommandSetManageService;
 import moe.ofs.backend.handlers.starter.LuaScriptStarter;
 import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
 import moe.ofs.backend.hookinterceptor.*;
@@ -20,12 +21,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class ChatCommandHookInterceptServiceImpl
         extends AbstractHookInterceptorProcessService<ChatCommandProcessEntity, HookInterceptorDefinition>
-        implements ChatCommandHookInterceptService, LuaScriptStarter {
+        implements ChatCommandHookInterceptService, ChatCommandSetManageService, LuaScriptStarter {
 
     private final PlayerInfoService playerInfoService;
     private final SimpleKeyValueStorage<List<String>> storage;
@@ -41,8 +44,8 @@ public class ChatCommandHookInterceptServiceImpl
                 "lava-chat-command-hook-intercept-service-data-storage",
                 LuaQueryEnv.SERVER_CONTROL);
 
-        storage.save("/enter", Arrays.asList("test", "best"));
-        storage.save("/whoami", Arrays.asList("123", "456"));
+//        storage.save("/enter", Arrays.asList("test", "best"));
+//        storage.save("/whoami", Arrays.asList("123", "456"));
     }
 
     @Override
@@ -96,11 +99,13 @@ public class ChatCommandHookInterceptServiceImpl
     @LuaInteract
     public void gather() throws IOException {
         poll(ChatCommandProcessEntity.class).stream()
-                .peek(hookProcessEntity ->
+                .peek(hookProcessEntity ->  // match and set player info if exists
                         playerInfoService.findByNetId(hookProcessEntity.getNetId())
                                 .ifPresent(hookProcessEntity::setPlayer))
-                .peek(System.out::println)
-                .forEach(e -> definitionSet.forEach(definition -> definition.getConsumer().accept(e)));
+//                .peek(System.out::println)
+                .forEach(e -> definitionSet.stream()
+                        .filter(d -> d.getKeyword().equals(e.getKeyword()))  // match unique keyword
+                        .forEach(definition -> definition.getConsumer().accept(e)));  // call consumer#accept
     }
 
     @Override
@@ -124,5 +129,20 @@ public class ChatCommandHookInterceptServiceImpl
     public void removeCommandDefinition(ChatCommandDefinition definition) {
         definitionSet.remove(definition);
         storage.delete(definition.getKeyword());
+    }
+
+    @Override
+    public Set<ChatCommandDefinition> findAllCommandDefinition() {
+        return new HashSet<>(definitionSet);
+    }
+
+    @Override
+    public Set<ChatCommandDefinition> findCommandDefinition(Predicate<ChatCommandDefinition> predicate) {
+        return definitionSet.stream().filter(predicate).collect(Collectors.toSet());
+    }
+
+    @Override
+    public ChatCommandDefinition findCommandDefinitionByName(String name) {
+        return definitionSet.stream().filter(s -> s.getName().equals(name)).findAny().orElse(null);
     }
 }

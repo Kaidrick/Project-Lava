@@ -1,1 +1,1 @@
-net.send_chat_to([[%s]], %d)
+net.send_chat_to([[%s]], %d, 1)

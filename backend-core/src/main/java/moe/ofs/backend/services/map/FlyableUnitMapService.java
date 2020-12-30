@@ -39,13 +39,17 @@ public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> imple
     @Override
     public Optional<FlyableUnit> findByUnitId(String idString) {
 
+        if (idString == null) return Optional.empty();
+
         // for shared cockpit aircraft such as Huey and Tomcat,
         // idString could be 1271 or 1271_n, where n is an integer
         int id;
         if(idString.contains("_")) {  // multi-seat aircraft slot
             id = Integer.parseInt(idString.substring(0, idString.indexOf("_")));
         } else {
-            if(idString.equals("")) {  // observer slot
+            if(idString.equals("") || idString.equals("instructor") ||
+                idString.equals("forward") || idString.equals("artillery") ||
+                idString.equals("observer")) {  // observer slot
                 return Optional.empty();
             } else {
                 id = Integer.parseInt(idString);

@@ -18,6 +18,8 @@ public class ChatCommandDefinition {
     @NonNull
     private String keyword;
 
+    private String description;
+
     @NonNull
     @Builder.Default
     private List<String> affectedPlayerUcidList = new ArrayList<>();
@@ -28,7 +30,8 @@ public class ChatCommandDefinition {
     private ScanStrategy strategy;
 
 
-    private ChatCommandDefinition(String name, String keyword, List<String> affectedPlayerUcidList,
+    private ChatCommandDefinition(String name, String keyword, String description,
+                                  List<String> affectedPlayerUcidList,
                                  Consumer<ChatCommandProcessEntity> consumer, ScanStrategy strategy) {
         if (name.isEmpty()) {
             throw new IllegalArgumentException("Name of a ChatCommandDefinition cannot be empty String");
@@ -40,6 +43,7 @@ public class ChatCommandDefinition {
 
         this.name = name;
         this.keyword = keyword;
+        this.description = description;
         this.affectedPlayerUcidList = affectedPlayerUcidList;
         this.consumer = consumer;
         this.strategy = strategy;
