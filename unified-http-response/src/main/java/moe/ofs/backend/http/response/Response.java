@@ -1,4 +1,4 @@
-package moe.ofs.backend.http;
+package moe.ofs.backend.http.response;
 
 import lombok.Data;
 

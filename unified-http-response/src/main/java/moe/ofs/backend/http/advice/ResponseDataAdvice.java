@@ -3,7 +3,8 @@ package moe.ofs.backend.http.advice;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import moe.ofs.backend.http.GlobalDefaultProperties;
-import moe.ofs.backend.http.Response;
+import moe.ofs.backend.http.config.EndpointBypassProperties;
+import moe.ofs.backend.http.response.Response;
 import moe.ofs.backend.http.annotations.IgnoreResponseAdvice;
 import moe.ofs.backend.http.response.Responses;
 import org.springframework.core.MethodParameter;
@@ -15,16 +16,20 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 
-import static moe.ofs.backend.http.Response.success;
+import static moe.ofs.backend.http.response.Response.success;
 
 @RestControllerAdvice
 public class ResponseDataAdvice implements ResponseBodyAdvice<Object> {
     private GlobalDefaultProperties globalDefaultProperties;
+    private final EndpointBypassProperties endpointBypassProperties;
 
-    public ResponseDataAdvice(GlobalDefaultProperties globalDefaultProperties) {
+    public ResponseDataAdvice(GlobalDefaultProperties globalDefaultProperties,
+                              EndpointBypassProperties endpointBypassProperties) {
         this.globalDefaultProperties = globalDefaultProperties;
+        this.endpointBypassProperties = endpointBypassProperties;
     }
 
     @Override
@@ -54,20 +59,9 @@ public class ResponseDataAdvice implements ResponseBodyAdvice<Object> {
             return success();
         }
 
-        // url based bypass
-        if (serverHttpRequest.getURI().getPath().startsWith("/atlas")) {
-            return o;
-        }
-
-        if (serverHttpRequest.getURI().getPath().startsWith("/actuator")) {
-            return o;
-        }
-
-        if (serverHttpRequest.getURI().getPath().startsWith("/swagger")) {
-            return o;
-        }
-
-        if (serverHttpRequest.getURI().getPath().startsWith("/v2/api-docs")) {
+        // advise bypasses any of the endpoints specified in the properties file
+        if (endpointBypassProperties.getEndpoints().stream()
+                .anyMatch(ep -> serverHttpRequest.getURI().getPath().startsWith(ep))) {
             return o;
         }
 
