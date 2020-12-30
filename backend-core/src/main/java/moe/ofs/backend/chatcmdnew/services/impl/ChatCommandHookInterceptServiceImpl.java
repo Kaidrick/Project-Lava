@@ -1,6 +1,7 @@
 package moe.ofs.backend.chatcmdnew.services.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.chatcmdnew.model.ChatCommandDefinition;
 import moe.ofs.backend.chatcmdnew.model.ChatCommandProcessEntity;
 import moe.ofs.backend.chatcmdnew.services.ChatCommandHookInterceptService;
 import moe.ofs.backend.handlers.starter.LuaScriptStarter;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -27,8 +30,12 @@ public class ChatCommandHookInterceptServiceImpl
     private final PlayerInfoService playerInfoService;
     private final SimpleKeyValueStorage<List<String>> storage;
 
+    private final Set<ChatCommandDefinition> definitionSet;
+
     public ChatCommandHookInterceptServiceImpl(PlayerInfoService playerInfoService) {
         this.playerInfoService = playerInfoService;
+
+        definitionSet = new HashSet<>();
 
         storage = new SimpleKeyValueStorage<>(
                 "lava-chat-command-hook-intercept-service-data-storage",
@@ -92,6 +99,30 @@ public class ChatCommandHookInterceptServiceImpl
                 .peek(hookProcessEntity ->
                         playerInfoService.findByNetId(hookProcessEntity.getNetId())
                                 .ifPresent(hookProcessEntity::setPlayer))
-                .forEach(System.out::println);
+                .peek(System.out::println)
+                .forEach(e -> definitionSet.forEach(definition -> definition.getConsumer().accept(e)));
+    }
+
+    @Override
+    public void addCommandDefinition(ChatCommandDefinition definition) {
+        definitionSet.add(definition);
+        storage.save(definition.getKeyword(), definition.getAffectedPlayerUcidList());
+    }
+
+    @Override
+    public void updateCommandDefinition(ChatCommandDefinition definition) {
+        definitionSet.stream().filter(d -> d.equals(definition)).findAny().ifPresent(d -> {
+            d.setConsumer(definition.getConsumer());
+            d.setAffectedPlayerUcidList(definition.getAffectedPlayerUcidList());
+            d.setStrategy(d.getStrategy());
+
+            storage.save(definition.getKeyword(), definition.getAffectedPlayerUcidList());
+        });
+    }
+
+    @Override
+    public void removeCommandDefinition(ChatCommandDefinition definition) {
+        definitionSet.remove(definition);
+        storage.delete(definition.getKeyword());
     }
 }

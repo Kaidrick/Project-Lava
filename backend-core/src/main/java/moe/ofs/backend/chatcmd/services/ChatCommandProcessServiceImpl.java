@@ -3,22 +3,19 @@ package moe.ofs.backend.chatcmd.services;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.BackgroundTask;
-import moe.ofs.backend.chatcmd.model.ChatCommandDefinition;
-import moe.ofs.backend.chatcmd.model.ScanStrategy;
+import moe.ofs.backend.chatcmdnew.model.ChatCommandDefinition;
+import moe.ofs.backend.chatcmdnew.model.ScanStrategy;
 import moe.ofs.backend.domain.ChatCommand;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.message.OperationPhase;
-import moe.ofs.backend.request.DataRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,9 +88,9 @@ public class ChatCommandProcessServiceImpl implements ChatCommandProcessService 
         Optional<PlayerInfo> optional = playerInfoService.findByNetId(command.getNetId());
         optional.ifPresent(playerInfo -> command.setPlayer(optional.get()));
 
-        definitions.stream()
-                .filter(definition -> definition.getKeyword().equals(command.getKeyword()))
-                .forEach(definition -> definition.getConsumer().accept(command));
+//        definitions.stream()
+//                .filter(definition -> definition.getKeyword().equals(command.getKeyword()))
+//                .forEach(definition -> definition.getConsumer().accept(command));
     }
 
     @Override

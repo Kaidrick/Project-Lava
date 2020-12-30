@@ -1,5 +1,8 @@
 package moe.ofs.backend.chatcmd.services;
 
+import moe.ofs.backend.chatcmdnew.model.ChatCommandDefinition;
+import moe.ofs.backend.domain.PlayerInfo;
+
 /**
  * If message is sent to user and is waiting for user input, check consequent messages
  *
@@ -14,6 +17,12 @@ package moe.ofs.backend.chatcmd.services;
  *
  */
 public interface ChatMessageContextListenerService {
+
+    void addContextForPlayer(ChatCommandDefinition definition, PlayerInfo playerInfo);
+
+    void removeContextForPlayer(ChatCommandDefinition definition, PlayerInfo playerInfo);
+
+    void removeAllContextForPlayer(PlayerInfo playerInfo);
 
     void startListener();
 
