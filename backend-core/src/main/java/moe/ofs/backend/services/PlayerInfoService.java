@@ -19,5 +19,7 @@ public interface PlayerInfoService extends UpdatableService<PlayerInfo>, CrudSer
 
     Set<PlayerInfo> findAll();
 
+    Set<PlayerInfo> findAll(boolean excludeServerHost);
+
     boolean detectSlotChange(PlayerInfo previous, PlayerInfo current);
 }

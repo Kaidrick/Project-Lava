@@ -1,7 +1,7 @@
 local hook_name = '%s'
 local target_function_name = '%s'
 local player_id_arg_index = %d
-local is_intercept_allowed = true
+local is_intercept_allowed = %b
 
 local JSON = require("JSON")
 
@@ -16,7 +16,11 @@ _G[hook_name] = _G[hook_name] or {  -- should only be initialized once to avoid 
 
 _G[hook_name][target_function_name] = function(...)
     local args = {...}
-    local player_id = args[player_id_arg_index]  -- extract player net id
+
+    local player_id
+    if player_id_arg_index >= 1 then  -- check if player id arg index is valid, otherwise left as nil
+        player_id = args[player_id_arg_index]  -- extract player net id
+    end
 
     for def_name, predicate in pairs(_G[hook_name].predicates) do
         local res = {predicate.test(predicate.store, ...)}
@@ -34,7 +38,7 @@ _G[hook_name][target_function_name] = function(...)
             end
         end
 
-        if #res > 0 then
+        if is_intercept_allowed and #res > 0 then
             if predicate.mapper then
                 for k, v in pairs(predicate.mapper(unpack(res))) do
                     verdict[k] = v
@@ -45,7 +49,7 @@ _G[hook_name][target_function_name] = function(...)
 
             _G[hook_name].decisions:save(verdict)  -- record only when predicate returns a result
             return unpack(res)
-        else
+        else  -- is_intercept_allowed == false or #res <= 0
             net.log('no return for empty res but save to decisions list for ref')
             _G[hook_name].decisions:save(verdict)
         end

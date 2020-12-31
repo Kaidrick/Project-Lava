@@ -22,6 +22,13 @@ public class PlayerInfoMapService extends AbstractMapService<PlayerInfo>
     }
 
     @Override
+    public Set<PlayerInfo> findAll(boolean excludeServerHost) {
+        return excludeServerHost ? findAll().stream()
+                .filter(playerInfo -> playerInfo.getNetId() != 1)
+                .collect(Collectors.toSet()) : findAll();
+    }
+
+    @Override
     public Optional<PlayerInfo> findByNetId(int netId) {
         return findAll().stream().filter(playerInfo -> playerInfo.getNetId() == netId).findAny();
     }

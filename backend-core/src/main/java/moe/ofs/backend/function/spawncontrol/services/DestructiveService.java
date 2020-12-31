@@ -1,4 +1,4 @@
-package moe.ofs.backend.function.spawncontrol;
+package moe.ofs.backend.function.spawncontrol.services;
 
 import moe.ofs.backend.domain.ExportObject;
 import moe.ofs.backend.domain.PlayerInfo;

@@ -21,12 +21,6 @@ public class MessageQueue {
 
     private int nextTimeStamp;
 
-//    private MessageQueue() {}
-//
-//    public MessageQueue(int receiverGroupId) {
-//        this.receiverGroupId = receiverGroupId;
-//    }
-
     public MessageQueue(ExportObject object, FlyableUnitService flyableUnitService,
                         TriggerMessageService triggerMessageService) {
 
@@ -55,11 +49,11 @@ public class MessageQueue {
             messageQueue.forEach(m ->
                     scheduledExecutorService.schedule(
                             () -> {
-                                TriggerMessage triggerMessage = triggerMessageService.getTriggerMessageTemplate()
-                                        .setMessage(m.getContent())
-                                        .setReceiverGroupId(receiverGroupId)
-                                        .setDuration(m.getDuration())
-                                        .setClearView(false)
+                                TriggerMessage triggerMessage = TriggerMessage.builder()
+                                        .message(m.getContent())
+                                        .receiverGroupId(receiverGroupId)
+                                        .duration(m.getDuration())
+                                        .clearView(false)
                                         .build();
                                 triggerMessageService.sendTriggerMessage(triggerMessage);
                             }, nextTime(m), TimeUnit.SECONDS));

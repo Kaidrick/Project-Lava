@@ -13,7 +13,6 @@ public class MessageQueueFactory implements FactoryBean<MessageQueue> {
     private ExportObject exportObject;
 
     private final FlyableUnitService flyableUnitService;
-
     private final TriggerMessageService triggerMessageService;
 
     public MessageQueueFactory(FlyableUnitService flyableUnitService,

@@ -1,13 +1,11 @@
 package moe.ofs.backend.function.triggermessage.controller;
 
 import moe.ofs.backend.domain.PlayerInfo;
-import moe.ofs.backend.function.triggermessage.model.MessageType;
 import moe.ofs.backend.function.triggermessage.model.TriggerMessage;
 import moe.ofs.backend.function.triggermessage.model.TriggerMessageRequest;
+import moe.ofs.backend.function.triggermessage.services.NetMessageService;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
 import moe.ofs.backend.services.PlayerInfoService;
-import moe.ofs.backend.util.LuaScripts;
-import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,24 +18,26 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("trigger")
-public class TriggerMessageController {
+public class DcsMessageController {
 
     private final TriggerMessageService triggerMessageService;
+    private final NetMessageService netMessageService;
     private final PlayerInfoService playerInfoService;
 
-    public TriggerMessageController(TriggerMessageService triggerMessageService,
-                                    PlayerInfoService playerInfoService) {
+    public DcsMessageController(TriggerMessageService triggerMessageService,
+                                NetMessageService netMessageService, PlayerInfoService playerInfoService) {
         this.triggerMessageService = triggerMessageService;
+        this.netMessageService = netMessageService;
         this.playerInfoService = playerInfoService;
     }
 
     @PostMapping("message")
     public List<String> send(@RequestBody TriggerMessageRequest request) {
-        TriggerMessage triggerMessage = triggerMessageService.getTriggerMessageTemplate()
-                .setMessage(request.getMessage())
-                .setClearView(request.isClearView())
-                .setDuration(request.getDuration())
-                .setReceiverGroupId(0)
+        TriggerMessage triggerMessage = TriggerMessage.builder()
+                .message(request.getMessage())
+                .clearView(request.isClearView())
+                .duration(request.getDuration())
+                .receiverGroupId(0)
                 .build();
 
         if (request.isUseTriggerMessageWhenPossible()) {
@@ -74,7 +74,7 @@ public class TriggerMessageController {
             switch (request.getType()) {
                 case ALL:
                     List<PlayerInfo> players = new ArrayList<>(playerInfoService.findAll());
-                    triggerMessageService.sendNetMessageForPlayers(triggerMessage, players);
+                    netMessageService.sendNetMessageForPlayers(triggerMessage, players);
 
                     return players.stream().map(PlayerInfo::getUcid).collect(Collectors.toList());
                 case RED:
@@ -84,7 +84,7 @@ public class TriggerMessageController {
                             .map(Optional::get)
                             .filter(playerInfo -> playerInfo.getSide() == 1)
                             .collect(Collectors.toList());
-                    triggerMessageService.sendNetMessageForPlayers(triggerMessage, reds);
+                    netMessageService.sendNetMessageForPlayers(triggerMessage, reds);
 
                     return reds.stream().map(PlayerInfo::getUcid).collect(Collectors.toList());
                 case BLUE:
@@ -94,7 +94,7 @@ public class TriggerMessageController {
                             .map(Optional::get)
                             .filter(playerInfo -> playerInfo.getSide() == 2)
                             .collect(Collectors.toList());
-                    triggerMessageService.sendNetMessageForPlayers(triggerMessage, blues);
+                    netMessageService.sendNetMessageForPlayers(triggerMessage, blues);
 
                     return blues.stream().map(PlayerInfo::getUcid).collect(Collectors.toList());
                 default:

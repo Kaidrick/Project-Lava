@@ -5,11 +5,13 @@ import moe.ofs.backend.chatcmdnew.model.ChatCommandDefinition;
 import moe.ofs.backend.chatcmdnew.services.ChatCommandSetManageService;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.function.triggermessage.model.TriggerMessage;
+import moe.ofs.backend.function.triggermessage.services.NetMessageService;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
 import moe.ofs.backend.services.PlayerInfoService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Component
@@ -17,12 +19,15 @@ import java.util.stream.Collectors;
 public class BasicChatCommandBootstrap {
     private final ChatCommandSetManageService commandSetManageService;
     private final TriggerMessageService triggerMessageService;
+    private final NetMessageService netMessageService;
     private final PlayerInfoService playerInfoService;
 
     public BasicChatCommandBootstrap(ChatCommandSetManageService commandSetManageService,
-                                     TriggerMessageService triggerMessageService, PlayerInfoService playerInfoService) {
+                                     TriggerMessageService triggerMessageService,
+                                     NetMessageService netMessageService, PlayerInfoService playerInfoService) {
         this.commandSetManageService = commandSetManageService;
         this.triggerMessageService = triggerMessageService;
+        this.netMessageService = netMessageService;
         this.playerInfoService = playerInfoService;
     }
 
@@ -38,11 +43,11 @@ public class BasicChatCommandBootstrap {
                         .description("Echo back player info")
                         .consumer(chatCommandProcessEntity -> {
                             PlayerInfo playerInfo = chatCommandProcessEntity.getPlayer();
-                            TriggerMessage message = triggerMessageService.getTriggerMessageTemplate()
-                                    .setReceiverGroupId(0)
-                                    .setMessage(playerInfo.toString())
+                            TriggerMessage message = TriggerMessage.builder()
+                                    .receiverGroupId(0)
+                                    .message(playerInfo.toString())
                                     .build();
-                            triggerMessageService.sendNetMessageForPlayer(message, playerInfo);
+                            netMessageService.sendNetMessageForPlayer(message, playerInfo);
                         })
                         .build()
         );
@@ -54,11 +59,11 @@ public class BasicChatCommandBootstrap {
                         .description("Show all available chat commands")
                         .consumer(chatCommandProcessEntity -> {
                             PlayerInfo playerInfo = chatCommandProcessEntity.getPlayer();
-                            TriggerMessage message = triggerMessageService.getTriggerMessageTemplate()
-                                    .setReceiverGroupId(0)
-                                    .setDuration(20)
-                                    .setClearView(false)
-                                    .setMessage(
+                            TriggerMessage message = TriggerMessage.builder()
+                                    .receiverGroupId(0)
+                                    .duration(20)
+                                    .clearView(false)
+                                    .message(
                                             "All available commands are as follows: \n" +
                                             commandSetManageService.findAllCommandDefinition().stream()
                                                     .map(d -> d.getKeyword() + ": " + d.getDescription())
@@ -86,19 +91,17 @@ public class BasicChatCommandBootstrap {
 
                             int diceRoll = (int) Math.ceil(Math.random() * bound);
 
-                            TriggerMessage message = triggerMessageService.getTriggerMessageTemplate()
-                                    .setReceiverGroupId(0)
-                                    .setDuration(20)
-                                    .setClearView(false)
-                                    .setMessage(
+                            TriggerMessage message = TriggerMessage.builder()
+                                    .receiverGroupId(0)
+                                    .duration(20)
+                                    .clearView(false)
+                                    .message(
                                             playerInfo.getName() + " rolled " + diceRoll + " (1-" + bound + ")."
                                     )
                                     .build();
 
-                            triggerMessageService.sendNetMessageForPlayers(message,
-                                    playerInfoService.findAll().stream()
-                                            .filter(p -> p.getNetId() != 1)
-                                            .collect(Collectors.toList()));
+                            netMessageService.sendNetMessageForPlayers(message,
+                                    new ArrayList<>(playerInfoService.findAll(true)));
                         })
                         .build()
         );

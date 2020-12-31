@@ -1,49 +1,36 @@
 package moe.ofs.backend.function.triggermessage.model;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 import moe.ofs.backend.util.LuaScripts;
 
 @Data
+@Builder
 public final class TriggerMessage {
-    private String message = "Hello from 422d Backend Powered by Java 8";
-    private int receiverGroupId = -1;
-    private int duration = 5;
-    private boolean clearView = false;
+    @NonNull
+    @Builder.Default
+    private String message = "Greetings from Project Lava - Powered by Java and Spring Framework";
 
-    public static class TriggerMessageBuilder {
-        private TriggerMessage triggerMessage = new TriggerMessage();
-        public TriggerMessageBuilder setMessage(String message) {
-            triggerMessage.message = message;
-            return this;
+    private int receiverGroupId;
+
+    @Builder.Default
+    private int duration = 10;
+
+    private boolean clearView;
+
+    private TriggerMessage(String message, int receiverGroupId, int duration, boolean clearView) {
+        if (message.isEmpty()) {
+            throw new IllegalArgumentException("Trigger message content must not be empty.");
         }
 
-        public TriggerMessageBuilder setDuration(int duration) {
-            triggerMessage.duration = duration;
-            return this;
+        if (duration < 1) {
+            throw new IllegalArgumentException("Trigger message display duration must be at least 1 second.");
         }
 
-        public TriggerMessageBuilder setReceiverGroupId(int groupId) {
-            triggerMessage.receiverGroupId = groupId;
-            return this;
-        }
-
-        public TriggerMessageBuilder setClearView(boolean clearView) {
-            triggerMessage.clearView = clearView;
-            return this;
-        }
-
-        public TriggerMessage build() {
-            if(triggerMessage.receiverGroupId < 0) {
-                throw new RuntimeException("GroupId is not specified for trigger message.");
-            }
-            return triggerMessage;
-        }
-    }
-
-    private TriggerMessage() {}
-
-    public TriggerMessage(int receiverGroupId, String message) {
         this.message = message;
         this.receiverGroupId = receiverGroupId;
+        this.duration = duration;
+        this.clearView = clearView;
     }
 }

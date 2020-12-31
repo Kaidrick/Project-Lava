@@ -25,7 +25,8 @@ public abstract class AbstractHookInterceptorProcessService
         this.name = name;
         return LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,
                 "generic_hook_interceptor/create_hook.lua",
-                name, hookType.getFunctionName(), hookType.getPlayerNetIdArgIndex()).getAsBoolean();
+                name, hookType.getFunctionName(), hookType.getPlayerNetIdArgIndex(),
+                hookType.isInterceptAllowed()).getAsBoolean();
     }
 
     @Override

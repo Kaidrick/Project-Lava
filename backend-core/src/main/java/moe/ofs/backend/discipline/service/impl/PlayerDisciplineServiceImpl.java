@@ -4,7 +4,7 @@ import moe.ofs.backend.discipline.service.PlayerDisciplineService;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.request.server.ServerExecRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
-import moe.ofs.backend.function.spawncontrol.DestructiveService;
+import moe.ofs.backend.function.spawncontrol.services.DestructiveService;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.stereotype.Service;
