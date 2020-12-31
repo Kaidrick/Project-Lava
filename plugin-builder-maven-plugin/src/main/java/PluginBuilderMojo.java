@@ -53,15 +53,16 @@ public class PluginBuilderMojo extends AbstractMojo {
 
             // find where META-INF is
             // if absent, create such directory
-            String metaInfoRoot = resources.stream().map(FileSet::getDirectory).findFirst().orElseThrow(() ->
-                    new RuntimeException("Unable to locate any resource directory"));
+            String metaInfoRoot = resources.stream().map(FileSet::getDirectory).findAny().get();
+//                    .orElseThrow(() -> new RuntimeException("Unable to locate any resource directory"));
 
             Path metaInf = Files.createDirectories(Paths.get(metaInfoRoot).resolve("META-INF"));
 
             Path metaInfOutput = Files.createDirectories(Paths.get(
                     project.getCompileClasspathElements().stream()
-                            .filter(cp -> cp.endsWith("\\target\\classes"))
+                            .filter(cp -> cp.endsWith("\\target\\classes") || cp.endsWith("/target/classes"))
                             .findAny()
+//                            .get()
                             .orElseThrow(() -> new RuntimeException("Unable to locate class output directory"))
             )).resolve("META-INF");
 
@@ -78,8 +79,11 @@ public class PluginBuilderMojo extends AbstractMojo {
                                     .filter(j -> j.getFileName().toString().endsWith(".java"))
                                     .forEach(j -> {
                                         String name = j.toString()
-                                                .substring(j.toString().indexOf("java\\") + 5)
-                                                .replace("\\", ".");
+                                                // FIXME: bad, really bad
+                                                .substring(j.toString().indexOf(
+                                                        j.toString().contains("\\") ? "java\\" : "java/"
+                                                ) + 5)
+                                                .replace(j.toString().contains("\\") ? "\\" : "/", ".");
 
                                         String className = name.substring(0, name.length() - 5);
                                         try {
@@ -87,6 +91,8 @@ public class PluginBuilderMojo extends AbstractMojo {
                                             if(Arrays.stream(targetClass.getAnnotations())
                                                     .map(annotation -> annotation.annotationType().getName())
                                                     .anyMatch(typeName ->
+                                                            typeName.contains("org.springframework.web.bind.annotation") ||
+                                                            typeName.contains("org.springframework.context.annotation") ||
                                                             typeName.contains("org.springframework.stereotype"))) {
                                                 // spring context needs to include this one
                                                 getLog().info("Found component:" + className);
@@ -111,6 +117,22 @@ public class PluginBuilderMojo extends AbstractMojo {
 
             Files.createDirectories(metaInfOutput);
             Files.copy(sourceSpringFactory, outputSpringFactory, StandardCopyOption.REPLACE_EXISTING);
+
+
+            // generate ident in meta info
+            Path sourceIdent = metaInf.resolve("ident");
+            Path outputIdent = metaInfOutput.resolve("ident");
+            String ident = String.format("%s-%s-%s",
+                    project.getGroupId(), project.getArtifactId(), project.getVersion());
+
+            getLog().info("Project is identified as " + ident);
+
+            try (BufferedWriter writer = Files.newBufferedWriter(sourceIdent)) {
+                writer.write(ident);
+            }
+
+            Files.copy(sourceIdent, outputIdent, StandardCopyOption.REPLACE_EXISTING);
+
 
         } catch (IOException | DependencyResolutionRequiredException e) {
             e.printStackTrace();

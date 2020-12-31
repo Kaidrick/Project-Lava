@@ -36,6 +36,8 @@ end
 function DataTable:save(object)
   self.nextId = self.nextId + 1
   self.repository[self.nextId] = object
+
+  return self.nextId
 end
 
 function DataTable:findBy(attribute_name, value)

@@ -1,17 +1,19 @@
 package moe.ofs.backend.request.server;
 
+import com.google.common.collect.Sets;
 import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.domain.LuaState;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.request.*;
+import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.services.UpdatableService;
 import moe.ofs.backend.util.ConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("playerInfoBulk")
 public final class ServerBulkPollHandlerService implements PollHandlerService {
@@ -26,7 +28,7 @@ public final class ServerBulkPollHandlerService implements PollHandlerService {
 
     protected boolean requestCompleted;
 
-    protected final UpdatableService<PlayerInfo> service;
+    protected final PlayerInfoService service;
 
     protected Level level;
 
@@ -35,7 +37,7 @@ public final class ServerBulkPollHandlerService implements PollHandlerService {
     }
 
     @Autowired
-    public ServerBulkPollHandlerService(RequestHandler requestHandler, UpdatableService<PlayerInfo> service) {
+    public ServerBulkPollHandlerService(RequestHandler requestHandler, PlayerInfoService service) {
         this.requestHandler = requestHandler;
         this.service = service;
 
@@ -79,7 +81,33 @@ public final class ServerBulkPollHandlerService implements PollHandlerService {
         jsonRpcResponseList.stream()
                 .findAny().ifPresent(r -> {
                     if(list.size() == r.getResult().getTotal()) {
-                        service.cycle(list);
+
+                        Set<PlayerInfo> record = service.findAll().parallelStream().collect(Collectors.toSet());
+                        Set<PlayerInfo> update = new HashSet<>(list);
+
+                        Sets.SetView<PlayerInfo> intersection = Sets.intersection(record, update);
+                        Sets.SetView<PlayerInfo> obsoletePlayers = Sets.symmetricDifference(intersection, record);
+                        Sets.SetView<PlayerInfo> newPlayers = Sets.symmetricDifference(intersection, update);
+
+                        // intersection contains old data, need updated info instead
+//                        intersection.forEach(o -> service.update(update.stream()
+//                                .filter(playerInfo -> playerInfo.equals(o)).findFirst()
+//                                .orElseThrow(() -> new RuntimeException("Unable to find target record PlayerInfo"))));
+
+//        intersection.forEach(this::processUpdateData);
+
+                        obsoletePlayers.forEach(service::remove);
+                        newPlayers.forEach(service::add);
+
+                        // use update value
+                        update.stream().filter(intersection::contains).forEach(playerInfo -> {
+                            PlayerInfo previous = service.update(playerInfo);
+
+                            if (service.detectSlotChange(previous, playerInfo)) {  // returns a boolean value
+                               System.out.println("Player slot change -> " + previous + ", " + playerInfo);
+                            }
+                        });
+
                         requestCompleted = true;
                         list.clear();
                     }

@@ -2,6 +2,9 @@ package.path = package.path .. ";./LuaSocket/?.lua"
 package.path = package.path .. ";./Scripts/?.lua"
 package.cpath = package.cpath .. ";./LuaSocket/?.dll"
 
+-- global lava hand-off flag
+__lava_hand_off = false
+
 -- require external libs
 local socket = require("socket")
 local JSON = require("JSON")
@@ -260,6 +263,7 @@ local function step()
 			
 				if not err then
 					last_comm_timestamp = os.time()  -- update on successful handshake
+					__lava_hand_off = false
 
 					---[[
 					local success, requests = pcall(
@@ -296,6 +300,7 @@ local function step()
 						client:close()
 						client = nil
 						last_comm_timestamp = nil
+						__lava_hand_off = true
 						return
 					end
 
@@ -304,6 +309,7 @@ local function step()
 					client:close()
 					client = nil
 					last_comm_timestamp = nil
+					__lava_hand_off = true
 					return
 			  
 				else  -- other error
@@ -313,6 +319,7 @@ local function step()
 
 			if not err then  -- successful handshake
 				last_comm_timestamp = os.time()
+				__lava_hand_off = false
 			
 				---[[
 				local success, requests = pcall(
@@ -349,6 +356,7 @@ local function poll_step()
 			
 				if not err then
 					last_poll_timestamp = os.time()  -- update on successful handshake
+					__lava_hand_off = false
 
 					---[[
 					local success, requests = pcall(
@@ -386,6 +394,7 @@ local function poll_step()
 						poll_client:close()
 						poll_client = nil
 						last_poll_timestamp = nil
+						__lava_hand_off = true
 						return
 					end
 
@@ -394,6 +403,7 @@ local function poll_step()
 					poll_client:close()
 					poll_client = nil
 					last_poll_timestamp = nil
+					__lava_hand_off = true
 					return
 			  
 				else  -- other error
@@ -403,6 +413,7 @@ local function poll_step()
 
 			if not err then  -- successful handshake
 				last_poll_timestamp = os.time()
+				__lava_hand_off = false
 			
 				---[[
 				local success, requests = pcall(
@@ -486,6 +497,8 @@ function ofsmiz.onSimulationStop()
 	  
     if poll_client then poll_client:close() end
     if poll_server then poll_server:close() end
+
+    __lava_hand_off = true
   
 	PULL.wait_list = {}
 	PULL.result = {}

@@ -3,10 +3,11 @@ package moe.ofs.backend.http.advice;
 import com.google.gson.Gson;
 import lombok.SneakyThrows;
 import moe.ofs.backend.http.GlobalDefaultProperties;
-import moe.ofs.backend.http.Response;
+import moe.ofs.backend.http.config.EndpointBypassProperties;
+import moe.ofs.backend.http.response.Response;
 import moe.ofs.backend.http.annotations.IgnoreResponseAdvice;
+import moe.ofs.backend.http.response.Responses;
 import org.springframework.core.MethodParameter;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
@@ -15,15 +16,20 @@ import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+
+import static moe.ofs.backend.http.response.Response.success;
 
 @RestControllerAdvice
 public class ResponseDataAdvice implements ResponseBodyAdvice<Object> {
     private GlobalDefaultProperties globalDefaultProperties;
+    private final EndpointBypassProperties endpointBypassProperties;
 
-    public ResponseDataAdvice(GlobalDefaultProperties globalDefaultProperties) {
+    public ResponseDataAdvice(GlobalDefaultProperties globalDefaultProperties,
+                              EndpointBypassProperties endpointBypassProperties) {
         this.globalDefaultProperties = globalDefaultProperties;
+        this.endpointBypassProperties = endpointBypassProperties;
     }
 
     @Override
@@ -48,14 +54,14 @@ public class ResponseDataAdvice implements ResponseBodyAdvice<Object> {
         if (o == null) {
             // 当 o 返回类型为 string 并且为null会出现 java.lang.ClassCastException: Result cannot be cast to java.lang.String
             if (methodParameter.getParameterType().getName().equals("java.lang.String")) {
-                return new Gson().toJson(Response.success()).toString();
+                return new Gson().toJson(success()).toString();
             }
-            return Response.success();
+            return success();
         }
 
-//        System.out.println("serverHttpRequest.getURI().getPath() = " + serverHttpRequest.getURI().getPath());
-
-        if (serverHttpRequest.getURI().getPath().startsWith("/atlas")) {
+        // advise bypasses any of the endpoints specified in the properties file
+        if (endpointBypassProperties.getEndpoints().stream()
+                .anyMatch(ep -> serverHttpRequest.getURI().getPath().startsWith(ep))) {
             return o;
         }
 
@@ -63,12 +69,21 @@ public class ResponseDataAdvice implements ResponseBodyAdvice<Object> {
             // check source
             if (o instanceof LinkedHashMap) {
                 LinkedHashMap<String, Object> response = (LinkedHashMap<String, Object>) o;
-                Response<?> failResponse = Response.fail(null);
+                Response<?> failResponse = Response.fail();
                 failResponse.setMessage((String) response.get("message"));
                 failResponse.setStatus((int) response.get("status"));
                 System.out.println("response = " + response);
                 return failResponse;
             }
+        }
+
+        // ignore advise if annotated by @IgnoreResponseAdvice
+        if (!supports(methodParameter, aClass)) {
+            return o;
+        }
+
+        if (o != null && methodParameter.getParameterType().getName().equals("moe.ofs.backend.pagination.PageVo")) {
+            return Responses.querySuccess(o);
         }
 
         // o is instanceof ConmmonResponse -> return o
@@ -77,10 +92,10 @@ public class ResponseDataAdvice implements ResponseBodyAdvice<Object> {
         }
         // string 特殊处理 java.lang.ClassCastException: Result cannot be cast to java.lang.String
         if (o instanceof String) {
-            return new Gson().toJson(Response.success(o)).toString();
+            return new Gson().toJson(success(o)).toString();
         }
 
-        return Response.success(o);
+        return success(o);
     }
 
     private Boolean filter(MethodParameter methodParameter) {

@@ -32,6 +32,20 @@ public class PlayerInfo extends BaseEntity {
     private boolean started;  // what is this?
     private String ucid;
 
+    public PlayerInfo(PlayerInfo playerInfo) {
+        super.setId(playerInfo.getId());
+        setPilotId(playerInfo.getPilotId());
+        setNetId(playerInfo.getNetId());
+        setName(playerInfo.getName());
+        setIpaddr(playerInfo.getIpaddr());
+        setLang(playerInfo.getLang());
+        setPing(playerInfo.getPing());
+        setSide(playerInfo.getSide());
+        setSlot(playerInfo.getSlot());
+        setStarted(playerInfo.isStarted());
+        setUcid(playerInfo.getUcid());
+    }
+
     @Override
     public String toString() {
         String slot = getSlot();

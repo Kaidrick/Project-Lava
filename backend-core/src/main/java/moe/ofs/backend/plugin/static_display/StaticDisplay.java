@@ -8,7 +8,7 @@ import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.function.slotcontrol.SlotChangeRequest;
 import moe.ofs.backend.function.slotcontrol.SlotChangeResult;
 import moe.ofs.backend.function.slotcontrol.SlotValidator;
-import moe.ofs.backend.function.unitwiselog.LogControl;
+import moe.ofs.backend.LavaLog;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 import moe.ofs.backend.object.FlyableUnit;
@@ -34,7 +34,7 @@ import java.util.*;
 @Component
 public class StaticDisplay implements Plugin {
 
-    private final LogControl.Logger logger = LogControl.getLogger(StaticDisplay.class);
+    private final LavaLog.Logger logger = LavaLog.getLogger(StaticDisplay.class);
 
     private final RequestTransmissionService requestTransmissionService;
 
@@ -61,7 +61,8 @@ public class StaticDisplay implements Plugin {
     }
 
     private static final String luaStringAddStatic = LuaScripts.load("add_static_object.lua");
-    private static final String luaStringRemoveObject = LuaScripts.load("remove_object_by_runtime_id.lua");
+    private static final String luaStringRemoveObject =
+            LuaScripts.load("spawn_control/remove_object_by_runtime_id.lua");
 
     private final FlyableUnitService flyableUnitService;
     private final ParkingInfoService parkingInfoService;

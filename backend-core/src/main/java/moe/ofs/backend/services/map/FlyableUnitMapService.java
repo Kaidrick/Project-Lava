@@ -2,8 +2,8 @@ package moe.ofs.backend.services.map;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import moe.ofs.backend.function.unitwiselog.LogControl;
-import moe.ofs.backend.function.unitwiselog.eventlogger.SpawnControlLogger;
+import moe.ofs.backend.LavaLog;
+import moe.ofs.backend.lavalog.eventlogger.SpawnControlLogger;
 import moe.ofs.backend.object.FlyableUnit;
 import moe.ofs.backend.request.JsonRpcResponse;
 import moe.ofs.backend.request.server.ServerExecRequest;
@@ -21,7 +21,7 @@ import java.util.Optional;
 @Service
 public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> implements FlyableUnitService {
 
-    private final LogControl.Logger logger = LogControl.getLogger(SpawnControlLogger.class);
+    private final LavaLog.Logger logger = LavaLog.getLogger(SpawnControlLogger.class);
 
     // protected map for FlyableUnit in AbstractMapService
 
@@ -33,11 +33,13 @@ public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> imple
 
     @Override
     public Optional<FlyableUnit> findByUnitName(String name) {
-        return map.values().stream().filter(e -> e.getUnit_name().equals(name)).findAny();
+        return findAll().stream().filter(e -> e.getUnit_name().equals(name)).findAny();
     }
 
     @Override
     public Optional<FlyableUnit> findByUnitId(String idString) {
+
+        if (idString == null) return Optional.empty();
 
         // for shared cockpit aircraft such as Huey and Tomcat,
         // idString could be 1271 or 1271_n, where n is an integer
@@ -45,37 +47,39 @@ public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> imple
         if(idString.contains("_")) {  // multi-seat aircraft slot
             id = Integer.parseInt(idString.substring(0, idString.indexOf("_")));
         } else {
-            if(idString.equals("")) {  // observer slot
+            if(idString.equals("") || idString.equals("instructor") ||
+                idString.equals("forward") || idString.equals("artillery") ||
+                idString.equals("observer")) {  // observer slot
                 return Optional.empty();
             } else {
                 id = Integer.parseInt(idString);
             }
         }
 
-        return map.values().stream()
+        return findAll().stream()
                 .filter(e -> e.getUnit_id() == id)
                 .findAny();
     }
 
     @Override
     public Optional<FlyableUnit> findByUnitId(Long id) {
-        return map.values().stream()
+        return findAll().stream()
                 .filter(e -> e.getUnit_id() == id)
                 .findAny();
     }
 
     @Override
     public Optional<Integer> findGroupIdByName(String name) {
-        Optional<Map.Entry<Long, FlyableUnit>> optional =
-                map.entrySet().stream()
-                        .filter(e -> e.getValue().getGroup_name().equals(name))
+        Optional<FlyableUnit> optional =
+                findAll().stream()
+                        .filter(e -> e.getGroup_name().equals(name))
                         .findAny();
-        return optional.map(stringFlyableUnitEntry -> stringFlyableUnitEntry.getValue().getGroup_id());
+        return optional.map(FlyableUnit::getGroup_id);
     }
 
     @Override
     public void dispose() {
-        map.clear();
+        deleteAll();
     }
 
     @Override

@@ -26,14 +26,12 @@ public class ReferencePointManager {
         //
     }
 
-
     // get ref point from dcs
     public List<ReferencePoint> getAll() {
         String luaString = LuaScripts.loadAndPrepare("refpoints/get_coalition_ref_points.lua", 2);
 
         String s = ((ServerDataRequest) requestTransmissionService.send(
-                 new ServerDataRequest(luaString)
-        )).get();
+                new ServerDataRequest(luaString))).get();
 
         Type referencePointListType = new TypeToken<List<ReferencePoint>>() {}.getType();
         return gson.fromJson(s, referencePointListType);

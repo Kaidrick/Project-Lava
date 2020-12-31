@@ -1,11 +1,7 @@
 package moe.ofs.backend.domain;
 
 import com.google.gson.annotations.SerializedName;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import moe.ofs.backend.object.FlyableUnit;
+import lombok.*;
 import moe.ofs.backend.object.Vector3D;
 import moe.ofs.backend.object.map.GeoPosition;
 
@@ -20,7 +16,8 @@ import java.util.Objects;
 @NoArgsConstructor
 @LuaState(Level.EXPORT_POLL)
 @Entity
-@Table(name = "export_objects")
+@ToString
+@Table(name = "export_object")
 public final class ExportObject extends BaseEntity implements Serializable {
     @Column(name = "own_bank")
     @SerializedName("Bank")
@@ -63,11 +60,11 @@ public final class ExportObject extends BaseEntity implements Serializable {
     private String unitName;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="key")
-    @Column(name="value")
-    @CollectionTable(name="flags", joinColumns=@JoinColumn(name="id"))
+    @MapKeyColumn(name = "status_name")
+    @Column(name = "is_active")
+    @CollectionTable(name = "object_status", joinColumns = @JoinColumn(name = "id"))
     @SerializedName("Flags")
-    private Map<String, Boolean> flags;
+    private Map<String, Boolean> status;
 
 //    @ElementCollection(fetch = FetchType.EAGER)
 //    @MapKeyColumn(name="key")
@@ -94,16 +91,17 @@ public final class ExportObject extends BaseEntity implements Serializable {
     private Vector3D position;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @MapKeyColumn(name="key")
-    @Column(name="value")
-    @CollectionTable(name="type", joinColumns=@JoinColumn(name="id"))
+    @MapKeyColumn(name = "attribute_key")
+    @Column(name = "attribute_value")
+    @CollectionTable(name = "object_attribute", joinColumns = @JoinColumn(name = "id"))
     @SerializedName("Type")
     private Map<String, Integer> type;
 
     @Builder
-    public ExportObject(Long id, double bank, String coalition, int coalitionID, int country, String groupName, double heading,
+    public ExportObject(Long id, double bank, String coalition, int coalitionID, int country,
+                        String groupName, double heading,
                         String name, double pitch, int runtimeID, String unitName,
-                        Map<String, Boolean> flags, GeoPosition geoPosition,
+                        Map<String, Boolean> status, GeoPosition geoPosition,
                         Vector3D position, Map<String, Integer> type) {
         super(id);
         this.bank = bank;
@@ -117,7 +115,7 @@ public final class ExportObject extends BaseEntity implements Serializable {
         this.runtimeID = runtimeID;
         this.unitName = unitName;
 
-        this.flags = flags;
+        this.status = status;
         this.geoPosition = geoPosition;
         this.position = position;
         this.type = type;
@@ -136,7 +134,7 @@ public final class ExportObject extends BaseEntity implements Serializable {
         this.runtimeID = object.getRuntimeID();
         this.unitName = object.getUnitName();
 
-        this.flags = new HashMap<>(object.getFlags());
+        this.status = new HashMap<>(object.getStatus());
         this.geoPosition = object.getGeoPosition();
         this.position = object.getPosition();
         this.type = new HashMap<>(object.getType());
@@ -144,6 +142,7 @@ public final class ExportObject extends BaseEntity implements Serializable {
 
     /**
      * Two ExportObject is consider equal if runtime id and unitName is the same.
+     *
      * @param o the object to be tested equality with.
      * @return boolean value indicating whether two ExportObject are equal.
      */
@@ -163,5 +162,14 @@ public final class ExportObject extends BaseEntity implements Serializable {
         int result = (int) (runtimeID ^ (runtimeID >>> 32));
         result = 31 * result + (unitName != null ? unitName.hashCode() : 0);
         return result;
+    }
+
+    public GeoPosition getGeoPosition() {
+        return geoPosition;
+    }
+
+
+    public Vector3D getPosition() {
+        return position;
     }
 }

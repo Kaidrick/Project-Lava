@@ -2,9 +2,9 @@ package moe.ofs.backend.plugin.greeting;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.Plugin;
-import moe.ofs.backend.function.triggermessage.Message;
-import moe.ofs.backend.function.triggermessage.MessageQueue;
-import moe.ofs.backend.function.triggermessage.MessageQueueFactory;
+import moe.ofs.backend.function.triggermessage.model.Message;
+import moe.ofs.backend.function.triggermessage.model.MessageQueue;
+import moe.ofs.backend.function.triggermessage.factories.MessageQueueFactory;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 import moe.ofs.backend.domain.ExportObject;
@@ -91,7 +91,7 @@ public class Greeting implements Plugin {
     }
 
     private void testMessageFunction(ExportObject object) {
-        if(object.getFlags().get("Human")) {
+        if(object.getStatus().get("Human")) {
             messageQueueFactory.setExportObject(object);
             MessageQueue messageQueue = messageQueueFactory.getObject();
             if (messageQueue != null) {

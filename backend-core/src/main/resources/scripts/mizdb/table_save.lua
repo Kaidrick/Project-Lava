@@ -10,5 +10,5 @@ local object = JSON:decode(object_json)
 local db_table = missionDatabase[table_name]
 
 if db_table then
-    db_table:save(object)
+    return db_table:save(object)
 end

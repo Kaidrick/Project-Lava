@@ -27,7 +27,7 @@ public class DcsConnectionConfigController {
         this.connectionManager = connectionManager;
     }
 
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    @GetMapping("/get")
     public PortConfig getCurrentConfiguration() {
         Map<Level, Integer> portMapping = connectionManager.getPortOverrideMap();
         return PortConfig.builder()
@@ -39,7 +39,9 @@ public class DcsConnectionConfigController {
     }
 
     @RequestMapping(value = "/port", method = RequestMethod.POST)
-    public PortConfig setConnectionPort(@RequestBody PortConfig config) {
+    public PortConfig setConnectionPort(
+            @RequestBody PortConfig config
+    ) {
         log.info(config.toString());
 
         // set request handler connection port number
@@ -59,6 +61,12 @@ public class DcsConnectionConfigController {
                 .exportMainPort(portMapping.get(Level.EXPORT))
                 .exportPollPort(portMapping.get(Level.EXPORT_POLL))
                 .build();
+    }
+
+    @RequestMapping(value = "/port_reset", method = RequestMethod.GET)
+    public PortConfig resetDefaultConnectionPort() {
+        connectionManager.restoreDefaultPortMap();
+        return getCurrentConfiguration();
     }
 
     @RequestMapping(value = "/script/install/{branch}", method = RequestMethod.GET)

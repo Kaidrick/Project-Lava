@@ -4,13 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Level;
-import moe.ofs.backend.function.unitwiselog.LogControl;
+import moe.ofs.backend.LavaLog;
 import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.message.ConnectionStatusChange;
 import moe.ofs.backend.message.connection.ConnectionStatus;
 import moe.ofs.backend.util.ConnectionManager;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
@@ -42,7 +43,7 @@ import java.util.stream.Collectors;
 @Component
 public final class RequestHandler {
 
-    private final LogControl.Logger logger = LogControl.getLogger(RequestHandler.class);
+    private final LavaLog.Logger logger = LavaLog.getLogger(RequestHandler.class);
 
     private final Sender sender;
 
@@ -60,6 +61,11 @@ public final class RequestHandler {
 
     public RequestHandler(Sender sender) {
         this.sender = sender;
+    }
+
+    @PreDestroy
+    private void shutdown() {
+        executorService.shutdownNow();
     }
 
     /**
@@ -127,7 +133,7 @@ public final class RequestHandler {
     public String sendAndGet(int port, String jsonString) throws IOException {
 
         String s = null;
-        try (Socket socket = new Socket("127.0.0.1", port);
+        try (Socket socket = new Socket("localhost", port);
              DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
              DataInputStream dataInputStream = new DataInputStream(socket.getInputStream())) {
 
@@ -275,6 +281,11 @@ public final class RequestHandler {
         // only add to wait map if result is definitely needed
         splitQueue.forEach((level, queue) -> {
             transmissionQueue.stream().filter(r -> r instanceof Resolvable).forEach(r -> waitMap.put(r.getUuidString(), r));
+
+//            if (queue.size() > 5) {
+//                System.out.println(" level + queue = " +  level + queue);
+//            }
+
             try {
                 Gson gson = new Gson();
                 String json = gson.toJson(queue);
@@ -303,7 +314,10 @@ public final class RequestHandler {
 
                                     // resolve Resolvable only
                                     if(request instanceof Resolvable) {
-                                        ((Resolvable) request).resolve(response.getResult().getData());
+                                        // sync call will cause resolve to be blocked if any
+                                        // busy waiting method such as ServerDataRequest#get to block is executed
+                                        executorService.submit(() ->
+                                                ((Resolvable) request).resolve(response.getResult().getData()));
                                     }
                                 }
                         );

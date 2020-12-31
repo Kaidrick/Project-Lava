@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.po.TableFill;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.object.map.GeoPosition;
 import moe.ofs.backend.object.map.GeoPositions;
 import moe.ofs.backend.object.map.Orientation;
@@ -19,7 +20,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+@Slf4j
 class GeoPositionsTest {
     GeoPosition geoPosition;
     GeoPosition compareGeoPosition;
@@ -52,7 +56,7 @@ class GeoPositionsTest {
 //        System.out.println(Arrays.toString(GeoPositions.formatStringArray(compareGeoPosition, false)));
     }
 
-    @Test
+
     void generator() {
 // 需要构建一个 代码自动生成器 对象
         AutoGenerator mpg = new AutoGenerator();
@@ -69,7 +73,7 @@ class GeoPositionsTest {
         gc.setIdType(IdType.ASSIGN_ID);
         gc.setDateType(DateType.ONLY_DATE);
 //      是否启用swagger自动配置
-        gc.setSwagger2(true);
+//        gc.setSwagger2(true);
         mpg.setGlobalConfig(gc);
 //2、设置数据源
         DataSourceConfig dsc = new DataSourceConfig();
@@ -77,7 +81,7 @@ class GeoPositionsTest {
                 "ding=utf-8&serverTimezone=GMT%2B8");
         dsc.setDriverName("com.mysql.cj.jdbc.Driver");
         dsc.setUsername("root");
-        dsc.setPassword("123456");
+        dsc.setPassword("root");
         dsc.setDbType(DbType.MYSQL);
         mpg.setDataSource(dsc);
 //3、包的配置
@@ -85,26 +89,19 @@ class GeoPositionsTest {
         pc.setModuleName("test");
         pc.setParent("moe.ofs");
         pc.setEntity("entity");
-        pc.setMapper("dao");
-        pc.setService("service");
-        pc.setController("controller");
+        pc.setMapper("mapper");
+        pc.setService("moe/ofs/backend/mybatis/service");
+//        pc.setController("controller");
         mpg.setPackageInfo(pc);
 //4、策略配置
         StrategyConfig strategy = new StrategyConfig();
         strategy.setInclude(
-                "EXPORT_OBJECTS",
-                "FLAGS",
-                "GEO_POSITION",
-                "LAVA_SYSTEM_LOG",
-                "PLAYER_INFO",
-                "STUDENT",
-                "TYPE",
-                "VECTOR3D"
+                "export_object"
         );// 设置要映射的表名
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true); // 自动lombok；
-        strategy.setLogicDeleteFieldName("enable");
+//        strategy.setLogicDeleteFieldName("enable");
 // 自动填充配置
         TableFill gmtCreate = new TableFill("create_time", FieldFill.INSERT);
         TableFill gmtModified = new TableFill("update_time",
@@ -121,4 +118,5 @@ class GeoPositionsTest {
         mpg.execute(); //执行
 
     }
+
 }

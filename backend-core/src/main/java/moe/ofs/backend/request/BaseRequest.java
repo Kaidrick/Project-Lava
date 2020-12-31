@@ -21,6 +21,12 @@ public abstract class BaseRequest {
 
     private transient boolean sent;
 
+    protected transient volatile String result;
+
+    public String getResult() {
+        return result;
+    }
+
     public void setSent(boolean sent) {
         this.sent = sent;
     }
@@ -87,7 +93,8 @@ public abstract class BaseRequest {
                     String modifiers = Modifier.toString(f.getModifiers());
                     String fieldName = f.getName();
 //                    System.out.println(fieldName);
-                    return modifiers.contains("transient") && !fieldName.equals("sent");
+                    return modifiers.contains("transient") &&
+                            !fieldName.equals("sent") && !fieldName.equals("result");
                 })
                 .map(Field::getName)
                 .forEach(addField);

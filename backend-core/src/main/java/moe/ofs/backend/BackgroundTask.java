@@ -8,6 +8,9 @@ import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.LuaScriptInjectionObservable;
 import moe.ofs.backend.handlers.MissionStartObservable;
+import moe.ofs.backend.handlers.starter.LuaScriptStarter;
+import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
+import moe.ofs.backend.handlers.starter.services.LuaScriptInjectService;
 import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.message.ConnectionStatusChange;
 import moe.ofs.backend.message.OperationPhase;
@@ -34,8 +37,11 @@ import javax.jms.TextMessage;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
+import java.time.Instant;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -67,6 +73,10 @@ public class BackgroundTask {
 
     private final LavaTaskDispatcher lavaTaskDispatcher;
 
+    private final LuaScriptInjectService luaScriptInjectService;
+
+    private final List<LuaScriptStarter> luaScriptStarters;
+
     private final List<Plugin> plugins;
 
     private final Sender sender;
@@ -93,8 +103,10 @@ public class BackgroundTask {
 
     @PostConstruct
     private void loadPlugins() {
+//        log.info("************ Loading Plugins *************");
+//        plugins.forEach(plugin -> System.out.println("plugin = " + plugin.getName()));
         Plugin.loadedPlugins.addAll(plugins);
-        Plugin.loadedPlugins.forEach(Plugin::load);
+        Plugin.loadedPlugins.forEach(Plugin::load);  // FIXME: this is so bad
     }
 
 
@@ -102,14 +114,18 @@ public class BackgroundTask {
     public BackgroundTask(
 
             RequestHandler requestHandler, ConnectionManager connectionManager,
-            @Qualifier("exportObjectDelta") PollHandlerService exportObjectPollService,
-            @Qualifier("playerInfoBulk") PollHandlerService playerInfoPollService,
+            @Qualifier("exportObjectDelta")
+                    PollHandlerService exportObjectPollService,
+            @Qualifier("playerInfoBulk")
+                    PollHandlerService playerInfoPollService,
 
             LuaStateTelemetryService luaStateTelemetryService,
             ExportObjectService exportObjectService,
             PlayerInfoService playerInfoService,
             FlyableUnitService flyableUnitService,
-            ParkingInfoService parkingInfoService, LavaTaskDispatcher lavaTaskDispatcher, List<Plugin> plugins, Sender sender, RequestTransmissionService requestTransmissionService) {
+            ParkingInfoService parkingInfoService, LavaTaskDispatcher lavaTaskDispatcher,
+            LuaScriptInjectService luaScriptInjectService, List<LuaScriptStarter> luaScriptStarters, List<Plugin> plugins,
+            Sender sender, RequestTransmissionService requestTransmissionService) {
         this.requestHandler = requestHandler;
         this.connectionManager = connectionManager;
 
@@ -124,6 +140,9 @@ public class BackgroundTask {
         this.parkingInfoService = parkingInfoService;
         this.lavaTaskDispatcher = lavaTaskDispatcher;
 
+        this.luaScriptInjectService = luaScriptInjectService;
+        this.luaScriptStarters = luaScriptStarters;
+
         this.plugins = plugins;
 
         // JMS
@@ -133,6 +152,7 @@ public class BackgroundTask {
         this.requestTransmissionService = requestTransmissionService;
 
         currentTask = this;
+        injectionTaskChecks = new HashMap<>();
 
         phase = OperationPhase.PREPARING;
     }
@@ -147,6 +167,18 @@ public class BackgroundTask {
         return currentTask;
     }
 
+    private static Instant taskStartTime;
+
+    public static Instant getTaskStartTime() {
+        return taskStartTime;
+    }
+
+    private static Map<ScriptInjectionTask, Boolean> injectionTaskChecks;
+
+    public Map<ScriptInjectionTask, Boolean> getInjectionTaskChecks() {
+        return new HashMap<>(injectionTaskChecks);
+    }
+
     public boolean isStarted() {
         return started;
     }
@@ -158,6 +190,8 @@ public class BackgroundTask {
         if(started) {
 
             log.info("Starting Background Task...");
+
+            taskStartTime = Instant.now();
 
             // there can only be one background thread
             // how to ensure this is a singleton?
@@ -263,6 +297,9 @@ public class BackgroundTask {
         connectionManager.sanitizeDataPipeline();
 
         log.info("Initializing data services");
+
+        // FIXME: use autowired list for services to call dispose();
+        // FIXME: is a dispose method really necessary?
         // dispose obsolete data if any
         flyableUnitService.dispose();
         parkingInfoService.dispose();
@@ -324,7 +361,7 @@ public class BackgroundTask {
                 e.printStackTrace();
 
                 // shutdown
-                requestHandler.shutdownConnections();
+//                requestHandler.shutdownConnections();
             }
         };
 
@@ -343,8 +380,6 @@ public class BackgroundTask {
         serverPollingScheduler.scheduleWithFixedDelay(serverPolling,
                 0, 100, TimeUnit.MILLISECONDS);
 
-//         initialize plugins
-        Plugin.loadedPlugins.forEach(Plugin::init);
 
         // check in lua mission env for global variable persistent initialization
         // this flag can only be reset by mission restart event handler
@@ -353,6 +388,14 @@ public class BackgroundTask {
         boolean flag = ((ServerDataRequest) requestTransmissionService.send(
                 new ServerDataRequest("return tostring(lava_mission_persistent_initialization)")))
                 .getAsBoolean();
+
+        luaScriptStarters.stream()
+                .map(LuaScriptStarter::injectScript)
+                .forEach(luaScriptInjectService::add);
+
+        // put inject result into map that can be referenced from other sources
+        injectionTaskChecks.putAll(luaScriptInjectService.invokeInjection());
+//                .forEach(((task, aBoolean) -> System.out.println(task.getScriptIdentName() + " -> " + aBoolean)));
 
         if(!flag) {
             log.info("injecting mission persistence");
@@ -369,9 +412,10 @@ public class BackgroundTask {
 
         }
 
-        log.info("Schedulers running, background task ready, mission data initialized");
+        //         initialize plugins
+        Plugin.loadedPlugins.forEach(Plugin::init);
 
-        phase = OperationPhase.RUNNING;
+        log.info("Schedulers running, background task ready, mission data initialized");
 
         requestTransmissionService.send(
                 // also get dcs version here
@@ -383,6 +427,8 @@ public class BackgroundTask {
                             taskDcsMapTheaterName = theater;  // store theater name
                         })
         );
+
+        phase = OperationPhase.RUNNING;
 
         // initializing task dispatcher
         lavaTaskDispatcher.init();
