@@ -9,6 +9,7 @@ import moe.ofs.backend.function.slotcontrol.SlotChangeRequest;
 import moe.ofs.backend.function.slotcontrol.SlotChangeResult;
 import moe.ofs.backend.function.slotcontrol.SlotValidator;
 import moe.ofs.backend.LavaLog;
+import moe.ofs.backend.function.spawncontrol.services.StaticObjectService;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 import moe.ofs.backend.object.FlyableUnit;
@@ -22,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 /**
  * This addon class implements the functionality to place a static object matching the type and livery of
@@ -37,6 +40,8 @@ public class StaticDisplay implements Plugin {
     private final LavaLog.Logger logger = LavaLog.getLogger(StaticDisplay.class);
 
     private final RequestTransmissionService requestTransmissionService;
+
+    private final StaticObjectService staticObjectService;
 
     // name
     public final String name = "Static Aircraft Display";
@@ -70,9 +75,10 @@ public class StaticDisplay implements Plugin {
     private final SlotValidator slotValidator;
 
     @Autowired
-    public StaticDisplay(RequestTransmissionService requestTransmissionService, FlyableUnitService flyableUnitService,
+    public StaticDisplay(RequestTransmissionService requestTransmissionService, StaticObjectService staticObjectService, FlyableUnitService flyableUnitService,
                          ParkingInfoService parkingInfoService, SlotValidator slotValidator) {
         this.requestTransmissionService = requestTransmissionService;
+        this.staticObjectService = staticObjectService;
         this.flyableUnitService = flyableUnitService;
         this.parkingInfoService = parkingInfoService;
         this.slotValidator = slotValidator;
@@ -175,28 +181,23 @@ public class StaticDisplay implements Plugin {
                 return;
             }
 
-            String p = String.format(luaStringAddStatic,
-                    "_StaticDisplay_" + flyableUnit.getUnit_name(), type,
-                    flyableUnit.getX(), flyableUnit.getY(), flyableUnit.getLivery_id(),
-                    flyableUnit.getOnboard_num(), heading, flyableUnit.getCountry_id());
+            CompletableFuture<Integer> future = staticObjectService.addStaticObject("_StaticDisplay_" + flyableUnit.getUnit_name(),
+                    flyableUnit.getX(), flyableUnit.getY(), type,
+                    flyableUnit.getLivery_id(), flyableUnit.getOnboard_num(), heading, flyableUnit.getCountry_id());
 
-            requestTransmissionService.send(
-                    new ServerDataRequest(p)
-                            .addProcessable(s -> mapSlotStaticId.put(String.valueOf(flyableUnit.getUnit_id()), s))
-                            .addProcessable(s -> logger.addon(
-                                    String.format("Static Object [%s] spawned for %s with livery [%s]",
-                                            s, flyableUnit.getUnit_name(), flyableUnit.getLivery_id())
-                            ))
-            );
+            future.thenAccept(r -> {
+                mapSlotStaticId.put(String.valueOf(flyableUnit.getUnit_id()), String.valueOf(r));
+
+                log.info("Static Object {} spawned for %s with livery {}",
+                        flyableUnit.getUnit_name(), flyableUnit.getLivery_id());
+            });
         }  // else no spawn
     }
 
     private void despawnControl(FlyableUnit flyableUnit) {
         String runtimeId = mapSlotStaticId.get(String.valueOf(flyableUnit.getUnit_id()));
-        requestTransmissionService.send(
-                new ServerDataRequest(String.format(luaStringRemoveObject, runtimeId))
-                        .addProcessable(s -> logger.addon(runtimeId + " -> static object removed"))
-        );
+        CompletableFuture<Boolean> future = staticObjectService.removeStaticObject(Integer.parseInt(runtimeId));
+        future.thenAccept(s -> logger.addon(runtimeId + " -> static object removed"));
     }
 
     private void respawnOnPlayerLeaveServer(PlayerInfo playerInfo) {

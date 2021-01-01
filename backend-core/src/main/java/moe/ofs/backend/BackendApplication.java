@@ -19,7 +19,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import java.io.File;
 
 @SpringBootApplication
-@EnableAsync
 @EnableScheduling
 @Slf4j
 public class BackendApplication {

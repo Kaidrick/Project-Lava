@@ -103,8 +103,8 @@ public class BackgroundTask {
 
     @PostConstruct
     private void loadPlugins() {
-//        log.info("************ Loading Plugins *************");
-//        plugins.forEach(plugin -> System.out.println("plugin = " + plugin.getName()));
+        log.info("************ Loading Plugins *************");
+        plugins.forEach(plugin -> System.out.println("plugin = " + plugin.getName()));
         Plugin.loadedPlugins.addAll(plugins);
         Plugin.loadedPlugins.forEach(Plugin::load);  // FIXME: this is so bad
     }
