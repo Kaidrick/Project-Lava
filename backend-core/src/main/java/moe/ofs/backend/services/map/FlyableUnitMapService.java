@@ -44,12 +44,12 @@ public class FlyableUnitMapService extends AbstractMapService<FlyableUnit> imple
         // for shared cockpit aircraft such as Huey and Tomcat,
         // idString could be 1271 or 1271_n, where n is an integer
         int id;
-        if(idString.contains("_")) {  // multi-seat aircraft slot
+        if(idString.contains("_") && idString.split("_").length == 2) {  // multi-seat aircraft slot
             id = Integer.parseInt(idString.substring(0, idString.indexOf("_")));
         } else {
-            if(idString.equals("") || idString.equals("instructor") ||
-                idString.equals("forward") || idString.equals("artillery") ||
-                idString.equals("observer")) {  // observer slot
+            if(idString.equals("") || idString.contains("instructor") ||
+                idString.contains("forward_observer") || idString.contains("artillery_commander") ||
+                idString.contains("observer")) {  // observer slot
                 return Optional.empty();
             } else {
                 id = Integer.parseInt(idString);

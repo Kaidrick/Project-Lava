@@ -34,7 +34,7 @@ import java.util.concurrent.Future;
  */
 
 @Slf4j
-@Component
+//@Component
 public class StaticDisplay implements Plugin {
 
     private final LavaLog.Logger logger = LavaLog.getLogger(StaticDisplay.class);
