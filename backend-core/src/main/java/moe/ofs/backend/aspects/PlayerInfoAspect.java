@@ -1,5 +1,7 @@
 package moe.ofs.backend.aspects;
 
+import moe.ofs.backend.discipline.aspects.NetAction;
+import moe.ofs.backend.discipline.aspects.PlayerNetActionVo;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.jms.Sender;
 import org.aspectj.lang.JoinPoint;
@@ -27,17 +29,32 @@ public class PlayerInfoAspect {
 
     @After("logNewPlayerInfo()")
     public void logPlayerInfoConnection(JoinPoint joinPoint) {
+        System.out.println("point cut player new");
         Object object = joinPoint.getArgs()[0];
         if(object instanceof PlayerInfo) {
-            sender.sendToTopic("player.connection", (PlayerInfo) object, "connect");
+            PlayerNetActionVo<PlayerInfo> playerNetActionVo = new PlayerNetActionVo<>();
+            playerNetActionVo.setAction(NetAction.CONNECT);
+            playerNetActionVo.setObject((PlayerInfo) object);
+            playerNetActionVo.setTimestamp(System.currentTimeMillis());
+            playerNetActionVo.setSuccess(true);
+//            sender.sendToTopic("lava.player.connection", (PlayerInfo) object, "connect");
+            sender.sendToTopicAsJson("lava.player.connection", object, NetAction.CONNECT.getActionName());
         }
     }
 
     @After("logObsoletePlayerInfo()")
     public void logPlayerInfoDisconnect(JoinPoint joinPoint) {
+        System.out.println("point cut player left");
+
         Object object = joinPoint.getArgs()[0];
         if(object instanceof PlayerInfo) {
-            sender.sendToTopic("player.connection", (PlayerInfo) object, "disconnect");
+            PlayerNetActionVo<PlayerInfo> playerNetActionVo = new PlayerNetActionVo<>();
+            playerNetActionVo.setAction(NetAction.CONNECT);
+            playerNetActionVo.setObject((PlayerInfo) object);
+            playerNetActionVo.setTimestamp(System.currentTimeMillis());
+            playerNetActionVo.setSuccess(true);
+//            sender.sendToTopic("lava.player.connection", (PlayerInfo) object, "disconnect");
+            sender.sendToTopicAsJson("lava.player.connection", object, NetAction.DISCONNECT.getActionName());
         }
     }
 }

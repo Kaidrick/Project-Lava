@@ -104,7 +104,7 @@ public final class ServerBulkPollHandlerService implements PollHandlerService {
                             PlayerInfo previous = service.update(playerInfo);
 
                             if (service.detectSlotChange(previous, playerInfo)) {  // returns a boolean value
-                               System.out.println("Player slot change -> " + previous + ", " + playerInfo);
+//                               System.out.println("Player slot change -> " + previous + ", " + playerInfo);
                             }
                         });
 

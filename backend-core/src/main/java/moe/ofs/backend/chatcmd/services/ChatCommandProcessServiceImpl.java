@@ -2,16 +2,15 @@ package moe.ofs.backend.chatcmd.services;
 
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.BackgroundTask;
 import moe.ofs.backend.chatcmdnew.model.ChatCommandDefinition;
 import moe.ofs.backend.chatcmdnew.model.ScanStrategy;
 import moe.ofs.backend.domain.ChatCommand;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.handlers.MissionStartObservable;
-import moe.ofs.backend.message.OperationPhase;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.PlayerInfoService;
+import moe.ofs.backend.util.LuaInteract;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -67,10 +66,9 @@ public class ChatCommandProcessServiceImpl implements ChatCommandProcessService 
     }
 
     @Scheduled(fixedDelay = 200L)
+    @LuaInteract
     public void gather() {
-        if (BackgroundTask.getCurrentTask().getPhase().equals(OperationPhase.RUNNING)) {
-            poll().forEach(this::analysis);
-        }
+        poll().forEach(this::analysis);
     }
 
     @Override

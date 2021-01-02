@@ -20,9 +20,12 @@ public interface UpdatableService<T extends BaseEntity> {
     void remove(T obsoleteObject);
 
     @Obsolete
-    void cycle(List<T> list);
+    default void cycle(List<T> list) {}
 
-    boolean updatable(T update, T record);
+    @Obsolete
+    default boolean updatable(T update, T record) {
+        return false;
+    }
 
     /**
      * Update fields on the record object with values of the fields from the update object

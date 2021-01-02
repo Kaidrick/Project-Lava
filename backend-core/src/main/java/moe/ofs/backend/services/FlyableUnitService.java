@@ -4,7 +4,7 @@ import moe.ofs.backend.object.FlyableUnit;
 
 import java.util.Optional;
 
-public interface FlyableUnitService extends CrudService<FlyableUnit>, StaticService {
+public interface FlyableUnitService extends CrudService<FlyableUnit>, StaticService, MissionPersistenceRepository {
 
     Optional<FlyableUnit> findByUnitName(String name);
 

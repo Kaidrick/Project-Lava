@@ -1,14 +1,13 @@
 package moe.ofs.backend.function.newslotcontrol.services;
 
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.BackgroundTask;
+import moe.ofs.backend.function.mizdb.services.impl.LuaStorageInitServiceImpl;
 import moe.ofs.backend.handlers.starter.LuaScriptStarter;
 import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
 import moe.ofs.backend.hookinterceptor.*;
-import moe.ofs.backend.message.OperationPhase;
-import moe.ofs.backend.function.mizdb.services.impl.LuaStorageInitServiceImpl;
 import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.services.mizdb.SimpleKeyValueStorage;
+import moe.ofs.backend.util.LuaInteract;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
 import moe.ofs.backend.util.lua.LuaQueryState;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -88,12 +87,10 @@ public class SlotValidatorHookInterceptService
     }
 
     @Scheduled(fixedDelay = 1000L)
+    @LuaInteract
     public void gather() throws IOException {
-        if (BackgroundTask.getCurrentTask().getPhase().equals(OperationPhase.RUNNING)) {
-            poll().stream().peek(entity ->
-                    playerInfoService.findByNetId(entity.getNetId()).ifPresent(entity::setPlayer))
-                    .forEach(System.out::println);
-        }
-
+        poll().stream().peek(entity ->
+                playerInfoService.findByNetId(entity.getNetId()).ifPresent(entity::setPlayer))
+                .forEach(System.out::println);
     }
 }

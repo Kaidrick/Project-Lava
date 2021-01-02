@@ -20,12 +20,11 @@ import moe.ofs.backend.request.PollHandlerService;
 import moe.ofs.backend.request.RequestHandler;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
-import moe.ofs.backend.services.ExportObjectService;
-import moe.ofs.backend.services.FlyableUnitService;
-import moe.ofs.backend.services.ParkingInfoService;
-import moe.ofs.backend.services.PlayerInfoService;
+import moe.ofs.backend.services.*;
 import moe.ofs.backend.telemetry.serivces.LuaStateTelemetryService;
 import moe.ofs.backend.util.ConnectionManager;
+import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.annotation.JmsListener;
@@ -61,14 +60,6 @@ public class BackgroundTask {
 
     private final PollHandlerService playerInfoPollService;
 
-    private final ExportObjectService exportObjectService;
-
-    private final PlayerInfoService playerInfoService;
-
-    private final FlyableUnitService flyableUnitService;
-
-    private final ParkingInfoService parkingInfoService;
-
     private final LuaStateTelemetryService luaStateTelemetryService;
 
     private final LavaTaskDispatcher lavaTaskDispatcher;
@@ -78,6 +69,12 @@ public class BackgroundTask {
     private final List<LuaScriptStarter> luaScriptStarters;
 
     private final List<Plugin> plugins;
+
+    private final List<MissionPersistenceRepository> repositoryList;
+
+    private final List<StaticService> staticServices;
+
+    private final PlayerInfoService playerInfoService;
 
     private final Sender sender;
 
@@ -91,6 +88,10 @@ public class BackgroundTask {
     // TODO: if the background task is halted, this field should be reset to null
     public String getTaskDcsMapTheaterName() {
         return taskDcsMapTheaterName;
+    }
+
+    private void setDcsApplicationVersion(String version) {
+        dcsApplicationVersion = version;
     }
 
     public String getDcsApplicationVersion() {
@@ -119,13 +120,11 @@ public class BackgroundTask {
             @Qualifier("playerInfoBulk")
                     PollHandlerService playerInfoPollService,
 
-            LuaStateTelemetryService luaStateTelemetryService,
-            ExportObjectService exportObjectService,
-            PlayerInfoService playerInfoService,
-            FlyableUnitService flyableUnitService,
-            ParkingInfoService parkingInfoService, LavaTaskDispatcher lavaTaskDispatcher,
-            LuaScriptInjectService luaScriptInjectService, List<LuaScriptStarter> luaScriptStarters, List<Plugin> plugins,
-            Sender sender, RequestTransmissionService requestTransmissionService) {
+            LuaStateTelemetryService luaStateTelemetryService, LavaTaskDispatcher lavaTaskDispatcher,
+            LuaScriptInjectService luaScriptInjectService, List<LuaScriptStarter> luaScriptStarters,
+            List<Plugin> plugins,
+            List<MissionPersistenceRepository> repositoryList, List<StaticService> staticServices,
+            PlayerInfoService playerInfoService, Sender sender, RequestTransmissionService requestTransmissionService) {
         this.requestHandler = requestHandler;
         this.connectionManager = connectionManager;
 
@@ -133,17 +132,17 @@ public class BackgroundTask {
 
         this.exportObjectPollService = exportObjectPollService;
         this.playerInfoPollService = playerInfoPollService;
-        this.exportObjectService = exportObjectService;
-        this.playerInfoService = playerInfoService;
 
-        this.flyableUnitService = flyableUnitService;
-        this.parkingInfoService = parkingInfoService;
         this.lavaTaskDispatcher = lavaTaskDispatcher;
 
         this.luaScriptInjectService = luaScriptInjectService;
         this.luaScriptStarters = luaScriptStarters;
 
         this.plugins = plugins;
+        this.repositoryList = repositoryList;
+        this.staticServices = staticServices;
+
+        this.playerInfoService = playerInfoService;
 
         // JMS
         this.sender = sender;
@@ -298,17 +297,9 @@ public class BackgroundTask {
 
         log.info("Initializing data services");
 
-        // FIXME: use autowired list for services to call dispose();
-        // FIXME: is a dispose method really necessary?
-        // dispose obsolete data if any
-        flyableUnitService.dispose();
-        parkingInfoService.dispose();
-        exportObjectService.dispose();
-        playerInfoService.dispose();
+        repositoryList.forEach(MissionPersistenceRepository::dispose);
+        staticServices.forEach(StaticService::loadData);
 
-        // load static data
-        flyableUnitService.loadData();
-        parkingInfoService.loadData();
 
         isHalted.set(false);
 
@@ -388,6 +379,9 @@ public class BackgroundTask {
         boolean flag = ((ServerDataRequest) requestTransmissionService.send(
                 new ServerDataRequest("return tostring(lava_mission_persistent_initialization)")))
                 .getAsBoolean();
+
+        LuaScripts.request(LuaQueryEnv.SERVER_CONTROL, "return _ED_VERSION")
+                .addProcessable(this::setDcsApplicationVersion);
 
         luaScriptStarters.stream()
                 .map(LuaScriptStarter::injectScript)

@@ -1,6 +1,7 @@
 package moe.ofs.backend.function.spawncontrol.services.impl;
 
 import moe.ofs.backend.function.spawncontrol.services.StaticObjectService;
+import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.object.StaticObject;
 import moe.ofs.backend.object.Unit;
 import moe.ofs.backend.util.LuaScripts;
@@ -25,12 +26,19 @@ public class StaticObjectServiceImpl implements StaticObjectService {
     }
 
     @Override
-    public CompletableFuture<Integer> addStaticObject(String name, double x, double y, String type,
+    public CompletableFuture<StaticObject> addStaticObject(String name, double x, double y, String type,
                                                       String livery_id, String onboard_num, Double heading, int country_id) {
-        return CompletableFuture.completedFuture(LuaScripts.requestWithFile(LuaQueryEnv.MISSION_SCRIPTING, "add_static_object.lua",
-                name, type,
-                x, y, livery_id,
-                onboard_num, heading, country_id).getAsInt());
+        StaticObject staticObject = StaticObject.builder()
+                .name(name)
+                .x(x)
+                .y(y)
+                .type(type)
+                .livery_id(livery_id)
+                .onboard_num(onboard_num)
+                .heading(heading)
+                .country_id(country_id)
+                .build();
+        return addStaticObject(staticObject);
 
     }
 

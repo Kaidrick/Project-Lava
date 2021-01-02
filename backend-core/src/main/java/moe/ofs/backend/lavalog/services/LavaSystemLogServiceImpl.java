@@ -62,7 +62,7 @@ public class LavaSystemLogServiceImpl implements LavaSystemLogService {
         Page<LogEntry> page = new Page<>(object.getCurrentPageNo(), object.getPageSize());
 
         // TODO: use a page object time field processor to deal with null Date or epoch date
-        // TODO: aspect
+        // TODO: aspects
         if (object.getTo().equals(Date.from(Instant.EPOCH))) {
             object.setTo(Date.from(Instant.now()));
         }

@@ -103,10 +103,22 @@
             <artifactId>spring-aop</artifactId>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.aspectj/aspectjrt -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.9.6</version>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/org.aspectj/aspectjweaver -->
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
+            <version>1.9.6</version>
+            <scope>runtime</scope>
         </dependency>
+
 
         <!-- https://mvnrepository.com/artifact/io.hawt/hawtio-springboot -->
         <dependency>

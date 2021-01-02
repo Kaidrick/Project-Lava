@@ -14,6 +14,7 @@ import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 import moe.ofs.backend.object.FlyableUnit;
 import moe.ofs.backend.object.ParkingInfo;
+import moe.ofs.backend.object.StaticObject;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.FlyableUnitService;
@@ -181,12 +182,12 @@ public class StaticDisplay implements Plugin {
                 return;
             }
 
-            CompletableFuture<Integer> future = staticObjectService.addStaticObject("_StaticDisplay_" + flyableUnit.getUnit_name(),
+            CompletableFuture<StaticObject> future = staticObjectService.addStaticObject("_StaticDisplay_" + flyableUnit.getUnit_name(),
                     flyableUnit.getX(), flyableUnit.getY(), type,
                     flyableUnit.getLivery_id(), flyableUnit.getOnboard_num(), heading, flyableUnit.getCountry_id());
 
             future.thenAccept(r -> {
-                mapSlotStaticId.put(String.valueOf(flyableUnit.getUnit_id()), String.valueOf(r));
+                mapSlotStaticId.put(String.valueOf(flyableUnit.getUnit_id()), String.valueOf(r.getId()));
 
                 log.info("Static Object {} spawned for %s with livery {}",
                         flyableUnit.getUnit_name(), flyableUnit.getLivery_id());
