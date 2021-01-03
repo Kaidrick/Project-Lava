@@ -27,7 +27,7 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
 
     @Override
     public Optional<ExportObject> findByUnitName(String name) {
-        return findAll().stream().filter(exportObject -> exportObject.getUnitName().equals(name)).findAny();
+        return findAll().stream().filter(exportObject -> name.equals(exportObject.getUnitName())).findAny();
     }
 
     @Override

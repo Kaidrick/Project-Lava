@@ -10,7 +10,7 @@ import moe.ofs.backend.hookinterceptor.HookInterceptorDefinition;
 import moe.ofs.backend.hookinterceptor.HookInterceptorProcessService;
 import moe.ofs.backend.hookinterceptor.HookType;
 import moe.ofs.backend.function.mizdb.services.impl.LuaStorageInitServiceImpl;
-import moe.ofs.backend.services.PlayerInfoService;
+import moe.ofs.backend.services.PlayerDataService;
 import moe.ofs.backend.services.mizdb.SimpleKeyValueStorage;
 import moe.ofs.backend.util.LuaInteract;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
@@ -26,11 +26,11 @@ public class NewPlayerConnectionValidationServiceImpl
         implements HookInterceptorProcessService<PlayerTryConnectRecord, HookInterceptorDefinition>,
         LuaScriptStarter, GlobalConnectionBlockService {
 
-    private final PlayerInfoService playerInfoService;
+    private final PlayerDataService playerInfoService;
     private final SimpleKeyValueStorage<String> connectionValidatorStorage;
     private final SimpleKeyValueStorage<Object> globalConnectionBlockStorage;
 
-    public NewPlayerConnectionValidationServiceImpl(PlayerInfoService playerInfoService) {
+    public NewPlayerConnectionValidationServiceImpl(PlayerDataService playerInfoService) {
         this.playerInfoService = playerInfoService;
 
         connectionValidatorStorage =

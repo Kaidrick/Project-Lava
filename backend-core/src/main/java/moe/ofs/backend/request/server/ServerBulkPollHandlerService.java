@@ -5,8 +5,7 @@ import moe.ofs.backend.domain.Level;
 import moe.ofs.backend.domain.LuaState;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.request.*;
-import moe.ofs.backend.services.PlayerInfoService;
-import moe.ofs.backend.services.UpdatableService;
+import moe.ofs.backend.services.PlayerDataService;
 import moe.ofs.backend.util.ConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ public final class ServerBulkPollHandlerService implements PollHandlerService {
 
     protected boolean requestCompleted;
 
-    protected final PlayerInfoService service;
+    private final PlayerDataService playerDataService;
 
     protected Level level;
 
@@ -37,9 +36,9 @@ public final class ServerBulkPollHandlerService implements PollHandlerService {
     }
 
     @Autowired
-    public ServerBulkPollHandlerService(RequestHandler requestHandler, PlayerInfoService service) {
+    public ServerBulkPollHandlerService(RequestHandler requestHandler, PlayerDataService playerDataService) {
         this.requestHandler = requestHandler;
-        this.service = service;
+        this.playerDataService = playerDataService;
 
         this.level = PlayerInfo.class.getAnnotation(LuaState.class).value();
 
@@ -82,7 +81,7 @@ public final class ServerBulkPollHandlerService implements PollHandlerService {
                 .findAny().ifPresent(r -> {
                     if(list.size() == r.getResult().getTotal()) {
 
-                        Set<PlayerInfo> record = service.findAll().parallelStream().collect(Collectors.toSet());
+                        Set<PlayerInfo> record = playerDataService.findAll().parallelStream().collect(Collectors.toSet());
                         Set<PlayerInfo> update = new HashSet<>(list);
 
                         Sets.SetView<PlayerInfo> intersection = Sets.intersection(record, update);
@@ -96,14 +95,14 @@ public final class ServerBulkPollHandlerService implements PollHandlerService {
 
 //        intersection.forEach(this::processUpdateData);
 
-                        obsoletePlayers.forEach(service::remove);
-                        newPlayers.forEach(service::add);
+                        obsoletePlayers.forEach(playerDataService::remove);
+                        newPlayers.forEach(playerDataService::add);
 
                         // use update value
                         update.stream().filter(intersection::contains).forEach(playerInfo -> {
-                            PlayerInfo previous = service.update(playerInfo);
+                            PlayerInfo previous = playerDataService.update(playerInfo);
 
-                            if (service.detectSlotChange(previous, playerInfo)) {  // returns a boolean value
+                            if (playerDataService.detectSlotChange(previous, playerInfo)) {  // returns a boolean value
 //                               System.out.println("Player slot change -> " + previous + ", " + playerInfo);
                             }
                         });

@@ -5,7 +5,7 @@ import moe.ofs.backend.discipline.model.PlayerDisciplinaryAction;
 import moe.ofs.backend.discipline.model.Punishment;
 import moe.ofs.backend.discipline.service.PlayerDisciplineService;
 import moe.ofs.backend.domain.PlayerInfo;
-import moe.ofs.backend.services.PlayerInfoService;
+import moe.ofs.backend.services.PlayerDataService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 public class PlayerBanKickController {
 
     private final PlayerDisciplineService disciplineService;
-    private final PlayerInfoService playerInfoService;
+    private final PlayerDataService playerInfoService;
 
-    public PlayerBanKickController(PlayerDisciplineService disciplineService, PlayerInfoService playerInfoService) {
+    public PlayerBanKickController(PlayerDisciplineService disciplineService, PlayerDataService playerInfoService) {
         this.disciplineService = disciplineService;
         this.playerInfoService = playerInfoService;
     }

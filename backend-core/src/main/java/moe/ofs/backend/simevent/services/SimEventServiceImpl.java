@@ -41,6 +41,7 @@ public class SimEventServiceImpl extends AbstractPageableMapService<SimEvent>
 
     @Override
     public void invokeHandlers(LavaEvent lavaEvent) {
+        System.out.println("published lavaEvent = " + lavaEvent);
         handlers.forEach(handler -> handler.accept(lavaEvent));
     }
 
@@ -58,19 +59,31 @@ public class SimEventServiceImpl extends AbstractPageableMapService<SimEvent>
     @LuaInteract
     public void gather() throws IOException {
         // always try unfinished association first
-        limbo.removeIf(event -> event.getAssociateRetryCount() <= retryCountLimit);
         limbo.forEach(simEventRegistryService::associate);
+
+        // find already associated and events that has already reached the retry count limit
+        List<SimEvent> processed = limbo.stream()
+                .filter(s -> s.isAssociated() || s.getAssociateRetryCount() >= retryCountLimit)
+                .collect(Collectors.toList());
+
+        limbo.removeAll(processed);
+
+        // publish final lava event
+        processed.stream()
+                .peek(s -> s.setAssociated(true))
+                .map(event -> (LavaEvent) event)
+                .forEach(this::invokeHandlers);
+
 
         Map<Boolean, List<SimEvent>> map = simEventPollService.poll().parallelStream()
                 .filter(simEvent -> simEvent.getInitiatorId() != 0)
                 .map(simEventRegistryService::associate)
-                .collect(Collectors.groupingBy(SimEvent::isAssociated));
+                .collect(Collectors.partitioningBy(SimEvent::isAssociated));
 
-        if (map.containsKey(true)) {
-            map.get(true).stream().map(event -> (LavaEvent) event).forEach(this::invokeHandlers);
-        }
+        map.get(true).stream().map(event -> (LavaEvent) event)
+                .forEach(this::invokeHandlers);
 
-        if (map.containsKey(false)) {
+        if (map.get(false).size() > 0) {
             limbo.addAll(map.get(false));
             log.info("{} SimEvents moving to limbo state; total limbo size: {}",
                     map.get(false).size(), limbo.size());

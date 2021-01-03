@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.*;
 import moe.ofs.backend.services.ExportObjectService;
 import moe.ofs.backend.services.GraveyardService;
-import moe.ofs.backend.services.PlayerInfoService;
+import moe.ofs.backend.services.PlayerDataService;
 import moe.ofs.backend.services.map.AbstractMapService;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +16,10 @@ public class SimEventRegistryMapService extends AbstractMapService<SimEvent> imp
 
     private final ExportObjectService exportObjectService;
     private final GraveyardService graveyardService;
-    private final PlayerInfoService playerInfoService;
+    private final PlayerDataService playerInfoService;
 
-    public SimEventRegistryMapService(ExportObjectService exportObjectService, GraveyardService graveyardService, PlayerInfoService playerInfoService) {
+    public SimEventRegistryMapService(ExportObjectService exportObjectService, GraveyardService graveyardService,
+                                      PlayerDataService playerInfoService) {
         this.exportObjectService = exportObjectService;
         this.graveyardService = graveyardService;
         this.playerInfoService = playerInfoService;
@@ -34,7 +35,13 @@ public class SimEventRegistryMapService extends AbstractMapService<SimEvent> imp
      */
     @Override
     public SimEvent associate(SimEvent event) {
-        LavaEvent lavaEvent = new LavaEvent(event);
+        LavaEvent lavaEvent;
+        if (event instanceof LavaEvent) {
+            lavaEvent = (LavaEvent) event;
+        } else {
+            lavaEvent = new LavaEvent(event);
+        }
+
         lavaEvent.incrementRetryCount();
 
         referenceInitiator(lavaEvent, event.getInitiatorId(), lavaEvent.getInitiator());
@@ -81,10 +88,10 @@ public class SimEventRegistryMapService extends AbstractMapService<SimEvent> imp
             if (optionalGraveyardRecord.isPresent()) {
                 event.setTarget(optionalGraveyardRecord.get().getRecord());
                 log.info("delegate to graveyard search for event id {}, runtime id {}",
-                        event.getId(), event.getTargetId());
+                        event.getEventId(), event.getTargetId());
             } else {
-                log.info("unable to find initiator for event id {}, runtime id {}",
-                        event.getId(), event.getTargetId());
+                log.info("unable to find target for event id {}, runtime id {}",
+                        event.getEventId(), event.getTargetId());
             }
         }
     }
@@ -94,7 +101,7 @@ public class SimEventRegistryMapService extends AbstractMapService<SimEvent> imp
             return;
         }
 
-        // check for initiator
+        // check for weapon
         Optional<ExportObject> optional = exportObjectService.findByRuntimeId(runtimeId);
         if (optional.isPresent()) {
             event.setWeapon(optional.get());
@@ -106,10 +113,10 @@ public class SimEventRegistryMapService extends AbstractMapService<SimEvent> imp
             if (optionalGraveyardRecord.isPresent()) {
                 event.setWeapon(optionalGraveyardRecord.get().getRecord());
                 log.info("delegate to graveyard search for event id {}, runtime id {}",
-                        event.getId(), event.getWeaponId());
+                        event.getEventId(), event.getWeaponId());
             } else {
-                log.info("unable to find initiator for event id {}, runtime id {}",
-                        event.getId(), event.getWeaponId());
+                log.info("unable to find weapon for event id {}, runtime id {}",
+                        event.getEventId(), event.getWeaponId());
             }
         }
     }
@@ -131,10 +138,10 @@ public class SimEventRegistryMapService extends AbstractMapService<SimEvent> imp
             if (optionalGraveyardRecord.isPresent()) {
                 event.setInitiator(optionalGraveyardRecord.get().getRecord());
                 log.info("delegate to graveyard search for event id {}, runtime id {}",
-                        event.getId(), event.getInitiatorId());
+                        event.getEventId(), event.getInitiatorId());
             } else {
                 log.info("unable to find initiator for event id {}, runtime id {}",
-                        event.getId(), event.getInitiatorId());
+                        event.getEventId(), event.getInitiatorId());
             }
         }
     }

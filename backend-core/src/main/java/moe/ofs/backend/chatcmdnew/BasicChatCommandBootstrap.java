@@ -7,7 +7,7 @@ import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.function.triggermessage.model.TriggerMessage;
 import moe.ofs.backend.function.triggermessage.services.NetMessageService;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
-import moe.ofs.backend.services.PlayerInfoService;
+import moe.ofs.backend.services.PlayerDataService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -20,11 +20,11 @@ public class BasicChatCommandBootstrap {
     private final ChatCommandSetManageService commandSetManageService;
     private final TriggerMessageService triggerMessageService;
     private final NetMessageService netMessageService;
-    private final PlayerInfoService playerInfoService;
+    private final PlayerDataService playerInfoService;
 
     public BasicChatCommandBootstrap(ChatCommandSetManageService commandSetManageService,
                                      TriggerMessageService triggerMessageService,
-                                     NetMessageService netMessageService, PlayerInfoService playerInfoService) {
+                                     NetMessageService netMessageService, PlayerDataService playerInfoService) {
         this.commandSetManageService = commandSetManageService;
         this.triggerMessageService = triggerMessageService;
         this.netMessageService = netMessageService;

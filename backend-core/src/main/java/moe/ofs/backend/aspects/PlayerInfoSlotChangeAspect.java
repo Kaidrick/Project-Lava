@@ -22,12 +22,36 @@ public class PlayerInfoSlotChangeAspect {
             "detectSlotChange(moe.ofs.backend.domain.PlayerInfo, moe.ofs.backend.domain.PlayerInfo))")
     public void playerSlotChange() {}
 
-    @Pointcut("execution(public void moe.ofs.backend.services.map.PlayerInfoMapService.dispose(..))")
+    @Pointcut("execution(* moe.ofs.backend.services.map.*.dispose(..))")
     public void dispose() {}
 
-    @Before("dispose()")
-    public void testsetset() {
-        System.out.println("test test test");
+    @Pointcut("execution(* moe.ofs.backend.services.map.Player*.detectSlotChange(..))")
+    public void pinpoint() {}
+
+    @Pointcut("execution(* moe.ofs.backend.services.map.Player*.add(..))")
+    public void daydayday() {}
+
+    // working
+    @Pointcut("execution(* moe.ofs.backend.services.map.ExportObjectMapService.add(..))")
+    public void repost() {}
+
+    @Around("pinpoint()")
+    public Object testsetset(ProceedingJoinPoint pjp) throws Throwable {
+//        System.out.println("pjp = " + pjp);
+//        System.out.println("pjp.proceed(pjp.getArgs()) = " + pjp.proceed(pjp.getArgs()));
+        boolean change = (boolean) pjp.proceed(pjp.getArgs());
+        if (change) {
+            System.out.println("test test test");
+            System.out.println("pjp = " + pjp.getSignature());
+        }
+        return change;
+    }
+
+    @Around("daydayday()")
+    public Object panpanpan(ProceedingJoinPoint pjp) throws Throwable {
+        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+        System.out.println("pjp = " + pjp.getSignature());
+        return pjp.proceed(pjp.getArgs());
     }
 
 //    @Around("playerSlotChange()")

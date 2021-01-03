@@ -5,11 +5,13 @@ import moe.ofs.backend.chatcmdnew.model.ChatCommandDefinition;
 import moe.ofs.backend.chatcmdnew.model.ChatCommandProcessEntity;
 import moe.ofs.backend.chatcmdnew.services.ChatCommandHookInterceptService;
 import moe.ofs.backend.chatcmdnew.services.ChatCommandSetManageService;
+import moe.ofs.backend.function.mizdb.services.impl.LuaStorageInitServiceImpl;
 import moe.ofs.backend.handlers.starter.LuaScriptStarter;
 import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
-import moe.ofs.backend.hookinterceptor.*;
-import moe.ofs.backend.function.mizdb.services.impl.LuaStorageInitServiceImpl;
-import moe.ofs.backend.services.PlayerInfoService;
+import moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService;
+import moe.ofs.backend.hookinterceptor.HookInterceptorDefinition;
+import moe.ofs.backend.hookinterceptor.HookType;
+import moe.ofs.backend.services.PlayerDataService;
 import moe.ofs.backend.services.mizdb.SimpleKeyValueStorage;
 import moe.ofs.backend.util.LuaInteract;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
@@ -17,7 +19,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,12 +31,12 @@ public class ChatCommandHookInterceptServiceImpl
         extends AbstractHookInterceptorProcessService<ChatCommandProcessEntity, HookInterceptorDefinition>
         implements ChatCommandHookInterceptService, ChatCommandSetManageService, LuaScriptStarter {
 
-    private final PlayerInfoService playerInfoService;
+    private final PlayerDataService playerInfoService;
     private final SimpleKeyValueStorage<List<String>> storage;
 
     private final Set<ChatCommandDefinition> definitionSet;
 
-    public ChatCommandHookInterceptServiceImpl(PlayerInfoService playerInfoService) {
+    public ChatCommandHookInterceptServiceImpl(PlayerDataService playerInfoService) {
         this.playerInfoService = playerInfoService;
 
         definitionSet = new HashSet<>();
@@ -43,9 +44,6 @@ public class ChatCommandHookInterceptServiceImpl
         storage = new SimpleKeyValueStorage<>(
                 "lava-chat-command-hook-intercept-service-data-storage",
                 LuaQueryEnv.SERVER_CONTROL);
-
-//        storage.save("/enter", Arrays.asList("test", "best"));
-//        storage.save("/whoami", Arrays.asList("123", "456"));
     }
 
     @Override

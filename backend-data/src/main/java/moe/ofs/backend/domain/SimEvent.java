@@ -4,11 +4,13 @@ import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import moe.ofs.backend.domain.BaseEntity;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@ToString(callSuper = true)
 public class SimEvent extends BaseEntity {
     @SerializedName("id")
     protected int eventId;

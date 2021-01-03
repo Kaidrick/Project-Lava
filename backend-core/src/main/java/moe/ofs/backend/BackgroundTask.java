@@ -74,8 +74,6 @@ public class BackgroundTask {
 
     private final List<StaticService> staticServices;
 
-    private final PlayerInfoService playerInfoService;
-
     private final Sender sender;
 
     private OperationPhase phase;
@@ -124,7 +122,7 @@ public class BackgroundTask {
             LuaScriptInjectService luaScriptInjectService, List<LuaScriptStarter> luaScriptStarters,
             List<Plugin> plugins,
             List<MissionPersistenceRepository> repositoryList, List<StaticService> staticServices,
-            PlayerInfoService playerInfoService, Sender sender, RequestTransmissionService requestTransmissionService) {
+            Sender sender, RequestTransmissionService requestTransmissionService) {
         this.requestHandler = requestHandler;
         this.connectionManager = connectionManager;
 
@@ -141,8 +139,6 @@ public class BackgroundTask {
         this.plugins = plugins;
         this.repositoryList = repositoryList;
         this.staticServices = staticServices;
-
-        this.playerInfoService = playerInfoService;
 
         // JMS
         this.sender = sender;
@@ -297,7 +293,7 @@ public class BackgroundTask {
 
         log.info("Initializing data services");
 
-        repositoryList.forEach(MissionPersistenceRepository::dispose);
+        repositoryList.stream().peek(System.out::println).forEach(MissionPersistenceRepository::dispose);
         staticServices.forEach(StaticService::loadData);
 
 
