@@ -24,7 +24,7 @@ public interface PlayerInfoService extends UpdatableService<PlayerInfo>, CrudSer
 
     Optional<PlayerInfo> findByName(String playerName);
 
-//    Set<PlayerInfo> findAll();
+    Set<PlayerInfo> findAll();
 
     Set<PlayerInfo> findAll(boolean excludeServerHost);
 

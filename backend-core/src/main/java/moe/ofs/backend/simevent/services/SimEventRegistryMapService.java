@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.*;
 import moe.ofs.backend.services.ExportObjectService;
 import moe.ofs.backend.services.GraveyardService;
-import moe.ofs.backend.services.PlayerDataService;
+import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.services.map.AbstractMapService;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +16,10 @@ public class SimEventRegistryMapService extends AbstractMapService<SimEvent> imp
 
     private final ExportObjectService exportObjectService;
     private final GraveyardService graveyardService;
-    private final PlayerDataService playerInfoService;
+    private final PlayerInfoService playerInfoService;
 
     public SimEventRegistryMapService(ExportObjectService exportObjectService, GraveyardService graveyardService,
-                                      PlayerDataService playerInfoService) {
+                                      PlayerInfoService playerInfoService) {
         this.exportObjectService = exportObjectService;
         this.graveyardService = graveyardService;
         this.playerInfoService = playerInfoService;

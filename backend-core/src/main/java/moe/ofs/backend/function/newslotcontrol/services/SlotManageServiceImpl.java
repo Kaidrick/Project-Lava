@@ -6,7 +6,7 @@ import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.object.FlyableUnit;
 import moe.ofs.backend.services.ExportObjectService;
 import moe.ofs.backend.services.FlyableUnitService;
-import moe.ofs.backend.services.PlayerDataService;
+import moe.ofs.backend.services.PlayerInfoService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -16,13 +16,13 @@ import java.util.Optional;
 @Slf4j
 public class SlotManageServiceImpl implements SlotManageService {
 
-    private final PlayerDataService playerInfoService;
+    private final PlayerInfoService playerInfoService;
     private final FlyableUnitService flyableUnitService;
     private final ExportObjectService exportObjectService;
 
     private final SlotValidatorService slotValidatorService;
 
-    public SlotManageServiceImpl(PlayerDataService playerInfoService,
+    public SlotManageServiceImpl(PlayerInfoService playerInfoService,
                                  FlyableUnitService flyableUnitService, ExportObjectService exportObjectService, SlotValidatorService slotValidatorService) {
         this.playerInfoService = playerInfoService;
         this.flyableUnitService = flyableUnitService;

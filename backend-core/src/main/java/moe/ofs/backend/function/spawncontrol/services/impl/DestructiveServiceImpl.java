@@ -9,7 +9,7 @@ import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.services.ExportObjectService;
 import moe.ofs.backend.services.FlyableUnitService;
-import moe.ofs.backend.services.PlayerDataService;
+import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @Service
 public class DestructiveServiceImpl implements DestructiveService {
 
-    private final PlayerDataService playerInfoService;
+    private final PlayerInfoService playerInfoService;
     private final ExportObjectService exportObjectService;
 
     private final FlyableUnitService flyableUnitService;
@@ -30,7 +30,7 @@ public class DestructiveServiceImpl implements DestructiveService {
 
     private static final String DESTROY = LuaScripts.load("spawn_control/remove_object_by_runtime_id.lua");
 
-    public DestructiveServiceImpl(PlayerDataService playerInfoService, ExportObjectService exportObjectService,
+    public DestructiveServiceImpl(PlayerInfoService playerInfoService, ExportObjectService exportObjectService,
                                   FlyableUnitService flyableUnitService,
                                   RequestTransmissionService requestTransmissionService) {
         this.playerInfoService = playerInfoService;

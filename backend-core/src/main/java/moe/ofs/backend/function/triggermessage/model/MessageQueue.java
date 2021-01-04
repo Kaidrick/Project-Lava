@@ -3,6 +3,7 @@ package moe.ofs.backend.function.triggermessage.model;
 import moe.ofs.backend.domain.ExportObject;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
 import moe.ofs.backend.services.FlyableUnitService;
+import org.springframework.lang.NonNull;
 
 import java.util.ArrayDeque;
 import java.util.Optional;
@@ -21,7 +22,7 @@ public class MessageQueue {
 
     private int nextTimeStamp;
 
-    public MessageQueue(ExportObject object, FlyableUnitService flyableUnitService,
+    public MessageQueue(@NonNull ExportObject object, FlyableUnitService flyableUnitService,
                         TriggerMessageService triggerMessageService) {
 
         this.flyableUnitService = flyableUnitService;

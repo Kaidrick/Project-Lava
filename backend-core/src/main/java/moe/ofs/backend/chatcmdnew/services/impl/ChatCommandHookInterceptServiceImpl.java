@@ -11,7 +11,7 @@ import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
 import moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService;
 import moe.ofs.backend.hookinterceptor.HookInterceptorDefinition;
 import moe.ofs.backend.hookinterceptor.HookType;
-import moe.ofs.backend.services.PlayerDataService;
+import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.services.mizdb.SimpleKeyValueStorage;
 import moe.ofs.backend.util.LuaInteract;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
@@ -31,12 +31,12 @@ public class ChatCommandHookInterceptServiceImpl
         extends AbstractHookInterceptorProcessService<ChatCommandProcessEntity, HookInterceptorDefinition>
         implements ChatCommandHookInterceptService, ChatCommandSetManageService, LuaScriptStarter {
 
-    private final PlayerDataService playerInfoService;
+    private final PlayerInfoService playerInfoService;
     private final SimpleKeyValueStorage<List<String>> storage;
 
     private final Set<ChatCommandDefinition> definitionSet;
 
-    public ChatCommandHookInterceptServiceImpl(PlayerDataService playerInfoService) {
+    public ChatCommandHookInterceptServiceImpl(PlayerInfoService playerInfoService) {
         this.playerInfoService = playerInfoService;
 
         definitionSet = new HashSet<>();

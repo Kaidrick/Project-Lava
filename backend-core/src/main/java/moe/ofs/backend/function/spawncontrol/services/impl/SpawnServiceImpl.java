@@ -7,7 +7,7 @@ import moe.ofs.backend.function.spawncontrol.services.SpawnService;
 import moe.ofs.backend.object.FlyableUnit;
 import moe.ofs.backend.services.ExportObjectService;
 import moe.ofs.backend.services.FlyableUnitService;
-import moe.ofs.backend.services.PlayerDataService;
+import moe.ofs.backend.services.PlayerInfoService;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,11 +15,11 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class SpawnServiceImpl implements SpawnService {
-    private final PlayerDataService playerInfoService;
+    private final PlayerInfoService playerInfoService;
     private final ExportObjectService exportObjectService;
     private final FlyableUnitService flyableUnitService;
 
-    public SpawnServiceImpl(PlayerDataService playerInfoService, ExportObjectService exportObjectService,
+    public SpawnServiceImpl(PlayerInfoService playerInfoService, ExportObjectService exportObjectService,
                             FlyableUnitService flyableUnitService) {
         this.playerInfoService = playerInfoService;
         this.exportObjectService = exportObjectService;

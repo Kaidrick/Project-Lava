@@ -18,64 +18,34 @@ public class PlayerInfoSlotChangeAspect {
         this.sender = sender;
     }
 
-    @Pointcut("execution(public boolean moe.ofs.backend.services.*." +
-            "detectSlotChange(moe.ofs.backend.domain.PlayerInfo, moe.ofs.backend.domain.PlayerInfo))")
-    public void playerSlotChange() {}
-
     @Pointcut("execution(* moe.ofs.backend.services.map.*.dispose(..))")
     public void dispose() {}
 
-    @Pointcut("execution(* moe.ofs.backend.services.map.Player*.detectSlotChange(..))")
-    public void pinpoint() {}
+    @Pointcut("execution(* moe.ofs.backend.services.*.Player*.detectSlotChange(..))")
+    public void playerSlotChange() {}
 
-    @Pointcut("execution(* moe.ofs.backend.services.map.Player*.add(..))")
-    public void daydayday() {}
+    @Around("playerSlotChange()")
+    public Object testSlotChange(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+        System.out.println("player slot change boolean");
+        proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
+        return proceedingJoinPoint;
+    }
 
-    // working
-    @Pointcut("execution(* moe.ofs.backend.services.map.ExportObjectMapService.add(..))")
-    public void repost() {}
+    @AfterReturning(value = "playerSlotChange()", returning = "change")
+    public void logPlayerSlotChange(JoinPoint joinPoint, boolean change) {
+        System.out.println("point cut player change slot");
 
-    @Around("pinpoint()")
-    public Object testsetset(ProceedingJoinPoint pjp) throws Throwable {
-//        System.out.println("pjp = " + pjp);
-//        System.out.println("pjp.proceed(pjp.getArgs()) = " + pjp.proceed(pjp.getArgs()));
-        boolean change = (boolean) pjp.proceed(pjp.getArgs());
         if (change) {
-            System.out.println("test test test");
-            System.out.println("pjp = " + pjp.getSignature());
+            PlayerInfo previousPlayerInfo = (PlayerInfo) joinPoint.getArgs()[0];
+            PlayerInfo currentPlayerInfo = (PlayerInfo) joinPoint.getArgs()[1];
+            PlayerNetActionVo<PlayerInfo[]> playerNetActionVo = new PlayerNetActionVo<>();
+            playerNetActionVo.setAction(NetAction.CHANGE_SLOT);
+            playerNetActionVo.setObject(new PlayerInfo[] {previousPlayerInfo, currentPlayerInfo});
+            playerNetActionVo.setTimestamp(System.currentTimeMillis());
+            playerNetActionVo.setSuccess(true);
+
+            sender.sendToTopic("lava.player.connection", playerNetActionVo,
+                    NetAction.CHANGE_SLOT.getActionName());
         }
-        return change;
     }
-
-    @Around("daydayday()")
-    public Object panpanpan(ProceedingJoinPoint pjp) throws Throwable {
-        System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-        System.out.println("pjp = " + pjp.getSignature());
-        return pjp.proceed(pjp.getArgs());
-    }
-
-//    @Around("playerSlotChange()")
-//    public Object testSlotChange(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-//        System.out.println("player slot change boolean");
-//        proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
-//        return proceedingJoinPoint;
-//    }
-
-//    @AfterReturning(value = "playerSlotChange()", returning = "change")
-//    public void logPlayerSlotChange(JoinPoint joinPoint, boolean change) {
-//        System.out.println("point cut player change slot");
-//
-//        if (change) {
-//            PlayerInfo previousPlayerInfo = (PlayerInfo) joinPoint.getArgs()[0];
-//            PlayerInfo currentPlayerInfo = (PlayerInfo) joinPoint.getArgs()[1];
-//            PlayerNetActionVo<PlayerInfo[]> playerNetActionVo = new PlayerNetActionVo<>();
-//            playerNetActionVo.setAction(NetAction.CHANGE_SLOT);
-//            playerNetActionVo.setObject(new PlayerInfo[] {previousPlayerInfo, currentPlayerInfo});
-//            playerNetActionVo.setTimestamp(System.currentTimeMillis());
-//            playerNetActionVo.setSuccess(true);
-//
-//            sender.sendToTopic("lava.player.connection", playerNetActionVo,
-//                    NetAction.CHANGE_SLOT.getActionName());
-//        }
-//    }
 }

@@ -5,7 +5,7 @@ import moe.ofs.backend.function.triggermessage.model.TriggerMessage;
 import moe.ofs.backend.function.triggermessage.model.TriggerMessageRequest;
 import moe.ofs.backend.function.triggermessage.services.NetMessageService;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
-import moe.ofs.backend.services.PlayerDataService;
+import moe.ofs.backend.services.PlayerInfoService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,10 +22,10 @@ public class DcsMessageController {
 
     private final TriggerMessageService triggerMessageService;
     private final NetMessageService netMessageService;
-    private final PlayerDataService playerInfoService;
+    private final PlayerInfoService playerInfoService;
 
     public DcsMessageController(TriggerMessageService triggerMessageService,
-                                NetMessageService netMessageService, PlayerDataService playerInfoService) {
+                                NetMessageService netMessageService, PlayerInfoService playerInfoService) {
         this.triggerMessageService = triggerMessageService;
         this.netMessageService = netMessageService;
         this.playerInfoService = playerInfoService;

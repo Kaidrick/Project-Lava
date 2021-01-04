@@ -5,7 +5,7 @@ import moe.ofs.backend.function.mizdb.services.impl.LuaStorageInitServiceImpl;
 import moe.ofs.backend.handlers.starter.LuaScriptStarter;
 import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
 import moe.ofs.backend.hookinterceptor.*;
-import moe.ofs.backend.services.PlayerDataService;
+import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.services.mizdb.SimpleKeyValueStorage;
 import moe.ofs.backend.util.LuaInteract;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
@@ -46,11 +46,11 @@ public class SlotValidatorHookInterceptService
         implements SlotValidatorService, HookInterceptorProcessService<HookProcessEntity, HookInterceptorDefinition>,
         LuaScriptStarter {
 
-    private final PlayerDataService playerInfoService;
+    private final PlayerInfoService playerInfoService;
 
     private final SimpleKeyValueStorage<String> storage;
 
-    public SlotValidatorHookInterceptService(PlayerDataService playerInfoService) {
+    public SlotValidatorHookInterceptService(PlayerInfoService playerInfoService) {
         this.playerInfoService = playerInfoService;
 
         storage = new SimpleKeyValueStorage<>(

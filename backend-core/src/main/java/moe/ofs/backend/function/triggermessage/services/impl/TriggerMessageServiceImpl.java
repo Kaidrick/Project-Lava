@@ -8,7 +8,6 @@ import moe.ofs.backend.function.triggermessage.model.TriggerMessage;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
 import moe.ofs.backend.object.FlyableUnit;
 import moe.ofs.backend.services.FlyableUnitService;
-import moe.ofs.backend.services.PlayerDataService;
 import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
@@ -26,7 +25,7 @@ public class TriggerMessageServiceImpl implements TriggerMessageService {
     private final FlyableUnitService flyableUnitService;
     private final PlayerInfoService playerInfoService;
 
-//    private final PlayerDataService playerDataService;
+//    private final PlayerInfoService playerDataService;
 
     public TriggerMessageServiceImpl(FlyableUnitService flyableUnitService,
                                      PlayerInfoService playerInfoService) {
