@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.ExportObject;
 import moe.ofs.backend.object.Vector3D;
 import moe.ofs.backend.object.map.GeoPosition;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -82,11 +81,11 @@ class UpdatableServiceTest {
 
     @Test
     void fieldUpdate() {
-        Mockito.when(exportObjectUpdatableService.fieldUpdate(record, update)).thenCallRealMethod();
+        Mockito.when(exportObjectUpdatableService.updateFields(record, update)).thenCallRealMethod();
 
         assertEquals(record.getRuntimeID(), update.getRuntimeID());
         assertTrue(updateFieldExcluded.stream().noneMatch(s ->
-                exportObjectUpdatableService.fieldUpdate(record, update).contains(s)));
+                exportObjectUpdatableService.updateFields(record, update).contains(s)));
 
         List<Field> fieldList = Arrays.stream(record.getClass().getDeclaredFields())
                 .filter(f -> !updateFieldExcluded.contains(f.getName()))

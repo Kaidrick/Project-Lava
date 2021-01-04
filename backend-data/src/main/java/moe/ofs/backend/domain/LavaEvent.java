@@ -23,17 +23,4 @@ public final class LavaEvent extends SimEvent {
         this.eventId = simEvent.eventId;
         this.time = simEvent.time;
     }
-
-//    @Override
-//    public String toString() {
-//        return "LavaEvent{" +
-//                "eventId=" + eventId +
-//                ", time=" + time +
-//                ", initiator=" + initiator +
-//                ", initiatorPlayer=" + initiatorPlayer +
-//                ", weapon=" + weapon +
-//                ", target=" + target +
-//                ", targetPlayer=" + targetPlayer +
-//                '}';
-//    }
 }

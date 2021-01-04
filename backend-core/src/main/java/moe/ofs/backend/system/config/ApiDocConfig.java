@@ -1,4 +1,4 @@
-package moe.ofs.backend.config;
+package moe.ofs.backend.system.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +26,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 @Configuration
 @EnableSwagger2WebMvc
 @RequiredArgsConstructor
-public class APIDocConfig implements WebMvcConfigurer {
+public class ApiDocConfig implements WebMvcConfigurer {
     private final Environment environment;
     //    判断当前环境是否为 '开发'，'测试'环境
 //    private boolean b = StrUtil.containsAnyIgnoreCase(environment.getActiveProfiles()[0], "dev", "test");

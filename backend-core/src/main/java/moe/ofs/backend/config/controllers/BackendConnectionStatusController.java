@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
+import javax.jms.TextMessage;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -57,21 +58,16 @@ public class BackendConnectionStatusController {
         return status;
     }
 
-    @JmsListener(destination = "unit.spawncontrol", containerFactory = "jmsListenerContainerFactory",
+    @JmsListener(destination = "lava.spawn-control.export-object", containerFactory = "jmsListenerContainerFactory",
             selector = "type = 'spawn'")
-    public void receiveUnitSpawnMessage(ObjectMessage message) throws JMSException {
-        Serializable object = message.getObject();
-        if (object instanceof ExportObject) {
-            exportObjectCount.incrementAndGet();
-        }
+    public void receiveUnitSpawnMessage(TextMessage message) throws JMSException {
+        exportObjectCount.incrementAndGet();
     }
 
-    @JmsListener(destination = "unit.spawncontrol", containerFactory = "jmsListenerContainerFactory", selector = "type = 'depawn'")
-    public void receiveUnitDespawnMessage(ObjectMessage message) throws JMSException {
-        Serializable object = message.getObject();
-        if (object instanceof ExportObject) {
-            exportObjectCount.decrementAndGet();
-        }
+    @JmsListener(destination = "lava.spawn-control.export-object", containerFactory = "jmsListenerContainerFactory",
+            selector = "type = 'depawn'")
+    public void receiveUnitDespawnMessage(TextMessage message) throws JMSException {
+        exportObjectCount.decrementAndGet();
     }
 
 //    @GetMapping("syslog")

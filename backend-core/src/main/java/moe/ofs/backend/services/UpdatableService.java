@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public interface UpdatableService<T extends BaseEntity> {
 
@@ -33,7 +34,7 @@ public interface UpdatableService<T extends BaseEntity> {
      * @param update the update object whose fields will be used to insert to record object
      * @return List for String that contains the fields updated
      */
-    default List<String> fieldUpdate(T record, T update) {
+    default List<String> updateFields(T record, T update) {
         List<Field> fields = Arrays.asList(update.getClass().getDeclaredFields());
         List<String> updatedFields = new ArrayList<>();
         fields.forEach(field -> {

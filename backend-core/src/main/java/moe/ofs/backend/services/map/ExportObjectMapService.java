@@ -1,9 +1,7 @@
 package moe.ofs.backend.services.map;
 
-import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.ExportObject;
-import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.repositories.ExportObjectRepository;
 import moe.ofs.backend.services.ExportObjectNotFoundException;
 import moe.ofs.backend.services.ExportObjectService;
@@ -19,11 +17,6 @@ import java.util.Optional;
 @Slf4j
 public class ExportObjectMapService extends AbstractMapService<ExportObject>
         implements ExportObjectRepository, UpdatableService<ExportObject>, ExportObjectService {
-    private final Sender sender;
-
-    public ExportObjectMapService(Sender sender) {
-        this.sender = sender;
-    }
 
     @Override
     public Optional<ExportObject> findByUnitName(String name) {
@@ -68,26 +61,16 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
      */
     @Override
     public ExportObject update(ExportObject updateObject) {
-        // find id and then update
-        // FIXME --> update object does not contains full info
-//        System.out.println("updateObject = " + updateObject);
-//        Long id = map.entrySet().stream()
-//                .filter(entry -> entry.getValue().getRuntimeID() == updateObject.getRuntimeID()).findAny()
-//                .orElseThrow(RuntimeException::new).getKey();
-//        return map.put(id, updateObject);
-
         Optional<ExportObject> optional = findByRuntimeID(updateObject.getRuntimeID());
         optional.ifPresent(exportObject -> {
             if (updateObject.getPosition() != null) {
                 exportObject.setPosition(updateObject.getPosition());
             }
-        });
 
-        if (optional.isPresent()) {
-            sender.sendToTopic("unit.spawncontrol", optional.get(), "update");
-        } else {
-            log.info("******" + new Gson().toJson(updateObject));
-        }
+            List<String> updatedFields = updateFields(exportObject, updateObject);
+            log.info("{} fields updated for {}: {}", updatedFields.size(), exportObject.getRuntimeID(),
+                    String.join(", ", updatedFields));
+        });
 
         return optional.orElseThrow(() -> {
             String message = "No export object can be found matching update runtime id: " +

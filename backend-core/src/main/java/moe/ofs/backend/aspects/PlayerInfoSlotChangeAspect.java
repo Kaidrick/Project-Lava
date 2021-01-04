@@ -24,13 +24,6 @@ public class PlayerInfoSlotChangeAspect {
     @Pointcut("execution(* moe.ofs.backend.services.*.Player*.detectSlotChange(..))")
     public void playerSlotChange() {}
 
-    @Around("playerSlotChange()")
-    public Object testSlotChange(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        System.out.println("player slot change boolean");
-        proceedingJoinPoint.proceed(proceedingJoinPoint.getArgs());
-        return proceedingJoinPoint;
-    }
-
     @AfterReturning(value = "playerSlotChange()", returning = "change")
     public void logPlayerSlotChange(JoinPoint joinPoint, boolean change) {
         System.out.println("point cut player change slot");
