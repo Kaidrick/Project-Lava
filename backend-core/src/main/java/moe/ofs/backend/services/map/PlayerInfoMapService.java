@@ -1,21 +1,59 @@
 package moe.ofs.backend.services.map;
 
+import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.PlayerInfo;
-import moe.ofs.backend.repositories.PlayerInfoRepository;
 import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.services.UpdatableService;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Repository
 @Primary
+@Slf4j
 public class PlayerInfoMapService extends AbstractMapService<PlayerInfo>
-        implements PlayerInfoRepository, UpdatableService<PlayerInfo>, PlayerInfoService {
+        implements UpdatableService<PlayerInfo>, PlayerInfoService {
+
+    @Override
+    public void dispose() {
+        deleteAll();
+    }
+
+    @Override
+    public Optional<PlayerInfo> findByUcid(String ucid) {
+        return findAll().stream().filter(playerInfo -> playerInfo.getUcid().equals(ucid)).findAny();
+    }
+
+    @Override
+    public Optional<PlayerInfo> findByNetId(int netId) {
+        return findAll().stream().filter(playerInfo -> playerInfo.getNetId() == netId).findAny();
+    }
+
+    @Override
+    public Optional<PlayerInfo> findBySlot(String slot) {
+        return findAll().stream().filter(playerInfo -> playerInfo.getSlot().equals(slot)).findAny();
+    }
+
+    @Override
+    public Set<PlayerInfo> findAllByLang(String lang) {
+        return findAll().stream()
+                .filter(playerInfo -> playerInfo.getLang().equals(lang))
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<PlayerInfo> findAllBySide(int side) {
+        return findAll().stream().filter(playerInfo -> playerInfo.getSide() == side).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<PlayerInfo> findByPingGreaterThan(int ping) {
+        return findAll().stream().filter(playerInfo -> playerInfo.getPing() > ping).collect(Collectors.toSet());
+    }
+
     @Override
     public Optional<PlayerInfo> findByName(String playerName) {
         return findAll().stream().filter(playerInfo -> playerInfo.getName().equals(playerName)).findAny();
@@ -29,45 +67,8 @@ public class PlayerInfoMapService extends AbstractMapService<PlayerInfo>
     }
 
     @Override
-    public Optional<PlayerInfo> findByNetId(int netId) {
-        return findAll().stream().filter(playerInfo -> playerInfo.getNetId() == netId).findAny();
-    }
-
-    @Override
     public boolean detectSlotChange(PlayerInfo previous, PlayerInfo current) {
         return previous.getUcid().equals(current.getUcid()) && !previous.getSlot().equals(current.getSlot());
-    }
-
-    @Override
-    public Set<PlayerInfo> findAllByLang(String lang) {
-        return findAll().stream()
-                .filter(playerInfo -> playerInfo.getLang().equals(lang))
-                .collect(Collectors.toSet());
-    }
-
-    @Override
-    public void dispose() {
-        deleteAll();
-    }
-
-    @Override
-    public Optional<PlayerInfo> findByUcid(String ucid) {
-        return findAll().stream().filter(playerInfo -> playerInfo.getUcid().equals(ucid)).findAny();
-    }
-
-    @Override
-    public Optional<PlayerInfo> findBySlot(String slot) {
-        return findAll().stream().filter(playerInfo -> playerInfo.getSlot().equals(slot)).findAny();
-    }
-
-    @Override
-    public Set<PlayerInfo> findAllBySide(int side) {
-        return findAll().stream().filter(playerInfo -> playerInfo.getSide() == side).collect(Collectors.toSet());
-    }
-
-    @Override
-    public Set<PlayerInfo> findByPingGreaterThan(int ping) {
-        return findAll().stream().filter(playerInfo -> playerInfo.getPing() > ping).collect(Collectors.toSet());
     }
 
     @Override
@@ -97,15 +98,5 @@ public class PlayerInfoMapService extends AbstractMapService<PlayerInfo>
     @Override
     public void remove(PlayerInfo obsoleteObject) {
         delete(obsoleteObject);
-    }
-
-    @Override
-    public void cycle(List<PlayerInfo> list) {
-
-    }
-
-    @Override
-    public boolean updatable(PlayerInfo update, PlayerInfo record) {
-        return false;
     }
 }

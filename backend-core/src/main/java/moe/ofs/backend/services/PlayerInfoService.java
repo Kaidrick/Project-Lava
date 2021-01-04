@@ -16,6 +16,12 @@ public interface PlayerInfoService extends UpdatableService<PlayerInfo>, CrudSer
 
     Optional<PlayerInfo> findBySlot(String slot);
 
+    Set<PlayerInfo> findAllByLang(String lang);
+
+    Set<PlayerInfo> findAllBySide(int side);
+
+    Set<PlayerInfo> findByPingGreaterThan(int ping);
+
     Optional<PlayerInfo> findByName(String playerName);
 
     Set<PlayerInfo> findAll();

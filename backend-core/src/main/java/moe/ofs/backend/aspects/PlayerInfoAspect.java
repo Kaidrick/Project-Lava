@@ -21,10 +21,10 @@ public class PlayerInfoAspect {
     }
 
 //    @Pointcut("within(moe.ofs.backend.services.jpa.PlayerInfoJpaService)")
-    @Pointcut("execution(public void moe.ofs.backend.services.map.PlayerInfoMapService.add(..))")
+    @Pointcut("execution(public void moe.ofs.backend.services.*.Player*.add(..))")
     public void logNewPlayerInfo() {}
 
-    @Pointcut("execution(public void moe.ofs.backend.services.map.PlayerInfoMapService.remove(..))")
+    @Pointcut("execution(public void moe.ofs.backend.services.*.Player*.remove(..))")
     public void logObsoletePlayerInfo() {}
 
     @After("logNewPlayerInfo()")

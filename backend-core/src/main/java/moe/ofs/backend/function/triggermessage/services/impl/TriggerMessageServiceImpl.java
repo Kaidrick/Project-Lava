@@ -25,6 +25,8 @@ public class TriggerMessageServiceImpl implements TriggerMessageService {
     private final FlyableUnitService flyableUnitService;
     private final PlayerInfoService playerInfoService;
 
+//    private final PlayerInfoService playerDataService;
+
     public TriggerMessageServiceImpl(FlyableUnitService flyableUnitService,
                                      PlayerInfoService playerInfoService) {
         this.flyableUnitService = flyableUnitService;
@@ -40,7 +42,7 @@ public class TriggerMessageServiceImpl implements TriggerMessageService {
     }
 
     @Override
-    public void sendTriggerMessage(@NonNull TriggerMessage triggerMessage) {
+    public void sendTriggerMessage(TriggerMessage triggerMessage) {
         if (triggerMessage.getReceiverGroupId() == 0) {  // no receive group id specified; send to all players
             sendTriggerMessageForPlayers(triggerMessage, new ArrayList<>(playerInfoService.findAll()));
             return;
