@@ -38,7 +38,7 @@ public class PlayerInfoAspect {
             playerNetActionVo.setTimestamp(System.currentTimeMillis());
             playerNetActionVo.setSuccess(true);
 //            sender.sendToTopic("lava.player.connection", (PlayerInfo) object, "connect");
-            sender.sendToTopicAsJson("lava.player.connection", object, NetAction.CONNECT.getActionName());
+            sender.sendToTopicAsJson("lava.player.connection", playerNetActionVo, NetAction.CONNECT.getActionName());
         }
     }
 
@@ -54,7 +54,7 @@ public class PlayerInfoAspect {
             playerNetActionVo.setTimestamp(System.currentTimeMillis());
             playerNetActionVo.setSuccess(true);
 //            sender.sendToTopic("lava.player.connection", (PlayerInfo) object, "disconnect");
-            sender.sendToTopicAsJson("lava.player.connection", object, NetAction.DISCONNECT.getActionName());
+            sender.sendToTopicAsJson("lava.player.connection", playerNetActionVo, NetAction.DISCONNECT.getActionName());
         }
     }
 }

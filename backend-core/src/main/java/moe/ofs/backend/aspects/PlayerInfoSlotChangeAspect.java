@@ -18,16 +18,11 @@ public class PlayerInfoSlotChangeAspect {
         this.sender = sender;
     }
 
-    @Pointcut("execution(* moe.ofs.backend.services.map.*.dispose(..))")
-    public void dispose() {}
-
     @Pointcut("execution(* moe.ofs.backend.services.*.Player*.detectSlotChange(..))")
     public void playerSlotChange() {}
 
     @AfterReturning(value = "playerSlotChange()", returning = "change")
     public void logPlayerSlotChange(JoinPoint joinPoint, boolean change) {
-        System.out.println("point cut player change slot");
-
         if (change) {
             PlayerInfo previousPlayerInfo = (PlayerInfo) joinPoint.getArgs()[0];
             PlayerInfo currentPlayerInfo = (PlayerInfo) joinPoint.getArgs()[1];
@@ -37,7 +32,7 @@ public class PlayerInfoSlotChangeAspect {
             playerNetActionVo.setTimestamp(System.currentTimeMillis());
             playerNetActionVo.setSuccess(true);
 
-            sender.sendToTopic("lava.player.connection", playerNetActionVo,
+            sender.sendToTopicAsJson("lava.player.connection", playerNetActionVo,
                     NetAction.CHANGE_SLOT.getActionName());
         }
     }

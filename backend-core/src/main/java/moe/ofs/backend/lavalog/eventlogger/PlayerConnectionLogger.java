@@ -27,7 +27,7 @@ public class PlayerConnectionLogger {
     }
 
     private PlayerInfo[] parseSlotChange(String json) {
-        Type type = new TypeToken<PlayerInfo[]>() {}.getType();
+        Type type = new TypeToken<PlayerNetActionVo<PlayerInfo[]>>() {}.getType();
         PlayerNetActionVo<PlayerInfo[]> playerNetActionVo = new Gson().fromJson(json, type);
         return playerNetActionVo.getObject();
     }
@@ -37,7 +37,7 @@ public class PlayerConnectionLogger {
     private void logPlayerConnect(TextMessage textMessage) throws JMSException {
         PlayerInfo playerInfo = parse(textMessage.getText());
 
-        log.info("connect -> " + playerInfo.toString());
+//        log.info("connect -> " + playerInfo.toString());
         logger.log(LogLevel.INFO, String.format("Player <%s> connected from <%s> with <%s> client; ping %sms",
                 playerInfo.getName(), playerInfo.getIpaddr(), playerInfo.getLang(), playerInfo.getPing()));
     }
@@ -47,7 +47,7 @@ public class PlayerConnectionLogger {
     private void logPlayerDisconnect(TextMessage textMessage) throws JMSException {
         PlayerInfo playerInfo = parse(textMessage.getText());
 
-        log.info("disconnect -> " + playerInfo.toString());
+//        log.info("disconnect -> " + playerInfo.toString());
         logger.log(LogLevel.INFO, String.format("Player <%s> disconnected from server",
                 playerInfo.getName()));
     }
@@ -60,7 +60,7 @@ public class PlayerConnectionLogger {
         PlayerInfo prev = change[0];
         PlayerInfo curr = change[1];
 
-        log.info("slot change -> " + prev.toString() + " => " + curr.toString());
+//        log.info("slot change -> " + prev.toString() + " => " + curr.toString());
 
         logger.log(LogLevel.INFO, String.format("Player <%s> slot changed from %s to %s",
                 curr.getName(), prev.getSlot(), curr.getSlot()));

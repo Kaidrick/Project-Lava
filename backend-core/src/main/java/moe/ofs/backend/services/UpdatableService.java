@@ -41,7 +41,8 @@ public interface UpdatableService<T extends BaseEntity> {
             field.setAccessible(true);
             try {
                 // if the field is not null,
-                if (field.get(update) != null) {
+                // FIXME: export object field equality needs to be defined; need to rework parking info binary data
+                if (field.get(update) != null && !field.get(update).equals(field.get(record))) {
                     PropertyDescriptor propertyDescriptor =
                             new PropertyDescriptor(field.getName(), record.getClass());
 
