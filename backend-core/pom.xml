@@ -11,6 +11,10 @@
 
     <artifactId>backend-core</artifactId>
 
+    <properties>
+        <ascpectj.version>1.9.2</ascpectj.version>
+    </properties>
+
     <!--    <properties>-->
     <!--        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>-->
     <!--    </properties>-->
@@ -135,10 +139,48 @@
             <artifactId>knife4j-spring-boot-starter</artifactId>
             <version>2.0.8</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${ascpectj.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${ascpectj.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>1.11</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjtools</artifactId>
+                        <version>${ascpectj.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <complianceLevel>1.8</complianceLevel>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>

@@ -31,14 +31,11 @@ public class ChatCommandHookInterceptServiceImpl
         extends AbstractHookInterceptorProcessService<ChatCommandProcessEntity, HookInterceptorDefinition>
         implements ChatCommandHookInterceptService, ChatCommandSetManageService, LuaScriptStarter {
 
-    private final PlayerInfoService playerInfoService;
     private final SimpleKeyValueStorage<List<String>> storage;
 
     private final Set<ChatCommandDefinition> definitionSet;
 
-    public ChatCommandHookInterceptServiceImpl(PlayerInfoService playerInfoService) {
-        this.playerInfoService = playerInfoService;
-
+    public ChatCommandHookInterceptServiceImpl() {
         definitionSet = new HashSet<>();
 
         storage = new SimpleKeyValueStorage<>(

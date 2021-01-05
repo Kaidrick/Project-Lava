@@ -46,12 +46,12 @@ public class SlotValidatorHookInterceptService
         implements SlotValidatorService, HookInterceptorProcessService<HookProcessEntity, HookInterceptorDefinition>,
         LuaScriptStarter {
 
-    private final PlayerInfoService playerInfoService;
+//    private final PlayerInfoService playerInfoService;
 
     private final SimpleKeyValueStorage<String> storage;
 
-    public SlotValidatorHookInterceptService(PlayerInfoService playerInfoService) {
-        this.playerInfoService = playerInfoService;
+    public SlotValidatorHookInterceptService() {
+//        this.playerInfoService = playerInfoService;
 
         storage = new SimpleKeyValueStorage<>(
                 "lava-slot-change-interceptor-kw-storage", LuaQueryEnv.SERVER_CONTROL

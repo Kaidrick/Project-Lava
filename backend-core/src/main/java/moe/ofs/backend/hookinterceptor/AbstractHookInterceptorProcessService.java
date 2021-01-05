@@ -1,18 +1,28 @@
 package moe.ofs.backend.hookinterceptor;
 
+import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.services.PlayerInfoService;
+import moe.ofs.backend.util.LuaInteract;
 import moe.ofs.backend.util.LuaScripts;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
+@Slf4j
 public abstract class AbstractHookInterceptorProcessService
         <T extends HookProcessEntity, D extends HookInterceptorDefinition>
         implements HookInterceptorProcessService<T, D> {
 
+    protected PlayerInfoService playerInfoService;
+
     private final Set<HookInterceptorDefinition> definitionSet = new HashSet<>();
+
+    private final Set<HookRecordProcessor<T>> processorSet = new HashSet<>();
 
     private String name;
 
@@ -72,5 +82,46 @@ public abstract class AbstractHookInterceptorProcessService
 
             LuaScripts.request(LuaQueryEnv.SERVER_CONTROL, s);
         }
+    }
+
+    @Override
+    public boolean addProcessor(HookRecordProcessor<T> processor) {
+        return processorSet.add(processor);
+    }
+
+    @Override
+    public boolean addProcessor(String name, Consumer<T> action) {
+        return addProcessor(new HookRecordProcessor<>(name, action));
+    }
+
+    @Override
+    public void removeProcessor(HookRecordProcessor<T> processor) {
+        processorSet.remove(processor);
+    }
+
+    @Override
+    public void removeProcessor(String processorName) {
+        processorSet.removeIf(processor -> processor.getName().equals(processorName));
+    }
+
+    @LuaInteract
+    @Override
+    public void gather(Class<T> tClass) throws IOException {
+        poll(tClass).stream()
+                .peek(hookProcessEntity ->  // match and set player info if exists
+                        playerInfoService.findByNetId(hookProcessEntity.getNetId())
+                                .ifPresent(hookProcessEntity::setPlayer))
+                .forEach(e -> {
+                    try {
+                        processorSet.forEach(p -> p.getAction().accept(e));
+                    } catch (Exception exception) {
+                        log.error("Failed to process hook record due to: ", exception);
+                    }
+                });  // call consumer#accept
+    }
+
+    @Override
+    public void setPlayerInfoService(PlayerInfoService playerInfoService) {
+        this.playerInfoService = playerInfoService;
     }
 }

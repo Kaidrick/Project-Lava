@@ -16,7 +16,7 @@ public class MethodOperationPhasePremiseAspect {
     @Around("@annotation(moe.ofs.backend.util.LuaInteract)")
     public Object skipMethodsIfInvalidPhase(ProceedingJoinPoint joinPoint) throws Throwable {
         if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {
-            joinPoint.proceed();
+            return joinPoint.proceed(joinPoint.getArgs());
         }
 
         return joinPoint;

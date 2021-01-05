@@ -17,6 +17,7 @@ import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 @Service
@@ -26,12 +27,10 @@ public class PlayerConnectionValidationServiceImpl
         implements HookInterceptorProcessService<PlayerTryConnectRecord, HookInterceptorDefinition>,
         LuaScriptStarter, GlobalConnectionBlockService {
 
-    private final PlayerInfoService playerInfoService;
     private final SimpleKeyValueStorage<String> connectionValidatorStorage;
     private final SimpleKeyValueStorage<Object> globalConnectionBlockStorage;
 
-    public PlayerConnectionValidationServiceImpl(PlayerInfoService playerInfoService) {
-        this.playerInfoService = playerInfoService;
+    public PlayerConnectionValidationServiceImpl() {
 
         connectionValidatorStorage =
                 new SimpleKeyValueStorage<>("lava-default-player-connection-validation-hook-kw-pair",
@@ -40,6 +39,15 @@ public class PlayerConnectionValidationServiceImpl
         globalConnectionBlockStorage =
                 new SimpleKeyValueStorage<>("lava-default-player-connection-block-hook-kw-pair",
                         LuaQueryEnv.SERVER_CONTROL);
+    }
+
+    @PostConstruct
+    public void populateProcessors() {
+        addProcessor("console log processor", playerTryConnectRecord ->
+                log.info("Player {}<{}> tries to connect from {}",
+                        playerTryConnectRecord.getPlayerName(),
+                        playerTryConnectRecord.getUcid(),
+                        playerTryConnectRecord.getIpaddr()));
     }
 
     @Override
@@ -107,15 +115,16 @@ public class PlayerConnectionValidationServiceImpl
     @Scheduled(fixedDelay = 100L)
     @LuaInteract
     public void gather() throws IOException {
-        poll(PlayerTryConnectRecord.class).stream()
-                .peek(hookProcessEntity ->
-                        playerInfoService.findByNetId(hookProcessEntity.getNetId())
-                                .ifPresent(hookProcessEntity::setPlayer))
-                .forEach(playerTryConnectRecord -> // TODO: send to message queue?
-                        log.info("Player {}<{}> tries to connect from {}",
-                                playerTryConnectRecord.getPlayerName(),
-                                playerTryConnectRecord.getUcid(),
-                                playerTryConnectRecord.getIpaddr()));
+        gather(PlayerTryConnectRecord.class);
+//        poll(PlayerTryConnectRecord.class).stream()
+//                .peek(hookProcessEntity ->
+//                        playerInfoService.findByNetId(hookProcessEntity.getNetId())
+//                                .ifPresent(hookProcessEntity::setPlayer))
+//                .forEach(playerTryConnectRecord -> // TODO: send to message queue?
+//                        log.info("Player {}<{}> tries to connect from {}",
+//                                playerTryConnectRecord.getPlayerName(),
+//                                playerTryConnectRecord.getUcid(),
+//                                playerTryConnectRecord.getIpaddr()));
     }
 
     @Override
