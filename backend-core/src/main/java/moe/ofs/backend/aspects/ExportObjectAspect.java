@@ -10,7 +10,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 @Aspect
 public class ExportObjectAspect {
 
@@ -47,7 +47,7 @@ public class ExportObjectAspect {
     }
 
     @After("exportObjectDataRemove()")
-    private void logExportUnitDespawn(JoinPoint joinPoint) {
+    public void logExportUnitDespawn(JoinPoint joinPoint) {
         Object object = joinPoint.getArgs()[0];
         if (object instanceof ExportObject) {
             sender.sendToTopicAsJson("lava.spawn-control.export-object",
@@ -56,7 +56,7 @@ public class ExportObjectAspect {
     }
 
     @AfterReturning(value = "exportObjectDataUpdate()", returning = "update")
-    private void logExportObjectDataUpdate(JoinPoint joinPoint, ExportObject update) {
+    public void logExportObjectDataUpdate(JoinPoint joinPoint, ExportObject update) {
 //        Object object = joinPoint.getArgs()[0];
         if (update != null) {
             sender.sendToTopicAsJson("lava.spawn-control.export-object",

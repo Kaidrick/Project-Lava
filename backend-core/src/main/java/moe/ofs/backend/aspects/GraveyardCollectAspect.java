@@ -22,7 +22,7 @@ public class GraveyardCollectAspect {
     public void exportObjectDataRemove() {}
 
     @After("exportObjectDataRemove()")
-    private void collectToGraveyardAfterDespawn(JoinPoint joinPoint) {
+    public void collectToGraveyardAfterDespawn(JoinPoint joinPoint) {
         Object object = joinPoint.getArgs()[0];
         if (object instanceof ExportObject) {
             service.collect((ExportObject) object);

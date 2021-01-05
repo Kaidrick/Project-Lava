@@ -60,7 +60,7 @@ public class StaticObjectAspect {
     }
 
     @AfterReturning(value = "addStaticObject()", returning = "future")
-    private void staticObjectAddMessage(JoinPoint joinPoint, CompletableFuture<StaticObject> future) {
+    public void staticObjectAddMessage(JoinPoint joinPoint, CompletableFuture<StaticObject> future) {
         future.thenAccept(staticObject -> {
             boolean success = staticObject.getId() != 0;
             SpawnControlVo<StaticObject> viewObject = new SpawnControlVo<>();

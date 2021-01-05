@@ -3,9 +3,9 @@ package moe.ofs.backend.aspects;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.BackgroundTask;
 import moe.ofs.backend.message.OperationPhase;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 
 @Aspect
@@ -20,5 +20,15 @@ public class MethodOperationPhasePremiseAspect {
         }
 
         return joinPoint;
+    }
+
+    @Pointcut("execution(* moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService.poll(..))")
+    public void testAbstractClassIntercept() {}
+
+    @After("testAbstractClassIntercept()")
+    public void testIntercept(JoinPoint point) {
+        System.out.println("********************************************************");
+        System.out.println("point = " + point);
+        System.out.println("point.getSignature() = " + point.getSignature());
     }
 }

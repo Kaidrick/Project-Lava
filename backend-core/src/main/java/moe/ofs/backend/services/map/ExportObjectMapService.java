@@ -18,6 +18,9 @@ import java.util.Optional;
 public class ExportObjectMapService extends AbstractMapService<ExportObject>
         implements ExportObjectRepository, UpdatableService<ExportObject>, ExportObjectService {
 
+    public ExportObjectMapService() {
+    }
+
     @Override
     public Optional<ExportObject> findByUnitName(String name) {
         return findAll().stream().filter(exportObject -> name.equals(exportObject.getUnitName())).findAny();

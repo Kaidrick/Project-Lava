@@ -113,7 +113,11 @@ public abstract class AbstractHookInterceptorProcessService
                                 .ifPresent(hookProcessEntity::setPlayer))
                 .forEach(e -> {
                     try {
-                        processorSet.forEach(p -> p.getAction().accept(e));
+                        System.out.println("e = " + e);
+                        processorSet.forEach(p -> {
+                            System.out.println("p = " + p);
+                            p.getAction().accept(e);
+                        });
                     } catch (Exception exception) {
                         log.error("Failed to process hook record due to: ", exception);
                     }
