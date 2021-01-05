@@ -111,11 +111,12 @@ public class LuaInjectionInitializr implements LuaScriptInjectService {
 
         log.info("Mapping Lua Script Injection Task Dependencies");
         scriptInjectionTasks.stream().sorted(Comparator.comparing(ScriptInjectionTask::getOrder)).forEach(task -> {
-            log.info("Task Ident Name: {}, Initializr Class: {}, Dependency: {}, Load Order: {}",
+            log.info("#{} {}, Initializr Class: {}, Dependency: {}",
+                    task.getOrder(),
                     task.getScriptIdentName(),
                     task.getInitializrClass().getName(),
-                    task.getDependencyInitializrClass() != null ? task.getDependencyInitializrClass().getName() : "None",
-                    task.getOrder());
+                    task.getDependencyInitializrClass() != null ?
+                            task.getDependencyInitializrClass().getName() : "None");
         });
     }
 

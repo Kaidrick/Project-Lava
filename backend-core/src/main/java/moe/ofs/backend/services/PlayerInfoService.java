@@ -5,7 +5,8 @@ import moe.ofs.backend.domain.PlayerInfo;
 import java.util.Optional;
 import java.util.Set;
 
-public interface PlayerInfoService extends UpdatableService<PlayerInfo>, CrudService<PlayerInfo> {
+public interface PlayerInfoService extends UpdatableService<PlayerInfo>, CrudService<PlayerInfo>,
+        MissionPersistenceRepository {
 
     void dispose();
 
@@ -14,6 +15,12 @@ public interface PlayerInfoService extends UpdatableService<PlayerInfo>, CrudSer
     Optional<PlayerInfo> findByNetId(int netId);
 
     Optional<PlayerInfo> findBySlot(String slot);
+
+    Set<PlayerInfo> findAllByLang(String lang);
+
+    Set<PlayerInfo> findAllBySide(int side);
+
+    Set<PlayerInfo> findByPingGreaterThan(int ping);
 
     Optional<PlayerInfo> findByName(String playerName);
 

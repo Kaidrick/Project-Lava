@@ -4,7 +4,8 @@ import moe.ofs.backend.domain.ExportObject;
 
 import java.util.Optional;
 
-public interface ExportObjectService extends UpdatableService<ExportObject>, CrudService<ExportObject> {
+public interface ExportObjectService extends UpdatableService<ExportObject>, CrudService<ExportObject>,
+        MissionPersistenceRepository {
 
     void dispose();
 

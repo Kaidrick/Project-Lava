@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public interface UpdatableService<T extends BaseEntity> {
 
@@ -20,9 +21,12 @@ public interface UpdatableService<T extends BaseEntity> {
     void remove(T obsoleteObject);
 
     @Obsolete
-    void cycle(List<T> list);
+    default void cycle(List<T> list) {}
 
-    boolean updatable(T update, T record);
+    @Obsolete
+    default boolean updatable(T update, T record) {
+        return false;
+    }
 
     /**
      * Update fields on the record object with values of the fields from the update object
@@ -30,14 +34,15 @@ public interface UpdatableService<T extends BaseEntity> {
      * @param update the update object whose fields will be used to insert to record object
      * @return List for String that contains the fields updated
      */
-    default List<String> fieldUpdate(T record, T update) {
+    default List<String> updateFields(T record, T update) {
         List<Field> fields = Arrays.asList(update.getClass().getDeclaredFields());
         List<String> updatedFields = new ArrayList<>();
         fields.forEach(field -> {
             field.setAccessible(true);
             try {
                 // if the field is not null,
-                if (field.get(update) != null) {
+                // FIXME: export object field equality needs to be defined; need to rework parking info binary data
+                if (field.get(update) != null && !field.get(update).equals(field.get(record))) {
                     PropertyDescriptor propertyDescriptor =
                             new PropertyDescriptor(field.getName(), record.getClass());
 

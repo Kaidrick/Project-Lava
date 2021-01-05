@@ -1,11 +1,12 @@
 package moe.ofs.backend.aspects;
 
+import moe.ofs.backend.discipline.aspects.NetAction;
+import moe.ofs.backend.discipline.aspects.PlayerNetActionVo;
 import moe.ofs.backend.domain.PlayerInfo;
 import moe.ofs.backend.jms.Sender;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,7 +18,7 @@ public class PlayerInfoSlotChangeAspect {
         this.sender = sender;
     }
 
-    @Pointcut("execution(public boolean moe.ofs.backend.services.map.PlayerInfoMapService.detectSlotChange(..))")
+    @Pointcut("execution(* moe.ofs.backend.services.*.Player*.detectSlotChange(..))")
     public void playerSlotChange() {}
 
     @AfterReturning(value = "playerSlotChange()", returning = "change")
@@ -25,9 +26,14 @@ public class PlayerInfoSlotChangeAspect {
         if (change) {
             PlayerInfo previousPlayerInfo = (PlayerInfo) joinPoint.getArgs()[0];
             PlayerInfo currentPlayerInfo = (PlayerInfo) joinPoint.getArgs()[1];
+            PlayerNetActionVo<PlayerInfo[]> playerNetActionVo = new PlayerNetActionVo<>();
+            playerNetActionVo.setAction(NetAction.CHANGE_SLOT);
+            playerNetActionVo.setObject(new PlayerInfo[] {previousPlayerInfo, currentPlayerInfo});
+            playerNetActionVo.setTimestamp(System.currentTimeMillis());
+            playerNetActionVo.setSuccess(true);
 
-            sender.sendToTopic("player.connection", new PlayerInfo[] {previousPlayerInfo, currentPlayerInfo},
-                    "slotchange");
+            sender.sendToTopicAsJson("lava.player.connection", playerNetActionVo,
+                    NetAction.CHANGE_SLOT.getActionName());
         }
     }
 }

@@ -7,6 +7,7 @@ import moe.ofs.backend.request.export.ExportDataRequest;
 import moe.ofs.backend.request.server.ServerDataRequest;
 import moe.ofs.backend.request.services.RequestTransmissionService;
 import moe.ofs.backend.util.lua.LuaQueryEnv;
+import org.springframework.boot.loader.LaunchedURLClassLoader;
 
 import java.io.BufferedReader;
 import java.io.IOException;

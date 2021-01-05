@@ -60,7 +60,7 @@ public enum HookType {
 
     public String getFunctionArgsString(String storageArgName) {
         if (storageArgName == null) {
-            return String.join(",", functionArgs);
+            return "_," +  String.join(",", functionArgs);
         }
         return storageArgName + "," + String.join(",", functionArgs);
     }

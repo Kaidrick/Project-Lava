@@ -85,11 +85,13 @@ public class BasicChatCommandBootstrap {
                             int bound = 100;
 
                             if (!chatCommandProcessEntity.getMessage().equals(chatCommandProcessEntity.getKeyword())) {
-                                bound = Double.valueOf(chatCommandProcessEntity.getMessage().substring(
-                                        chatCommandProcessEntity.getKeyword().length())).intValue();
+                                try {
+                                    bound = Double.valueOf(chatCommandProcessEntity.getMessage().substring(
+                                            chatCommandProcessEntity.getKeyword().length())).intValue();
+                                } catch (NumberFormatException ignored) {}
                             }
 
-                            int diceRoll = (int) Math.ceil(Math.random() * bound);
+                            int diceRoll = Math.abs((int) Math.ceil(Math.random() * bound));
 
                             TriggerMessage message = TriggerMessage.builder()
                                     .receiverGroupId(0)

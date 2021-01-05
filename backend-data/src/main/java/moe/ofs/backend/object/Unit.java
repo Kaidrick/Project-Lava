@@ -2,23 +2,17 @@ package moe.ofs.backend.object;
 
 import java.util.Map;
 
-public class Unit extends SimObject {
+public class Unit extends DisplayableObject {
     private Double alt;
     private String alt_type = "BARO";
-    private String livery_id = "default_livery";
     private String skill = "High";
     private String parking;
     private Double speed;
-    private String type;
     private Integer unitId;
     private Double psi;
     private String parking_id;
-    private Double x;
-    private Double y;
-    private Double heading;
     private Payload payload;
     private Map<Object, Object> callsign;
-    private String onboard_num;
 
     private String getParking() {
         return parking;

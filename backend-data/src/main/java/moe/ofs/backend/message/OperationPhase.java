@@ -1,10 +1,16 @@
 package moe.ofs.backend.message;
 
 public enum OperationPhase {
-    PREPARING, LOADING, STOPPING, IDLE, RUNNING;
+    PREPARING(0), LOADING(1), STOPPING(2), IDLE(3), RUNNING(4);
+
+    private final int statusCode;
+
+    OperationPhase(int statusCode) {
+        this.statusCode = statusCode;
+    }
 
     public int getStatusCode() {
-        return this.ordinal();
+        return statusCode;
     }
 
     public String getStatusString() {

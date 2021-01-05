@@ -17,4 +17,9 @@ public class LoggerConfiguration {
     public PlayerConnectionLogger playerConnectionLogger() {
         return new PlayerConnectionLogger();
     }
+
+    @Bean
+    public StaticObjectLogger staticObjectLogger() {
+        return new StaticObjectLogger();
+    }
 }

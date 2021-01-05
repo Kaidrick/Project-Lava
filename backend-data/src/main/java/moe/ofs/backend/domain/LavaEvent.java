@@ -7,6 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString(callSuper = true)
 public final class LavaEvent extends SimEvent {
     private ExportObject initiator;
     private ExportObject weapon;
@@ -21,18 +22,5 @@ public final class LavaEvent extends SimEvent {
         this.weaponId = simEvent.weaponId;
         this.eventId = simEvent.eventId;
         this.time = simEvent.time;
-    }
-
-    @Override
-    public String toString() {
-        return "LavaEvent{" +
-                "eventId=" + eventId +
-                ", time=" + time +
-                ", initiator=" + initiator +
-                ", initiatorPlayer=" + initiatorPlayer +
-                ", weapon=" + weapon +
-                ", target=" + target +
-                ", targetPlayer=" + targetPlayer +
-                '}';
     }
 }

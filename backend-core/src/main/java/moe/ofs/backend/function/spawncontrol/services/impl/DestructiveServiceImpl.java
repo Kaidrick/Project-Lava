@@ -11,6 +11,7 @@ import moe.ofs.backend.services.ExportObjectService;
 import moe.ofs.backend.services.FlyableUnitService;
 import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.util.lua.LuaQueryEnv;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -54,21 +55,36 @@ public class DestructiveServiceImpl implements DestructiveService {
      * @param playerInfo the player who is occupying the unit that should be destroyed.
      */
     @Override
-    public void destroy(PlayerInfo playerInfo) {
+    public boolean destroy(PlayerInfo playerInfo) {
         Optional<FlyableUnit> flyableUnitOptional = flyableUnitService.findByUnitId(playerInfo.getSlot());
         if (flyableUnitOptional.isPresent()) {
-            FlyableUnit unit = flyableUnitOptional.get();
-            exportObjectService.findByUnitName(unit.getUnit_name()).ifPresent(exportObject ->
-                    requestTransmissionService.send(
-                    new ServerDataRequest(String.format(DESTROY, exportObject.getRuntimeID()))
-                            .addProcessable(s ->
-                                    logger.info(String.format("World removed object (ID: %d, Type: %s; " +
-                                                    "linked player: %s[%s]<%s>) " +
-                                                    "from current mission.",
-                                            exportObject.getRuntimeID(), exportObject.getName(),
-                                            playerInfo.getName(), playerInfo.getLang(), playerInfo.getIpaddr())))
-            ));
+            Optional<ExportObject> exportObjectOptional = exportObjectService.findByUnitName(playerInfo.getName());
+            if (exportObjectOptional.isPresent()) {
+                ExportObject exportObject = exportObjectOptional.get();
+
+                boolean destroyed = LuaScripts.requestWithFile(LuaQueryEnv.MISSION_SCRIPTING,
+                        "spawn_control/remove_object_by_runtime_id.lua", exportObject.getRuntimeID()).getAsBoolean();
+
+                if(destroyed) {
+                    logger.info(String.format("World removed object (ID: %d, Type: %s; " +
+                                    "linked player: %s[%s]<%s>) " +
+                                    "from current mission.",
+                            exportObject.getRuntimeID(), exportObject.getName(),
+                            playerInfo.getName(), playerInfo.getLang(), playerInfo.getIpaddr()));
+                } else {
+                    logger.info(String.format("World failed to removed object " +
+                                    "because this object does not exist in mission: " +
+                                    "(ID: %d, Type: %s; " +
+                                    "linked player: %s[%s]<%s>).",
+                            exportObject.getRuntimeID(), exportObject.getName(),
+                            playerInfo.getName(), playerInfo.getLang(), playerInfo.getIpaddr()));
+                }
+            } else {
+                return false;
+            }
         }
+
+        return false;
     }
 
     @Override

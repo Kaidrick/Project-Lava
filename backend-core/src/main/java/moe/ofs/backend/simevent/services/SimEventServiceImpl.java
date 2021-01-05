@@ -1,11 +1,10 @@
 package moe.ofs.backend.simevent.services;
 
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.BackgroundTask;
 import moe.ofs.backend.domain.LavaEvent;
-import moe.ofs.backend.message.OperationPhase;
-import moe.ofs.backend.services.map.AbstractPageableMapService;
 import moe.ofs.backend.domain.SimEvent;
+import moe.ofs.backend.services.map.AbstractPageableMapService;
+import moe.ofs.backend.util.LuaInteract;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -43,6 +41,7 @@ public class SimEventServiceImpl extends AbstractPageableMapService<SimEvent>
 
     @Override
     public void invokeHandlers(LavaEvent lavaEvent) {
+        System.out.println("published lavaEvent = " + lavaEvent);
         handlers.forEach(handler -> handler.accept(lavaEvent));
     }
 
@@ -57,26 +56,37 @@ public class SimEventServiceImpl extends AbstractPageableMapService<SimEvent>
     }
 
     @Scheduled(fixedDelay = 200L)
-    private void gather() throws IOException {
-        if (BackgroundTask.getCurrentTask().getPhase().equals(OperationPhase.RUNNING)) {
-            // always try unfinished association first
-            limbo.removeIf(event -> event.getAssociateRetryCount() <= retryCountLimit);
-            limbo.forEach(simEventRegistryService::associate);
+    @LuaInteract
+    public void gather() throws IOException {
+        // always try unfinished association first
+        limbo.forEach(simEventRegistryService::associate);
 
-            Map<Boolean, List<SimEvent>> map = simEventPollService.poll().parallelStream()
-                    .filter(simEvent -> simEvent.getInitiatorId() != 0)
-                    .map(simEventRegistryService::associate)
-                    .collect(Collectors.groupingBy(SimEvent::isAssociated));
+        // find already associated and events that has already reached the retry count limit
+        List<SimEvent> processed = limbo.stream()
+                .filter(s -> s.isAssociated() || s.getAssociateRetryCount() >= retryCountLimit)
+                .collect(Collectors.toList());
 
-            if (map.containsKey(true)) {
-                map.get(true).stream().map(event -> (LavaEvent) event).forEach(this::invokeHandlers);
-            }
+        limbo.removeAll(processed);
 
-            if (map.containsKey(false)) {
-                limbo.addAll(map.get(false));
-                log.info("{} SimEvents moving to limbo state; total limbo size: {}",
-                        map.get(false).size(), limbo.size());
-            }
+        // publish final lava event
+        processed.stream()
+                .peek(s -> s.setAssociated(true))
+                .map(event -> (LavaEvent) event)
+                .forEach(this::invokeHandlers);
+
+
+        Map<Boolean, List<SimEvent>> map = simEventPollService.poll().parallelStream()
+                .filter(simEvent -> simEvent.getInitiatorId() != 0)
+                .map(simEventRegistryService::associate)
+                .collect(Collectors.partitioningBy(SimEvent::isAssociated));
+
+        map.get(true).stream().map(event -> (LavaEvent) event)
+                .forEach(this::invokeHandlers);
+
+        if (map.get(false).size() > 0) {
+            limbo.addAll(map.get(false));
+            log.info("{} SimEvents moving to limbo state; total limbo size: {}",
+                    map.get(false).size(), limbo.size());
         }
     }
 

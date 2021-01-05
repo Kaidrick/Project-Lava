@@ -4,34 +4,41 @@ import moe.ofs.backend.domain.ExportObject;
 import moe.ofs.backend.function.triggermessage.model.MessageQueue;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
 import moe.ofs.backend.services.FlyableUnitService;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MessageQueueFactory implements FactoryBean<MessageQueue> {
+public class MessageQueueFactory implements FactoryBean<MessageQueue>, ApplicationContextAware {
 
-    private ExportObject exportObject;
+    private ApplicationContext applicationContext;
 
-    private final FlyableUnitService flyableUnitService;
-    private final TriggerMessageService triggerMessageService;
+    private final ThreadLocal<ExportObject> objectThreadLocal;
 
-    public MessageQueueFactory(FlyableUnitService flyableUnitService,
-                               TriggerMessageService triggerMessageService) {
-        this.flyableUnitService = flyableUnitService;
-        this.triggerMessageService = triggerMessageService;
+    public MessageQueueFactory() {
+        objectThreadLocal = new ThreadLocal<>();
     }
 
     public ExportObject getExportObject() {
-        return exportObject;
+        return objectThreadLocal.get();
     }
 
     public void setExportObject(ExportObject exportObject) {
-        this.exportObject = exportObject;
+        this.objectThreadLocal.set(exportObject);
     }
 
     @Override
     public MessageQueue getObject() {
-        return new MessageQueue(exportObject, flyableUnitService, triggerMessageService);
+        try {
+            return new MessageQueue(objectThreadLocal.get(),
+                    applicationContext.getBean(FlyableUnitService.class),
+                    applicationContext.getBean(TriggerMessageService.class));
+        } finally {
+            objectThreadLocal.remove();
+        }
     }
 
     @Override
@@ -42,5 +49,10 @@ public class MessageQueueFactory implements FactoryBean<MessageQueue> {
     @Override
     public boolean isSingleton() {
         return false;
+    }
+
+    @Override
+    public void setApplicationContext(@NonNull ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
     }
 }
