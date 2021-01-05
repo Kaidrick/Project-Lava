@@ -4,16 +4,28 @@ __storage = __storage or {}
 -- add handler to drop database on mission restart
 local handler = {}
 handler.ident = "__storageDropOnMissionRestart"
-handler.f = function(event)
-    if event.id == world.event.S_EVENT_MISSION_START then
-        __storage = {}
+
+-- check if handler already exists; if so, skip injection
+local skipHandlerInjection = false
+for _, eventHandler in pairs(world.eventHandlers) do
+    if eventHandler.ident == handler.ident then
+        skipHandlerInjection = true
+        break
     end
 end
 
-function handler:onEvent(event)
-    self.f(event)
+if not skipHandlerInjection then
+    handler.f = function(event)
+        if event.id == world.event.S_EVENT_MISSION_START then
+            __storage = {}
+        end
+    end
+
+    function handler:onEvent(event)
+        self.f(event)
+    end
+    world.addEventHandler(handler)
 end
-world.addEventHandler(handler)
 
 -- Meta class
 DataTable = {}
