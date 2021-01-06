@@ -25,6 +25,10 @@ public class PlayerInfoSlotChangeAspect {
         if (change) {
             System.out.println("cut player changed slot");
 
+            // FIXME: joinPoint = execution(public boolean moe.ofs.backend.services.map.PlayerInfoMapService.detectSlotChange(moe.ofs.backend.domain.PlayerInfo, moe.ofs.backend.domain.PlayerInfo))
+            // FIXME: joinPoint = execution(public final boolean moe.ofs.backend.services.map.PlayerInfoMapService..EnhancerBySpringCGLIB..425270c2.detectSlotChange(moe.ofs.backend.domain.PlayerInfo, moe.ofs.backend.domain.PlayerInfo))
+            System.out.println("joinPoint = " + joinPoint.toLongString());
+
             PlayerInfo previousPlayerInfo = (PlayerInfo) joinPoint.getArgs()[0];
             PlayerInfo currentPlayerInfo = (PlayerInfo) joinPoint.getArgs()[1];
             PlayerNetActionVo<PlayerInfo[]> playerNetActionVo = new PlayerNetActionVo<>();
