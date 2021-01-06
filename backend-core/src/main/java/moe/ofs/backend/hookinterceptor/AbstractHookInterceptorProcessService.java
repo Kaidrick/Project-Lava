@@ -104,7 +104,7 @@ public abstract class AbstractHookInterceptorProcessService
         processorSet.removeIf(processor -> processor.getName().equals(processorName));
     }
 
-    @LuaInteract
+//    @LuaInteract
     @Override
     public void gather(Class<T> tClass) throws IOException {
         poll(tClass).stream()

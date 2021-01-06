@@ -8,12 +8,13 @@ import moe.ofs.backend.services.ExportObjectService;
 import moe.ofs.backend.services.UpdatableService;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-@Primary
+@Service
+//@Primary
 @Slf4j
 public class ExportObjectMapService extends AbstractMapService<ExportObject>
         implements ExportObjectRepository, UpdatableService<ExportObject>, ExportObjectService {
@@ -71,8 +72,8 @@ public class ExportObjectMapService extends AbstractMapService<ExportObject>
             }
 
             List<String> updatedFields = updateFields(exportObject, updateObject);
-            log.info("{} fields updated for {}: {}", updatedFields.size(), exportObject.getRuntimeID(),
-                    String.join(", ", updatedFields));
+//            log.info("{} fields updated for {}: {}", updatedFields.size(), exportObject.getRuntimeID(),
+//                    String.join(", ", updatedFields));
         });
 
         return optional.orElseThrow(() -> {

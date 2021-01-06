@@ -2,8 +2,9 @@
 <aspectj>
 
     <weaver options="-warn:none -Xlint:ignore">
-        <include within="moe.ofs.*" />
+        <include within="moe.ofs..*" />
 <!--        <include within="org.springframework.boot..*" />-->
+        <include within="moe.ofs.backend.aspects"/>
     </weaver>
 
     <aspects>
@@ -13,7 +14,4 @@
         <aspect name="moe.ofs.backend.aspects.PlayerInfoAspect" />
         <aspect name="moe.ofs.backend.aspects.PlayerInfoSlotChangeAspect" />
     </aspects>
-
-
-
 </aspectj>

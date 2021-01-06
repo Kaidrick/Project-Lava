@@ -1,5 +1,6 @@
 package moe.ofs.backend.aspects;
 
+import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.ExportObject;
 import moe.ofs.backend.function.spawncontrol.aspects.ControlAction;
 import moe.ofs.backend.jms.Sender;
@@ -8,17 +9,16 @@ import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
-@Component
+@Slf4j
+@Configurable
 @Aspect
 public class ExportObjectAspect {
 
-    private final Sender sender;
-
-    public ExportObjectAspect(Sender sender) {
-        this.sender = sender;
-    }
+    @Autowired
+    private Sender sender;
 
     @Pointcut("execution(public void " +
             "moe.ofs.backend.services.map.ExportObjectMapService.add(..))")
@@ -39,6 +39,7 @@ public class ExportObjectAspect {
 
     @After("exportObjectDataAdd()")
     public void logExportUnitSpawn(JoinPoint joinPoint) {
+        log.info(joinPoint.toShortString());
         Object object = joinPoint.getArgs()[0];
         if (object instanceof ExportObject) {
             sender.sendToTopicAsJson("lava.spawn-control.export-object",

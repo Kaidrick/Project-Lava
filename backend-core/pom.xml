@@ -228,32 +228,32 @@
                     </dependency>
                 </dependencies>
                 <executions>
-                    <execution>
-                        <id>default-compile</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <!-- use this goal to weave all your main classes -->
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <weaveDirectories>
-                                <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
-                            </weaveDirectories>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>default-testCompile</id>
-                        <phase>process-test-classes</phase>
-                        <goals>
-                            <!-- use this goal to weave all your test classes -->
-                            <goal>test-compile</goal>
-                        </goals>
-                        <configuration>
-                            <weaveDirectories>
-                                <weaveDirectory>${project.build.testOutputDirectory}</weaveDirectory>
-                            </weaveDirectories>
-                        </configuration>
-                    </execution>
+<!--                    <execution>-->
+<!--                        <id>default-compile</id>-->
+<!--                        <phase>process-classes</phase>-->
+<!--                        <goals>-->
+<!--                            &lt;!&ndash; use this goal to weave all your main classes &ndash;&gt;-->
+<!--                            <goal>compile</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <weaveDirectories>-->
+<!--                                <weaveDirectory>${project.build.directory}/classes</weaveDirectory>-->
+<!--                            </weaveDirectories>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                    <execution>-->
+<!--                        <id>default-testCompile</id>-->
+<!--                        <phase>process-test-classes</phase>-->
+<!--                        <goals>-->
+<!--                            &lt;!&ndash; use this goal to weave all your test classes &ndash;&gt;-->
+<!--                            <goal>test-compile</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <weaveDirectories>-->
+<!--                                <weaveDirectory>${project.build.testOutputDirectory}</weaveDirectory>-->
+<!--                            </weaveDirectories>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
                 </executions>
                 <configuration>
 <!--                    <source>1.8</source>-->

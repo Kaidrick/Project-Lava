@@ -7,16 +7,15 @@ import moe.ofs.backend.jms.Sender;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Component;
 
-@Component
+@Configurable
 @Aspect
 public class PlayerInfoSlotChangeAspect {
-    private final Sender sender;
-
-    public PlayerInfoSlotChangeAspect(Sender sender) {
-        this.sender = sender;
-    }
+    @Autowired
+    private Sender sender;
 
     @Pointcut("execution(* moe.ofs.backend.services.*.Player*.detectSlotChange(..))")
     public void playerSlotChange() {}
@@ -24,6 +23,8 @@ public class PlayerInfoSlotChangeAspect {
     @AfterReturning(value = "playerSlotChange()", returning = "change")
     public void logPlayerSlotChange(JoinPoint joinPoint, boolean change) {
         if (change) {
+            System.out.println("cut player changed slot");
+
             PlayerInfo previousPlayerInfo = (PlayerInfo) joinPoint.getArgs()[0];
             PlayerInfo currentPlayerInfo = (PlayerInfo) joinPoint.getArgs()[1];
             PlayerNetActionVo<PlayerInfo[]> playerNetActionVo = new PlayerNetActionVo<>();

@@ -33,6 +33,12 @@ public class SpawnControlLogger {
     private void logUnitDespawn(TextMessage textMessage) throws JMSException {
         ExportObject exportObject = new Gson().fromJson(textMessage.getText(), ExportObject.class);
 
+        System.out.println("exportObject = " + exportObject);
+        System.out.println("exportObject = " + exportObject);
+        System.out.println("exportObject = " + exportObject);
+        System.out.println("exportObject = " + exportObject);
+        System.out.println("exportObject = " + exportObject);
+
         if (exportObject != null) {
             logger.log(LogLevel.INFO, String.format("Unit Despawn: %s (RuntimeID: %s) - %s Type",
                     exportObject.getUnitName(), exportObject.getRuntimeID(), exportObject.getName()));

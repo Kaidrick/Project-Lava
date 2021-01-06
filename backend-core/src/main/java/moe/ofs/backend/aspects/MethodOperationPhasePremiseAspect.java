@@ -9,7 +9,7 @@ import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 
 @Aspect
-@Component
+//@Component
 @Slf4j
 public class MethodOperationPhasePremiseAspect {
 
@@ -25,10 +25,8 @@ public class MethodOperationPhasePremiseAspect {
     @Pointcut("execution(* moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService.poll(..))")
     public void testAbstractClassIntercept() {}
 
-    @After("testAbstractClassIntercept()")
-    public void testIntercept(JoinPoint point) {
-        System.out.println("********************************************************");
-        System.out.println("point = " + point);
-        System.out.println("point.getSignature() = " + point.getSignature());
-    }
+//    @After("testAbstractClassIntercept()")
+//    public void testIntercept(JoinPoint point) {
+//        System.out.println("point.getSignature() = " + point.getSignature());
+//    }
 }
