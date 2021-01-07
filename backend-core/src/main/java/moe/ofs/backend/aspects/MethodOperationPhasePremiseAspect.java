@@ -15,6 +15,7 @@ public class MethodOperationPhasePremiseAspect {
 
     @Around("@annotation(moe.ofs.backend.util.LuaInteract)")
     public Object skipMethodsIfInvalidPhase(ProceedingJoinPoint joinPoint) throws Throwable {
+        System.out.println("joinPoint = " + joinPoint.toLongString());
         if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {
             return joinPoint.proceed(joinPoint.getArgs());
         }
@@ -25,8 +26,8 @@ public class MethodOperationPhasePremiseAspect {
     @Pointcut("execution(* moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService.poll(..))")
     public void testAbstractClassIntercept() {}
 
-//    @After("testAbstractClassIntercept()")
-//    public void testIntercept(JoinPoint point) {
-//        System.out.println("point.getSignature() = " + point.getSignature());
-//    }
+    @After("testAbstractClassIntercept()")
+    public void testIntercept(JoinPoint point) {
+        System.out.println("point.getSignature() = " + point.getSignature());
+    }
 }

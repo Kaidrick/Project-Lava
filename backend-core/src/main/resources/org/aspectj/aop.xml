@@ -8,10 +8,10 @@
     </weaver>
 
     <aspects>
-        <aspect name="moe.ofs.backend.aspects.ExportObjectAspect" />
-        <aspect name="moe.ofs.backend.aspects.GraveyardCollectAspect" />
-        <aspect name="moe.ofs.backend.aspects.MethodOperationPhasePremiseAspect" />
-        <aspect name="moe.ofs.backend.aspects.PlayerInfoAspect" />
-        <aspect name="moe.ofs.backend.aspects.PlayerInfoSlotChangeAspect" />
+<!--        <aspect name="moe.ofs.backend.aspects.ExportObjectAspect" />-->
+<!--        <aspect name="moe.ofs.backend.aspects.GraveyardCollectAspect" />-->
+<!--        <aspect name="moe.ofs.backend.aspects.MethodOperationPhasePremiseAspect" />-->
+<!--        <aspect name="moe.ofs.backend.aspects.PlayerInfoAspect" />-->
+<!--        <aspect name="moe.ofs.backend.aspects.PlayerInfoSlotChangeAspect" />-->
     </aspects>
 </aspectj>
