@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>backend</artifactId>
+        <groupId>moe.ofs</groupId>
+        <version>0.0.1-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>moe.ofs.backend</groupId>
+    <artifactId>lava-aspect</artifactId>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>moe.ofs</groupId>
+            <artifactId>backend-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.m50d</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <configuration>
+                    <aspectLibraries>
+                        <aspectLibrary>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-aspects</artifactId>
+                        </aspectLibrary>
+                    </aspectLibraries>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

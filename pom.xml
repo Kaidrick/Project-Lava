@@ -11,6 +11,8 @@
         <module>backend-log</module>
         <module>unified-http-response</module>
         <module>application</module>
+        <module>lava-aspect</module>
+        <module>message</module>
     </modules>
 
     <groupId>moe.ofs</groupId>
@@ -18,6 +20,11 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>ofs-backend</name>
     <description>OFS backend project</description>
+
+    <properties>
+        <!--        <java.version>1.8</java.version>-->
+        <maven.compiler.release>8</maven.compiler.release>
+    </properties>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -71,6 +78,24 @@
                 <artifactId>spring-aspects</artifactId>
                 <version>5.2.10.RELEASE</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjtools</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -81,17 +106,7 @@
         </dependency>
     </dependencies>
 
-    <profiles>
-        <profile>
-            <id>intellij-properties-launcher</id>
-            <dependencies>
-                <dependency>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-loader</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
+
 
     <build>
         <pluginManagement>
@@ -107,144 +122,124 @@
                         </dependency>
                     </dependencies>
                 </plugin>
+
+<!--                <plugin>-->
+<!--                    <groupId>org.codehaus.mojo</groupId>-->
+<!--                    <artifactId>aspectj-maven-plugin</artifactId>-->
+<!--                    <configuration>-->
+<!--                        <skip>true</skip>-->
+<!--                    </configuration>-->
+<!--                </plugin>-->
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>copy</id>
+                            <phase>initialize</phase>
+                            <goals>
+                                <goal>copy</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <artifactItems>
+                            <artifactItem>
+                                <groupId>org.aspectj</groupId>
+                                <artifactId>aspectjweaver</artifactId>
+                                <version>${aspectj.version}</version>
+                                <type>jar</type>
+                                <overWrite>false</overWrite>
+                                <outputDirectory>${project.build.directory}/aspectj</outputDirectory>
+                            </artifactItem>
+                        </artifactItems>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.github.m50d</groupId>
+                    <artifactId>aspectj-maven-plugin</artifactId>
+                    <version>1.11.1</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.aspectj</groupId>
+                            <artifactId>aspectjtools</artifactId>
+                            <version>${aspectj.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <executions>
+                        <execution>
+                            <id>default-compile</id>
+                            <phase>process-classes</phase>
+                            <goals>
+                                <!-- use this goal to weave all your main classes -->
+                                <goal>compile</goal>
+                            </goals>
+                            <configuration>
+                                <weaveDirectories>
+                                    <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
+                                </weaveDirectories>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>default-testCompile</id>
+                            <phase>process-test-classes</phase>
+                            <goals>
+                                <!-- use this goal to weave all your test classes -->
+                                <goal>test-compile</goal>
+                            </goals>
+                            <configuration>
+                                <weaveDirectories>
+                                    <weaveDirectory>${project.build.testOutputDirectory}</weaveDirectory>
+                                </weaveDirectories>
+                            </configuration>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <excludes>
+                            <exclude>**/*.java</exclude>
+                        </excludes>
+                        <aspectLibraries>
+                            <aspectLibrary>
+                                <groupId>org.springframework</groupId>
+                                <artifactId>spring-aspects</artifactId>
+                            </aspectLibrary>
+                        </aspectLibraries>
+                        <complianceLevel>${maven.compiler.target}</complianceLevel>
+                        <source>${maven.compiler.target}</source>
+                        <target>${maven.compiler.target}</target>
+                        <showWeaveInfo>true</showWeaveInfo>
+                        <verbose>true</verbose>
+                        <Xlint>ignore</Xlint>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <forceAjcCompile>true</forceAjcCompile>
+                        <sources/><!-- this is important!-->
+                    </configuration>
+                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <!--					<configuration>-->
-                    <!--						<argLine>-javaagent:${project.build.directory}/aspectj/aspectjweaver-${aspectj.version}.jar</argLine>-->
-                    <!--					</configuration>-->
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>aspectj-maven-plugin</artifactId>
                     <configuration>
-                        <skip>true</skip>
+                        <useSystemClassLoader>false</useSystemClassLoader>
+<!--                        <argLine>-javaagent:${project.build.directory}/aspectj/aspectjweaver-${aspectj.version}.jar</argLine>-->
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <artifactItems>
-                        <artifactItem>
-                            <groupId>org.aspectj</groupId>
-                            <artifactId>aspectjweaver</artifactId>
-                            <version>${aspectj.version}</version>
-                            <type>jar</type>
-                            <overWrite>false</overWrite>
-                            <outputDirectory>${project.build.directory}/aspectj</outputDirectory>
-                        </artifactItem>
-                    </artifactItems>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>com.github.m50d</groupId>
-                <artifactId>aspectj-maven-plugin</artifactId>
-                <version>1.11.1</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjtools</artifactId>
-                        <version>1.9.6</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>default-compile</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <!-- use this goal to weave all your main classes -->
-                            <goal>compile</goal>
-                        </goals>
-                        <configuration>
-                            <weaveDirectories>
-                                <weaveDirectory>${project.build.directory}/classes</weaveDirectory>
-                            </weaveDirectories>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>default-testCompile</id>
-                        <phase>process-test-classes</phase>
-                        <goals>
-                            <!-- use this goal to weave all your test classes -->
-                            <goal>test-compile</goal>
-                        </goals>
-                        <configuration>
-                            <weaveDirectories>
-                                <weaveDirectory>${project.build.testOutputDirectory}</weaveDirectory>
-                            </weaveDirectories>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*.java</exclude>
-                    </excludes>
-                    <aspectLibraries>
-                        <aspectLibrary>
-                            <groupId>org.springframework</groupId>
-                            <artifactId>spring-aspects</artifactId>
-                        </aspectLibrary>
-                    </aspectLibraries>
-                    <complianceLevel>${maven.compiler.target}</complianceLevel>
-                    <source>${maven.compiler.target}</source>
-                    <target>${maven.compiler.target}</target>
-                    <showWeaveInfo>true</showWeaveInfo>
-                    <verbose>true</verbose>
-                    <Xlint>ignore</Xlint>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <forceAjcCompile>true</forceAjcCompile>
-                    <sources/><!-- this is important!-->
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <useSystemClassLoader>false</useSystemClassLoader>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <phase>package</phase>
-                        <configuration>
-                            <!--to be imported on other projects-->
-                            <classifier>addon-dependency</classifier>
-<!--                                <includes>-->
-<!--                                    <include>**/function/*</include>-->
-<!--                                    <include>**/services/*</include>-->
-<!--                                </includes>-->
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
 
-    <properties>
-<!--        <java.version>1.8</java.version>-->
-        <maven.compiler.release>8</maven.compiler.release>
-    </properties>
+    <profiles>
+        <profile>
+            <id>intellij-properties-launcher</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-loader</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
 </project>

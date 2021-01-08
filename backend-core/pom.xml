@@ -143,4 +143,42 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.m50d</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <configuration>
+                    <aspectLibraries>
+                        <aspectLibrary>
+                            <groupId>moe.ofs.backend</groupId>
+                            <artifactId>lava-aspect</artifactId>
+                        </aspectLibrary>
+                    </aspectLibraries>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <!--to be imported on other projects-->
+                            <classifier>addon-dependency</classifier>
+                            <!--                                <includes>-->
+                            <!--                                    <include>**/function/*</include>-->
+                            <!--                                    <include>**/services/*</include>-->
+                            <!--                                </includes>-->
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

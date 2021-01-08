@@ -13,5 +13,6 @@
 <!--        <aspect name="moe.ofs.backend.aspects.MethodOperationPhasePremiseAspect" />-->
 <!--        <aspect name="moe.ofs.backend.aspects.PlayerInfoAspect" />-->
 <!--        <aspect name="moe.ofs.backend.aspects.PlayerInfoSlotChangeAspect" />-->
+        <aspect name="moe.ofs.backend.aspects.LuaInteractPremiseAspect" />
     </aspects>
 </aspectj>

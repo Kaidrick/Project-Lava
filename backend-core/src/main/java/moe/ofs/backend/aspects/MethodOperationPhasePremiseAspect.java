@@ -13,15 +13,15 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class MethodOperationPhasePremiseAspect {
 
-    @Around("@annotation(moe.ofs.backend.util.LuaInteract)")
-    public Object skipMethodsIfInvalidPhase(ProceedingJoinPoint joinPoint) throws Throwable {
-        System.out.println("joinPoint = " + joinPoint.toLongString());
-        if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {
-            return joinPoint.proceed(joinPoint.getArgs());
-        }
-
-        return joinPoint;
-    }
+//    @Around("@annotation(moe.ofs.backend.util.LuaInteract)")
+//    public Object skipMethodsIfInvalidPhase(ProceedingJoinPoint joinPoint) throws Throwable {
+//        System.out.println("joinPoint = " + joinPoint.toLongString());
+//        if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {
+//            return joinPoint.proceed(joinPoint.getArgs());
+//        }
+//
+//        return joinPoint;
+//    }
 
     @Pointcut("execution(* moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService.poll(..))")
     public void testAbstractClassIntercept() {}

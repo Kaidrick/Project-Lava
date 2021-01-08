@@ -5,7 +5,10 @@ import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.aspects.LuaInteractPremiseAspect;
 import moe.ofs.backend.util.HeartbeatThreadFactory;
+import moe.ofs.backend.util.LuaInteract;
+import org.aspectj.lang.Aspects;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +17,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.File;
 
@@ -47,6 +51,16 @@ public class LavaApplication {
             }
         }
     }
+
+    @LuaInteract
+    @Scheduled(fixedDelay = 100L)
+    public void pingTest() {
+        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&77");
+        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&77");
+        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&77");
+        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&77");
+    }
+
 
     @Bean
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
