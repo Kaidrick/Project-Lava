@@ -6,12 +6,12 @@ import cn.hutool.core.util.CharsetUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.google.gson.Gson;
-import moe.ofs.backend.BackgroundTask;
-import moe.ofs.backend.object.LogLevel;
-import moe.ofs.backend.pagination.LavaSystemLogPageObject;
-import moe.ofs.backend.pagination.PageVo;
+import moe.ofs.backend.connector.LavaSystemStatus;
 import moe.ofs.backend.dao.LogEntryDao;
-import moe.ofs.backend.domain.LogEntry;
+import moe.ofs.backend.domain.jms.LogEntry;
+import moe.ofs.backend.domain.jms.LogLevel;
+import moe.ofs.backend.domain.pagination.LavaSystemLogPageObject;
+import moe.ofs.backend.domain.pagination.PageVo;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
@@ -51,7 +51,7 @@ public class LavaSystemLogServiceImpl implements LavaSystemLogService {
         Page<LogEntry> page = new Page<>(current, size);
 //        page.setSearchCount(false);
         entryDao.selectPage(page,
-                Wrappers.<LogEntry>lambdaQuery().gt(LogEntry::getTime, BackgroundTask.getTaskStartTime())
+                Wrappers.<LogEntry>lambdaQuery().gt(LogEntry::getTime, LavaSystemStatus.getStartTime())
         );
 
         return new PageVo<>(current, page.getTotal(), page.getRecords());

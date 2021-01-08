@@ -1,23 +1,19 @@
 package moe.ofs.backend.config.controllers;
 
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.BackgroundTask;
 import moe.ofs.backend.config.BackendOperatingStatusMonitorService;
 import moe.ofs.backend.config.model.ConnectionInfoVo;
+import moe.ofs.backend.connector.ConnectionManager;
+import moe.ofs.backend.connector.LavaSystemStatus;
 import moe.ofs.backend.dao.LogEntryDao;
-import moe.ofs.backend.domain.ExportObject;
-import moe.ofs.backend.domain.PlayerInfo;
-import moe.ofs.backend.domain.LogEntry;
-import moe.ofs.backend.util.ConnectionManager;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
 import javax.jms.TextMessage;
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -50,8 +46,8 @@ public class BackendConnectionStatusController {
         ConnectionInfoVo status = new ConnectionInfoVo();
         status.setConnected(manager.isBackendConnected());
         status.setTimestamp(LocalDateTime.now());
-        status.setPhaseCode(BackgroundTask.getCurrentTask().getPhase().getStatusCode());
-        status.setTheater(BackgroundTask.getCurrentTask().getTaskDcsMapTheaterName());
+        status.setPhaseCode(LavaSystemStatus.getPhase().getStatusCode());
+        status.setTheater(LavaSystemStatus.getTheater());
         status.setObjectCount(exportObjectCount.get());
         status.setPlayerCount(connectedPlayerCount.get());
 

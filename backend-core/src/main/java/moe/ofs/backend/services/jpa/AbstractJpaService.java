@@ -1,7 +1,7 @@
 package moe.ofs.backend.services.jpa;
 
-import moe.ofs.backend.domain.BaseEntity;
-import moe.ofs.backend.services.CrudService;
+import moe.ofs.backend.domain.dcs.BaseEntity;
+import moe.ofs.backend.common.CrudService;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.HashSet;

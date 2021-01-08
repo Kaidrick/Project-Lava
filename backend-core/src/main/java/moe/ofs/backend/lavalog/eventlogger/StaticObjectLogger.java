@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.LavaLog;
 import moe.ofs.backend.function.spawncontrol.aspects.SpawnControlVo;
-import moe.ofs.backend.object.LogLevel;
+import moe.ofs.backend.domain.jms.LogLevel;
 import moe.ofs.backend.object.StaticObject;
 import org.springframework.jms.annotation.JmsListener;
 

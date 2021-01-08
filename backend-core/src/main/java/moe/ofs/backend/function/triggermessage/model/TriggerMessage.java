@@ -3,7 +3,6 @@ package moe.ofs.backend.function.triggermessage.model;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
-import moe.ofs.backend.util.LuaScripts;
 
 @Data
 @Builder

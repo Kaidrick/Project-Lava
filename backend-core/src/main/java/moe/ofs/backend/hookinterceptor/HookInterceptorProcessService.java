@@ -1,8 +1,7 @@
 package moe.ofs.backend.hookinterceptor;
 
-import moe.ofs.backend.services.PlayerInfoService;
-import moe.ofs.backend.services.PlayerInfoServiceAware;
-import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.dataservice.aware.PlayerInfoServiceAware;
+import moe.ofs.backend.connector.util.LuaScripts;
 
 import java.io.IOException;
 import java.util.List;

@@ -34,7 +34,7 @@ public class Responses {
 
         Class<?> clazz = data.getClass();
 
-        if (!clazz.getName().equals("moe.ofs.backend.pagination.PageVo")) {
+        if (!clazz.getName().equals("moe.ofs.backend.domain.pagination.PageVo")) {
             throw new ClassNotFoundException();
         }
 

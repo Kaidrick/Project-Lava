@@ -1,7 +1,7 @@
 package moe.ofs.backend.util;
 
 import moe.ofs.backend.UTF8Control;
-import moe.ofs.backend.domain.PlayerInfo;
+import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 
 import java.util.Locale;
 import java.util.Map;

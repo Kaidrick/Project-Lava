@@ -2,14 +2,12 @@ package moe.ofs.backend.function.markpanel;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import moe.ofs.backend.interaction.TestButtonCommand;
-import moe.ofs.backend.object.Vector3D;
-import moe.ofs.backend.request.server.ServerDataRequest;
-import moe.ofs.backend.request.services.RequestTransmissionService;
-import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.domain.dcs.theater.Vector3D;
+import moe.ofs.backend.connector.request.server.ServerDataRequest;
+import moe.ofs.backend.connector.services.RequestTransmissionService;
+import moe.ofs.backend.connector.util.LuaScripts;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.Type;
 import java.util.Comparator;
 import java.util.List;
@@ -41,13 +39,6 @@ public class MarkPanelManager {
 
     public MarkPanelManager(RequestTransmissionService requestTransmissionService) {
         this.requestTransmissionService = requestTransmissionService;
-    }
-
-    @PostConstruct
-    private void initialize() {
-        TestButtonCommand testButtonCommand = () -> getAllMarkPanels().forEach(p ->
-                System.out.println(p.getIndex() + " / " + p.getContent()));
-        testButtonCommand.attach();
     }
 
     /**

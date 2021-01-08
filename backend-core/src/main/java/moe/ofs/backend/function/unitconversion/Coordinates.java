@@ -1,9 +1,9 @@
 package moe.ofs.backend.function.unitconversion;
 
-import moe.ofs.backend.object.Vector3D;
-import moe.ofs.backend.object.map.GeoPosition;
-import moe.ofs.backend.request.server.ServerDataRequest;
-import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.domain.dcs.theater.Vector3D;
+import moe.ofs.backend.domain.dcs.theater.GeoPosition;
+import moe.ofs.backend.connector.request.server.ServerDataRequest;
+import moe.ofs.backend.connector.util.LuaScripts;
 
 public class Coordinates {
 

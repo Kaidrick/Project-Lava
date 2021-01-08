@@ -3,13 +3,13 @@ package moe.ofs.backend.services.mizdb;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.BackgroundTask;
-import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
-import moe.ofs.backend.message.OperationPhase;
-import moe.ofs.backend.function.mizdb.services.impl.LuaStorageInitServiceImpl;
+import moe.ofs.backend.connector.LavaSystemStatus;
+import moe.ofs.backend.connector.lua.LuaQueryEnv;
+import moe.ofs.backend.connector.util.LuaScripts;
+import moe.ofs.backend.domain.connector.OperationPhase;
+import moe.ofs.backend.domain.connector.handlers.scripts.ScriptInjectionTask;
 import moe.ofs.backend.function.mizdb.services.MissionKeyValueService;
-import moe.ofs.backend.util.LuaScripts;
-import moe.ofs.backend.util.lua.LuaQueryEnv;
+import moe.ofs.backend.function.mizdb.services.impl.LuaStorageInitServiceImpl;
 
 import java.util.*;
 
@@ -32,8 +32,9 @@ public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueServi
         MissionKeyValueService.super.createRepository();
 
         // check whether task ofr LuaStorageInitService has been completed, if so, call createRepository()
-        if (BackgroundTask.getCurrentTask() != null) {
-            Map<ScriptInjectionTask, Boolean> checkMap = BackgroundTask.getCurrentTask().getInjectionTaskChecks();
+        if (LavaSystemStatus.isInitiated()) {
+            // TODO: why null check?
+            Map<ScriptInjectionTask, Boolean> checkMap = LavaSystemStatus.getInjectionTaskChecks();
             Optional<ScriptInjectionTask> taskOptional = checkMap.keySet().stream()
                     .filter(task -> LuaStorageInitServiceImpl.class.equals(task.getInitializrClass()))
                     .findAny();
@@ -71,8 +72,7 @@ public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueServi
      */
     @Override
     public T save(Object key, T object) {
-        if (BackgroundTask.getCurrentTask() != null &&
-            BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {
+        if (LavaSystemStatus.getPhase() == OperationPhase.RUNNING) {
             Gson gson = new Gson();
             String keyJson = gson.toJson(key);
             String objectJson = gson.toJson(object);
@@ -93,8 +93,8 @@ public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueServi
      */
     @Override
     public List<T> saveAll(Map<Object, T> map) {
-        if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING ||
-            BackgroundTask.getCurrentTask().getPhase() == OperationPhase.LOADING) {
+        if (LavaSystemStatus.getPhase() == OperationPhase.RUNNING ||
+            LavaSystemStatus.getPhase() == OperationPhase.LOADING) {
             Gson gson = new Gson();
             LuaScripts.requestWithFile(env, "storage/keyvalue/kw_pair_save_batch.lua",
                     getRepositoryName(), gson.toJson(map));

@@ -1,21 +1,9 @@
 package moe.ofs.backend.function.coordoffset;
 
-import moe.ofs.backend.object.Vector3D;
+import moe.ofs.backend.domain.dcs.theater.Vector3D;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class OffsetTest {
 

@@ -1,8 +1,8 @@
 package moe.ofs.backend.function.triggermessage.model;
 
-import moe.ofs.backend.domain.ExportObject;
+import moe.ofs.backend.domain.dcs.poll.ExportObject;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
-import moe.ofs.backend.services.FlyableUnitService;
+import moe.ofs.backend.dataservice.FlyableUnitService;
 import org.springframework.lang.NonNull;
 
 import java.util.ArrayDeque;

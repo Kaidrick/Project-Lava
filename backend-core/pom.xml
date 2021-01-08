@@ -69,24 +69,6 @@
         </dependency>
 
         <dependency>
-            <groupId>moe.ofs</groupId>
-            <artifactId>backend-data</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>moe.ofs</groupId>
-            <artifactId>backend-log</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>moe.ofs</groupId>
-            <artifactId>unified-http-response</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-activemq</artifactId>
         </dependency>
@@ -141,6 +123,36 @@
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>moe.ofs</groupId>
+            <artifactId>backend-data</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>moe.ofs</groupId>
+            <artifactId>backend-log</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>moe.ofs</groupId>
+            <artifactId>connector</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>moe.ofs</groupId>
+            <artifactId>unified-http-response</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>moe.ofs</groupId>
+            <artifactId>lava-aspect</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -151,7 +163,7 @@
                 <configuration>
                     <aspectLibraries>
                         <aspectLibrary>
-                            <groupId>moe.ofs.backend</groupId>
+                            <groupId>moe.ofs</groupId>
                             <artifactId>lava-aspect</artifactId>
                         </aspectLibrary>
                     </aspectLibraries>

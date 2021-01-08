@@ -1,12 +1,12 @@
 //package moe.ofs.backend.services.jpa;
 //
-//import moe.ofs.backend.domain.ExportObject;
+//import moe.ofs.backend.domain.dcs.poll.ExportObject;
 //import moe.ofs.backend.LavaLog;
 //import moe.ofs.backend.handlers.ExportUnitDespawnObservable;
 //import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 //import moe.ofs.backend.handlers.ExportUnitUpdateObservable;
-//import moe.ofs.backend.repositories.ExportObjectRepository;
-//import moe.ofs.backend.services.ExportObjectService;
+//import moe.ofs.backend.common.ExportObjectRepository;
+//import moe.ofs.backend.dataservice.ExportObjectService;
 //import org.springframework.context.annotation.Primary;
 //import org.springframework.stereotype.Service;
 //

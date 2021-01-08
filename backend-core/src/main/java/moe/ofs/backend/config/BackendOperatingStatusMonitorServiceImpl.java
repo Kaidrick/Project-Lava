@@ -2,7 +2,7 @@ package moe.ofs.backend.config;
 
 import moe.ofs.backend.config.model.ConnectionInfoVo;
 import moe.ofs.backend.jms.Sender;
-import moe.ofs.backend.message.OperationPhase;
+import moe.ofs.backend.domain.connector.OperationPhase;
 import org.springframework.stereotype.Service;
 
 @Service

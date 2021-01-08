@@ -1,6 +1,6 @@
 package moe.ofs.backend.handlers;
 
-import moe.ofs.backend.domain.PlayerInfo;
+import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 
 import java.util.ArrayList;
 import java.util.List;

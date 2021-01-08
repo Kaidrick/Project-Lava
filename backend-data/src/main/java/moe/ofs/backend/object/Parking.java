@@ -1,5 +1,7 @@
 package moe.ofs.backend.object;
 
+import moe.ofs.backend.domain.dcs.theater.Vector3D;
+
 import java.io.Serializable;
 
 /**

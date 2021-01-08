@@ -2,15 +2,15 @@ package moe.ofs.backend.function.triggermessage.services.impl;
 
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.domain.PlayerInfo;
+import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 import moe.ofs.backend.function.triggermessage.PlayerNotActiveException;
 import moe.ofs.backend.function.triggermessage.model.TriggerMessage;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
 import moe.ofs.backend.object.FlyableUnit;
-import moe.ofs.backend.services.FlyableUnitService;
-import moe.ofs.backend.services.PlayerInfoService;
-import moe.ofs.backend.util.LuaScripts;
-import moe.ofs.backend.util.lua.LuaQueryEnv;
+import moe.ofs.backend.dataservice.FlyableUnitService;
+import moe.ofs.backend.dataservice.PlayerInfoService;
+import moe.ofs.backend.connector.util.LuaScripts;
+import moe.ofs.backend.connector.lua.LuaQueryEnv;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

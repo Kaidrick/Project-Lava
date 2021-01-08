@@ -1,12 +1,12 @@
 package moe.ofs.backend.function.newslotcontrol.services;
 
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.domain.ExportObject;
-import moe.ofs.backend.domain.PlayerInfo;
+import moe.ofs.backend.domain.dcs.poll.ExportObject;
+import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 import moe.ofs.backend.object.FlyableUnit;
-import moe.ofs.backend.services.ExportObjectService;
-import moe.ofs.backend.services.FlyableUnitService;
-import moe.ofs.backend.services.PlayerInfoService;
+import moe.ofs.backend.dataservice.ExportObjectService;
+import moe.ofs.backend.dataservice.FlyableUnitService;
+import moe.ofs.backend.dataservice.PlayerInfoService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;

@@ -1,11 +1,10 @@
 package moe.ofs.backend.hookinterceptor;
 
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.services.PlayerInfoService;
-import moe.ofs.backend.util.LuaInteract;
-import moe.ofs.backend.util.LuaScripts;
-import moe.ofs.backend.util.lua.LuaQueryEnv;
-import org.springframework.scheduling.annotation.Scheduled;
+import moe.ofs.backend.connector.lua.LuaInteract;
+import moe.ofs.backend.dataservice.PlayerInfoService;
+import moe.ofs.backend.connector.util.LuaScripts;
+import moe.ofs.backend.connector.lua.LuaQueryEnv;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -104,7 +103,7 @@ public abstract class AbstractHookInterceptorProcessService
         processorSet.removeIf(processor -> processor.getName().equals(processorName));
     }
 
-//    @LuaInteract
+    @LuaInteract
     @Override
     public void gather(Class<T> tClass) throws IOException {
         poll(tClass).stream()

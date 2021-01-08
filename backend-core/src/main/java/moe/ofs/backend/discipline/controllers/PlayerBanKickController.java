@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.discipline.model.PlayerDisciplinaryAction;
 import moe.ofs.backend.discipline.model.Punishment;
 import moe.ofs.backend.discipline.service.PlayerDisciplineService;
-import moe.ofs.backend.domain.PlayerInfo;
-import moe.ofs.backend.services.PlayerInfoService;
+import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
+import moe.ofs.backend.dataservice.PlayerInfoService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;

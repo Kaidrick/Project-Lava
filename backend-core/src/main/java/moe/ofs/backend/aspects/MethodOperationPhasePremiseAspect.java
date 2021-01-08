@@ -1,19 +1,15 @@
 package moe.ofs.backend.aspects;
 
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.BackgroundTask;
-import moe.ofs.backend.message.OperationPhase;
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
-import org.springframework.stereotype.Component;
 
 @Aspect
 //@Component
 @Slf4j
 public class MethodOperationPhasePremiseAspect {
 
-//    @Around("@annotation(moe.ofs.backend.util.LuaInteract)")
+//    @Around("@annotation(moe.ofs.backend.connector.lua.LuaInteract)")
 //    public Object skipMethodsIfInvalidPhase(ProceedingJoinPoint joinPoint) throws Throwable {
 //        System.out.println("joinPoint = " + joinPoint.toLongString());
 //        if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {

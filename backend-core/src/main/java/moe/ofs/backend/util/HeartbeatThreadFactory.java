@@ -4,9 +4,10 @@ import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
 import moe.ofs.backend.LavaLog;
-import moe.ofs.backend.message.ConnectionStatusChange;
-import moe.ofs.backend.message.connection.ConnectionStatus;
-import moe.ofs.backend.request.RequestHandler;
+import moe.ofs.backend.domain.message.ConnectionStatusChange;
+import moe.ofs.backend.domain.message.connection.ConnectionStatus;
+import moe.ofs.backend.connector.ConnectionManager;
+import moe.ofs.backend.connector.RequestHandler;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 

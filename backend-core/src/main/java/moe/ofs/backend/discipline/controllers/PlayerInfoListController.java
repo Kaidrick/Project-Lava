@@ -1,7 +1,7 @@
 package moe.ofs.backend.discipline.controllers;
 
-import moe.ofs.backend.domain.PlayerInfo;
-import moe.ofs.backend.services.PlayerInfoService;
+import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
+import moe.ofs.backend.dataservice.PlayerInfoService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;

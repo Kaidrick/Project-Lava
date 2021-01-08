@@ -2,7 +2,7 @@ package moe.ofs.backend.function;
 
 import moe.ofs.backend.function.radiomenu.RadioItem;
 import moe.ofs.backend.function.radiomenu.RadioItemManager;
-import moe.ofs.backend.services.FlyableUnitService;
+import moe.ofs.backend.dataservice.FlyableUnitService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

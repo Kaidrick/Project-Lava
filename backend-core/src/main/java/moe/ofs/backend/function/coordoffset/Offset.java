@@ -1,7 +1,7 @@
 package moe.ofs.backend.function.coordoffset;
 
 import moe.ofs.backend.function.unitconversion.Lengths;
-import moe.ofs.backend.object.Vector3D;
+import moe.ofs.backend.domain.dcs.theater.Vector3D;
 import moe.ofs.backend.object.unitofmeasure.Length;
 
 public class Offset {

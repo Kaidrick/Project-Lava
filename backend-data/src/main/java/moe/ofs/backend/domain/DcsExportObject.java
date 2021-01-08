@@ -1,12 +1,12 @@
 package moe.ofs.backend.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
 import lombok.experimental.Accessors;
+import moe.ofs.backend.domain.connector.Level;
+import moe.ofs.backend.domain.dcs.LuaState;
 
 import java.util.Map;
 import java.util.Objects;

@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import moe.ofs.backend.domain.BaseEntity;
+import moe.ofs.backend.domain.dcs.BaseEntity;
 
 @AllArgsConstructor
 @NoArgsConstructor

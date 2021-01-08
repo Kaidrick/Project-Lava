@@ -2,10 +2,10 @@ package moe.ofs.backend.config.services.impl;
 
 import moe.ofs.backend.config.model.ResetType;
 import moe.ofs.backend.config.services.DcsSimulationControlService;
-import moe.ofs.backend.util.LuaScripts;
-import moe.ofs.backend.util.lua.LuaQueryCapable;
-import moe.ofs.backend.util.lua.LuaQueryState;
-import moe.ofs.backend.util.lua.LuaQueryEnv;
+import moe.ofs.backend.connector.util.LuaScripts;
+import moe.ofs.backend.connector.lua.LuaQueryCapable;
+import moe.ofs.backend.connector.lua.LuaQueryState;
+import moe.ofs.backend.connector.lua.LuaQueryEnv;
 import org.springframework.stereotype.Service;
 
 @Service

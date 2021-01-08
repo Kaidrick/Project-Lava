@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import moe.ofs.backend.object.Vector3D;
+import moe.ofs.backend.domain.dcs.theater.Vector3D;
 
 /**
  * The y value of Vector3D position will be snapped to ground altitude if its value is below ground level

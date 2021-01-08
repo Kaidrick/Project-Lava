@@ -1,7 +1,7 @@
 package moe.ofs.backend.simevent.services;
 
 import moe.ofs.backend.domain.LavaEvent;
-import moe.ofs.backend.services.CrudService;
+import moe.ofs.backend.common.CrudService;
 import moe.ofs.backend.domain.SimEvent;
 
 import java.util.function.Consumer;

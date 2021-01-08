@@ -1,9 +1,10 @@
 package moe.ofs.backend.services;
 
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.domain.ExportObject;
-import moe.ofs.backend.object.Vector3D;
-import moe.ofs.backend.object.map.GeoPosition;
+import moe.ofs.backend.domain.dcs.poll.ExportObject;
+import moe.ofs.backend.domain.dcs.theater.Vector3D;
+import moe.ofs.backend.domain.dcs.theater.GeoPosition;
+import moe.ofs.backend.common.UpdatableService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,14 +1,14 @@
 //package moe.ofs.backend.services.jpa;
 //
 //import com.google.common.collect.Sets;
-//import moe.ofs.backend.domain.PlayerInfo;
+//import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 //import moe.ofs.backend.LavaLog;
 //import moe.ofs.backend.lavalog.eventlogger.SpawnControlLogger;
 //import moe.ofs.backend.handlers.PlayerEnterServerObservable;
 //import moe.ofs.backend.handlers.PlayerLeaveServerObservable;
 //import moe.ofs.backend.handlers.PlayerSlotChangeObservable;
-//import moe.ofs.backend.repositories.PlayerInfoRepository;
-//import moe.ofs.backend.services.PlayerInfoService;
+//import moe.ofs.backend.common.PlayerInfoRepository;
+//import moe.ofs.backend.dataservice.PlayerInfoService;
 //import org.springframework.stereotype.Service;
 //
 //import java.util.HashSet;

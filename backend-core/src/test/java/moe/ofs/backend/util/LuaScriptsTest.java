@@ -1,5 +1,6 @@
 package moe.ofs.backend.util;
 
+import moe.ofs.backend.connector.util.LuaScripts;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

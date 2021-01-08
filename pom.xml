@@ -12,7 +12,8 @@
         <module>unified-http-response</module>
         <module>application</module>
         <module>lava-aspect</module>
-        <module>message</module>
+        <module>connector</module>
+        <module>entity</module>
     </modules>
 
     <groupId>moe.ofs</groupId>
@@ -71,6 +72,18 @@
                 <groupId>io.hawt</groupId>
                 <artifactId>hawtio-springboot</artifactId>
                 <version>2.10.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-generator</artifactId>
+                <version>3.3.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>3.3.0</version>
             </dependency>
 
             <dependency>

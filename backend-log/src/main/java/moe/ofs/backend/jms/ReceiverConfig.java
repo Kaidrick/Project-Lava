@@ -1,6 +1,5 @@
 package moe.ofs.backend.jms;
 
-import moe.ofs.backend.domain.PlayerInfo;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -59,7 +58,7 @@ public class ReceiverConfig {
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
         converter.setTargetType(MessageType.TEXT);
         Map<String, Class<?>> typeIdMap = new HashMap<>();
-        typeIdMap.put("TestJMS", PlayerInfo.class);
+        typeIdMap.put("TestJMS", String.class);
         converter.setTypeIdMappings(typeIdMap);
         converter.setTypeIdPropertyName("TestJMS");
         converter.setEncoding("UTF-8");

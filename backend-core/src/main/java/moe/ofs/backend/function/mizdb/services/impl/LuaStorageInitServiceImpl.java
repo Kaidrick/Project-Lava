@@ -2,8 +2,8 @@ package moe.ofs.backend.function.mizdb.services.impl;
 
 import moe.ofs.backend.function.mizdb.services.LuaStorageInitService;
 import moe.ofs.backend.function.mizdb.bootstrap.PersistentKeyValueInjectionBootstrap;
-import moe.ofs.backend.handlers.starter.LuaScriptStarter;
-import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
+import moe.ofs.backend.domain.connector.handlers.scripts.LuaScriptStarter;
+import moe.ofs.backend.domain.connector.handlers.scripts.ScriptInjectionTask;
 import moe.ofs.backend.function.mizdb.services.MissionPersistenceService;
 import org.springframework.stereotype.Service;
 

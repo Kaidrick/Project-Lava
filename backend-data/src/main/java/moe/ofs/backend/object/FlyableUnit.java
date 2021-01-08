@@ -2,7 +2,7 @@ package moe.ofs.backend.object;
 
 import lombok.Getter;
 import lombok.Setter;
-import moe.ofs.backend.domain.BaseEntity;
+import moe.ofs.backend.domain.dcs.BaseEntity;
 
 import java.util.Objects;
 

@@ -1,6 +1,8 @@
 package moe.ofs.backend.domain;
 
 import lombok.*;
+import moe.ofs.backend.domain.dcs.poll.ExportObject;
+import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor

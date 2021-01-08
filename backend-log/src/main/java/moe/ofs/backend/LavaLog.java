@@ -1,9 +1,9 @@
 package moe.ofs.backend;
 
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.domain.LogEntry;
+import moe.ofs.backend.domain.jms.LogEntry;
+import moe.ofs.backend.domain.jms.LogLevel;
 import moe.ofs.backend.jms.Sender;
-import moe.ofs.backend.object.LogLevel;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;

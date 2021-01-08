@@ -1,7 +1,6 @@
 package moe.ofs.backend.discipline.model;
 
 import lombok.Data;
-import moe.ofs.backend.domain.PlayerInfo;
 
 import java.time.Duration;
 

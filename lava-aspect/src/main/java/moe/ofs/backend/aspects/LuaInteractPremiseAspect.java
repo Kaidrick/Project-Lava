@@ -1,8 +1,8 @@
 package moe.ofs.backend.aspects;
 
-import moe.ofs.backend.BackgroundTask;
+import moe.ofs.backend.connector.LavaSystemStatus;
+import moe.ofs.backend.domain.connector.OperationPhase;
 import moe.ofs.backend.jms.Sender;
-import moe.ofs.backend.message.OperationPhase;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -18,21 +18,20 @@ public class LuaInteractPremiseAspect {
     @Autowired
     private Sender sender;
 
-    @Around("@annotation(moe.ofs.backend.util.LuaInteract)")
+    @Around("@annotation(moe.ofs.backend.connector.lua.LuaInteract)")
     public Object skipMethodsIfInvalidPhase(ProceedingJoinPoint joinPoint) throws Throwable {
-        System.out.println("LuaInteract => " + joinPoint.toLongString());
-        if (BackgroundTask.getCurrentTask().getPhase() == OperationPhase.RUNNING) {
+        if (LavaSystemStatus.getPhase() == OperationPhase.RUNNING) {
             return joinPoint.proceed(joinPoint.getArgs());
         }
 
         return joinPoint;
     }
 
-    @Pointcut("execution(* moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService.poll(..))")
+    @Pointcut("execution(public * moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService.poll(..))")
     public void testAbstractClassIntercept() {}
 
     @After("testAbstractClassIntercept()")
     public void testIntercept(JoinPoint point) {
-        System.out.println("point.getSignature() = " + point.getSignature());
+        System.out.println("testIntercept => point.getSignature() = " + point.getSignature());
     }
 }

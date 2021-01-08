@@ -1,7 +1,7 @@
 package moe.ofs.backend.chatcmd.services;
 
 import moe.ofs.backend.chatcmdnew.model.ChatCommandDefinition;
-import moe.ofs.backend.domain.ChatCommand;
+import moe.ofs.backend.domain.chatcmd.ChatCommand;
 
 import java.io.IOException;
 import java.util.List;

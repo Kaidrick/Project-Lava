@@ -7,17 +7,15 @@ import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.aspects.LuaInteractPremiseAspect;
 import moe.ofs.backend.util.HeartbeatThreadFactory;
-import moe.ofs.backend.util.LuaInteract;
-import org.aspectj.lang.Aspects;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.io.File;
 
@@ -28,9 +26,15 @@ public class LavaApplication {
     private static Environment environment;
     private final HeartbeatThreadFactory heartbeatThreadFactory;
 
-    public LavaApplication(HeartbeatThreadFactory heartbeatThreadFactory, Environment environment) {
+    private final LuaInteractPremiseAspect luaInteractPremiseAspect;
+
+    public LavaApplication(HeartbeatThreadFactory heartbeatThreadFactory, Environment environment, LuaInteractPremiseAspect luaInteractPremiseAspect) {
         this.heartbeatThreadFactory = heartbeatThreadFactory;
         this.environment = environment;
+
+        this.luaInteractPremiseAspect = luaInteractPremiseAspect;
+
+        System.out.println("luaInteractPremiseAspect = " + luaInteractPremiseAspect);
     }
 
     public static void main(String[] args) {
@@ -51,16 +55,6 @@ public class LavaApplication {
             }
         }
     }
-
-    @LuaInteract
-    @Scheduled(fixedDelay = 100L)
-    public void pingTest() {
-        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&77");
-        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&77");
-        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&77");
-        System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&77");
-    }
-
 
     @Bean
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {

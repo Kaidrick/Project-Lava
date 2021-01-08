@@ -1,7 +1,7 @@
 package moe.ofs.backend.aspects;
 
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.domain.ExportObject;
+import moe.ofs.backend.domain.dcs.poll.ExportObject;
 import moe.ofs.backend.function.spawncontrol.aspects.ControlAction;
 import moe.ofs.backend.jms.Sender;
 import org.aspectj.lang.JoinPoint;
@@ -21,19 +21,19 @@ public class ExportObjectAspect {
     private Sender sender;
 
     @Pointcut("execution(public void " +
-            "moe.ofs.backend.services.map.ExportObjectMapService.add(..))")
+            "moe.ofs.backend.dataservice.map.ExportObjectMapService.add(..))")
     public void exportObjectDataAdd() {
     }
 
     @Pointcut("execution(public void " +
-            "moe.ofs.backend.services.map.ExportObjectMapService.remove(..))")
+            "moe.ofs.backend.dataservice.map.ExportObjectMapService.remove(..))")
     public void exportObjectDataRemove() {
     }
 
     //    @Pointcut("execution(public void moe.ofs.backend.services.jpa.ExportObjectDeltaJpaService." +
-//            "update(moe.ofs.backend.domain.ExportObject))")
-    @Pointcut("execution(public moe.ofs.backend.domain.ExportObject " +
-            "moe.ofs.backend.services.map.ExportObjectMapService.update(..))")
+//            "update(moe.ofs.backend.domain.dcs.poll.ExportObject))")
+    @Pointcut("execution(public moe.ofs.backend.domain.dcs.poll.ExportObject " +
+            "moe.ofs.backend.dataservice.map.ExportObjectMapService.update(..))")
     public void exportObjectDataUpdate() {
     }  // example of export object update listener
 
