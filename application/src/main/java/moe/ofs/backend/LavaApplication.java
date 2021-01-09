@@ -5,7 +5,6 @@ import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.aspects.LuaInteractPremiseAspect;
 import moe.ofs.backend.util.HeartbeatThreadFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,7 +12,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -26,15 +24,9 @@ public class LavaApplication {
     private static Environment environment;
     private final HeartbeatThreadFactory heartbeatThreadFactory;
 
-    private final LuaInteractPremiseAspect luaInteractPremiseAspect;
-
-    public LavaApplication(HeartbeatThreadFactory heartbeatThreadFactory, Environment environment, LuaInteractPremiseAspect luaInteractPremiseAspect) {
+    public LavaApplication(HeartbeatThreadFactory heartbeatThreadFactory, Environment environment) {
         this.heartbeatThreadFactory = heartbeatThreadFactory;
         this.environment = environment;
-
-        this.luaInteractPremiseAspect = luaInteractPremiseAspect;
-
-        System.out.println("luaInteractPremiseAspect = " + luaInteractPremiseAspect);
     }
 
     public static void main(String[] args) {

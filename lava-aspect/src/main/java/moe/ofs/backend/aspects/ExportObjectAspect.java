@@ -1,8 +1,8 @@
 package moe.ofs.backend.aspects;
 
 import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.domain.behaviors.spawnctl.ControlAction;
 import moe.ofs.backend.domain.dcs.poll.ExportObject;
-import moe.ofs.backend.function.spawncontrol.aspects.ControlAction;
 import moe.ofs.backend.jms.Sender;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -39,7 +39,7 @@ public class ExportObjectAspect {
 
     @After("exportObjectDataAdd()")
     public void logExportUnitSpawn(JoinPoint joinPoint) {
-        log.info(joinPoint.toShortString());
+//        log.info(joinPoint.toShortString());
         Object object = joinPoint.getArgs()[0];
         if (object instanceof ExportObject) {
             sender.sendToTopicAsJson("lava.spawn-control.export-object",

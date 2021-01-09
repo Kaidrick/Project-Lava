@@ -30,8 +30,8 @@ public class LuaInteractPremiseAspect {
     @Pointcut("execution(public * moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService.poll(..))")
     public void testAbstractClassIntercept() {}
 
-    @After("testAbstractClassIntercept()")
-    public void testIntercept(JoinPoint point) {
-        System.out.println("testIntercept => point.getSignature() = " + point.getSignature());
-    }
+//    @After("testAbstractClassIntercept()")
+//    public void testIntercept(JoinPoint point) {
+//        System.out.println("testIntercept => point.getSignature() = " + point.getSignature());
+//    }
 }

@@ -29,11 +29,7 @@ public class SpawnControlLogger {
             selector = "type = 'despawn'")
     private void logUnitDespawn(TextMessage textMessage) throws JMSException {
         ExportObject exportObject = new Gson().fromJson(textMessage.getText(), ExportObject.class);
-
-        System.out.println("exportObject = " + exportObject);
-        System.out.println("exportObject = " + exportObject);
-        System.out.println("exportObject = " + exportObject);
-        System.out.println("exportObject = " + exportObject);
+        System.out.println("textMessage = " + textMessage);
         System.out.println("exportObject = " + exportObject);
 
         if (exportObject != null) {

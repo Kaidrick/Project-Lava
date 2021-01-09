@@ -1,4 +1,4 @@
-package moe.ofs.backend.function.spawncontrol.aspects;
+package moe.ofs.backend.domain.behaviors.spawnctl;
 
 public enum ControlAction {
     ADD(0), REMOVE(1), UPDATE(2), SPAWN(3), DESPAWN(4);

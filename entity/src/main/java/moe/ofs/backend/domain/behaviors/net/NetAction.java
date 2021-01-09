@@ -1,4 +1,4 @@
-package moe.ofs.backend.discipline.aspects;
+package moe.ofs.backend.domain.behaviors.net;
 
 public enum NetAction {
     CONNECT(0), DISCONNECT(1), CHANGE_SLOT(2),

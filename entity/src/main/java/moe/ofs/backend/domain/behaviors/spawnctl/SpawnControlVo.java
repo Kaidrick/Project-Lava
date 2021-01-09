@@ -1,4 +1,4 @@
-package moe.ofs.backend.function.spawncontrol.aspects;
+package moe.ofs.backend.domain.behaviors.spawnctl;
 
 import lombok.Data;
 

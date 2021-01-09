@@ -1,6 +1,8 @@
-package moe.ofs.backend.function.spawncontrol.aspects;
+package moe.ofs.backend.aspects;
 
 import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.domain.behaviors.spawnctl.ControlAction;
+import moe.ofs.backend.domain.behaviors.spawnctl.SpawnControlVo;
 import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.object.StaticObject;
 import org.aspectj.lang.JoinPoint;
@@ -9,19 +11,17 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
 import java.util.concurrent.CompletableFuture;
 
-@Component
+@Configurable
 @Aspect
 @Slf4j
 public class StaticObjectAspect {
-    private final Sender sender;
-
-    public StaticObjectAspect(Sender sender) {
-        this.sender = sender;
-    }
+    @Autowired
+    private Sender sender;
 
     @Pointcut("execution(public java.util.concurrent.CompletableFuture<moe.ofs.backend.object.StaticObject> " +
             "moe.ofs.backend.function.spawncontrol.services.*." +

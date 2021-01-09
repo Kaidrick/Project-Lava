@@ -42,6 +42,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -86,8 +87,9 @@ public class BackgroundTask {
 
     @PostConstruct
     private void loadPlugins() {
-        log.info("************ Loading Plugins *************");
-        plugins.forEach(plugin -> System.out.println("plugin = " + plugin.getName()));
+        String detectedPlugins = plugins.stream()
+                .map(p -> p.getName() + " " + p.getVersion()).collect(Collectors.joining("\n"));
+        log.info("Mapping Lava Plugins:\n{}", detectedPlugins);
         Plugin.loadedPlugins.addAll(plugins);
         Plugin.loadedPlugins.forEach(Plugin::load);  // FIXME: this is so bad
     }
@@ -356,7 +358,7 @@ public class BackgroundTask {
                 .forEach(luaScriptInjectService::add);
 
         // put inject result into map that can be referenced from other sources
-        LavaSystemStatus.getInjectionTaskChecks().putAll(luaScriptInjectService.invokeInjection());
+        LavaSystemStatus.setInjectionTaskChecks(luaScriptInjectService.invokeInjection());
 //                .forEach(((task, aBoolean) -> System.out.println(task.getScriptIdentName() + " -> " + aBoolean)));
 
         if(!flag) {

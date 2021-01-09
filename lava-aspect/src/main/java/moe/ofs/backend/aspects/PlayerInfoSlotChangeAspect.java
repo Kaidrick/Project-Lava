@@ -1,7 +1,7 @@
 package moe.ofs.backend.aspects;
 
-import moe.ofs.backend.discipline.aspects.NetAction;
-import moe.ofs.backend.discipline.aspects.PlayerNetActionVo;
+import moe.ofs.backend.domain.behaviors.net.NetAction;
+import moe.ofs.backend.domain.behaviors.net.PlayerNetActionVo;
 import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 import moe.ofs.backend.jms.Sender;
 import org.aspectj.lang.JoinPoint;

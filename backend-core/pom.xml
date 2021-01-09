@@ -114,10 +114,10 @@
             <artifactId>knife4j-spring-boot-starter</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.aspectj</groupId>-->
+<!--            <artifactId>aspectjrt</artifactId>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.aspectj</groupId>
@@ -161,35 +161,84 @@
                 <groupId>com.github.m50d</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
                 <configuration>
+                    <excludes>
+                        <exclude>**/*.java</exclude>
+                    </excludes>
                     <aspectLibraries>
+                        <aspectLibrary>
+                            <groupId>org.springframework</groupId>
+                            <artifactId>spring-aspects</artifactId>
+                        </aspectLibrary>
                         <aspectLibrary>
                             <groupId>moe.ofs</groupId>
                             <artifactId>lava-aspect</artifactId>
                         </aspectLibrary>
                     </aspectLibraries>
+
+                    <forceAjcCompile>true</forceAjcCompile>
+                    <sources/>
+                    <weaveDirectories>
+                        <weaveDirectory>${project.build.directory}/unwoven-classes</weaveDirectory>
+                    </weaveDirectories>
                 </configuration>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
+                <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <phase>package</phase>
+                        <id>unwovenClassesFolder</id>
+                        <phase>generate-resources</phase>
                         <configuration>
-                            <!--to be imported on other projects-->
-                            <classifier>addon-dependency</classifier>
-                            <!--                                <includes>-->
-                            <!--                                    <include>**/function/*</include>-->
-                            <!--                                    <include>**/services/*</include>-->
-                            <!--                                </includes>-->
+                            <tasks>
+                                <delete dir="${project.build.directory}/unwoven-classes"/>
+                                <mkdir dir="${project.build.directory}/unwoven-classes"/>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <configuration>
+                            <compilerArgs>
+                                <arg>-d</arg>
+                                <arg>${project.build.directory}/unwoven-classes</arg>
+                            </compilerArgs>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-jar-plugin</artifactId>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <goals>-->
+<!--                            <goal>jar</goal>-->
+<!--                        </goals>-->
+<!--                        <phase>package</phase>-->
+<!--                        <configuration>-->
+<!--                            &lt;!&ndash;to be imported on other projects&ndash;&gt;-->
+<!--                            <classifier>addon-dependency</classifier>-->
+<!--                            &lt;!&ndash;                                <includes>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                                    <include>**/function/*</include>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                                    <include>**/services/*</include>&ndash;&gt;-->
+<!--                            &lt;!&ndash;                                </includes>&ndash;&gt;-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 

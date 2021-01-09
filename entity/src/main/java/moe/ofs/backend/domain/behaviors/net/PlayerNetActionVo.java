@@ -1,4 +1,4 @@
-package moe.ofs.backend.discipline.aspects;
+package moe.ofs.backend.domain.behaviors.net;
 
 import lombok.Data;
 

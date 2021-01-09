@@ -7,4 +7,7 @@ import org.aspectj.lang.annotation.Pointcut;
 public class LavaSystemArchitecture {
     @Pointcut("within(moe.ofs.backend.connector..*)")
     public void inConnector() {}
+
+    @Pointcut("within(moe.ofs.backend.hookinterceptor..*)")
+    public void inHookInterceptorTemplate() {}
 }

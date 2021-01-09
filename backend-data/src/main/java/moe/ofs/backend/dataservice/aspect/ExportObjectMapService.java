@@ -1,4 +1,4 @@
-package moe.ofs.backend.dataservice.map;
+package moe.ofs.backend.dataservice.aspect;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.common.AbstractMapService;

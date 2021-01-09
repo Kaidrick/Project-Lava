@@ -3,7 +3,7 @@ package moe.ofs.backend.lavalog.eventlogger;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.discipline.aspects.PlayerNetActionVo;
+import moe.ofs.backend.domain.behaviors.net.PlayerNetActionVo;
 import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 import moe.ofs.backend.LavaLog;
 import moe.ofs.backend.domain.jms.LogLevel;

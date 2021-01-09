@@ -1,4 +1,4 @@
-package moe.ofs.backend.dataservice.map;
+package moe.ofs.backend.dataservice.aspect;
 
 import moe.ofs.backend.common.AbstractMapService;
 import moe.ofs.backend.domain.dcs.poll.ExportObject;
@@ -21,6 +21,7 @@ public class GraveyardMapService extends AbstractMapService<GraveyardRecord>
 
     @Override
     public void collect(ExportObject record) {
+        System.out.println("record = " + record);
         GraveyardRecord graveyardRecord =
                 new GraveyardRecord(record, Instant.now().plusSeconds(persistentDuration), Instant.now());
         save(graveyardRecord);
