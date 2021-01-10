@@ -104,7 +104,6 @@
                             <artifactId>lava-aspect</artifactId>
                         </aspectLibrary>
                     </aspectLibraries>
-
                     <forceAjcCompile>true</forceAjcCompile>
                     <sources/>
                     <weaveDirectories>

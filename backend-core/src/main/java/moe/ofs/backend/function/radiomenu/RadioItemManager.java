@@ -10,7 +10,7 @@ import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.connector.request.server.ServerActionRequest;
 import moe.ofs.backend.connector.request.server.ServerDataRequest;
 import moe.ofs.backend.connector.services.RequestTransmissionService;
-import moe.ofs.backend.dataservice.FlyableUnitService;
+import moe.ofs.backend.dataservice.slotunit.FlyableUnitService;
 import moe.ofs.backend.connector.util.LuaScripts;
 import org.springframework.stereotype.Component;
 

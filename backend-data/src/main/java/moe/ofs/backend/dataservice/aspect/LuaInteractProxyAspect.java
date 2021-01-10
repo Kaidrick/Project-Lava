@@ -13,7 +13,7 @@ public class LuaInteractProxyAspect {
 
     @Around("@annotation(moe.ofs.backend.connector.lua.LuaInteract)")
     public Object skipMethodsIfInvalidPhase(ProceedingJoinPoint joinPoint) throws Throwable {
-        System.out.println("joinPoint.toLongString() = " + joinPoint.toLongString());
+//        System.out.println("joinPoint.toLongString() = " + joinPoint.toLongString());
         if (LavaSystemStatus.getPhase() == OperationPhase.RUNNING) {
             return joinPoint.proceed(joinPoint.getArgs());
         }

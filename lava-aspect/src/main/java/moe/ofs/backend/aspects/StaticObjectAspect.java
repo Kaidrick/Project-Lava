@@ -24,12 +24,11 @@ public class StaticObjectAspect {
     private Sender sender;
 
     @Pointcut("execution(public java.util.concurrent.CompletableFuture<moe.ofs.backend.object.StaticObject> " +
-            "moe.ofs.backend.function.spawncontrol.services.*." +
-            "addStaticObject(..))")
+            "moe.ofs.backend.function.spawncontrol.services.impl.StaticObjectServiceImpl.addStaticObject(..))")
     public void addStaticObject() {}
 
     @Pointcut("execution(public java.util.concurrent.CompletableFuture<moe.ofs.backend.object.StaticObject> " +
-            "moe.ofs.backend.function.spawncontrol.services.*.*." +
+            "moe.ofs.backend.function.spawncontrol.services.impl.StaticObjectServiceImpl." +
             "removeStaticObject(moe.ofs.backend.object.StaticObject || int))")
     public void removeStaticObject() {}
 

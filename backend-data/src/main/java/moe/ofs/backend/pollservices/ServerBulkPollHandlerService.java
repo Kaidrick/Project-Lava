@@ -8,7 +8,7 @@ import moe.ofs.backend.connector.request.BaseRequest;
 import moe.ofs.backend.connector.request.FillerRequest;
 import moe.ofs.backend.connector.request.PollRequest;
 import moe.ofs.backend.connector.response.JsonRpcResponse;
-import moe.ofs.backend.dataservice.PlayerInfoService;
+import moe.ofs.backend.dataservice.player.PlayerInfoService;
 import moe.ofs.backend.domain.dcs.LuaState;
 import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 import moe.ofs.backend.connector.RequestHandler;

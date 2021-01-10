@@ -1,4 +1,4 @@
-package moe.ofs.backend.dataservice;
+package moe.ofs.backend.dataservice.player;
 
 import moe.ofs.backend.common.CrudService;
 import moe.ofs.backend.common.MissionPersistenceRepository;

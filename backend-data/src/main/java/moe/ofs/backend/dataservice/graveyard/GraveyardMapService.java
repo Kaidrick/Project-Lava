@@ -1,10 +1,10 @@
-package moe.ofs.backend.dataservice.aspect;
+package moe.ofs.backend.dataservice.graveyard;
 
 import moe.ofs.backend.common.AbstractMapService;
 import moe.ofs.backend.domain.dcs.poll.ExportObject;
 import moe.ofs.backend.domain.GraveyardRecord;
 import moe.ofs.backend.common.CrudService;
-import moe.ofs.backend.dataservice.GraveyardService;
+import moe.ofs.backend.dataservice.graveyard.GraveyardService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,8 @@
-package moe.ofs.backend.dataservice.map;
+package moe.ofs.backend.dataservice.player;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.common.AbstractMapService;
 import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
-import moe.ofs.backend.dataservice.PlayerInfoService;
 import moe.ofs.backend.common.UpdatableService;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;

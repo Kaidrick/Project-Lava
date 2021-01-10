@@ -1,6 +1,6 @@
 package moe.ofs.backend.util;
 
-import moe.ofs.backend.dataservice.map.ParkingInfoMapService;
+import moe.ofs.backend.dataservice.parking.ParkingInfoMapService;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

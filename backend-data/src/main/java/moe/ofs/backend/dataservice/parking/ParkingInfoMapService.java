@@ -1,4 +1,4 @@
-package moe.ofs.backend.dataservice.map;
+package moe.ofs.backend.dataservice.parking;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -8,7 +8,6 @@ import moe.ofs.backend.common.AbstractMapService;
 import moe.ofs.backend.object.ParkingInfo;
 import moe.ofs.backend.connector.response.JsonRpcResponse;
 import moe.ofs.backend.connector.request.server.ServerDataRequest;
-import moe.ofs.backend.dataservice.ParkingInfoService;
 import moe.ofs.backend.connector.ConnectionManager;
 import org.springframework.stereotype.Service;
 import moe.ofs.backend.connector.util.LuaScripts;

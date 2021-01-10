@@ -9,7 +9,7 @@ import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 import moe.ofs.backend.handlers.MissionStartObservable;
 import moe.ofs.backend.connector.request.server.ServerDataRequest;
 import moe.ofs.backend.connector.services.RequestTransmissionService;
-import moe.ofs.backend.dataservice.PlayerInfoService;
+import moe.ofs.backend.dataservice.player.PlayerInfoService;
 import moe.ofs.backend.connector.lua.LuaInteract;
 import moe.ofs.backend.connector.util.LuaScripts;
 import moe.ofs.backend.connector.lua.LuaQueryEnv;

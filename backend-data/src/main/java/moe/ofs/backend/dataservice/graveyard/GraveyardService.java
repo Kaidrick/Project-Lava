@@ -1,4 +1,4 @@
-package moe.ofs.backend.dataservice;
+package moe.ofs.backend.dataservice.graveyard;
 
 import moe.ofs.backend.domain.dcs.poll.ExportObject;
 import moe.ofs.backend.domain.GraveyardRecord;

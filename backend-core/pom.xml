@@ -161,9 +161,9 @@
                 <groupId>com.github.m50d</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
                 <configuration>
-                    <excludes>
-                        <exclude>**/*.java</exclude>
-                    </excludes>
+<!--                    <excludes>-->
+<!--                        <exclude>**/*.java</exclude>-->
+<!--                    </excludes>-->
                     <aspectLibraries>
                         <aspectLibrary>
                             <groupId>org.springframework</groupId>
@@ -174,9 +174,7 @@
                             <artifactId>lava-aspect</artifactId>
                         </aspectLibrary>
                     </aspectLibraries>
-
                     <forceAjcCompile>true</forceAjcCompile>
-                    <sources/>
                     <weaveDirectories>
                         <weaveDirectory>${project.build.directory}/unwoven-classes</weaveDirectory>
                     </weaveDirectories>
@@ -210,6 +208,7 @@
                     <execution>
                         <id>default-compile</id>
                         <configuration>
+<!--                            <forceJavacCompilerUse>true</forceJavacCompilerUse>-->
                             <compilerArgs>
                                 <arg>-d</arg>
                                 <arg>${project.build.directory}/unwoven-classes</arg>
@@ -218,27 +217,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-jar-plugin</artifactId>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <goals>-->
-<!--                            <goal>jar</goal>-->
-<!--                        </goals>-->
-<!--                        <phase>package</phase>-->
-<!--                        <configuration>-->
-<!--                            &lt;!&ndash;to be imported on other projects&ndash;&gt;-->
-<!--                            <classifier>addon-dependency</classifier>-->
-<!--                            &lt;!&ndash;                                <includes>&ndash;&gt;-->
-<!--                            &lt;!&ndash;                                    <include>**/function/*</include>&ndash;&gt;-->
-<!--                            &lt;!&ndash;                                    <include>**/services/*</include>&ndash;&gt;-->
-<!--                            &lt;!&ndash;                                </includes>&ndash;&gt;-->
-<!--                        </configuration>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
         </plugins>
     </build>
 

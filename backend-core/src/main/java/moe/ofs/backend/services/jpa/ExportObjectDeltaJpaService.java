@@ -6,7 +6,7 @@
 //import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
 //import moe.ofs.backend.handlers.ExportUnitUpdateObservable;
 //import moe.ofs.backend.common.ExportObjectRepository;
-//import moe.ofs.backend.dataservice.ExportObjectService;
+//import moe.ofs.backend.dataservice.exportobject.ExportObjectService;
 //import org.springframework.context.annotation.Primary;
 //import org.springframework.stereotype.Service;
 //

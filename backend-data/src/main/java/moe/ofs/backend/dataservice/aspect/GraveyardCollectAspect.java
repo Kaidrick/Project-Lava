@@ -1,13 +1,11 @@
 package moe.ofs.backend.dataservice.aspect;
 
-import moe.ofs.backend.dataservice.GraveyardService;
+import moe.ofs.backend.dataservice.graveyard.GraveyardService;
 import moe.ofs.backend.domain.dcs.poll.ExportObject;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.stereotype.Component;
 
 //@Configurable
 @Aspect
@@ -19,7 +17,7 @@ public class GraveyardCollectAspect {
         this.service = service;
     }
 
-    @Pointcut("execution(public void moe.ofs.backend.dataservice.aspect.ExportObjectMapService.remove(moe.ofs.backend.domain.dcs.poll.ExportObject))")
+    @Pointcut("execution(public void moe.ofs.backend.dataservice.exportobject.ExportObjectMapService.remove(moe.ofs.backend.domain.dcs.poll.ExportObject))")
     public void exportObjectDataRemove() {}
 
     @After("exportObjectDataRemove()")

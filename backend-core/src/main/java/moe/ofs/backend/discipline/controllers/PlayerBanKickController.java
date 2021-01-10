@@ -5,7 +5,7 @@ import moe.ofs.backend.discipline.model.PlayerDisciplinaryAction;
 import moe.ofs.backend.discipline.model.Punishment;
 import moe.ofs.backend.discipline.service.PlayerDisciplineService;
 import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
-import moe.ofs.backend.dataservice.PlayerInfoService;
+import moe.ofs.backend.dataservice.player.PlayerInfoService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;

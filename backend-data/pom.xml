@@ -129,9 +129,9 @@
                 <groupId>com.github.m50d</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
                 <configuration>
-                    <excludes>
-                        <exclude>**/*.java</exclude>
-                    </excludes>
+<!--                    <excludes>-->
+<!--                        <exclude>**/*.java</exclude>-->
+<!--                    </excludes>-->
                     <aspectLibraries>
                         <aspectLibrary>
                             <groupId>org.springframework</groupId>
@@ -144,9 +144,9 @@
                     </aspectLibraries>
 
                     <forceAjcCompile>true</forceAjcCompile>
-                    <sources/>
+<!--                    <sources/>-->
                     <weaveDirectories>
-                        <weaveDirectory>${project.build.directory}/unwoven-classes/moe/ofs/backend/dataservice/map</weaveDirectory>
+                        <weaveDirectory>${project.build.directory}/unwoven-classes</weaveDirectory>
                     </weaveDirectories>
                 </configuration>
             </plugin>

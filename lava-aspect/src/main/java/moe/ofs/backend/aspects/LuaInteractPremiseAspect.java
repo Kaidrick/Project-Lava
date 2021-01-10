@@ -20,6 +20,7 @@ public class LuaInteractPremiseAspect {
 
     @Around("@annotation(moe.ofs.backend.connector.lua.LuaInteract)")
     public Object skipMethodsIfInvalidPhase(ProceedingJoinPoint joinPoint) throws Throwable {
+//        System.out.println("joinPoint.toLongString() = " + joinPoint.toLongString());
         if (LavaSystemStatus.getPhase() == OperationPhase.RUNNING) {
             return joinPoint.proceed(joinPoint.getArgs());
         }
@@ -30,8 +31,8 @@ public class LuaInteractPremiseAspect {
     @Pointcut("execution(public * moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService.poll(..))")
     public void testAbstractClassIntercept() {}
 
-//    @After("testAbstractClassIntercept()")
-//    public void testIntercept(JoinPoint point) {
-//        System.out.println("testIntercept => point.getSignature() = " + point.getSignature());
-//    }
+    @After("testAbstractClassIntercept()")
+    public void testIntercept(JoinPoint point) {
+        System.out.println("testIntercept => point.getSignature() = " + point.getSignature());
+    }
 }

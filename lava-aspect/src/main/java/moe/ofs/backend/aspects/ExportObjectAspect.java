@@ -21,25 +21,25 @@ public class ExportObjectAspect {
     private Sender sender;
 
     @Pointcut("execution(public void " +
-            "moe.ofs.backend.dataservice.map.ExportObjectMapService.add(..))")
+            "moe.ofs.backend.dataservice.exportobject.ExportObjectMapService.add(..))")
     public void exportObjectDataAdd() {
     }
 
     @Pointcut("execution(public void " +
-            "moe.ofs.backend.dataservice.map.ExportObjectMapService.remove(..))")
+            "moe.ofs.backend.dataservice.exportobject.ExportObjectMapService.remove(..))")
     public void exportObjectDataRemove() {
     }
 
     //    @Pointcut("execution(public void moe.ofs.backend.services.jpa.ExportObjectDeltaJpaService." +
 //            "update(moe.ofs.backend.domain.dcs.poll.ExportObject))")
     @Pointcut("execution(public moe.ofs.backend.domain.dcs.poll.ExportObject " +
-            "moe.ofs.backend.dataservice.map.ExportObjectMapService.update(..))")
+            "moe.ofs.backend.dataservice.exportobject.ExportObjectMapService.update(..))")
     public void exportObjectDataUpdate() {
     }  // example of export object update listener
 
     @After("exportObjectDataAdd()")
     public void logExportUnitSpawn(JoinPoint joinPoint) {
-//        log.info(joinPoint.toShortString());
+        log.info(joinPoint.toShortString());
         Object object = joinPoint.getArgs()[0];
         if (object instanceof ExportObject) {
             sender.sendToTopicAsJson("lava.spawn-control.export-object",

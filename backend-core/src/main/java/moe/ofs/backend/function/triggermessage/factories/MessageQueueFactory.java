@@ -3,7 +3,7 @@ package moe.ofs.backend.function.triggermessage.factories;
 import moe.ofs.backend.domain.dcs.poll.ExportObject;
 import moe.ofs.backend.function.triggermessage.model.MessageQueue;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
-import moe.ofs.backend.dataservice.FlyableUnitService;
+import moe.ofs.backend.dataservice.slotunit.FlyableUnitService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;

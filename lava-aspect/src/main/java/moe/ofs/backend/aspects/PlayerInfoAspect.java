@@ -17,11 +17,10 @@ public class PlayerInfoAspect {
     @Autowired
     private Sender sender;
 
-//    @Pointcut("within(moe.ofs.backend.services.jpa.PlayerInfoJpaService)")
-    @Pointcut("execution(* moe.ofs.backend..Player*.add(..))")
+    @Pointcut("execution(* moe.ofs.backend.dataservice.player.PlayerInfoMapService.add(..))")
     public void logNewPlayerInfo() {}
 
-    @Pointcut("execution(public void moe.ofs.backend.dataservice.map.PlayerInfoMapService.remove(..))")
+    @Pointcut("execution(* moe.ofs.backend.dataservice.player.PlayerInfoMapService.remove(..))")
     public void logObsoletePlayerInfo() {}
 
     @After("logNewPlayerInfo()")
@@ -34,7 +33,7 @@ public class PlayerInfoAspect {
             playerNetActionVo.setObject((PlayerInfo) object);
             playerNetActionVo.setTimestamp(System.currentTimeMillis());
             playerNetActionVo.setSuccess(true);
-//            sender.sendToTopic("lava.player.connection", (PlayerInfo) object, "connect");
+
             sender.sendToTopicAsJson("lava.player.connection", playerNetActionVo, NetAction.CONNECT.getActionName());
         }
     }
@@ -50,7 +49,7 @@ public class PlayerInfoAspect {
             playerNetActionVo.setObject((PlayerInfo) object);
             playerNetActionVo.setTimestamp(System.currentTimeMillis());
             playerNetActionVo.setSuccess(true);
-//            sender.sendToTopic("lava.player.connection", (PlayerInfo) object, "disconnect");
+
             sender.sendToTopicAsJson("lava.player.connection", playerNetActionVo, NetAction.DISCONNECT.getActionName());
         }
     }

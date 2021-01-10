@@ -1,4 +1,4 @@
-package moe.ofs.backend.dataservice;
+package moe.ofs.backend.dataservice.parking;
 
 import moe.ofs.backend.common.MissionPersistenceRepository;
 import moe.ofs.backend.common.StaticService;

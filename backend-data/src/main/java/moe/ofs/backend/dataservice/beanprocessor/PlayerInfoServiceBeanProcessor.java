@@ -1,6 +1,6 @@
 package moe.ofs.backend.dataservice.beanprocessor;
 
-import moe.ofs.backend.dataservice.PlayerInfoService;
+import moe.ofs.backend.dataservice.player.PlayerInfoService;
 import moe.ofs.backend.dataservice.aware.PlayerInfoServiceAware;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;

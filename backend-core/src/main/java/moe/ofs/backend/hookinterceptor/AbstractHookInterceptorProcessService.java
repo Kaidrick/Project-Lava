@@ -2,7 +2,7 @@ package moe.ofs.backend.hookinterceptor;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.connector.lua.LuaInteract;
-import moe.ofs.backend.dataservice.PlayerInfoService;
+import moe.ofs.backend.dataservice.player.PlayerInfoService;
 import moe.ofs.backend.connector.util.LuaScripts;
 import moe.ofs.backend.connector.lua.LuaQueryEnv;
 

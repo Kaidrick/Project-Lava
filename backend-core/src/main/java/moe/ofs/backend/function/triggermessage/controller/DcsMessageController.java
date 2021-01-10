@@ -5,7 +5,7 @@ import moe.ofs.backend.function.triggermessage.model.TriggerMessage;
 import moe.ofs.backend.function.triggermessage.model.TriggerMessageRequest;
 import moe.ofs.backend.function.triggermessage.services.NetMessageService;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
-import moe.ofs.backend.dataservice.PlayerInfoService;
+import moe.ofs.backend.dataservice.player.PlayerInfoService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
