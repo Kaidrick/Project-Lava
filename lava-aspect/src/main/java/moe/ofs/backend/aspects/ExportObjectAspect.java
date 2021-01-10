@@ -39,8 +39,8 @@ public class ExportObjectAspect {
 
     @After("exportObjectDataAdd()")
     public void logExportUnitSpawn(JoinPoint joinPoint) {
-        log.info(joinPoint.toShortString());
         Object object = joinPoint.getArgs()[0];
+//        log.info("{} - {}", joinPoint.toShortString(), object);
         if (object instanceof ExportObject) {
             sender.sendToTopicAsJson("lava.spawn-control.export-object",
                     object, ControlAction.SPAWN.getActionName());

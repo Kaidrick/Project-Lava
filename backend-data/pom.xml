@@ -146,6 +146,19 @@
                     <forceAjcCompile>true</forceAjcCompile>
 <!--                    <sources/>-->
                     <weaveDirectories>
+                        <!-- no weaving for graveyard because graveyard should use spring proxy aop to capture data -->
+<!--                        <weaveDirectory>${project.build.directory}/unwoven-classes/moe/ofs/backend/common</weaveDirectory>-->
+<!--                        <weaveDirectory>${project.build.directory}/unwoven-classes/moe/ofs/backend/dao</weaveDirectory>-->
+<!--                        <weaveDirectory>${project.build.directory}/unwoven-classes/moe/ofs/backend/domain</weaveDirectory>-->
+<!--                        <weaveDirectory>${project.build.directory}/unwoven-classes/moe/ofs/backend/object</weaveDirectory>-->
+<!--                        <weaveDirectory>${project.build.directory}/unwoven-classes/moe/ofs/backend/pollservices</weaveDirectory>-->
+<!--                        <weaveDirectory>${project.build.directory}/unwoven-classes/moe/ofs/backend/dataservice/aspect</weaveDirectory>-->
+<!--                        <weaveDirectory>${project.build.directory}/unwoven-classes/moe/ofs/backend/dataservice/aware</weaveDirectory>-->
+<!--                        <weaveDirectory>${project.build.directory}/unwoven-classes/moe/ofs/backend/dataservice/beanprocessor</weaveDirectory>-->
+<!--                        <weaveDirectory>${project.build.directory}/unwoven-classes/moe/ofs/backend/dataservice/exportobject</weaveDirectory>-->
+<!--                        <weaveDirectory>${project.build.directory}/unwoven-classes/moe/ofs/backend/dataservice/parking</weaveDirectory>-->
+<!--                        <weaveDirectory>${project.build.directory}/unwoven-classes/moe/ofs/backend/dataservice/player</weaveDirectory>-->
+<!--                        <weaveDirectory>${project.build.directory}/unwoven-classes/moe/ofs/backend/dataservice/slotunit</weaveDirectory>-->
                         <weaveDirectory>${project.build.directory}/unwoven-classes</weaveDirectory>
                     </weaveDirectories>
                 </configuration>

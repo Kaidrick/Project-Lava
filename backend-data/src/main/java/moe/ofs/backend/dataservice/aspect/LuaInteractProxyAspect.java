@@ -8,12 +8,12 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
 @Aspect
-//@Component
+@Component
 public class LuaInteractProxyAspect {
 
-    @Around("@annotation(moe.ofs.backend.connector.lua.LuaInteract)")
+    @Around("@annotation(moe.ofs.backend.connector.lua.LuaLoading)")
     public Object skipMethodsIfInvalidPhase(ProceedingJoinPoint joinPoint) throws Throwable {
-//        System.out.println("joinPoint.toLongString() = " + joinPoint.toLongString());
+        System.out.println("LuaInteractProxyAspect => " + joinPoint.toLongString());
         if (LavaSystemStatus.getPhase() == OperationPhase.RUNNING) {
             return joinPoint.proceed(joinPoint.getArgs());
         }

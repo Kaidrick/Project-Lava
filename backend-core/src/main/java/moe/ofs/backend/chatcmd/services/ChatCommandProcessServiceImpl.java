@@ -65,8 +65,8 @@ public class ChatCommandProcessServiceImpl implements ChatCommandProcessService 
                 .build());
     }
 
-    @Scheduled(fixedDelay = 200L)
-    @LuaInteract
+//    @Scheduled(fixedDelay = 200L)
+//    @LuaInteract
     public void gather() {
         poll().forEach(this::analysis);
     }

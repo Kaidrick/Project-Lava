@@ -6,16 +6,14 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
 
-//@Configurable
+@Configurable
 @Aspect
-//@Component
 public class GraveyardCollectAspect {
-    private final GraveyardService service;
-
-    public GraveyardCollectAspect(GraveyardService service) {
-        this.service = service;
-    }
+    @Autowired
+    private GraveyardService service;
 
     @Pointcut("execution(public void moe.ofs.backend.dataservice.exportobject.ExportObjectMapService.remove(moe.ofs.backend.domain.dcs.poll.ExportObject))")
     public void exportObjectDataRemove() {}

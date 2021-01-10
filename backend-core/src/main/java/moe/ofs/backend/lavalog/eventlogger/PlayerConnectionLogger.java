@@ -58,7 +58,8 @@ public class PlayerConnectionLogger {
         PlayerInfo prev = change[0];
         PlayerInfo curr = change[1];
 
-        log.info("slot change -> " + prev.toString() + " => " + curr.toString());
+        log.info("Player <{}>({}) change slot from [{}] to [{}]",
+                curr.getName(), curr.getUcid(), prev.getSlot(), curr.getSlot());
 
         logger.log(LogLevel.INFO, String.format("Player <%s> slot changed from %s to %s",
                 curr.getName(), prev.getSlot(), curr.getSlot()));

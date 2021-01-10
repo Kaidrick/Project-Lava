@@ -9,7 +9,7 @@
 
     <aspects>
         <aspect name="moe.ofs.backend.aspects.ExportObjectAspect" />
-<!--        <aspect name="moe.ofs.backend.dataservice.aspect.GraveyardCollectAspect" />-->
+        <aspect name="moe.ofs.backend.dataservice.aspect.GraveyardCollectAspect" />
         <aspect name="moe.ofs.backend.aspects.hookinterceptor.HookInterceptorAspect"/>
         <aspect name="moe.ofs.backend.aspects.PlayerInfoAspect" />
         <aspect name="moe.ofs.backend.aspects.PlayerInfoSlotChangeAspect" />
