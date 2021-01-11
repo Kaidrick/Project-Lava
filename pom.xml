@@ -10,6 +10,11 @@
         <module>backend-data</module>
         <module>backend-log</module>
         <module>unified-http-response</module>
+        <module>application</module>
+        <module>lava-aspect</module>
+        <module>connector</module>
+        <module>entity</module>
+        <module>lava-annotation</module>
     </modules>
 
     <groupId>moe.ofs</groupId>
@@ -18,6 +23,11 @@
     <name>ofs-backend</name>
     <description>OFS backend project</description>
 
+    <properties>
+        <!--        <java.version>1.8</java.version>-->
+        <maven.compiler.release>8</maven.compiler.release>
+    </properties>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -25,48 +35,183 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>maven2</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>jcenter</id>
+            <name>bintray</name>
+            <url>https://jcenter.bintray.com</url>
+        </repository>
+    </repositories>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>28.2-jre</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.xiaoymin</groupId>
+                <artifactId>knife4j-spring-boot-starter</artifactId>
+                <version>2.0.8</version>
+            </dependency>
+
+            <!-- https://mvnrepository.com/artifact/io.hawt/hawtio-springboot -->
+            <dependency>
+                <groupId>io.hawt</groupId>
+                <artifactId>hawtio-springboot</artifactId>
+                <version>2.10.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-generator</artifactId>
+                <version>3.3.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>3.3.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aspects</artifactId>
+                <version>5.2.10.RELEASE</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjtools</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aspects</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.aspectj</groupId>
+                            <artifactId>aspectjweaver</artifactId>
+                            <version>${aspectj.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.github.m50d</groupId>
+                    <artifactId>aspectj-maven-plugin</artifactId>
+                    <version>1.11.1</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.aspectj</groupId>
+                            <artifactId>aspectjtools</artifactId>
+                            <version>${aspectj.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+<!--                        <excludes>-->
+<!--                            <exclude>**/*.java</exclude>-->
+<!--                        </excludes>-->
+<!--                        <aspectLibraries>-->
+<!--                            <aspectLibrary>-->
+<!--                                <groupId>org.springframework</groupId>-->
+<!--                                <artifactId>spring-aspects</artifactId>-->
+<!--                            </aspectLibrary>-->
+<!--                            <aspectLibrary>-->
+<!--                                <groupId>moe.ofs</groupId>-->
+<!--                                <artifactId>lava-aspect</artifactId>-->
+<!--                            </aspectLibrary>-->
+<!--                        </aspectLibraries>-->
+                        <complianceLevel>${maven.compiler.target}</complianceLevel>
+                        <source>${maven.compiler.target}</source>
+                        <target>${maven.compiler.target}</target>
+                        <showWeaveInfo>true</showWeaveInfo>
+                        <verbose>true</verbose>
+                        <Xlint>ignore</Xlint>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <forceAjcCompile>true</forceAjcCompile>
+                        <sources/><!-- this is important!-->
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-antrun-plugin</artifactId>
+                    <version>${maven-antrun-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <useSystemClassLoader>false</useSystemClassLoader>
+<!--                        <argLine>-javaagent:${project.build.directory}/aspectj/aspectjweaver-${aspectj.version}.jar</argLine>-->
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
     <profiles>
         <profile>
             <id>intellij-properties-launcher</id>
             <dependencies>
-<!--                 https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-loader-->
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-loader</artifactId>
-<!--                    <version>2.4.0</version>-->
                 </dependency>
-
-
             </dependencies>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>moe.ofs.backend.BackendApplication</mainClass>
-                </configuration>
-                <!--                <executions>-->
-                <!--                    <execution>-->
-                <!--                        <id>repackage</id>-->
-                <!--                        <goals>-->
-                <!--                            <goal>repackage</goal>-->
-                <!--                        </goals>-->
-                <!--                        <configuration>-->
-                <!--                            <classifier>exec</classifier>-->
-                <!--                        </configuration>-->
-                <!--                    </execution>-->
-                <!--                </executions>-->
-            </plugin>
-        </plugins>
-    </build>
-
-    <properties>
-<!--        <java.version>1.8</java.version>-->
-        <maven.compiler.release>8</maven.compiler.release>
-    </properties>
 
 </project>

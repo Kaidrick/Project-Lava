@@ -2,9 +2,9 @@ package moe.ofs.backend.system.controllers;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.domain.LogEntry;
+import moe.ofs.backend.domain.jms.LogEntry;
 import moe.ofs.backend.jms.Sender;
-import moe.ofs.backend.object.LogLevel;
+import moe.ofs.backend.domain.jms.LogLevel;
 import moe.ofs.backend.system.FrontendStatusMonitor;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;

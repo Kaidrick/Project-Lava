@@ -2,10 +2,9 @@ package moe.ofs.backend.dispatcher.services;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.dispatcher.model.LavaTask;
-import moe.ofs.backend.services.map.AbstractMapService;
+import moe.ofs.backend.common.AbstractMapService;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 import java.util.concurrent.*;
 

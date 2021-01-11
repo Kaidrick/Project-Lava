@@ -6,10 +6,9 @@ import lombok.Setter;
 import moe.ofs.backend.object.Unit;
 import moe.ofs.backend.object.command.Command;
 import moe.ofs.backend.object.tasks.Task;
-import moe.ofs.backend.request.DataRequest;
-import moe.ofs.backend.request.server.ServerActionRequest;
-import moe.ofs.backend.util.LuaScripts;
-import moe.ofs.backend.util.lua.LuaQueryEnv;
+import moe.ofs.backend.connector.request.server.ServerActionRequest;
+import moe.ofs.backend.connector.util.LuaScripts;
+import moe.ofs.backend.connector.lua.LuaQueryEnv;
 
 import java.util.List;
 

@@ -1,13 +1,10 @@
 package moe.ofs.backend.lavalog.controllers;
 
-import moe.ofs.backend.pagination.LavaSystemLogPageObject;
-import moe.ofs.backend.pagination.PageVo;
-import moe.ofs.backend.domain.LogEntry;
+import moe.ofs.backend.domain.pagination.LavaSystemLogPageObject;
+import moe.ofs.backend.domain.pagination.PageVo;
+import moe.ofs.backend.domain.jms.LogEntry;
 import moe.ofs.backend.lavalog.services.LavaSystemLogService;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
-import java.util.Map;
 
 @RestController
 @RequestMapping("syslog")

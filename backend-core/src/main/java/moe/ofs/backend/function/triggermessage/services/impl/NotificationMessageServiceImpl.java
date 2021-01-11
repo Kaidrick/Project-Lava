@@ -1,13 +1,13 @@
 package moe.ofs.backend.function.triggermessage.services.impl;
 
-import moe.ofs.backend.domain.PlayerInfo;
+import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 import moe.ofs.backend.function.triggermessage.model.MessageFallback;
 import moe.ofs.backend.function.triggermessage.model.TriggerMessage;
 import moe.ofs.backend.function.triggermessage.services.NetMessageService;
 import moe.ofs.backend.function.triggermessage.services.NotificationMessageService;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
-import moe.ofs.backend.services.ExportObjectService;
-import moe.ofs.backend.services.FlyableUnitService;
+import moe.ofs.backend.dataservice.exportobject.ExportObjectService;
+import moe.ofs.backend.dataservice.slotunit.FlyableUnitService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

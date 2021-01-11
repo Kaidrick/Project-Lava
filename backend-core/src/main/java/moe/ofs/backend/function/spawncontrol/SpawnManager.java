@@ -1,8 +1,8 @@
 package moe.ofs.backend.function.spawncontrol;
 
-import moe.ofs.backend.object.Vector3D;
-import moe.ofs.backend.request.server.ServerDataRequest;
-import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.domain.dcs.theater.Vector3D;
+import moe.ofs.backend.connector.request.server.ServerDataRequest;
+import moe.ofs.backend.connector.util.LuaScripts;
 
 public interface SpawnManager {
     /**

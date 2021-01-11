@@ -1,5 +1,6 @@
 package moe.ofs.backend;
 
+import moe.ofs.backend.connector.Configurable;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

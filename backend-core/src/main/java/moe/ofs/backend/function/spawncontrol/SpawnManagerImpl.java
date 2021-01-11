@@ -1,6 +1,6 @@
 package moe.ofs.backend.function.spawncontrol;
 
-import moe.ofs.backend.repositories.ExportObjectRepository;
+import moe.ofs.backend.common.ExportObjectRepository;
 import org.springframework.stereotype.Component;
 
 @Component

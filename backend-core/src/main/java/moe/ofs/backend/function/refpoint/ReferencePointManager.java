@@ -2,10 +2,10 @@ package moe.ofs.backend.function.refpoint;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import moe.ofs.backend.object.map.ReferencePoint;
-import moe.ofs.backend.request.server.ServerDataRequest;
-import moe.ofs.backend.request.services.RequestTransmissionService;
-import moe.ofs.backend.util.LuaScripts;
+import moe.ofs.backend.domain.dcs.theater.ReferencePoint;
+import moe.ofs.backend.connector.request.server.ServerDataRequest;
+import moe.ofs.backend.connector.services.RequestTransmissionService;
+import moe.ofs.backend.connector.util.LuaScripts;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;

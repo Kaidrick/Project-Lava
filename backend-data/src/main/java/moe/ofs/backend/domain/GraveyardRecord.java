@@ -3,6 +3,8 @@ package moe.ofs.backend.domain;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import moe.ofs.backend.domain.dcs.BaseEntity;
+import moe.ofs.backend.domain.dcs.poll.ExportObject;
 
 import java.time.Instant;
 

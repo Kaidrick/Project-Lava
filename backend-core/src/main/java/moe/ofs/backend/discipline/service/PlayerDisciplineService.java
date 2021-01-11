@@ -1,6 +1,6 @@
 package moe.ofs.backend.discipline.service;
 
-import moe.ofs.backend.domain.PlayerInfo;
+import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 
 import java.time.Duration;
 

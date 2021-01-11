@@ -4,7 +4,8 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import moe.ofs.backend.domain.BaseEntity;
+import moe.ofs.backend.domain.dcs.BaseEntity;
+import moe.ofs.backend.domain.dcs.theater.Vector3D;
 
 import java.io.Serializable;
 

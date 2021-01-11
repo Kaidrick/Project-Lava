@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import moe.ofs.backend.domain.connector.Level;
+import moe.ofs.backend.domain.dcs.LuaState;
 
 import java.io.Serializable;
 import java.util.Objects;

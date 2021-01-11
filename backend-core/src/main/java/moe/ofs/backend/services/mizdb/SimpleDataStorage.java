@@ -1,6 +1,6 @@
 package moe.ofs.backend.services.mizdb;
 
-import moe.ofs.backend.util.lua.LuaQueryEnv;
+import moe.ofs.backend.connector.lua.LuaQueryEnv;
 
 public class SimpleDataStorage<T> extends AbstractDataStorage<T> {
 

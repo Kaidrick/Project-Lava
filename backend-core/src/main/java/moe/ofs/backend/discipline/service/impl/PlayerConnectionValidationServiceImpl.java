@@ -3,20 +3,20 @@ package moe.ofs.backend.discipline.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.discipline.model.PlayerTryConnectRecord;
 import moe.ofs.backend.discipline.service.GlobalConnectionBlockService;
-import moe.ofs.backend.handlers.starter.LuaScriptStarter;
-import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
+import moe.ofs.backend.domain.connector.handlers.scripts.LuaScriptStarter;
+import moe.ofs.backend.domain.connector.handlers.scripts.ScriptInjectionTask;
 import moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService;
 import moe.ofs.backend.hookinterceptor.HookInterceptorDefinition;
 import moe.ofs.backend.hookinterceptor.HookInterceptorProcessService;
 import moe.ofs.backend.hookinterceptor.HookType;
 import moe.ofs.backend.function.mizdb.services.impl.LuaStorageInitServiceImpl;
-import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.services.mizdb.SimpleKeyValueStorage;
-import moe.ofs.backend.util.LuaInteract;
-import moe.ofs.backend.util.lua.LuaQueryEnv;
+import moe.ofs.backend.connector.lua.LuaInteract;
+import moe.ofs.backend.connector.lua.LuaQueryEnv;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 
 @Service
@@ -26,12 +26,10 @@ public class PlayerConnectionValidationServiceImpl
         implements HookInterceptorProcessService<PlayerTryConnectRecord, HookInterceptorDefinition>,
         LuaScriptStarter, GlobalConnectionBlockService {
 
-    private final PlayerInfoService playerInfoService;
     private final SimpleKeyValueStorage<String> connectionValidatorStorage;
     private final SimpleKeyValueStorage<Object> globalConnectionBlockStorage;
 
-    public PlayerConnectionValidationServiceImpl(PlayerInfoService playerInfoService) {
-        this.playerInfoService = playerInfoService;
+    public PlayerConnectionValidationServiceImpl() {
 
         connectionValidatorStorage =
                 new SimpleKeyValueStorage<>("lava-default-player-connection-validation-hook-kw-pair",
@@ -40,6 +38,15 @@ public class PlayerConnectionValidationServiceImpl
         globalConnectionBlockStorage =
                 new SimpleKeyValueStorage<>("lava-default-player-connection-block-hook-kw-pair",
                         LuaQueryEnv.SERVER_CONTROL);
+    }
+
+    @PostConstruct
+    public void populateProcessors() {
+        addProcessor("console log processor", playerTryConnectRecord ->
+                log.info("Player {}<{}> tries to connect from {}",
+                        playerTryConnectRecord.getPlayerName(),
+                        playerTryConnectRecord.getUcid(),
+                        playerTryConnectRecord.getIpaddr()));
     }
 
     @Override
@@ -105,17 +112,18 @@ public class PlayerConnectionValidationServiceImpl
     }
 
     @Scheduled(fixedDelay = 100L)
-    @LuaInteract
+//    @LuaInteract
     public void gather() throws IOException {
-        poll(PlayerTryConnectRecord.class).stream()
-                .peek(hookProcessEntity ->
-                        playerInfoService.findByNetId(hookProcessEntity.getNetId())
-                                .ifPresent(hookProcessEntity::setPlayer))
-                .forEach(playerTryConnectRecord -> // TODO: send to message queue?
-                        log.info("Player {}<{}> tries to connect from {}",
-                                playerTryConnectRecord.getPlayerName(),
-                                playerTryConnectRecord.getUcid(),
-                                playerTryConnectRecord.getIpaddr()));
+        gather(PlayerTryConnectRecord.class);
+//        poll(PlayerTryConnectRecord.class).stream()
+//                .peek(hookProcessEntity ->
+//                        playerInfoService.findByNetId(hookProcessEntity.getNetId())
+//                                .ifPresent(hookProcessEntity::setPlayer))
+//                .forEach(playerTryConnectRecord -> // TODO: send to message queue?
+//                        log.info("Player {}<{}> tries to connect from {}",
+//                                playerTryConnectRecord.getPlayerName(),
+//                                playerTryConnectRecord.getUcid(),
+//                                playerTryConnectRecord.getIpaddr()));
     }
 
     @Override

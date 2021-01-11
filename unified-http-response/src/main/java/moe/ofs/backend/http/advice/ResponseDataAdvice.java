@@ -82,7 +82,7 @@ public class ResponseDataAdvice implements ResponseBodyAdvice<Object> {
             return o;
         }
 
-        if (o != null && methodParameter.getParameterType().getName().equals("moe.ofs.backend.pagination.PageVo")) {
+        if (o != null && methodParameter.getParameterType().getName().equals("moe.ofs.backend.domain.pagination.PageVo")) {
             return Responses.querySuccess(o);
         }
 

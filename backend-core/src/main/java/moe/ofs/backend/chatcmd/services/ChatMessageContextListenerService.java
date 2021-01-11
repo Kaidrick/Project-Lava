@@ -1,7 +1,7 @@
 package moe.ofs.backend.chatcmd.services;
 
 import moe.ofs.backend.chatcmdnew.model.ChatCommandDefinition;
-import moe.ofs.backend.domain.PlayerInfo;
+import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 
 /**
  * If message is sent to user and is waiting for user input, check consequent messages

@@ -34,7 +34,8 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(passwordTypeFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
 //                所有请求放行
-//                .anyRequest().permitAll()
+                .antMatchers("/h2-console/**")
+                .permitAll()
                 .and()
                 .cors().disable()
                 .csrf().disable()

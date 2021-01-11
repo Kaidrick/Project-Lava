@@ -1,10 +1,10 @@
 package moe.ofs.backend.config.controllers;
 
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.domain.Level;
+import moe.ofs.backend.domain.connector.Level;
 import moe.ofs.backend.object.PortConfig;
-import moe.ofs.backend.util.ConnectionManager;
-import moe.ofs.backend.util.DcsScriptConfigManager;
+import moe.ofs.backend.connector.ConnectionManager;
+import moe.ofs.backend.connector.DcsScriptConfigManager;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;

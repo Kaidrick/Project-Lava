@@ -1,6 +1,6 @@
 package moe.ofs.backend.chatcmd.services;
 
-import moe.ofs.backend.domain.ChatCommand;
+import moe.ofs.backend.domain.chatcmd.ChatCommand;
 
 @FunctionalInterface
 public interface Processable {

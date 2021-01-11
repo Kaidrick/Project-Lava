@@ -1,6 +1,6 @@
 package moe.ofs.backend.handlers.starter.services;
 
-import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
+import moe.ofs.backend.domain.connector.handlers.scripts.ScriptInjectionTask;
 
 import java.util.Map;
 

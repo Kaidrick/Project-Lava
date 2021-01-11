@@ -6,15 +6,14 @@ import moe.ofs.backend.chatcmdnew.model.ChatCommandProcessEntity;
 import moe.ofs.backend.chatcmdnew.services.ChatCommandHookInterceptService;
 import moe.ofs.backend.chatcmdnew.services.ChatCommandSetManageService;
 import moe.ofs.backend.function.mizdb.services.impl.LuaStorageInitServiceImpl;
-import moe.ofs.backend.handlers.starter.LuaScriptStarter;
-import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
+import moe.ofs.backend.domain.connector.handlers.scripts.LuaScriptStarter;
+import moe.ofs.backend.domain.connector.handlers.scripts.ScriptInjectionTask;
 import moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService;
 import moe.ofs.backend.hookinterceptor.HookInterceptorDefinition;
 import moe.ofs.backend.hookinterceptor.HookType;
-import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.services.mizdb.SimpleKeyValueStorage;
-import moe.ofs.backend.util.LuaInteract;
-import moe.ofs.backend.util.lua.LuaQueryEnv;
+import moe.ofs.backend.connector.lua.LuaInteract;
+import moe.ofs.backend.connector.lua.LuaQueryEnv;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -31,19 +30,20 @@ public class ChatCommandHookInterceptServiceImpl
         extends AbstractHookInterceptorProcessService<ChatCommandProcessEntity, HookInterceptorDefinition>
         implements ChatCommandHookInterceptService, ChatCommandSetManageService, LuaScriptStarter {
 
-    private final PlayerInfoService playerInfoService;
     private final SimpleKeyValueStorage<List<String>> storage;
 
     private final Set<ChatCommandDefinition> definitionSet;
 
-    public ChatCommandHookInterceptServiceImpl(PlayerInfoService playerInfoService) {
-        this.playerInfoService = playerInfoService;
-
+    public ChatCommandHookInterceptServiceImpl() {
         definitionSet = new HashSet<>();
 
         storage = new SimpleKeyValueStorage<>(
                 "lava-chat-command-hook-intercept-service-data-storage",
                 LuaQueryEnv.SERVER_CONTROL);
+
+        addProcessor("execute-command", processEntity -> definitionSet.stream()
+                .filter(d -> d.getKeyword().equals(processEntity.getKeyword()))  // match unique keyword
+                .forEach(definition -> definition.getConsumer().accept(processEntity)));  // call consumer#accept
     }
 
     @Override
@@ -94,16 +94,17 @@ public class ChatCommandHookInterceptServiceImpl
     }
 
     @Scheduled(fixedDelay = 100L)
-    @LuaInteract
+//    @LuaInteract
     public void gather() throws IOException {
-        poll(ChatCommandProcessEntity.class).stream()
-                .peek(hookProcessEntity ->  // match and set player info if exists
-                        playerInfoService.findByNetId(hookProcessEntity.getNetId())
-                                .ifPresent(hookProcessEntity::setPlayer))
-//                .peek(System.out::println)
-                .forEach(e -> definitionSet.stream()
-                        .filter(d -> d.getKeyword().equals(e.getKeyword()))  // match unique keyword
-                        .forEach(definition -> definition.getConsumer().accept(e)));  // call consumer#accept
+        gather(ChatCommandProcessEntity.class);
+//        poll(ChatCommandProcessEntity.class).stream()
+//                .peek(hookProcessEntity ->  // match and set player info if exists
+//                        playerInfoService.findByNetId(hookProcessEntity.getNetId())
+//                                .ifPresent(hookProcessEntity::setPlayer))
+////                .peek(System.out::println)
+//                .forEach(e -> definitionSet.stream()
+//                        .filter(d -> d.getKeyword().equals(e.getKeyword()))  // match unique keyword
+//                        .forEach(definition -> definition.getConsumer().accept(e)));  // call consumer#accept
     }
 
     @Override

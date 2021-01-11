@@ -7,13 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.ControlPanelShutdownObservable;
 import moe.ofs.backend.handlers.MissionStartObservable;
-import moe.ofs.backend.request.DataRequest;
-import moe.ofs.backend.request.server.ServerActionRequest;
-import moe.ofs.backend.request.server.ServerDataRequest;
-import moe.ofs.backend.request.services.RequestTransmissionService;
-import moe.ofs.backend.util.LuaScripts;
-import moe.ofs.backend.util.lua.LuaQueryEnv;
-import org.springframework.stereotype.Component;
+import moe.ofs.backend.connector.request.server.ServerActionRequest;
+import moe.ofs.backend.connector.request.server.ServerDataRequest;
+import moe.ofs.backend.connector.services.RequestTransmissionService;
+import moe.ofs.backend.connector.util.LuaScripts;
+import moe.ofs.backend.connector.lua.LuaQueryEnv;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Type;

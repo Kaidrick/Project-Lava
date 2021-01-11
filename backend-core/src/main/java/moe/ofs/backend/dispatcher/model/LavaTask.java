@@ -1,9 +1,8 @@
 package moe.ofs.backend.dispatcher.model;
 
-import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import moe.ofs.backend.domain.BaseEntity;
+import moe.ofs.backend.domain.dcs.BaseEntity;
 
 import java.time.Instant;
 import java.util.UUID;

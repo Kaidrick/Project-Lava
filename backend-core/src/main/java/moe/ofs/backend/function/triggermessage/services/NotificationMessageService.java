@@ -1,6 +1,6 @@
 package moe.ofs.backend.function.triggermessage.services;
 
-import moe.ofs.backend.domain.PlayerInfo;
+import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 import moe.ofs.backend.function.triggermessage.model.MessageFallback;
 import moe.ofs.backend.function.triggermessage.model.TriggerMessage;
 

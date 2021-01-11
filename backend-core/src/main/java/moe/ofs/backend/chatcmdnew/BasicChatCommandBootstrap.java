@@ -3,11 +3,11 @@ package moe.ofs.backend.chatcmdnew;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.chatcmdnew.model.ChatCommandDefinition;
 import moe.ofs.backend.chatcmdnew.services.ChatCommandSetManageService;
-import moe.ofs.backend.domain.PlayerInfo;
+import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 import moe.ofs.backend.function.triggermessage.model.TriggerMessage;
 import moe.ofs.backend.function.triggermessage.services.NetMessageService;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
-import moe.ofs.backend.services.PlayerInfoService;
+import moe.ofs.backend.dataservice.player.PlayerInfoService;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;

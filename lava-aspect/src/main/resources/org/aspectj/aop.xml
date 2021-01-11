@@ -1,0 +1,20 @@
+<!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+<aspectj>
+
+    <weaver options="-warn:none -Xlint:ignore">
+        <include within="moe.ofs..*" />
+<!--        <include within="org.springframework.boot..*" />-->
+<!--        <include within="moe.ofs.backend.aspects"/>-->
+    </weaver>
+
+    <aspects>
+        <aspect name="moe.ofs.backend.aspects.ExportObjectAspect" />
+        <aspect name="moe.ofs.backend.dataservice.aspect.GraveyardCollectAspect" />
+        <aspect name="moe.ofs.backend.aspects.hookinterceptor.HookInterceptorAspect"/>
+        <aspect name="moe.ofs.backend.aspects.PlayerInfoAspect" />
+        <aspect name="moe.ofs.backend.aspects.PlayerInfoSlotChangeAspect" />
+        <aspect name="moe.ofs.backend.aspects.LuaInteractPremiseAspect" />
+        <aspect name="moe.ofs.backend.aspects.StaticObjectAspect"/>
+        <include within="moe.ofs.backend..*"/>
+    </aspects>
+</aspectj>

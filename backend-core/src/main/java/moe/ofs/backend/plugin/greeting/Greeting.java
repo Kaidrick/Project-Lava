@@ -7,7 +7,7 @@ import moe.ofs.backend.function.triggermessage.model.MessageQueue;
 import moe.ofs.backend.function.triggermessage.factories.MessageQueueFactory;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.ExportUnitSpawnObservable;
-import moe.ofs.backend.domain.ExportObject;
+import moe.ofs.backend.domain.dcs.poll.ExportObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

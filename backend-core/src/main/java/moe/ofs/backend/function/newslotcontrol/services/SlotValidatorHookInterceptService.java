@@ -2,14 +2,13 @@ package moe.ofs.backend.function.newslotcontrol.services;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.function.mizdb.services.impl.LuaStorageInitServiceImpl;
-import moe.ofs.backend.handlers.starter.LuaScriptStarter;
-import moe.ofs.backend.handlers.starter.model.ScriptInjectionTask;
+import moe.ofs.backend.domain.connector.handlers.scripts.LuaScriptStarter;
+import moe.ofs.backend.domain.connector.handlers.scripts.ScriptInjectionTask;
 import moe.ofs.backend.hookinterceptor.*;
-import moe.ofs.backend.services.PlayerInfoService;
 import moe.ofs.backend.services.mizdb.SimpleKeyValueStorage;
-import moe.ofs.backend.util.LuaInteract;
-import moe.ofs.backend.util.lua.LuaQueryEnv;
-import moe.ofs.backend.util.lua.LuaQueryState;
+import moe.ofs.backend.connector.lua.LuaInteract;
+import moe.ofs.backend.connector.lua.LuaQueryEnv;
+import moe.ofs.backend.connector.lua.LuaQueryState;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -46,16 +45,18 @@ public class SlotValidatorHookInterceptService
         implements SlotValidatorService, HookInterceptorProcessService<HookProcessEntity, HookInterceptorDefinition>,
         LuaScriptStarter {
 
-    private final PlayerInfoService playerInfoService;
+//    private final PlayerInfoService playerInfoService;
 
     private final SimpleKeyValueStorage<String> storage;
 
-    public SlotValidatorHookInterceptService(PlayerInfoService playerInfoService) {
-        this.playerInfoService = playerInfoService;
+    public SlotValidatorHookInterceptService() {
+//        this.playerInfoService = playerInfoService;
 
         storage = new SimpleKeyValueStorage<>(
                 "lava-slot-change-interceptor-kw-storage", LuaQueryEnv.SERVER_CONTROL
         );
+
+        addProcessor("test", System.out::println);
     }
 
     @Override
@@ -87,10 +88,11 @@ public class SlotValidatorHookInterceptService
     }
 
     @Scheduled(fixedDelay = 1000L)
-    @LuaInteract
+//    @LuaInteract
     public void gather() throws IOException {
-        poll().stream().peek(entity ->
-                playerInfoService.findByNetId(entity.getNetId()).ifPresent(entity::setPlayer))
-                .forEach(System.out::println);
+        gather(HookProcessEntity.class);
+//        poll().stream().peek(entity ->
+//                playerInfoService.findByNetId(entity.getNetId()).ifPresent(entity::setPlayer))
+//                .forEach(System.out::println);
     }
 }
