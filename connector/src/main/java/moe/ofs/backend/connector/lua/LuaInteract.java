@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface LuaInteract {
-    OperationPhase value() default OperationPhase.RUNNING;
+    OperationPhase[] value() default { OperationPhase.RUNNING };
 }

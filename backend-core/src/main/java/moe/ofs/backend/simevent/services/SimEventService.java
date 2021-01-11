@@ -10,7 +10,7 @@ public interface SimEventService extends CrudService<SimEvent> {
 
     void invokeHandlers(LavaEvent lavaEvent);
 
-    void addHandler(Consumer<LavaEvent> handler);
+    void addHandler(String name, Consumer<LavaEvent> handler);
 
-    void removeHandler(Consumer<LavaEvent> handler);
+    void removeHandler(String name);
 }

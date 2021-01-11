@@ -27,7 +27,7 @@ local collection = {
     [world.event.S_EVENT_ENGINE_SHUTDOWN] = true,
 
 
-    [world.event.S_EVENT_PLAYER_COMMENT] = true
+    --[world.event.S_EVENT_PLAYER_COMMENT] = true
 }
 
 handler.ident = "simulationEventCollectorHandler"

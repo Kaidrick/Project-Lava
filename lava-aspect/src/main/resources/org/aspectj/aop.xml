@@ -15,6 +15,7 @@
         <aspect name="moe.ofs.backend.aspects.PlayerInfoSlotChangeAspect" />
         <aspect name="moe.ofs.backend.aspects.LuaInteractPremiseAspect" />
         <aspect name="moe.ofs.backend.aspects.StaticObjectAspect"/>
+        <aspect name="moe.ofs.backend.aspects.LavaEventPublishMessageAspect"/>
         <include within="moe.ofs.backend..*"/>
     </aspects>
 </aspectj>

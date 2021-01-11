@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -29,30 +30,30 @@ public class SimEventServiceImpl extends AbstractPageableMapService<SimEvent>
 
     private final List<SimEvent> limbo;
 
-    private final List<Consumer<LavaEvent>> handlers;
+    private final Map<String, Consumer<LavaEvent>> handlers;
 
     public SimEventServiceImpl(SimEventRegistryService simEventRegistryService, SimEventPollService simEventPollService) {
         this.simEventRegistryService = simEventRegistryService;
         this.simEventPollService = simEventPollService;
 
         this.limbo = new ArrayList<>();
-        this.handlers = new ArrayList<>();
+        this.handlers = new HashMap<>();
     }
 
     @Override
     public void invokeHandlers(LavaEvent lavaEvent) {
         System.out.println("published lavaEvent = " + lavaEvent);
-        handlers.forEach(handler -> handler.accept(lavaEvent));
+        handlers.values().forEach(handler -> handler.accept(lavaEvent));
     }
 
     @Override
-    public void addHandler(Consumer<LavaEvent> handler) {
-        handlers.add(handler);
+    public void addHandler(String name, Consumer<LavaEvent> handler) {
+        handlers.put(name, handler);
     }
 
     @Override
-    public void removeHandler(Consumer<LavaEvent> handler) {
-        handlers.remove(handler);
+    public void removeHandler(String name) {
+        handlers.remove(name);
     }
 
     @Scheduled(fixedDelay = 200L)
