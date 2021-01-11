@@ -9,7 +9,7 @@ public class EventTypeSerializer implements JsonSerializer<EventType>, JsonDeser
     private EventType getTypeById(int id) {
         return Arrays.stream(EventType.values())
                 .filter(eventType -> eventType.getId() == id)
-                .findAny().orElse(EventType.EMPTY);
+                .findAny().orElse(EventType.INVALID);
     }
 
     @Override
@@ -23,7 +23,7 @@ public class EventTypeSerializer implements JsonSerializer<EventType>, JsonDeser
         try {
             return getTypeById(jsonElement.getAsNumber().intValue());
         } catch (JsonParseException e) {
-            return EventType.EMPTY;
+            return EventType.INVALID;
         }
     }
 }

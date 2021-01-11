@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD, ElementType.TYPE})
 @ListenLavaMessage(destination = "lava.event")
 public @interface ListenLavaEvent {
-    EventType value() default EventType.EMPTY;
+    EventType value() default EventType.INVALID;
 }

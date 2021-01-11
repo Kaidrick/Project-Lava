@@ -91,10 +91,10 @@ public class SimEventRegistryMapService extends AbstractMapService<SimEvent> imp
             if (optionalGraveyardRecord.isPresent()) {
                 event.setTarget(optionalGraveyardRecord.get().getRecord());
                 log.info("delegate to graveyard search for event id {}, runtime id {}",
-                        event.getEventId(), event.getTargetId());
+                        event.getType(), event.getTargetId());
             } else {
                 log.info("unable to find target for event id {}, runtime id {}",
-                        event.getEventId(), event.getTargetId());
+                        event.getType(), event.getTargetId());
             }
         }
     }
@@ -116,10 +116,10 @@ public class SimEventRegistryMapService extends AbstractMapService<SimEvent> imp
             if (optionalGraveyardRecord.isPresent()) {
                 event.setWeapon(optionalGraveyardRecord.get().getRecord());
                 log.info("delegate to graveyard search for event id {}, runtime id {}",
-                        event.getEventId(), event.getWeaponId());
+                        event.getType(), event.getWeaponId());
             } else {
                 log.info("unable to find weapon for event id {}, runtime id {}",
-                        event.getEventId(), event.getWeaponId());
+                        event.getType(), event.getWeaponId());
             }
         }
     }
@@ -141,10 +141,10 @@ public class SimEventRegistryMapService extends AbstractMapService<SimEvent> imp
             if (optionalGraveyardRecord.isPresent()) {
                 event.setInitiator(optionalGraveyardRecord.get().getRecord());
                 log.info("delegate to graveyard search for event id {}, runtime id {}",
-                        event.getEventId(), event.getInitiatorId());
+                        event.getType(), event.getInitiatorId());
             } else {
                 log.info("unable to find initiator for event id {}, runtime id {}",
-                        event.getEventId(), event.getInitiatorId());
+                        event.getType(), event.getInitiatorId());
             }
         }
     }

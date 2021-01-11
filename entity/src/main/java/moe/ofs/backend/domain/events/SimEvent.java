@@ -13,7 +13,7 @@ import moe.ofs.backend.domain.dcs.BaseEntity;
 @ToString(callSuper = true)
 public class SimEvent extends BaseEntity {
     @SerializedName("id")
-    protected int eventId;  // TODO: replace with EventType enum
+    protected EventType type;  // TODO: replace with EventType enum
 
     protected double time;  // DCS event time may be decimals
 

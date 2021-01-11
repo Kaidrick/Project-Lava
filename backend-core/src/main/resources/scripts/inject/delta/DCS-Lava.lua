@@ -359,7 +359,8 @@ local function get_delta_export_data(current_data, ...)
 			batch_delta[runtime_id] = {
 				action = "delete",
 				data = {
-					["RuntimeID"] = runtime_id
+					["RuntimeID"] = runtime_id,
+					["UnitName"] = object_data["UnitName"]
 				}
 			}
 		end

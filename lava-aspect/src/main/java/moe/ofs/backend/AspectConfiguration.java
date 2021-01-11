@@ -39,4 +39,9 @@ public class AspectConfiguration {
     PlayerInfoSlotChangeAspect playerInfoSlotChangeAspect() {
         return Aspects.aspectOf(PlayerInfoSlotChangeAspect.class);
     }
+
+    @Bean
+    LavaEventPublishMessageAspect lavaEventPublishMessageAspect() {
+        return Aspects.aspectOf(LavaEventPublishMessageAspect.class);
+    }
 }

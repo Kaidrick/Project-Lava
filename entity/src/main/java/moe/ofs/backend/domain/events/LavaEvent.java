@@ -22,7 +22,7 @@ public final class LavaEvent extends SimEvent {
         this.initiatorId = simEvent.initiatorId;
         this.targetId = simEvent.targetId;
         this.weaponId = simEvent.weaponId;
-        this.eventId = simEvent.eventId;
+        this.type = simEvent.type;
         this.time = simEvent.time;
     }
 }

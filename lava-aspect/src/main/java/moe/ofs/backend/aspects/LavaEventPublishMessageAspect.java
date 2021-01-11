@@ -21,7 +21,7 @@ public class LavaEventPublishMessageAspect {
     @Pointcut("target(moe.ofs.backend.simevent.services.SimEventService) && execution(public * *..removeHandler(..))")
     public void removeEventHandler() {}
 
-    @Pointcut("execution(public * invokeHandlers(..)) && within(moe.ofs.backend.simevent..*))")
+    @Pointcut("execution(public * invokeHandlers(..)) && within(moe.ofs.backend.simevent..*)")
     public void invokeEventHandler() {}
 
     @After("addEventHandler()")
@@ -45,8 +45,9 @@ public class LavaEventPublishMessageAspect {
         assert joinPoint.getArgs().length > 0;
 
         Object event = joinPoint.getArgs()[0];
+
         if (event instanceof LavaEvent) {
-            sender.sendToTopicAsJson("lava.event", joinPoint.getArgs()[0], null);
+            sender.sendToTopicAsJson("lava.event", event, null);
         }
     }
 }
