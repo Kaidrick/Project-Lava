@@ -1,4 +1,4 @@
-package moe.ofs.backend.dataservice.aspect;
+package moe.ofs.backend.aspects;
 
 import moe.ofs.backend.connector.LavaSystemStatus;
 import moe.ofs.backend.domain.connector.OperationPhase;

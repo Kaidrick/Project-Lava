@@ -110,13 +110,15 @@ public abstract class AbstractHookInterceptorProcessService
                 .peek(hookProcessEntity ->  // match and set player info if exists
                         playerInfoService.findByNetId(hookProcessEntity.getNetId())
                                 .ifPresent(hookProcessEntity::setPlayer))
-                .forEach(e -> {
-                    try {
-                        processorSet.forEach(p -> p.getAction().accept(e));
-                    } catch (Exception exception) {
-                        log.error("Failed to process hook record due to: ", exception);
-                    }
-                });  // call consumer#accept
+                .forEach(this::processEntity);
+    }
+
+    private void processEntity(T t) {
+        try {
+            processorSet.forEach(p -> p.getAction().accept(t));  // call consumer#accept
+        } catch (Exception exception) {
+            log.error("Failed to process hook record due to: ", exception);
+        }
     }
 
     @Override

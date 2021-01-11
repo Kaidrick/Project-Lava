@@ -40,6 +40,10 @@ public class ChatCommandHookInterceptServiceImpl
         storage = new SimpleKeyValueStorage<>(
                 "lava-chat-command-hook-intercept-service-data-storage",
                 LuaQueryEnv.SERVER_CONTROL);
+
+        addProcessor("execute-command", processEntity -> definitionSet.stream()
+                .filter(d -> d.getKeyword().equals(processEntity.getKeyword()))  // match unique keyword
+                .forEach(definition -> definition.getConsumer().accept(processEntity)));  // call consumer#accept
     }
 
     @Override
@@ -90,16 +94,17 @@ public class ChatCommandHookInterceptServiceImpl
     }
 
     @Scheduled(fixedDelay = 100L)
-    @LuaInteract
+//    @LuaInteract
     public void gather() throws IOException {
-        poll(ChatCommandProcessEntity.class).stream()
-                .peek(hookProcessEntity ->  // match and set player info if exists
-                        playerInfoService.findByNetId(hookProcessEntity.getNetId())
-                                .ifPresent(hookProcessEntity::setPlayer))
-//                .peek(System.out::println)
-                .forEach(e -> definitionSet.stream()
-                        .filter(d -> d.getKeyword().equals(e.getKeyword()))  // match unique keyword
-                        .forEach(definition -> definition.getConsumer().accept(e)));  // call consumer#accept
+        gather(ChatCommandProcessEntity.class);
+//        poll(ChatCommandProcessEntity.class).stream()
+//                .peek(hookProcessEntity ->  // match and set player info if exists
+//                        playerInfoService.findByNetId(hookProcessEntity.getNetId())
+//                                .ifPresent(hookProcessEntity::setPlayer))
+////                .peek(System.out::println)
+//                .forEach(e -> definitionSet.stream()
+//                        .filter(d -> d.getKeyword().equals(e.getKeyword()))  // match unique keyword
+//                        .forEach(definition -> definition.getConsumer().accept(e)));  // call consumer#accept
     }
 
     @Override

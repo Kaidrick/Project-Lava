@@ -1,9 +1,15 @@
 package moe.ofs.backend.function.newslotcontrol.model;
 
 import com.google.gson.annotations.SerializedName;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import moe.ofs.backend.hookinterceptor.HookProcessEntity;
 
-public class SlotChangeData extends HookProcessEntity {
+@EqualsAndHashCode(callSuper = true)
+@Data
+@ToString(callSuper = true)
+public class PlayerSlotChangeRecord extends HookProcessEntity {
     private int side;
 
     @SerializedName("cur_side")

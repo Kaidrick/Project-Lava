@@ -5,7 +5,7 @@ import moe.ofs.backend.function.mizdb.bootstrap.PersistentStructuredDataInjectio
 import moe.ofs.backend.domain.connector.handlers.scripts.LuaScriptStarter;
 import moe.ofs.backend.domain.connector.handlers.scripts.ScriptInjectionTask;
 import moe.ofs.backend.services.mizdb.AbstractPersistentMissionDataService;
-import moe.ofs.backend.domain.SimEvent;
+import moe.ofs.backend.domain.events.SimEvent;
 import moe.ofs.backend.connector.lua.Environment;
 import moe.ofs.backend.connector.lua.InjectionEnvironment;
 import moe.ofs.backend.connector.util.LuaScripts;

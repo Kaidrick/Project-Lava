@@ -1,4 +1,4 @@
-package moe.ofs.backend.domain;
+package moe.ofs.backend.domain.events;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;

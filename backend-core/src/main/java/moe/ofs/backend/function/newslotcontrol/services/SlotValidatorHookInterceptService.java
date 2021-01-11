@@ -55,6 +55,8 @@ public class SlotValidatorHookInterceptService
         storage = new SimpleKeyValueStorage<>(
                 "lava-slot-change-interceptor-kw-storage", LuaQueryEnv.SERVER_CONTROL
         );
+
+        addProcessor("test", System.out::println);
     }
 
     @Override
@@ -86,10 +88,11 @@ public class SlotValidatorHookInterceptService
     }
 
     @Scheduled(fixedDelay = 1000L)
-    @LuaInteract
+//    @LuaInteract
     public void gather() throws IOException {
-        poll().stream().peek(entity ->
-                playerInfoService.findByNetId(entity.getNetId()).ifPresent(entity::setPlayer))
-                .forEach(System.out::println);
+        gather(HookProcessEntity.class);
+//        poll().stream().peek(entity ->
+//                playerInfoService.findByNetId(entity.getNetId()).ifPresent(entity::setPlayer))
+//                .forEach(System.out::println);
     }
 }

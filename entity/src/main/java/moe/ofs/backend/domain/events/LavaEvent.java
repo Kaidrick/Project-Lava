@@ -1,4 +1,4 @@
-package moe.ofs.backend.domain;
+package moe.ofs.backend.domain.events;
 
 import lombok.*;
 import moe.ofs.backend.domain.dcs.poll.ExportObject;

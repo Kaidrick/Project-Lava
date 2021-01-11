@@ -65,6 +65,12 @@
             <artifactId>lava-aspect</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>moe.ofs</groupId>
+            <artifactId>lava-annotation</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
