@@ -1,3 +1,23 @@
+create table if not exists player_role
+(
+    id bigint not null auto_increment,
+    role_level int(11) not null,
+    role_name varchar(255) not null,
+    primary key(id)
+);
+
+insert into player_role (role_level, role_name)
+values (1, 'system'), (2, 'administrator'), (3, 'user'), (4, 'guest');
+
+create table if not exists role_assignment
+(
+    id bigint not null auto_increment,
+    ucid varchar(255) not null,
+    role_id bigint not null,
+    time timestamp not null,
+    primary key(id)
+);
+
 create table if not exists lava_system_log
 (
     id bigint not null auto_increment,

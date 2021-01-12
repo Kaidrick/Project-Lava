@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="moe.ofs.backend.dao.PlayerRoleAssignmentDao">
+    <resultMap id="playerRole" type="list">
+        <result property="id" column="id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="roleLevel" column="role_level"/>
+    </resultMap>
+    <select id="findPlayerRolesByUcid" resultType="moe.ofs.backend.domain.admin.PlayerRole">
+        select pr.id as id,
+               pr.role_name as roleName,
+               pr.role_level as roleLevel
+        from player_role as pr inner join
+             role_assignment as ra
+             on ra.ucid = '95abc' and pr.id = ra.role_id
+    </select>
+</mapper>

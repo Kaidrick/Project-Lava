@@ -30,11 +30,14 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.headers().frameOptions().sameOrigin();
+
         http
                 .addFilterBefore(passwordTypeFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
 //                所有请求放行
-                .antMatchers("/h2-console/**")
+//                .antMatchers("/h2-console/**")
+                .anyRequest()
                 .permitAll()
                 .and()
                 .cors().disable()

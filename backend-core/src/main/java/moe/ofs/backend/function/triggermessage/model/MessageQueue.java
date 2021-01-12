@@ -13,8 +13,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class MessageQueue {
-    private int receiverGroupId;
-    private Queue<Message> messageQueue = new ArrayDeque<>();
+    private final int receiverGroupId;
+    private final Queue<Message> messageQueue = new ArrayDeque<>();
 
     private FlyableUnitService flyableUnitService;
 
@@ -37,7 +37,7 @@ public class MessageQueue {
         messageQueue.offer(message);
     }
 
-    public int nextTime(Message message) {
+    private int nextTime(Message message) {
 
         int currentTime = nextTimeStamp;
         nextTimeStamp += message.getWaitNextMessage();
@@ -60,8 +60,10 @@ public class MessageQueue {
                             }, nextTime(m), TimeUnit.SECONDS));
             scheduledExecutorService.shutdown();
             try {
-                scheduledExecutorService.awaitTermination(nextTimeStamp + 30, TimeUnit.SECONDS);
-                scheduledExecutorService.shutdownNow();
+                boolean shutdown = scheduledExecutorService.awaitTermination(nextTimeStamp + 30, TimeUnit.SECONDS);
+                if (!shutdown) {
+                    scheduledExecutorService.shutdownNow();
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

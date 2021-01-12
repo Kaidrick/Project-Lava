@@ -1,8 +1,8 @@
 package moe.ofs.backend.function.triggermessage.model;
 
-import java.io.Serializable;
+import moe.ofs.backend.domain.dcs.BaseEntity;
 
-public class Message implements Serializable {
+public class Message extends BaseEntity {
     private int duration;
     private String content;
     private String prefix;

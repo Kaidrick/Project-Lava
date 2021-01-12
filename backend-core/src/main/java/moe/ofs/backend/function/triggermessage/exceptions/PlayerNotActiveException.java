@@ -1,4 +1,4 @@
-package moe.ofs.backend.function.triggermessage;
+package moe.ofs.backend.function.triggermessage.exceptions;
 
 public class PlayerNotActiveException extends RuntimeException {
     public PlayerNotActiveException() {
