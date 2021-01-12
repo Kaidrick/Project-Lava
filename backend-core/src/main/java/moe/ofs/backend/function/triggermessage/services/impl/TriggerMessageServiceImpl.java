@@ -48,7 +48,14 @@ public class TriggerMessageServiceImpl implements TriggerMessageService {
             return;
         }
 
-        LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,
+        String test = LuaScripts.loadAndPrepare("message/send_message_by_group_id.lua",
+                triggerMessage.getReceiverGroupId(), triggerMessage.getMessage(),
+                triggerMessage.getDuration(), triggerMessage.isClearView());
+        System.out.println("test = " + test);
+//        trigger.action.outTextForGroup(%d, [[%s]], %d, %b)
+
+
+        LuaScripts.requestWithFile(LuaQueryEnv.MISSION_SCRIPTING,
                 "message/send_message_by_group_id.lua",
                 triggerMessage.getReceiverGroupId(), triggerMessage.getMessage(),
                 triggerMessage.getDuration(), triggerMessage.isClearView());
@@ -60,7 +67,7 @@ public class TriggerMessageServiceImpl implements TriggerMessageService {
             sendTriggerMessage(message);
             return;
         }
-        LuaScripts.requestWithFile(LuaQueryEnv.SERVER_CONTROL,
+        LuaScripts.requestWithFile(LuaQueryEnv.MISSION_SCRIPTING,
                 "message/send_message_by_group_id.lua",
                 flyableUnitService.findByUnitId(player.getSlot()).map(FlyableUnit::getGroup_id).orElseThrow(
                         PlayerNotActiveException::new),

@@ -2,43 +2,43 @@ package moe.ofs.backend.function.admin.services;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import moe.ofs.backend.dao.PlayerRoleAssignmentDao;
-import moe.ofs.backend.dao.PlayerRoleDao;
 import moe.ofs.backend.domain.admin.PlayerRole;
 import moe.ofs.backend.domain.admin.RoleAssignment;
 import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
+import moe.ofs.backend.repositories.PlayerRoleRepository;
 import moe.ofs.backend.repositories.RoleAssignmentRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class NetPlayerRoleServiceImpl implements NetPlayerRoleService {
 
-    private final PlayerRoleDao playerRoleDao;
+    private final PlayerRoleRepository playerRoleRepository;
     private final RoleAssignmentRepository roleAssignmentRepository;
 
     private final PlayerRoleAssignmentDao playerRoleAssignmentDao;
 
-    public NetPlayerRoleServiceImpl(PlayerRoleDao playerRoleDao, RoleAssignmentRepository roleAssignmentRepository,
+    public NetPlayerRoleServiceImpl(PlayerRoleRepository playerRoleRepository, RoleAssignmentRepository roleAssignmentRepository,
                                     PlayerRoleAssignmentDao playerRoleAssignmentDao) {
-        this.playerRoleDao = playerRoleDao;
+        this.playerRoleRepository = playerRoleRepository;
         this.roleAssignmentRepository = roleAssignmentRepository;
         this.playerRoleAssignmentDao = playerRoleAssignmentDao;
 
-        List<RoleAssignment> roleAssignments = playerRoleDao.selectList(Wrappers.<PlayerRole>lambdaQuery().le(PlayerRole::getRoleLevel, 2))
-                .stream().map(r -> {
-                    RoleAssignment roleAssignment = new RoleAssignment();
-                    roleAssignment.setRoleId(r.getId());
-                    roleAssignment.setUcid("95abc");
-                    roleAssignment.setTime(new Date());
-                    return roleAssignment;
-                }).collect(Collectors.toList());
+//        List<RoleAssignment> roleAssignments = playerRoleRepository.list(Wrappers.<PlayerRole>lambdaQuery().le(PlayerRole::getRoleLevel, 2))
+//                .stream().map(r -> {
+//                    RoleAssignment roleAssignment = new RoleAssignment();
+//                    roleAssignment.setRoleId(r.getId());
+//                    roleAssignment.setUcid("95abc");
+//                    roleAssignment.setTime(new Date());
+//                    return roleAssignment;
+//                }).collect(Collectors.toList());
 
-        roleAssignmentRepository.saveBatch(roleAssignments);
+//        roleAssignmentRepository.saveBatch(roleAssignments);
     }
-
-    Map<String, Set<PlayerRole>> playerRoles = new HashMap<>();
 
     @Override
     public void assignRole(String ucid, PlayerRole role) {
@@ -50,7 +50,7 @@ public class NetPlayerRoleServiceImpl implements NetPlayerRoleService {
     }
 
     @Override
-    public void removeRole(String ucid, PlayerRole role) {
+    public void deleteRole(String ucid, PlayerRole role) {
         roleAssignmentRepository.remove(Wrappers.<RoleAssignment>lambdaQuery()
                 .eq(RoleAssignment::getRoleId, role.getId()).eq(RoleAssignment::getUcid, ucid));
     }
@@ -65,7 +65,7 @@ public class NetPlayerRoleServiceImpl implements NetPlayerRoleService {
     }
 
     @Override
-    public void removeRole(PlayerInfo playerInfo, PlayerRole role) {
+    public void deleteRole(PlayerInfo playerInfo, PlayerRole role) {
         roleAssignmentRepository.remove(Wrappers.<RoleAssignment>lambdaQuery()
                 .eq(RoleAssignment::getRoleId, role.getId()).eq(RoleAssignment::getUcid, playerInfo.getUcid()));
     }
@@ -80,7 +80,7 @@ public class NetPlayerRoleServiceImpl implements NetPlayerRoleService {
 
     @Override
     public Set<PlayerRole> findPlayerRoles(String ucid) {
-        return new HashSet<>(playerRoleAssignmentDao.findPlayerRolesByUcid("ucid"));
+        return new HashSet<>(playerRoleAssignmentDao.findPlayerRolesByUcid(ucid));
 //                roleAssignmentRepository.list(Wrappers.<RoleAssignment>lambdaQuery()
 //                .eq(RoleAssignment::getUcid, ucid)).stream()
 //                .map();
@@ -88,6 +88,21 @@ public class NetPlayerRoleServiceImpl implements NetPlayerRoleService {
 
     @Override
     public Set<PlayerRole> findPlayerRoles(PlayerInfo playerInfo) {
-        return null;
+        return new HashSet<>(playerRoleAssignmentDao.findPlayerRolesByUcid(playerInfo.getUcid()));
+    }
+
+    @Override
+    public boolean addRole(PlayerRole playerRole) {
+        return playerRoleRepository.save(playerRole);
+    }
+
+    @Override
+    public boolean deleteRole(PlayerRole playerRole) {
+        return playerRoleRepository.removeById(playerRole.getId());
+    }
+
+    @Override
+    public boolean deleteRoleById(Long id) {
+        return playerRoleRepository.removeById(id);
     }
 }

@@ -3,6 +3,7 @@ package moe.ofs.backend.function.admin;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.annotations.ListenLavaMessage;
 import moe.ofs.backend.dao.PlayerRoleDao;
 import moe.ofs.backend.domain.admin.PlayerRole;
@@ -16,6 +17,7 @@ import javax.jms.TextMessage;
 import java.lang.reflect.Type;
 
 @Component
+@Slf4j
 public class NetPlayerRoleBootstrapTest {
 
     private final NetPlayerRoleService netPlayerRoleService;
@@ -32,7 +34,13 @@ public class NetPlayerRoleBootstrapTest {
         PlayerNetActionVo<PlayerInfo> actionVo = new Gson().fromJson(textMessage.getText(), type);
         PlayerInfo playerInfo = actionVo.getObject();
 
-        playerRoleDao.selectList(Wrappers.<PlayerRole>lambdaQuery().le(PlayerRole::getRoleLevel, 2))
-                .forEach(role -> netPlayerRoleService.assignRole(playerInfo, role));
+        if (playerInfo.getNetId() == 1) return;
+
+        playerRoleDao.selectList(Wrappers.<PlayerRole>lambdaQuery()
+                .ge(PlayerRole::getRoleLevel, 1000).le(PlayerRole::getRoleLevel, 1999))
+                .forEach(role -> {
+                    netPlayerRoleService.assignRole(playerInfo, role);
+                    log.info("Assigning roles to player {}: {}", playerInfo.getName(), role);
+                });
     }
 }

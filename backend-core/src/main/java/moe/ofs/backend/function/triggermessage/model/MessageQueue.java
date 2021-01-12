@@ -57,6 +57,7 @@ public class MessageQueue {
                                         .clearView(false)
                                         .build();
                                 triggerMessageService.sendTriggerMessage(triggerMessage);
+                                System.out.println("triggerMessage = " + triggerMessage);
                             }, nextTime(m), TimeUnit.SECONDS));
             scheduledExecutorService.shutdown();
             try {

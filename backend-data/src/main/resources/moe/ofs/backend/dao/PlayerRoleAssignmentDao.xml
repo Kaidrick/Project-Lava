@@ -12,6 +12,6 @@
                pr.role_level as roleLevel
         from player_role as pr inner join
              role_assignment as ra
-             on ra.ucid = '95abc' and pr.id = ra.role_id
+             on ra.ucid = #{ucid} and pr.id = ra.role_id
     </select>
 </mapper>

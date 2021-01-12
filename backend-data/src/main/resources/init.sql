@@ -7,7 +7,7 @@ create table if not exists player_role
 );
 
 insert into player_role (role_level, role_name)
-values (1, 'system'), (2, 'administrator'), (3, 'user'), (4, 'guest');
+values (1000, 'motd'), (1001, 'motd_recv'), (1002, 'motd_add'), (1003, 'motd_delete');
 
 create table if not exists role_assignment
 (

@@ -11,15 +11,21 @@ import java.util.Set;
 public interface NetPlayerRoleService {
     void assignRole(String ucid, PlayerRole role);
 
-    void removeRole(String ucid, PlayerRole role);
+    void deleteRole(String ucid, PlayerRole role);
 
     void assignRole(PlayerInfo playerInfo, PlayerRole role);
 
-    void removeRole(PlayerInfo playerInfo, PlayerRole role);
+    void deleteRole(PlayerInfo playerInfo, PlayerRole role);
 
     Set<String> findUcidsWithRole(PlayerRole role);
 
     Set<PlayerRole> findPlayerRoles(String ucid);
 
     Set<PlayerRole> findPlayerRoles(PlayerInfo playerInfo);
+
+    boolean addRole(PlayerRole playerRole);
+
+    boolean deleteRole(PlayerRole playerRole);
+
+    boolean deleteRoleById(Long id);
 }
