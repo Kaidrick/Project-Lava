@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="moe.ofs.backend.dao.PlayerRoleGroupDao">
+    <resultMap id="roleGroupWithRolesMap" type="moe.ofs.backend.domain.admin.PlayerRoleGroup">
+        <result property="roleGroupName" column="roleGroupName"/>
+        <result property="id" column="id"/>
+        <collection property="roles" ofType="moe.ofs.backend.domain.admin.PlayerRole">
+            <result property="roleName"  column="roleName"/>
+            <result property="roleLevel" column="roleLevel"/>
+        </collection>
+    </resultMap>
+    <select id="findRoleGroupWithRoles" resultMap="roleGroupWithRolesMap">
+        select rg.id id,
+               rg.role_group_name roleGroupName,
+               pr.role_level roleLevel,
+               pr.role_name roleName,
+               pr.id role_id,
+        from role_group rg
+                 inner join role_group_role_assignment rgra on rg.id = rgra.role_group_id
+                 inner join player_role pr on pr.id = rgra.player_role_id
+        where rg.id = #{id}
+    </select>
+</mapper>

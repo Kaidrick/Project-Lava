@@ -1,13 +1,45 @@
+-- create default player role table
 create table if not exists player_role
 (
     id bigint not null auto_increment,
     role_level int(11) not null,
     role_name varchar(255) not null,
+    pid int(11) comment 'parent role group id',
     primary key(id)
 );
 
+-- populate player role table
 insert into player_role (role_level, role_name)
-values (1000, 'motd'), (1001, 'motd_recv'), (1002, 'motd_add'), (1003, 'motd_delete');
+values (1000, 'motd'), (1001, 'motd_recv'), (1002, 'motd_add'), (1003, 'motd_delete'),
+       (300, 'send_chat'), (301, 'send_coalition_chat'), (302, 'send_all_chat'),
+       (3100, 'chat_command'), (3101, '');
+
+
+-- create default role group table
+create table if not exists role_group
+(
+    id bigint not null auto_increment,
+    role_group_name varchar(255) not null
+);
+
+-- populate default role group
+insert into role_group (role_group_name)
+values ('guest'), ('user'), ('admin'), ('su');
+
+
+-- create relation table between role group and player role
+create table if not exists role_group_role_assignment
+(
+    id bigint not null auto_increment,
+    role_group_id bigint not null,
+    player_role_id bigint not null
+);
+
+-- default values for guest group
+insert into role_group_role_assignment (role_group_id, player_role_id)
+values (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (1, 7);
+
+
 
 create table if not exists role_assignment
 (
