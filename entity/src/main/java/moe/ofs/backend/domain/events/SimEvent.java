@@ -23,6 +23,9 @@ public class SimEvent extends BaseEntity {
 
     protected long weaponId;
 
+    protected String weaponName;  // KILL(29) event will somehow only pass a weapon name, not weapon id
+                                  // maybe due to the fact that the weapon has been destroyed
+
     private transient boolean associated;
     private transient int associateRetryCount;
 
