@@ -1,6 +1,7 @@
 package moe.ofs.backend.function.admin.services;
 
 import moe.ofs.backend.domain.admin.PlayerRole;
+import moe.ofs.backend.domain.admin.PlayerRoleGroup;
 import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 
 import java.util.Set;
@@ -28,4 +29,14 @@ public interface NetPlayerRoleService {
     boolean deleteRole(PlayerRole playerRole);
 
     boolean deleteRoleById(Long id);
+
+    PlayerRoleGroup assignRoleGroup(PlayerInfo playerInfo, PlayerRoleGroup group);
+
+    PlayerRoleGroup assignRoleGroup(String ucid, PlayerRoleGroup group);
+
+    PlayerRoleGroup findRoleGroup(PlayerInfo playerInfo);
+
+    PlayerRoleGroup findRoleGroup(String ucid);
+
+    boolean checkRole(String ucid, int roleLevel);
 }

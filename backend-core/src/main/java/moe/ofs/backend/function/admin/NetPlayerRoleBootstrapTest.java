@@ -42,15 +42,15 @@ public class NetPlayerRoleBootstrapTest {
 
     @ListenLavaMessage(destination = "lava.player.connection", selector = "type = 'connect'")
     public void testRoleAssignment(TextMessage textMessage) throws JMSException {
-
-        PlayerRoleGroup roleGroup = playerRoleGroupDao.findRoleGroupWithRoles(1L);
-        // TODO: find guest group and assign to guest player
-
         Type type = new TypeToken<PlayerNetActionVo<PlayerInfo>>() {}.getType();
         PlayerNetActionVo<PlayerInfo> actionVo = new Gson().fromJson(textMessage.getText(), type);
         PlayerInfo playerInfo = actionVo.getObject();
 
         if (playerInfo.getNetId() == 1) return;
+
+        // TODO: find guest group and assign to guest player
+        PlayerRoleGroup roleGroup = playerRoleGroupDao.findRoleGroupWithRoles(1L);
+        netPlayerRoleService.assignRoleGroup(playerInfo, roleGroup);
 
         playerRoleDao.selectList(Wrappers.<PlayerRole>lambdaQuery()
                 .ge(PlayerRole::getRoleLevel, 1000).le(PlayerRole::getRoleLevel, 1999))

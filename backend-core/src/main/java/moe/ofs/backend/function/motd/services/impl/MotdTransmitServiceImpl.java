@@ -46,8 +46,10 @@ public class MotdTransmitServiceImpl implements MotdTransmitService {
             Optional<PlayerInfo> optional = playerInfoService.findByName(exportObject.getUnitName());
 
             optional.ifPresent(playerInfo -> {
-                boolean authorized = netPlayerRoleService.findPlayerRoles(playerInfo).stream()
-                        .anyMatch(playerRole -> playerRole.getRoleLevel() == 1001L);
+//                boolean authorized = netPlayerRoleService.findPlayerRoles(playerInfo).stream()
+//                        .anyMatch(playerRole -> playerRole.getRoleLevel() == 1001L);
+
+                boolean authorized = netPlayerRoleService.checkRole(playerInfo.getUcid(), 1001);
                 if (authorized) {
                     service.findAll().stream()
                             .peek(System.out::println)
