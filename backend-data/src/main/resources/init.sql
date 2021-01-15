@@ -16,14 +16,14 @@ values (1000, 'motd'), (1001, 'motd_recv'), (1002, 'motd_add'), (1003, 'motd_del
 
 
 -- create default role group table
-create table if not exists role_group
+create table if not exists player_role_group
 (
     id bigint not null auto_increment,
     role_group_name varchar(255) not null
 );
 
 -- populate default role group
-insert into role_group (role_group_name)
+insert into player_role_group (role_group_name)
 values ('guest'), ('user'), ('admin'), ('su');
 
 

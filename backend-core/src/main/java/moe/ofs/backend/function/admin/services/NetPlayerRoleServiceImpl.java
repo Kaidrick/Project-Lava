@@ -6,6 +6,7 @@ import moe.ofs.backend.domain.admin.PlayerRole;
 import moe.ofs.backend.domain.admin.PlayerRoleGroup;
 import moe.ofs.backend.domain.admin.RoleAssignment;
 import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
+import moe.ofs.backend.repositories.PlayerRoleGroupRepository;
 import moe.ofs.backend.repositories.PlayerRoleRepository;
 import moe.ofs.backend.repositories.RoleAssignmentRepository;
 import org.springframework.stereotype.Service;
@@ -18,28 +19,18 @@ public class NetPlayerRoleServiceImpl implements NetPlayerRoleService {
 
     private final PlayerRoleRepository playerRoleRepository;
     private final RoleAssignmentRepository roleAssignmentRepository;
-
+    private final PlayerRoleGroupRepository playerRoleGroupRepository;
     private final PlayerRoleAssignmentDao playerRoleAssignmentDao;
 
     // TODO: temporary map repository for ucid - player role group
     private final Map<String, PlayerRoleGroup> ucidPlayerRoleGroupRepository = new HashMap<>();
 
     public NetPlayerRoleServiceImpl(PlayerRoleRepository playerRoleRepository, RoleAssignmentRepository roleAssignmentRepository,
-                                    PlayerRoleAssignmentDao playerRoleAssignmentDao) {
+                                    PlayerRoleGroupRepository playerRoleGroupRepository, PlayerRoleAssignmentDao playerRoleAssignmentDao) {
         this.playerRoleRepository = playerRoleRepository;
         this.roleAssignmentRepository = roleAssignmentRepository;
+        this.playerRoleGroupRepository = playerRoleGroupRepository;
         this.playerRoleAssignmentDao = playerRoleAssignmentDao;
-
-//        List<RoleAssignment> roleAssignments = playerRoleRepository.list(Wrappers.<PlayerRole>lambdaQuery().le(PlayerRole::getRoleLevel, 2))
-//                .stream().map(r -> {
-//                    RoleAssignment roleAssignment = new RoleAssignment();
-//                    roleAssignment.setRoleId(r.getId());
-//                    roleAssignment.setUcid("95abc");
-//                    roleAssignment.setTime(new Date());
-//                    return roleAssignment;
-//                }).collect(Collectors.toList());
-
-//        roleAssignmentRepository.saveBatch(roleAssignments);
     }
 
     @Override
@@ -119,12 +110,12 @@ public class NetPlayerRoleServiceImpl implements NetPlayerRoleService {
     }
 
     @Override
-    public PlayerRoleGroup findRoleGroup(PlayerInfo playerInfo) {
+    public PlayerRoleGroup findPlayerRoleGroup(PlayerInfo playerInfo) {
         return ucidPlayerRoleGroupRepository.get(playerInfo.getUcid());
     }
 
     @Override
-    public PlayerRoleGroup findRoleGroup(String ucid) {
+    public PlayerRoleGroup findPlayerRoleGroup(String ucid) {
         return ucidPlayerRoleGroupRepository.get(ucid);
     }
 
@@ -136,5 +127,30 @@ public class NetPlayerRoleServiceImpl implements NetPlayerRoleService {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public PlayerRoleGroup findRoleGroupById(Long id) {
+        return playerRoleGroupRepository.getById(id);
+    }
+
+    @Override
+    public PlayerRoleGroup findRoleGroupByName(String name) {
+        return playerRoleGroupRepository.findRolesGroupByName(name);
+    }
+
+    @Override
+    public boolean addPlayerRoleGroup(PlayerRoleGroup group) {
+        return playerRoleGroupRepository.save(group);
+    }
+
+    @Override
+    public boolean deletePlayerRoleGroup(PlayerRoleGroup group) {
+        return playerRoleGroupRepository.removeById(group.getId());
+    }
+
+    @Override
+    public boolean deletePlayerRoleGroupById(Long id) {
+        return playerRoleGroupRepository.removeById(id);
     }
 }

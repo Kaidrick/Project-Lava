@@ -1,18 +1,17 @@
 package moe.ofs.backend.discipline.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.connector.lua.LuaQueryEnv;
 import moe.ofs.backend.discipline.model.PlayerTryConnectRecord;
 import moe.ofs.backend.discipline.service.GlobalConnectionBlockService;
+import moe.ofs.backend.discipline.service.PlayerConnectionValidationService;
 import moe.ofs.backend.domain.connector.handlers.scripts.LuaScriptStarter;
 import moe.ofs.backend.domain.connector.handlers.scripts.ScriptInjectionTask;
+import moe.ofs.backend.function.mizdb.services.impl.LuaStorageInitServiceImpl;
 import moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService;
 import moe.ofs.backend.hookinterceptor.HookInterceptorDefinition;
-import moe.ofs.backend.hookinterceptor.HookInterceptorProcessService;
 import moe.ofs.backend.hookinterceptor.HookType;
-import moe.ofs.backend.function.mizdb.services.impl.LuaStorageInitServiceImpl;
 import moe.ofs.backend.services.mizdb.SimpleKeyValueStorage;
-import moe.ofs.backend.connector.lua.LuaInteract;
-import moe.ofs.backend.connector.lua.LuaQueryEnv;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,7 @@ import java.io.IOException;
 @Slf4j
 public class PlayerConnectionValidationServiceImpl
         extends AbstractHookInterceptorProcessService<PlayerTryConnectRecord, HookInterceptorDefinition>
-        implements HookInterceptorProcessService<PlayerTryConnectRecord, HookInterceptorDefinition>,
+        implements PlayerConnectionValidationService,
         LuaScriptStarter, GlobalConnectionBlockService {
 
     private final SimpleKeyValueStorage<String> connectionValidatorStorage;
@@ -57,8 +56,6 @@ public class PlayerConnectionValidationServiceImpl
                 .dependencyInitializrClass(LuaStorageInitServiceImpl.class)
                 .inject(() -> {
                     boolean hooked = createHook(getClass().getName(), HookType.ON_PLAYER_TRY_CONNECT);
-
-                    log.info("{} Hooked? {}", getName(), hooked);
 
                     HookInterceptorDefinition hookInterceptorDefinition =
                             HookInterceptorDefinition.builder()
@@ -112,7 +109,6 @@ public class PlayerConnectionValidationServiceImpl
     }
 
     @Scheduled(fixedDelay = 100L)
-//    @LuaInteract
     public void gather() throws IOException {
         gather(PlayerTryConnectRecord.class);
 //        poll(PlayerTryConnectRecord.class).stream()

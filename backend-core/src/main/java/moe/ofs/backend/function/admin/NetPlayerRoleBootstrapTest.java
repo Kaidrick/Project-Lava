@@ -6,14 +6,15 @@ import com.google.gson.reflect.TypeToken;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.annotations.ListenLavaMessage;
 import moe.ofs.backend.dao.PlayerRoleDao;
-import moe.ofs.backend.dao.PlayerRoleGroupDao;
 import moe.ofs.backend.domain.admin.PlayerRole;
 import moe.ofs.backend.domain.admin.PlayerRoleGroup;
 import moe.ofs.backend.domain.behaviors.net.PlayerNetActionVo;
 import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 import moe.ofs.backend.function.admin.services.NetPlayerRoleService;
+import moe.ofs.backend.repositories.PlayerRoleGroupRepository;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.lang.reflect.Type;
@@ -32,12 +33,13 @@ public class NetPlayerRoleBootstrapTest {
 
     private final NetPlayerRoleService netPlayerRoleService;
     private final PlayerRoleDao playerRoleDao;
-    private final PlayerRoleGroupDao playerRoleGroupDao;
+    private final PlayerRoleGroupRepository playerRoleGroupRepository;
 
-    public NetPlayerRoleBootstrapTest(NetPlayerRoleService netPlayerRoleService, PlayerRoleDao playerRoleDao, PlayerRoleGroupDao playerRoleGroupDao) {
+    public NetPlayerRoleBootstrapTest(NetPlayerRoleService netPlayerRoleService, PlayerRoleDao playerRoleDao,
+                                      PlayerRoleGroupRepository playerRoleGroupRepository) {
         this.netPlayerRoleService = netPlayerRoleService;
         this.playerRoleDao = playerRoleDao;
-        this.playerRoleGroupDao = playerRoleGroupDao;
+        this.playerRoleGroupRepository = playerRoleGroupRepository;
     }
 
     @ListenLavaMessage(destination = "lava.player.connection", selector = "type = 'connect'")
@@ -49,7 +51,7 @@ public class NetPlayerRoleBootstrapTest {
         if (playerInfo.getNetId() == 1) return;
 
         // TODO: find guest group and assign to guest player
-        PlayerRoleGroup roleGroup = playerRoleGroupDao.findRoleGroupWithRoles(1L);
+        PlayerRoleGroup roleGroup = playerRoleGroupRepository.findRoleGroupWithRoles(1L);
         netPlayerRoleService.assignRoleGroup(playerInfo, roleGroup);
 
         playerRoleDao.selectList(Wrappers.<PlayerRole>lambdaQuery()

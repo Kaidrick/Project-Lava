@@ -34,9 +34,19 @@ public interface NetPlayerRoleService {
 
     PlayerRoleGroup assignRoleGroup(String ucid, PlayerRoleGroup group);
 
-    PlayerRoleGroup findRoleGroup(PlayerInfo playerInfo);
+    PlayerRoleGroup findPlayerRoleGroup(PlayerInfo playerInfo);
 
-    PlayerRoleGroup findRoleGroup(String ucid);
+    PlayerRoleGroup findPlayerRoleGroup(String ucid);
 
     boolean checkRole(String ucid, int roleLevel);
+
+    PlayerRoleGroup findRoleGroupById(Long id);
+
+    PlayerRoleGroup findRoleGroupByName(String name);
+
+    boolean addPlayerRoleGroup(PlayerRoleGroup group);
+
+    boolean deletePlayerRoleGroup(PlayerRoleGroup group);
+
+    boolean deletePlayerRoleGroupById(Long id);
 }

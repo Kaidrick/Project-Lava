@@ -3,6 +3,7 @@ package moe.ofs.backend.function.triggermessage.model;
 import moe.ofs.backend.domain.dcs.BaseEntity;
 
 public class Message extends BaseEntity {
+    private int index;
     private int duration;
     private String content;
     private String prefix;
@@ -19,6 +20,14 @@ public class Message extends BaseEntity {
     public Message(String content, int duration) {
         this(content);
         this.duration = duration;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public int getDuration() {

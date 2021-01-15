@@ -5,4 +5,6 @@ import moe.ofs.backend.domain.admin.PlayerRoleGroup;
 
 public interface PlayerRoleGroupDao extends BaseMapper<PlayerRoleGroup> {
     PlayerRoleGroup findRoleGroupWithRoles(Long id);
+
+    PlayerRoleGroup findRolesGroupByName(String name);
 }
