@@ -21,14 +21,12 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 @RequiredArgsConstructor
 public class ApiDocConfig implements WebMvcConfigurer {
     private final Environment environment;
-    // 判断当前环境是否为 '开发'，'测试'环境
-    private boolean b = StrUtil.containsAnyIgnoreCase(environment.getActiveProfiles()[0], "dev", "test");
 
     @Bean
     public Docket docket() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
-                .enable(b)
+                .enable(checkEnvironment())
                 .groupName("Debug")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("moe.ofs.backend.debug.controllers"))
@@ -50,5 +48,10 @@ public class ApiDocConfig implements WebMvcConfigurer {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
+
+    // 判断当前环境是否为 '开发'，'测试'环境
+    private boolean checkEnvironment() {
+        return StrUtil.containsAnyIgnoreCase(environment.getActiveProfiles()[0], "dev", "test");
     }
 }
