@@ -28,8 +28,11 @@ public class MotdBootstrapTest {
         MotdMessageSet motdMessageSet = new MotdMessageSet();
         Set<Message> messages = motdMessageSet.getMessages();
         Message test1 = new Message("test 1 for 5s", 5);
+        test1.setIndex(1);
         Message test2 = new Message("test 2 for 10s", 10);
+        test2.setIndex(2);
         Message test3 = new Message("test 3 for 2s", 2);
+        test3.setIndex(3);
         messages.add(test1);
         messages.add(test2);
         messages.add(test3);

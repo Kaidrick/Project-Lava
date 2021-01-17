@@ -20,8 +20,9 @@ import org.springframework.stereotype.Service;
  * @date: 2021/1/15
  * @version: v1.0
  */
-@Service
+//@Service
 public class MybatisPlusGenerator {
+    // TODO: use java.util.Properties class to read from configuration files so that this class can be used as a standalone in IDE environment.
     @Value("${spring.datasource.url}")
     private String url;
     @Value("${spring.datasource.username}")
