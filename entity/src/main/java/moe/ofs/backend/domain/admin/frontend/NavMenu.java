@@ -10,6 +10,6 @@ public class NavMenu extends BaseEntity {
     private String name;
     private String path;
     private Long pid;
-    private boolean isLeaf;
+    private boolean leaf;
     private String ident;
 }

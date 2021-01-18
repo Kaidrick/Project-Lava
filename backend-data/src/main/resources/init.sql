@@ -5,7 +5,7 @@ create table if not exists nav_menu
     name varchar(255) not null,
     path varchar(255),
     pid int(11) comment 'parent menu id',
-    is_leaf bit(1) not null,
+    leaf bit(1) not null,
     ident varchar(32) not null,
     primary key(id)
 );
