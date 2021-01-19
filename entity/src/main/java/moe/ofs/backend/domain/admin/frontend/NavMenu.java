@@ -12,4 +12,5 @@ public class NavMenu extends BaseEntity {
     private Long pid;
     private boolean leaf;
     private String ident;
+    private int menuOrder;
 }
