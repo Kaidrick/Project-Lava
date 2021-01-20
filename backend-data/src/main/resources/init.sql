@@ -7,7 +7,7 @@ create table if not exists nav_menu
     pid int(11) comment 'parent menu id',
     leaf bit(1) not null,
     ident varchar(32) not null,
-    menu_order int(11) not null,
+    ordinal int(11) not null,
     primary key(id)
 );
 
