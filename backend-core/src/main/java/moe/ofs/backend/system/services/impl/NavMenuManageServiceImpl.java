@@ -42,6 +42,11 @@ public class NavMenuManageServiceImpl implements NavMenuManageService {
     }
 
     @Override
+    public int updateNavMenu(NavMenu menu) {
+        return navMenuDao.updateById(menu);
+    }
+
+    @Override
     public int deleteNavMenu(NavMenu menu) {
         return navMenuDao.deleteById(menu.getId());
     }

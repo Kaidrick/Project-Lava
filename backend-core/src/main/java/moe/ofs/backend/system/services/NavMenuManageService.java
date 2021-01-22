@@ -13,6 +13,8 @@ public interface NavMenuManageService {
 
     int addNavMenu(NavMenu menu);
 
+    int updateNavMenu(NavMenu menu);
+
     int deleteNavMenu(NavMenu menu);
 
     int deleteNavMenuById(Long id);

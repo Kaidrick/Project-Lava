@@ -30,8 +30,12 @@ public class NavMenuManageController {
 
     @PostMapping("add")
     public int addNavMenu(@RequestBody NavMenu menu) {
-        System.out.println("menu = " + menu);
         return service.addNavMenu(menu);
+    }
+
+    @PostMapping("update")
+    public int updateNavMenu(@RequestBody NavMenu menu) {
+        return service.updateNavMenu(menu);
     }
 
     @PostMapping("delete")
