@@ -6,4 +6,7 @@ import moe.ofs.backend.hookinterceptor.HookInterceptorProcessService;
 
 public interface PlayerConnectionValidationService
         extends HookInterceptorProcessService<PlayerTryConnectRecord, HookInterceptorDefinition> {
+    void blockPlayerUcid(String ucid);
+
+    void unblockPlayerUcid(String ucid);
 }

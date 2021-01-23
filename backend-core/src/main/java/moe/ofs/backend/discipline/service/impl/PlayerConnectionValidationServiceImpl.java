@@ -61,10 +61,12 @@ public class PlayerConnectionValidationServiceImpl
                             HookInterceptorDefinition.builder()
                                     .name("lava-default-player-connection-validation-hook-interceptor")
                                     .storage(connectionValidatorStorage)
-//                                    .predicateFunction("" +
-//                                            "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString("store") + ") " +
-//                                            "   net.log('enter sandman') " +
-//                                            "end")
+                                    .predicateFunction("" +
+                                            "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString("store") + ") " +
+                                            "   if store:get(ucid) then " +
+                                            "       return false, 'You are banned from this server.' " +
+                                            "   end " +
+                                            "end")
                                     .argPostProcessFunction("" +
                                             "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString("store") + ") " +
                                             "   local data = { " +
@@ -132,5 +134,15 @@ public class PlayerConnectionValidationServiceImpl
     public void release() {
         globalConnectionBlockStorage.save("isBlocked", false);
         globalConnectionBlockStorage.delete("blockReason");
+    }
+
+    @Override
+    public void blockPlayerUcid(String ucid) {
+        connectionValidatorStorage.save(ucid, String.valueOf(true));
+    }
+
+    @Override
+    public void unblockPlayerUcid(String ucid) {
+        connectionValidatorStorage.delete(ucid);
     }
 }
