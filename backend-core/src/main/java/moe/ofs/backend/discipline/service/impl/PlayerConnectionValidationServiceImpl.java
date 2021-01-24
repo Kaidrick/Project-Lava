@@ -138,8 +138,9 @@ public class PlayerConnectionValidationServiceImpl
 
     @Override
     public void blockPlayerUcid(String ucid) {
-        connectionValidatorStorage.save(ucid, "你被ban了！ You are banned！");
+        blockPlayerUcid(ucid, "你被ban了！ You are banned！");
     }
+
     @Override
     public void blockPlayerUcid(String ucid, String reason) {
         connectionValidatorStorage.save(ucid, reason);
