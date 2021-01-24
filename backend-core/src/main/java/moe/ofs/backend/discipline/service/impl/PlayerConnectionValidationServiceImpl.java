@@ -64,7 +64,7 @@ public class PlayerConnectionValidationServiceImpl
                                     .predicateFunction("" +
                                             "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString("store") + ") " +
                                             "   if store:get(ucid) then " +
-                                            "       return false, 'You are banned from this server.' " +
+                                            "       return false, store:get(ucid) " +
                                             "   end " +
                                             "end")
                                     .argPostProcessFunction("" +
@@ -138,7 +138,11 @@ public class PlayerConnectionValidationServiceImpl
 
     @Override
     public void blockPlayerUcid(String ucid) {
-        connectionValidatorStorage.save(ucid, String.valueOf(true));
+        connectionValidatorStorage.save(ucid, "你被ban了！ You are banned！");
+    }
+    @Override
+    public void blockPlayerUcid(String ucid, String reason) {
+        connectionValidatorStorage.save(ucid, reason);
     }
 
     @Override
