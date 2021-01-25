@@ -165,4 +165,14 @@ public class PlayerConnectionValidationServiceImpl
     public void unblockPlayerUcid(String ucid) {
         connectionValidatorStorage.delete(ucid);
     }
+
+    @Override
+    public void unblockPlayerAll() {
+        connectionValidatorStorage.deleteAll();
+    }
+
+    @Override
+    public void unblockPlayerUcid(List<String> ucidList) {
+        ucidList.forEach(this::unblockPlayerUcid);
+    }
 }

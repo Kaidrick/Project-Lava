@@ -18,4 +18,9 @@ public interface PlayerConnectionValidationService
     void blockPlayerUcid(Map<Object, String> ucidReasonMap);
 
     void unblockPlayerUcid(String ucid);
+
+    void unblockPlayerAll();
+
+    void unblockPlayerUcid(List<String> ucidList);
+
 }
