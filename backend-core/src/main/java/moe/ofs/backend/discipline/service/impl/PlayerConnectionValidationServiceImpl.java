@@ -1,6 +1,5 @@
 package moe.ofs.backend.discipline.service.impl;
 
-import cn.hutool.core.collection.ListUtil;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.connector.lua.LuaQueryEnv;
 import moe.ofs.backend.discipline.model.PlayerTryConnectRecord;
@@ -13,13 +12,11 @@ import moe.ofs.backend.hookinterceptor.AbstractHookInterceptorProcessService;
 import moe.ofs.backend.hookinterceptor.HookInterceptorDefinition;
 import moe.ofs.backend.hookinterceptor.HookType;
 import moe.ofs.backend.services.mizdb.SimpleKeyValueStorage;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -155,10 +152,8 @@ public class PlayerConnectionValidationServiceImpl
 
     @Override
     public void blockPlayerUcid(List<String> ucidList) {
-        if (ucidList.isEmpty()) throw
-
-                ucidList.stream().collect(Collectors.toMap(Function.identity(), s -> "You are banned."))；
-        connectionValidatorStorage.saveAll(map);
+        Map<Object, String> collect = ucidList.stream().collect(Collectors.toMap(Function.identity(), s -> "你被ban了！ You are banned！"));
+        blockPlayerUcid(collect);
     }
 
     @Override
