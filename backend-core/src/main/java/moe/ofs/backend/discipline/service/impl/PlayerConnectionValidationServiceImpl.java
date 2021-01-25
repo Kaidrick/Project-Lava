@@ -17,6 +17,10 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -64,7 +68,7 @@ public class PlayerConnectionValidationServiceImpl
                                     .predicateFunction("" +
                                             "function(" + HookType.ON_PLAYER_TRY_CONNECT.getFunctionArgsString("store") + ") " +
                                             "   if store:get(ucid) then " +
-                                            "       return false, 'You are banned from this server.' " +
+                                            "       return false, store:get(ucid) " +
                                             "   end " +
                                             "end")
                                     .argPostProcessFunction("" +
@@ -138,11 +142,37 @@ public class PlayerConnectionValidationServiceImpl
 
     @Override
     public void blockPlayerUcid(String ucid) {
-        connectionValidatorStorage.save(ucid, String.valueOf(true));
+        blockPlayerUcid(ucid, "你被ban了！ You are banned！");
+    }
+
+    @Override
+    public void blockPlayerUcid(String ucid, String reason) {
+        connectionValidatorStorage.save(ucid, reason);
+    }
+
+    @Override
+    public void blockPlayerUcid(List<String> ucidList) {
+        Map<Object, String> collect = ucidList.stream().collect(Collectors.toMap(Function.identity(), s -> "你被ban了！ You are banned！"));
+        blockPlayerUcid(collect);
+    }
+
+    @Override
+    public void blockPlayerUcid(Map<Object, String> ucidReasonMap) {
+        connectionValidatorStorage.saveAll(ucidReasonMap);
     }
 
     @Override
     public void unblockPlayerUcid(String ucid) {
         connectionValidatorStorage.delete(ucid);
+    }
+
+    @Override
+    public void unblockPlayerAll() {
+        connectionValidatorStorage.deleteAll();
+    }
+
+    @Override
+    public void unblockPlayerUcid(List<String> ucidList) {
+        ucidList.forEach(this::unblockPlayerUcid);
     }
 }
