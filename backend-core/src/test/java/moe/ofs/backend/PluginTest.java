@@ -27,9 +27,9 @@ class PluginTest {
     @BeforeEach
     void setUp() {
         // init map
-        configKeyValueMap = Stream.of(new String[][] {
-                { "motd_de", "Guten tag!" },
-                { "motd_cn", "中文字符测试！" },
+        configKeyValueMap = Stream.of(new String[][]{
+                {"motd_de", "Guten tag!"},
+                {"motd_cn", "中文字符测试！"},
         }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
         // init plugin
@@ -68,7 +68,7 @@ class PluginTest {
         testPlugin.writeConfiguration(enabledKey, "true");
 
         // check size
-        try(InputStream inputStream = Files.newInputStream(testPluginXmlPath)) {
+        try (InputStream inputStream = Files.newInputStream(testPluginXmlPath)) {
             Properties properties = new Properties();
             properties.loadFromXML(inputStream);
             assertEquals(1, properties.size());
@@ -80,7 +80,7 @@ class PluginTest {
 
         testPlugin.writeConfiguration(configKeyValueMap);
         // check size
-        try(InputStream inputStream = Files.newInputStream(Configurable.configPath.resolve(testPluginXmlPath))) {
+        try (InputStream inputStream = Files.newInputStream(Configurable.configPath.resolve(testPluginXmlPath))) {
             Properties properties = new Properties();
             properties.loadFromXML(inputStream);
             assertEquals(3, properties.size());
@@ -95,7 +95,7 @@ class PluginTest {
         testPlugin.writeConfiguration(enabledKey, "true");
 
         // check size
-        try(InputStream inputStream = Files.newInputStream(testPluginXmlPath)) {
+        try (InputStream inputStream = Files.newInputStream(testPluginXmlPath)) {
             Properties properties = new Properties();
             properties.loadFromXML(inputStream);
             assertEquals(1, properties.size());
@@ -110,7 +110,7 @@ class PluginTest {
     void testWriteAndReadMapBasedConfigToXML() throws IOException {
         testPlugin.writeConfiguration(configKeyValueMap);
         // check size
-        try(InputStream inputStream = Files.newInputStream(testPluginXmlPath)) {
+        try (InputStream inputStream = Files.newInputStream(testPluginXmlPath)) {
             Properties properties = new Properties();
             properties.loadFromXML(inputStream);
             assertEquals(2, properties.size());
@@ -131,4 +131,5 @@ class PluginTest {
         testPlugin.writeConfiguration("enabled", "true");
         assertTrue(testPlugin.isEnabled());
     }
+
 }
