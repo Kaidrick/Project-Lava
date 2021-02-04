@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("sim_event")
+@RequestMapping("sim_event")  // FIXME: fix underscore
 public class SimEventTestController {
 
     private final SimEventPollService simEventPollService;

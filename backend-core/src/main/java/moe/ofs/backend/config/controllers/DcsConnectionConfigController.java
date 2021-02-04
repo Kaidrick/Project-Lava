@@ -63,7 +63,7 @@ public class DcsConnectionConfigController {
                 .build();
     }
 
-    @RequestMapping(value = "/port_reset", method = RequestMethod.GET)
+    @RequestMapping(value = "/port_reset", method = RequestMethod.GET)  // TODO: fix underscore
     public PortConfig resetDefaultConnectionPort() {
         connectionManager.restoreDefaultPortMap();
         return getCurrentConfiguration();

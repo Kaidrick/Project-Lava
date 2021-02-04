@@ -15,6 +15,8 @@ public interface NavMenuManageService {
 
     int updateNavMenu(NavMenu menu);
 
+    int updateNavMenus(List<NavMenu> menuList);
+
     int deleteNavMenu(NavMenu menu);
 
     int deleteNavMenuById(Long id);

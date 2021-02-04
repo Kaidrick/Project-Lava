@@ -21,7 +21,7 @@ public class DcsServerController {
     }
 
     // restart
-    @RequestMapping(value = "/control/reload_mission", method = RequestMethod.POST)
+    @RequestMapping(value = "/control/reload_mission", method = RequestMethod.POST)  // FIXME: fix underscore
     public boolean reloadCurrentMission(@RequestBody ServerResetAction serverResetAction) {
         return service.restart(serverResetAction.getResetType());
     }
@@ -32,7 +32,7 @@ public class DcsServerController {
 
     // lava system shutdown: shutdown background tasks and task dispatcher, then shutdown spring boot starter actuator
 
-    @RequestMapping(value = "/control/block_all", method = RequestMethod.POST)
+    @RequestMapping(value = "/control/block_all", method = RequestMethod.POST)  // FIXME: fix underscore
     public boolean blockServerEntryForAll(@RequestBody boolean isBlocked) {
         networkControlService.blockServerConnections(isBlocked);
         return true;
