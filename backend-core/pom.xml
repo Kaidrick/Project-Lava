@@ -159,6 +159,7 @@
             <artifactId>lava-annotation</artifactId>
             <version>${project.version}</version>
         </dependency>
+
     </dependencies>
 
     <build>
