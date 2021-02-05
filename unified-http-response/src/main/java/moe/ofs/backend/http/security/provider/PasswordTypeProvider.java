@@ -1,6 +1,8 @@
 package moe.ofs.backend.http.security.provider;
 
-import moe.ofs.backend.http.security.domain.BasicUserInfo;
+import lombok.RequiredArgsConstructor;
+import moe.ofs.backend.http.security.dao.AdminInfoDao;
+import moe.ofs.backend.http.security.domain.AdminInfo;
 import moe.ofs.backend.http.security.token.PasswordTypeToken;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -13,7 +15,9 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class PasswordTypeProvider implements AuthenticationProvider {
+    private final AdminInfoDao adminInfoDao;
 
     @Override
     public Authentication authenticate(Authentication authentication) {
@@ -21,14 +25,16 @@ public class PasswordTypeProvider implements AuthenticationProvider {
         String principal = (String) authentication.getPrincipal();
         String password = (String) authentication.getCredentials();
 
-        if (!principal.equals("XXX")) throw new RuntimeException("用户名不正确!");
-        if (!password.equals("XXX")) throw new RuntimeException("密码不正确!");
+        AdminInfo adminInfo = adminInfoDao.selectById(principal);
+
+        if (adminInfo == null) throw new RuntimeException("用户名不正确!");
+        if (!password.equals(adminInfo.getPassword())) throw new RuntimeException("密码不正确!");
 
         List<GrantedAuthority> authorities = new ArrayList<>();
-        BasicUserInfo basicUserInfo = new BasicUserInfo();
-        basicUserInfo.getRoles().forEach(v -> authorities.add(new SimpleGrantedAuthority(v)));
+        authorities.add(new SimpleGrantedAuthority("admin"));
 
         return new PasswordTypeToken(Collections.unmodifiableList(authorities), principal, null);
+
     }
 
     public boolean supports(Class<?> authentication) {

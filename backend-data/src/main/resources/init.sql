@@ -131,3 +131,13 @@ CREATE TABLE player_info
     ucid     varchar(255) NULL DEFAULT NULL,
     PRIMARY KEY (id)
 );
+
+create table if not exists admin_info
+(
+    name              varchar(255)     not null comment '管理员名称'
+        primary key,
+    password          varchar(255)     not null comment '密码',
+    create_time       datetime         not null comment '创建时间',
+    last_connect_time datetime         not null comment '上次登录时间',
+    enable            bit default b'1' not null comment '是否启用'
+);
