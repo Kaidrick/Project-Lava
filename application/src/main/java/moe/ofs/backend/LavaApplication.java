@@ -44,8 +44,6 @@ public class LavaApplication {
     }
 
     private static void generatorRootKey() {
-        // FIXME AdminInfo表相关建表sql已写入init.sql 但H2中无法看到该表
-
         Integer integer = adminInfoDao.selectCount(null);
         if (integer > 0) return;
         AdminInfo adminInfo = new AdminInfo();
