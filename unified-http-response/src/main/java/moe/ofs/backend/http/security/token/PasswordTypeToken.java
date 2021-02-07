@@ -1,6 +1,6 @@
 package moe.ofs.backend.http.security.token;
 
-import moe.ofs.backend.http.security.domain.BasicUserInfo;
+import moe.ofs.backend.domain.BasicUserInfo;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.GrantedAuthority;

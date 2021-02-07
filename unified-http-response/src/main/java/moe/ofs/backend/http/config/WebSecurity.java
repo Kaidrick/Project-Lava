@@ -5,6 +5,7 @@ import moe.ofs.backend.http.security.filter.PasswordTypeFilter;
 import moe.ofs.backend.http.security.handler.FailureHandler;
 import moe.ofs.backend.http.security.handler.SuccessHandler;
 import moe.ofs.backend.http.security.provider.PasswordTypeProvider;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, jsr250Enabled = true, securedEnabled = true)
 @RequiredArgsConstructor
+@Configuration
 public class WebSecurity extends WebSecurityConfigurerAdapter {
     private final SuccessHandler successHandler;
     private final FailureHandler failureHandler;

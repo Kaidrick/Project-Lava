@@ -1,8 +1,8 @@
 package moe.ofs.backend.http.security.provider;
 
 import lombok.RequiredArgsConstructor;
-import moe.ofs.backend.http.security.dao.AdminInfoDao;
-import moe.ofs.backend.http.security.domain.AdminInfo;
+import moe.ofs.backend.dao.AdminInfoDao;
+import moe.ofs.backend.domain.AdminInfo;
 import moe.ofs.backend.http.security.token.PasswordTypeToken;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;

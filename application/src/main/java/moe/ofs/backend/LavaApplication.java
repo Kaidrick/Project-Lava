@@ -5,8 +5,8 @@ import cn.hutool.core.util.HexUtil;
 import cn.hutool.core.util.IdUtil;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.connector.DcsScriptConfigManager;
-import moe.ofs.backend.http.security.dao.AdminInfoDao;
-import moe.ofs.backend.http.security.domain.AdminInfo;
+import moe.ofs.backend.dao.AdminInfoDao;
+import moe.ofs.backend.domain.AdminInfo;
 import moe.ofs.backend.util.HeartbeatThreadFactory;
 import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.boot.CommandLineRunner;
@@ -26,7 +26,7 @@ public class LavaApplication {
 
     public LavaApplication(HeartbeatThreadFactory heartbeatThreadFactory, AdminInfoDao adminInfoDao) {
         this.heartbeatThreadFactory = heartbeatThreadFactory;
-        LavaApplication.adminInfoDao = adminInfoDao;
+        this.adminInfoDao = adminInfoDao;
     }
 
     public static void main(String[] args) {
@@ -45,7 +45,7 @@ public class LavaApplication {
 
     private static void generatorRootKey() {
         Integer integer = adminInfoDao.selectCount(null);
-        if (integer > 0) return;
+        if (integer != 0) return;
         AdminInfo adminInfo = new AdminInfo();
         adminInfo.setName("root");
         String s = IdUtil.fastSimpleUUID();

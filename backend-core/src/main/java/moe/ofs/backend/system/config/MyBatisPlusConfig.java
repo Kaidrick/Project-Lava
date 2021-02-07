@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@MapperScan({"moe.ofs.backend.dao", "moe.ofs.backend.http.security.dao"})
+@MapperScan("moe.ofs.backend.dao")
 public class MyBatisPlusConfig {
     //Mybtais-Plus分页插件配置
     @Bean
