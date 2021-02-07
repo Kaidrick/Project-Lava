@@ -30,7 +30,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.headers().frameOptions().sameOrigin();
+        http.headers().frameOptions().disable();
 
         http
                 .addFilterBefore(passwordTypeFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -40,7 +40,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .permitAll()
                 .and()
-                .cors().disable()
+                .cors().and()
                 .csrf().disable()
         ;
     }
