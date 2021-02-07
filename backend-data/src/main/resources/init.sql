@@ -156,22 +156,22 @@ create table if not exists lava_system_log
 DROP TABLE IF EXISTS export_object;
 CREATE TABLE export_object
 (
-    runtime_id    bigint(20)        UNSIGNED NOT NULL,
-    own_bank      double                     NULL DEFAULT NULL,
-    coalition     varchar(255)               NULL DEFAULT NULL,
-    coalition_id  int(11)                    NULL DEFAULT NULL,
-    country_id    int(11)                    NULL DEFAULT NULL,
-    group_name    varchar(255)               NULL DEFAULT NULL,
-    own_heading   double                     NULL DEFAULT NULL,
-    own_name      varchar(255)               NULL DEFAULT NULL,
-    own_pitch     double                     NULL DEFAULT NULL,
-    unit_name     varchar(255)               NULL DEFAULT NULL,
-    geo_altitude  double                     NOT NULL,
-    geo_latitude  double                     NOT NULL,
-    geo_longitude double                     NOT NULL,
-    vector_x      double                     NOT NULL,
-    vector_y      double                     NOT NULL,
-    vector_z      double                     NOT NULL,
+    runtime_id    bigint(20) UNSIGNED NOT NULL,
+    own_bank      double              NULL DEFAULT NULL,
+    coalition     varchar(255)        NULL DEFAULT NULL,
+    coalition_id  int(11)             NULL DEFAULT NULL,
+    country_id    int(11)             NULL DEFAULT NULL,
+    group_name    varchar(255)        NULL DEFAULT NULL,
+    own_heading   double              NULL DEFAULT NULL,
+    own_name      varchar(255)        NULL DEFAULT NULL,
+    own_pitch     double              NULL DEFAULT NULL,
+    unit_name     varchar(255)        NULL DEFAULT NULL,
+    geo_altitude  double              NOT NULL,
+    geo_latitude  double              NOT NULL,
+    geo_longitude double              NOT NULL,
+    vector_x      double              NOT NULL,
+    vector_y      double              NOT NULL,
+    vector_z      double              NOT NULL,
 
     PRIMARY KEY (runtime_id)
 );
