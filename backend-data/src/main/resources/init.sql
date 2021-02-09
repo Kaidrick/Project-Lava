@@ -195,10 +195,61 @@ CREATE TABLE player_info
 
 create table if not exists admin_info
 (
-    name              varchar(255)  not null comment '管理员名称'
+    name        varchar(255)  not null comment '管理员名称'
         primary key,
-    password          varchar(255)  not null comment '密码',
-    create_time       datetime      not null comment '创建时间',
-    last_connect_time datetime      not null comment '上次登录时间',
-    enable            bit default 1 not null comment '是否启用'
+    password    varchar(255)  not null comment '密码',
+    create_time datetime      not null comment '创建时间',
+    enable      bit default 1 not null comment '是否启用'
+);
+
+create table if not exists group_info
+(
+    id          bigint(12) unsigned auto_increment comment '自增ID'
+        primary key,
+    `group`     varchar(255) not null comment '用户组',
+    description varchar(255) null comment '用户组描述'
+);
+
+insert into group_info
+values (1, 'admin', '管理员组'),
+       (2, 'user', '普通用户组');
+
+create table if not exists group_role
+(
+    id       bigint(12) unsigned auto_increment comment '自增ID'
+        primary key,
+    group_id bigint(12) unsigned not null comment '用户组ID',
+    role_id  bigint(12) unsigned not null comment '角色ID'
+);
+
+insert into group_role
+values (1, 1, 1),
+       (2, 2, 2);
+
+create table if not exists role_info
+(
+    id          bigint(12) unsigned auto_increment comment '自增ID'
+        primary key,
+    role        varchar(255) null comment '角色',
+    description varchar(255) null comment '角色介绍'
+);
+
+insert into role_info
+values (1, 'admin.super_admin', '超级管理员'),
+       (2, 'user.user', '普通用户');
+
+create table if not exists user_group
+(
+    id       bigint(12) unsigned auto_increment comment '自增ID'
+        primary key,
+    user_id  bigint(12) unsigned not null comment '用户ID',
+    group_id bigint(12) unsigned not null comment '用户组ID'
+);
+
+create table if not exists user_role
+(
+    id      bigint(12) unsigned auto_increment comment '自增ID'
+        primary key,
+    user_id bigint(12) unsigned not null comment '用户ID',
+    role_id bigint(12) unsigned not null comment '角色ID'
 );

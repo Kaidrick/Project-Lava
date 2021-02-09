@@ -1,9 +1,9 @@
-package moe.ofs.backend.http.security.provider;
+package moe.ofs.backend.security.provider;
 
 import lombok.RequiredArgsConstructor;
 import moe.ofs.backend.dao.AdminInfoDao;
 import moe.ofs.backend.domain.AdminInfo;
-import moe.ofs.backend.http.security.token.PasswordTypeToken;
+import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,10 +32,12 @@ public class PasswordTypeProvider implements AuthenticationProvider {
 
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("admin"));
+        adminInfo.setPassword(null);
 
-        return new PasswordTypeToken(Collections.unmodifiableList(authorities), principal, null);
+        return new PasswordTypeToken(Collections.unmodifiableList(authorities), adminInfo, null);
 
     }
+
 
     public boolean supports(Class<?> authentication) {
         return PasswordTypeToken.class.isAssignableFrom(authentication);

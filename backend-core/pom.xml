@@ -114,10 +114,10 @@
             <artifactId>knife4j-spring-boot-starter</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>org.aspectj</groupId>-->
-<!--            <artifactId>aspectjrt</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.aspectj</groupId>-->
+        <!--            <artifactId>aspectjrt</artifactId>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>org.aspectj</groupId>
@@ -127,6 +127,12 @@
         <dependency>
             <groupId>moe.ofs</groupId>
             <artifactId>backend-data</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>moe.ofs</groupId>
+            <artifactId>lava-security</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -168,9 +174,9 @@
                 <groupId>com.github.m50d</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
                 <configuration>
-<!--                    <excludes>-->
-<!--                        <exclude>**/*.java</exclude>-->
-<!--                    </excludes>-->
+                    <!--                    <excludes>-->
+                    <!--                        <exclude>**/*.java</exclude>-->
+                    <!--                    </excludes>-->
                     <aspectLibraries>
                         <aspectLibrary>
                             <groupId>org.springframework</groupId>
@@ -215,7 +221,7 @@
                     <execution>
                         <id>default-compile</id>
                         <configuration>
-<!--                            <forceJavacCompilerUse>true</forceJavacCompilerUse>-->
+                            <!--                            <forceJavacCompilerUse>true</forceJavacCompilerUse>-->
                             <compilerArgs>
                                 <arg>-d</arg>
                                 <arg>${project.build.directory}/unwoven-classes</arg>

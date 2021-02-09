@@ -1,4 +1,4 @@
-package moe.ofs.backend.http.security.handler;
+package moe.ofs.backend.security.handler;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;

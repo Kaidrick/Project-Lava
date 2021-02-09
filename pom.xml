@@ -15,6 +15,7 @@
         <module>connector</module>
         <module>entity</module>
         <module>lava-annotation</module>
+        <module>lava-security</module>
     </modules>
 
     <groupId>moe.ofs</groupId>
@@ -25,7 +26,7 @@
 
     <properties>
         <!--        <java.version>1.8</java.version>-->
-        <maven.compiler.release>8</maven.compiler.release>
+        <!--        <maven.compiler.release>8</maven.compiler.release>-->
     </properties>
 
     <parent>
@@ -170,19 +171,19 @@
                         </execution>
                     </executions>
                     <configuration>
-<!--                        <excludes>-->
-<!--                            <exclude>**/*.java</exclude>-->
-<!--                        </excludes>-->
-<!--                        <aspectLibraries>-->
-<!--                            <aspectLibrary>-->
-<!--                                <groupId>org.springframework</groupId>-->
-<!--                                <artifactId>spring-aspects</artifactId>-->
-<!--                            </aspectLibrary>-->
-<!--                            <aspectLibrary>-->
-<!--                                <groupId>moe.ofs</groupId>-->
-<!--                                <artifactId>lava-aspect</artifactId>-->
-<!--                            </aspectLibrary>-->
-<!--                        </aspectLibraries>-->
+                        <!--                        <excludes>-->
+                        <!--                            <exclude>**/*.java</exclude>-->
+                        <!--                        </excludes>-->
+                        <!--                        <aspectLibraries>-->
+                        <!--                            <aspectLibrary>-->
+                        <!--                                <groupId>org.springframework</groupId>-->
+                        <!--                                <artifactId>spring-aspects</artifactId>-->
+                        <!--                            </aspectLibrary>-->
+                        <!--                            <aspectLibrary>-->
+                        <!--                                <groupId>moe.ofs</groupId>-->
+                        <!--                                <artifactId>lava-aspect</artifactId>-->
+                        <!--                            </aspectLibrary>-->
+                        <!--                        </aspectLibraries>-->
                         <complianceLevel>${maven.compiler.target}</complianceLevel>
                         <source>${maven.compiler.target}</source>
                         <target>${maven.compiler.target}</target>
@@ -206,7 +207,7 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
                         <useSystemClassLoader>false</useSystemClassLoader>
-<!--                        <argLine>-javaagent:${project.build.directory}/aspectj/aspectjweaver-${aspectj.version}.jar</argLine>-->
+                        <!--                        <argLine>-javaagent:${project.build.directory}/aspectj/aspectjweaver-${aspectj.version}.jar</argLine>-->
                     </configuration>
                 </plugin>
             </plugins>

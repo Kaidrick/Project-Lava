@@ -1,7 +1,7 @@
-package moe.ofs.backend.http.security.filter;
+package moe.ofs.backend.security.filter;
 
 import cn.hutool.core.util.HexUtil;
-import moe.ofs.backend.http.security.token.PasswordTypeToken;
+import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
