@@ -8,13 +8,13 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CheckPermission {
-    String[] roles();
+    String[] roles() default {};
 
-    String[] groups();
+    String[] groups() default {};
 
-    String[] nonRoles();
+    String[] nonRoles() default {};
 
-    String[] nonGroups();
+    String[] nonGroups() default {};
 
     boolean requiredAccessToken() default false;
 

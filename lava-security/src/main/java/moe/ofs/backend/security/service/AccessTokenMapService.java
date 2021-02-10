@@ -3,6 +3,7 @@ package moe.ofs.backend.security.service;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
+import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import moe.ofs.backend.common.AbstractMapService;
 import moe.ofs.backend.dao.TokenInfoDao;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class AccessTokenService extends AbstractMapService<LavaUserToken> {
+public class AccessTokenMapService extends AbstractMapService<LavaUserToken> {
     private final TokenInfoDao tokenInfoDao;
 
     public LavaUserToken generate() {
@@ -42,7 +43,31 @@ public class AccessTokenService extends AbstractMapService<LavaUserToken> {
     }
 
     public Long add(LavaUserToken lavaUserToken) {
-        return add(lavaUserToken);
+        return save(lavaUserToken).getId();
+    }
+
+    public void update(LavaUserToken lavaUserToken) {
+        add(lavaUserToken);
+        TokenInfo tokenInfo = tokenInfoDao.selectById(lavaUserToken.getId());
+        if (tokenInfo == null) {
+            super.delete(lavaUserToken);
+            lavaUserToken.setUserInfoToken(null);
+            throw new RuntimeException("token ：" + new Gson().toJson(lavaUserToken) + " 库表不存在！");
+        }
+        tokenInfo.setAccessTokenExpireTime(lavaUserToken.getAccessTokenExpireTime());
+        tokenInfo.setAccessToken(lavaUserToken.getAccessToken());
+        tokenInfoDao.updateById(tokenInfo);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        super.deleteById(id);
+        tokenInfoDao.deleteById(id);
+    }
+
+    @Override
+    public void delete(LavaUserToken lavaUserToken) {
+        this.deleteById(lavaUserToken.getId());
     }
 
     public LavaUserToken getByAccessToken(String accessToken) {
@@ -50,17 +75,15 @@ public class AccessTokenService extends AbstractMapService<LavaUserToken> {
                 .stream()
                 .filter(v -> v.getAccessToken().equals(accessToken))
                 .collect(Collectors.toList());
-        if (collect.size() == 1) return checkValidation(collect.get(0));
+        if (collect.size() == 1) return collect.get(0);
 
         TokenInfo tokenInfo = tokenInfoDao.selectOneByAccessToken(accessToken);
 
         if (tokenInfo == null) throw new RuntimeException("AccessToken不存在，请重新获取");
 
-        PasswordTypeToken token = new PasswordTypeToken(tokenInfo.getName(), tokenInfo.getPassword());
-        LavaUserToken lavaUserToken = new LavaUserToken(token, tokenInfo.getAccessToken(), tokenInfo.getRefreshToken(), tokenInfo.getAccessTokenExpireTime(), tokenInfo.getRefreshTokenExpireTime());
-        lavaUserToken.setId(tokenInfo.getId());
+        LavaUserToken lavaUserToken = tokenInfoToLavaUserToken(tokenInfo);
         add(lavaUserToken);
-        return checkValidation(lavaUserToken);
+        return lavaUserToken;
     }
 
     public LavaUserToken getByRefreshToken(String refreshToken) {
@@ -68,28 +91,48 @@ public class AccessTokenService extends AbstractMapService<LavaUserToken> {
                 .stream()
                 .filter(v -> v.getRefreshToken().equals(refreshToken))
                 .collect(Collectors.toList());
-        if (collect.size() == 1) return checkValidation(collect.get(0));
+        if (collect.size() == 1) return collect.get(0);
 
         TokenInfo tokenInfo = tokenInfoDao.selectOneByRefreshToken(refreshToken);
 
         if (tokenInfo == null) throw new RuntimeException("RefreshToken不存在，请重新认证");
 
-        PasswordTypeToken token = new PasswordTypeToken(tokenInfo.getName(), tokenInfo.getPassword());
-        LavaUserToken lavaUserToken = new LavaUserToken(token, tokenInfo.getAccessToken(), tokenInfo.getRefreshToken(), tokenInfo.getAccessTokenExpireTime(), tokenInfo.getRefreshTokenExpireTime());
-        lavaUserToken.setId(tokenInfo.getId());
+        LavaUserToken lavaUserToken = tokenInfoToLavaUserToken(tokenInfo);
         add(lavaUserToken);
-        return checkValidation(lavaUserToken);
+        return lavaUserToken;
     }
 
-    private LavaUserToken checkValidation(LavaUserToken lavaUserToken) {
+    public boolean checkAccessToken(String accessToken) {
+        return checkAccessToken(getByAccessToken(accessToken));
+    }
+
+    public boolean checkAccessToken(LavaUserToken lavaUserToken) {
         Date now = new Date();
         DateTime hour = DateUtil.offsetHour(now, 2);
-        DateTime week = DateUtil.offsetWeek(now, 2);
-        if (!DateUtil.isIn(lavaUserToken.getAccessTokenExpireTime(), now, hour))
-            throw new RuntimeException("AccessToken已过期！");
 
-        if (!DateUtil.isIn(lavaUserToken.getRefreshTokenExpireTime(), now, week))
-            throw new RuntimeException("RefreshToken已过期！");
+        return DateUtil.isIn(lavaUserToken.getAccessTokenExpireTime(), now, hour);
+    }
+
+    public boolean checkRefreshToken(String refreshToken) {
+        return checkRefreshToken(getByRefreshToken(refreshToken));
+    }
+
+    public boolean checkRefreshToken(LavaUserToken lavaUserToken) {
+        Date now = new Date();
+        DateTime week = DateUtil.offsetWeek(now, 2);
+
+        return DateUtil.isIn(lavaUserToken.getAccessTokenExpireTime(), now, week);
+    }
+
+    public LavaUserToken refreshAccessToken(String refreshToken) {
+        return refreshAccessToken(getByRefreshToken(refreshToken));
+    }
+
+    public LavaUserToken refreshAccessToken(LavaUserToken lavaUserToken) {
+        LavaUserToken generate = generate();
+        lavaUserToken.setAccessToken(generate.getAccessToken());
+        lavaUserToken.setAccessTokenExpireTime(generate.getAccessTokenExpireTime());
+        update(lavaUserToken);
         return lavaUserToken;
     }
 
@@ -99,11 +142,17 @@ public class AccessTokenService extends AbstractMapService<LavaUserToken> {
         if (tokenInfos.isEmpty()) return;
 
         tokenInfos.forEach(v -> {
-            PasswordTypeToken token = new PasswordTypeToken(v.getName(), v.getPassword());
-            LavaUserToken lavaUserToken = new LavaUserToken(token, v.getAccessToken(), v.getRefreshToken(), v.getAccessTokenExpireTime(), v.getRefreshTokenExpireTime());
-            lavaUserToken.setId(v.getId());
+            LavaUserToken lavaUserToken = tokenInfoToLavaUserToken(v);
             add(lavaUserToken);
         });
+    }
+
+
+    public LavaUserToken tokenInfoToLavaUserToken(TokenInfo tokenInfo) {
+        PasswordTypeToken token = new PasswordTypeToken(tokenInfo.getName(), null);
+        LavaUserToken lavaUserToken = new LavaUserToken(token, tokenInfo.getAccessToken(), tokenInfo.getRefreshToken(), tokenInfo.getAccessTokenExpireTime(), tokenInfo.getRefreshTokenExpireTime());
+        lavaUserToken.setId(tokenInfo.getId());
+        return lavaUserToken;
     }
 
     @Scheduled(fixedDelay = 2 * 60 * 3600 * 1000L)

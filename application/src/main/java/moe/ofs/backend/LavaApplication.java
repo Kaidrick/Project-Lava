@@ -1,7 +1,6 @@
 package moe.ofs.backend;
 
 import cn.hutool.core.io.file.FileWriter;
-import cn.hutool.core.util.HexUtil;
 import cn.hutool.core.util.IdUtil;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.connector.DcsScriptConfigManager;
@@ -10,7 +9,6 @@ import moe.ofs.backend.dao.UserGroupDao;
 import moe.ofs.backend.domain.AdminInfo;
 import moe.ofs.backend.domain.UserGroup;
 import moe.ofs.backend.util.HeartbeatThreadFactory;
-import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,6 +16,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.util.DigestUtils;
 
 import java.util.Date;
 
@@ -55,7 +54,7 @@ public class LavaApplication {
         AdminInfo adminInfo = new AdminInfo();
         adminInfo.setName("root");
         String s = IdUtil.fastSimpleUUID();
-        adminInfo.setPassword(MD5Encoder.encode(HexUtil.decodeHex(s)));
+        adminInfo.setPassword(DigestUtils.md5DigestAsHex(s.getBytes()));
         adminInfo.setCreateTime(new Date());
         adminInfoDao.insert(adminInfo);
         UserGroup userGroup = new UserGroup();

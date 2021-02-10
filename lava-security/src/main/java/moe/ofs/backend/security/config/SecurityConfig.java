@@ -48,7 +48,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 //                所有请求放行
 //                .antMatchers("/h2-console/**")
-                .antMatchers("/api/**").access("@securityConfig")
                 .anyRequest()
                 .permitAll()
                 .and()

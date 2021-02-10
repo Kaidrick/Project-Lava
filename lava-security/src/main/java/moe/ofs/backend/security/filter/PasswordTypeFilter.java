@@ -1,8 +1,6 @@
 package moe.ofs.backend.security.filter;
 
-import cn.hutool.core.util.HexUtil;
 import moe.ofs.backend.security.token.PasswordTypeToken;
-import org.apache.tomcat.util.security.MD5Encoder;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
@@ -31,7 +29,7 @@ public class PasswordTypeFilter extends AbstractAuthenticationProcessingFilter {
         String password = Optional.ofNullable(request.getParameter("password"))
                 .orElseThrow(() -> new RuntimeException("密码不能为空"));
 
-        PasswordTypeToken authRequest = new PasswordTypeToken(principal, MD5Encoder.encode(HexUtil.decodeHex(password)));
+        PasswordTypeToken authRequest = new PasswordTypeToken(principal, password);
         authRequest.setDetails(authenticationDetailsSource.buildDetails(request));
         return this.getAuthenticationManager().authenticate(authRequest);
     }

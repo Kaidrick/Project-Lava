@@ -195,8 +195,9 @@ CREATE TABLE player_info
 
 create table if not exists admin_info
 (
-    name        varchar(255)  not null comment '管理员名称'
+    id          bigint(12) unsigned auto_increment comment '自增ID'
         primary key,
+    name        varchar(255)  not null comment '管理员名称',
     password    varchar(255)  not null comment '密码',
     create_time datetime      not null comment '创建时间',
     enable      bit default 1 not null comment '是否启用'
@@ -252,4 +253,15 @@ create table if not exists user_role
         primary key,
     user_id bigint(12) unsigned not null comment '用户ID',
     role_id bigint(12) unsigned not null comment '角色ID'
+);
+
+create table if not exists token_info
+(
+    id                        bigint(12) unsigned auto_increment comment '自增ID'
+        primary key,
+    access_token              varchar(255)        not null comment 'AccessToken',
+    user_id                   bigint(12) unsigned not null comment '用户ID',
+    access_token_expire_time  datetime            not null comment 'AccessToken过期时间',
+    refresh_token             varchar(255)        not null comment 'RefreshToken',
+    refresh_token_expire_time datetime            not null comment 'RefreshToken过期时间'
 );

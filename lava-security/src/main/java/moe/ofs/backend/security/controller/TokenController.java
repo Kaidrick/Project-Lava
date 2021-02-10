@@ -7,7 +7,7 @@ import moe.ofs.backend.domain.AdminInfo;
 import moe.ofs.backend.domain.LavaUserToken;
 import moe.ofs.backend.domain.TokenInfo;
 import moe.ofs.backend.security.provider.PasswordTypeProvider;
-import moe.ofs.backend.security.service.AccessTokenService;
+import moe.ofs.backend.security.service.AccessTokenMapService;
 import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,14 +24,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class TokenController {
-    private final AccessTokenService accessTokenService;
+    private final AccessTokenMapService accessTokenService;
     private final TokenInfoDao tokenInfoDao;
     private final PasswordTypeProvider passwordTypeProvider;
 
-    @PostMapping("/getToken")
+    @PostMapping("/get/token")
     public String getToken(
-            @RequestParam("username") String username,
-            @RequestParam("password") String password
+            String username,
+            String password
     ) {
         PasswordTypeToken token = new PasswordTypeToken(username, password);
         AdminInfo adminInfo = (AdminInfo) passwordTypeProvider.authenticate(token).getPrincipal();
@@ -45,5 +45,16 @@ public class TokenController {
         generate.setId(null);
         generate.setUserInfoToken(null);
         return new Gson().toJson(generate);
+    }
+
+    @PostMapping("/refresh/token")
+    public String refreshToken(
+            @RequestParam("refresh_token") String refreshToken
+    ) {
+        if (!accessTokenService.checkRefreshToken(refreshToken)) return "RefreshToken已过期，请重新认证";
+        LavaUserToken lavaUserToken = accessTokenService.refreshAccessToken(refreshToken);
+        lavaUserToken.setUserInfoToken(null);
+        lavaUserToken.setId(null);
+        return new Gson().toJson(lavaUserToken);
     }
 }

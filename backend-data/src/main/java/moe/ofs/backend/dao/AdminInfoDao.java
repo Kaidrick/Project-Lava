@@ -16,4 +16,8 @@ public interface AdminInfoDao extends BaseMapper<AdminInfo> {
     @Select("SELECT group_info.`group` 'groups' FROM user_group,group_info WHERE user_group.group_id = group_info.id " +
             "AND user_group.user_id = ${id};")
     List<String> selectGroups(@Param("id") Long id);
+
+    @Select("SELECT admin_info.`name`,admin_info.id FROM admin_info,token_info WHERE admin_info.id = token_info.user_id " +
+            "AND token_info.access_token='${accessToken}';")
+    AdminInfo selectOneByAccessToken(@Param("accessToken") String accessToken);
 }
