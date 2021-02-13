@@ -1,3 +1,5 @@
+SET MODE MySQL;
+
 -- frontend navigation menu
 create table if not exists nav_menu
 (
@@ -12,20 +14,21 @@ create table if not exists nav_menu
 );
 
 -- default navigational menu configuration
--- insert into if (not exists(select 1 from nav_menu)) NAV_MENU (ID, NAME, PATH, PID, LEAF, IDENT, ORDINAL)
-insert into NAV_MENU (ID, NAME, PATH, PID, LEAF, IDENT, ORDINAL)
-values (1, 'System', null, 0, false, '4970e4917f1648ada723cf79e2416dc2', 1),
-       (2, 'GUI', null, 1, false, '45f1da18c8404c7bb1b622091fdddfcc', 0),
-       (3, 'Platform', null, 1, false, '0c0a8bb4d5d643b18659fd79a9b704c0', 1),
-       (4, 'Nav Menus', '/config/nav_menu', 2, true, '50f789b90ea24b309566634c5ed2f9d5', 0),
-       (5, 'Preference', '/config', 3, true, '33742c3bd69a452abc3802d22785986a', 0),
-       (6, 'Utilities', null, 0, false, '929c74dab0de4a55a949f23baf8dfbfa', 2),
-       (7, 'Atlas Map (Test)', '/atlas', 6, true, 'a9ec4118cc3e4fffbdb2fef593ec2d17', 0),
-       (8, 'Dashboard', '/', 0, true, 'f8876fd3dc964e6995020aa10f521248', 0),
-       (9, 'Lua Debugger', '/bingo/debugger', 6, true, 'cef9cf5b2a7145f9a58430dda2bc6b19', 1),
-       (10, 'Addons', '/addons', 0, true, 'd3e5f989283b4278927f8a427d7f19ca', 3),
-       (11, 'About', '/about', 0, true, 'f439d8f5e0234ab3bc874bc0662141a4', 4);
-
+INSERT INTO nav_menu(ID, NAME, PATH, PID, LEAF, IDENT, ORDINAL)
+SELECT * FROM (
+         SELECT 1 as id, 'System', null, 0, false, '4970e4917f1648ada723cf79e2416dc2', 1 UNION ALL
+         SELECT 2 as id, 'GUI', null, 1, false, '45f1da18c8404c7bb1b622091fdddfcc', 0 UNION ALL
+         SELECT 3 as id, 'Platform', null, 1, false, '0c0a8bb4d5d643b18659fd79a9b704c0', 1 UNION ALL
+         SELECT 4 as id, 'Nav Menus', '/config/nav_menu', 2, true, '50f789b90ea24b309566634c5ed2f9d5', 0 UNION ALL
+         SELECT 5 as id, 'Preference', '/config', 3, true, '33742c3bd69a452abc3802d22785986a', 0 UNION ALL
+         SELECT 6 as id, 'Utilities', null, 0, false, '929c74dab0de4a55a949f23baf8dfbfa', 2 UNION ALL
+         SELECT 7 as id, 'Atlas Map (Test)', '/atlas', 6, true, 'a9ec4118cc3e4fffbdb2fef593ec2d17', 0 UNION ALL
+         SELECT 8 as id, 'Dashboard', '/', 0, true, 'f8876fd3dc964e6995020aa10f521248', 0 UNION ALL
+         SELECT 9 as id, 'Lua Debugger', '/bingo/debugger', 6, true, 'cef9cf5b2a7145f9a58430dda2bc6b19', 1 UNION ALL
+         SELECT 10 as id, 'Addons', '/addons', 0, true, 'd3e5f989283b4278927f8a427d7f19ca', 3 UNION ALL
+         SELECT 11 as id, 'About', '/about', 0, true, 'f439d8f5e0234ab3bc874bc0662141a4', 4
+) dual
+WHERE NOT EXISTS (SELECT 1 FROM nav_menu);
 
 -- create default player role table
 create table if not exists player_role
