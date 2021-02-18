@@ -2,9 +2,9 @@ package moe.ofs.backend.function.motd;
 
 import moe.ofs.backend.domain.admin.PlayerRoleGroup;
 import moe.ofs.backend.function.admin.services.NetPlayerRoleService;
-import moe.ofs.backend.function.motd.model.MotdMessageSet;
+import moe.ofs.backend.domain.admin.message.MotdMessageSet;
 import moe.ofs.backend.function.motd.services.MotdManageService;
-import moe.ofs.backend.function.triggermessage.model.Message;
+import moe.ofs.backend.domain.admin.message.Message;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

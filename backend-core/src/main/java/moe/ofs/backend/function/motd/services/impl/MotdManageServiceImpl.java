@@ -1,17 +1,13 @@
 package moe.ofs.backend.function.motd.services.impl;
 
 import moe.ofs.backend.common.AbstractMapService;
-import moe.ofs.backend.function.motd.model.MotdMessageSet;
+import moe.ofs.backend.connector.Configurable;
+import moe.ofs.backend.domain.admin.message.MotdMessageSet;
 import moe.ofs.backend.function.motd.services.MotdManageService;
-import moe.ofs.backend.function.triggermessage.model.Message;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-
 @Service
-public class MotdManageServiceImpl extends AbstractMapService<MotdMessageSet> implements MotdManageService {
+public class MotdManageServiceImpl extends AbstractMapService<MotdMessageSet> implements MotdManageService, Configurable {
     private MotdMessageSet activeMotdMessageSet;
 
     public MotdManageServiceImpl() {
@@ -30,5 +26,10 @@ public class MotdManageServiceImpl extends AbstractMapService<MotdMessageSet> im
     @Override
     public void setActiveMotdSet(MotdMessageSet motdMessageSet) {
 //        activeMotdSetName = motdMessageSet.getName();
+    }
+
+    @Override
+    public String getName() {
+        throw new UnsupportedOperationException();
     }
 }

@@ -1,12 +1,14 @@
 package moe.ofs.backend.function.admin.controller;
 
 import moe.ofs.backend.domain.admin.PlayerRole;
+import moe.ofs.backend.domain.admin.PlayerRoleGroup;
 import moe.ofs.backend.function.admin.services.NetPlayerRoleService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -16,6 +18,11 @@ public class NetPlayerRoleController {
 
     public NetPlayerRoleController(NetPlayerRoleService netPlayerRoleService) {
         this.netPlayerRoleService = netPlayerRoleService;
+    }
+
+    @PostMapping("list")
+    public List<PlayerRoleGroup> listPlayerRoleGroups() {
+        return netPlayerRoleService.findAllRoleGroup();
     }
 
     @PostMapping("test")

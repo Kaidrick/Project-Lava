@@ -17,7 +17,7 @@ import moe.ofs.backend.dispatcher.services.LavaTaskDispatcher;
 import moe.ofs.backend.domain.connector.Level;
 import moe.ofs.backend.domain.connector.OperationPhase;
 import moe.ofs.backend.domain.connector.handlers.scripts.LuaScriptStarter;
-import moe.ofs.backend.domain.message.ConnectionStatusChange;
+import moe.ofs.backend.domain.message.connection.ConnectionStatusChange;
 import moe.ofs.backend.domain.message.connection.ConnectionStatus;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.LuaScriptInjectionObservable;

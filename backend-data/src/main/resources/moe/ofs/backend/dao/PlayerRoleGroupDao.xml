@@ -17,13 +17,17 @@
                pr.role_name roleName,
                pr.id role_id,
         from player_role_group rg
-                 inner join role_group_role_assignment rgra on rg.id = rgra.role_group_id
-                 inner join player_role pr on pr.id = rgra.player_role_id
+                 left join role_group_role_assignment rgra on rg.id = rgra.role_group_id
+                 left join player_role pr on pr.id = rgra.player_role_id
     </sql>
 
     <select id="findRoleGroupWithRoles" resultMap="roleGroupWithRolesMap">
         <include refid="selectRoleGroupWithRoles"/>
         where rg.id = #{id}
+    </select>
+
+    <select id="findAllRoleGroupWithRoles" parameterType="java.util.List" resultMap="roleGroupWithRolesMap">
+        <include refid="selectRoleGroupWithRoles"/>
     </select>
 
     <select id="findRolesGroupByName" resultMap="roleGroupWithRolesMap">

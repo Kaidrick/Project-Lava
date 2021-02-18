@@ -1,5 +1,7 @@
 package moe.ofs.backend.function.triggermessage.model;
 
+import moe.ofs.backend.domain.admin.message.Message;
+import moe.ofs.backend.domain.admin.message.TriggerMessage;
 import moe.ofs.backend.domain.dcs.poll.ExportObject;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
 import moe.ofs.backend.dataservice.slotunit.FlyableUnitService;

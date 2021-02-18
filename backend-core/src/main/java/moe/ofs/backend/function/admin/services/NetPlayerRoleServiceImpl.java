@@ -100,6 +100,11 @@ public class NetPlayerRoleServiceImpl implements NetPlayerRoleService {
     }
 
     @Override
+    public List<PlayerRoleGroup> findAllRoleGroup() {
+        return playerRoleGroupRepository.findAllRoleGroup();
+    }
+
+    @Override
     public PlayerRoleGroup assignRoleGroup(PlayerInfo playerInfo, PlayerRoleGroup group) {
         return ucidPlayerRoleGroupRepository.put(playerInfo.getUcid(), group);
     }

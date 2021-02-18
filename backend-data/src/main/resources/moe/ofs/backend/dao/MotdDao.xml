@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="moe.ofs.backend.dao.MotdDao">
+    <resultMap id="motdMessageSetWithMessages" type="moe.ofs.backend.domain.admin.message.MotdMessageSet">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="lastEditTime" column="last_edit_time"/>
+        <collection property="messages" ofType="moe.ofs.backend.domain.admin.message.Message">
+            <result property="id" column="msg_id"/>
+            <result property="index" column="msg_index"/>
+            <result property="duration" column="msg_duration"/>
+            <result property="content" column="msg_content"/>
+        </collection>
+        <collection property="assignedRoleGroups" ofType="moe.ofs.backend.domain.admin.PlayerRoleGroup">
+            <result property="id" column="player_role_group_id"/>
+            <result property="roleGroupName" column="player_role_group_role_group_name"/>
+        </collection>
+    </resultMap>
+
+    <select id="findAllMotdMessageSet" parameterType="java.util.Set" resultMap="motdMessageSetWithMessages">
+        select mms.id id,
+               mm.id msg_id,
+               mms.create_time create_time,
+               mms.last_edit_time last_edit_time,
+               mms.language,
+               mm.index msg_index,
+               mm.duration msg_duration,
+               mm.content msg_content,
+               mm.message_set,
+               prg.id player_role_group_id,
+               prg.role_group_name player_role_group_role_group_name
+        from motd_message mm right join motd_message_set mms on mm.message_set = mms.id
+                             inner join player_role_group prg on mms.assigned_role_group = prg.id
+    </select>
+</mapper>

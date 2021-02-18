@@ -1,4 +1,4 @@
-package moe.ofs.backend.function.triggermessage.model;
+package moe.ofs.backend.domain.admin.message;
 
 import lombok.Builder;
 import lombok.Data;

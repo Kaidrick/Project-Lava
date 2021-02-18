@@ -1,11 +1,10 @@
-package moe.ofs.backend.function.motd.model;
+package moe.ofs.backend.domain.admin.message;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import moe.ofs.backend.domain.admin.PlayerRole;
 import moe.ofs.backend.domain.admin.PlayerRoleGroup;
 import moe.ofs.backend.domain.dcs.BaseEntity;
-import moe.ofs.backend.function.triggermessage.model.Message;
+import moe.ofs.backend.domain.admin.message.Message;
 
 import java.util.*;
 

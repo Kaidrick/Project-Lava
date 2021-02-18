@@ -12,7 +12,7 @@ import moe.ofs.backend.connector.response.Resolvable;
 import moe.ofs.backend.domain.connector.Level;
 //import moe.ofs.backend.LavaLog;
 import moe.ofs.backend.jms.Sender;
-import moe.ofs.backend.domain.message.ConnectionStatusChange;
+import moe.ofs.backend.domain.message.connection.ConnectionStatusChange;
 import moe.ofs.backend.domain.message.connection.ConnectionStatus;
 import org.springframework.stereotype.Component;
 

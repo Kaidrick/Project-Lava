@@ -1,7 +1,7 @@
 package moe.ofs.backend.function.motd.services;
 
 import moe.ofs.backend.common.CrudService;
-import moe.ofs.backend.function.motd.model.MotdMessageSet;
+import moe.ofs.backend.domain.admin.message.MotdMessageSet;
 
 /**
  * Message of the day service is used to manage a set of message that is sent to a player who takes control of an

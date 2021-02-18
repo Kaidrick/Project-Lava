@@ -2,7 +2,7 @@ package moe.ofs.backend.plugin.greeting;
 
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.Plugin;
-import moe.ofs.backend.function.triggermessage.model.Message;
+import moe.ofs.backend.domain.admin.message.Message;
 import moe.ofs.backend.function.triggermessage.model.MessageQueue;
 import moe.ofs.backend.function.triggermessage.factories.MessageQueueFactory;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;

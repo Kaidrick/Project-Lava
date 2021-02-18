@@ -1,4 +1,4 @@
-package moe.ofs.backend.domain.message;
+package moe.ofs.backend.domain.message.connection;
 
 import lombok.Getter;
 import moe.ofs.backend.domain.message.connection.ConnectionStatus;

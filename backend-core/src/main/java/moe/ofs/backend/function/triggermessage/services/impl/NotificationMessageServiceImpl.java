@@ -1,8 +1,8 @@
 package moe.ofs.backend.function.triggermessage.services.impl;
 
 import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
-import moe.ofs.backend.function.triggermessage.model.MessageFallback;
-import moe.ofs.backend.function.triggermessage.model.TriggerMessage;
+import moe.ofs.backend.domain.admin.message.MessageFallback;
+import moe.ofs.backend.domain.admin.message.TriggerMessage;
 import moe.ofs.backend.function.triggermessage.services.NetMessageService;
 import moe.ofs.backend.function.triggermessage.services.NotificationMessageService;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;

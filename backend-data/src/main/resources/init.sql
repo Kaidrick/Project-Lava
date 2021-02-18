@@ -41,17 +41,28 @@ create table if not exists player_role
 );
 
 -- populate player role table
-insert into player_role (role_level, role_name)
-values (1000, 'motd'),
-       (1001, 'motd_recv'),
-       (1002, 'motd_add'),
-       (1003, 'motd_delete'),
-       (300, 'send_chat'),
-       (301, 'send_coalition_chat'),
-       (302, 'send_all_chat'),
-       (3100, 'chat_command'),
-       (3101, '');
-
+insert into player_role (id, role_level, role_name)
+select *
+from (
+         select 1 as id, 1000, 'motd'
+         union all
+         select 2 as id, 1001, 'motd_recv'
+         union all
+         select 3 as id, 1002, 'motd_add'
+         union all
+         select 4 as id, 1003, 'motd_delete'
+         union all
+         select 5 as id, 300, 'send_chat'
+         union all
+         select 6 as id, 301, 'send_coalition_chat'
+         union all
+         select 7 as id, 302, 'send_all_chat'
+         union all
+         select 8 as id, 3100, 'chat_command'
+         union all
+         select 9 as id, 3101, ''
+     ) dual
+where not exists(select 1 from player_role);
 
 -- create default role group table
 create table if not exists player_role_group
@@ -62,12 +73,15 @@ create table if not exists player_role_group
 );
 
 -- populate default role group
-insert into player_role_group (role_group_name)
-values ('guest'),
-       ('user'),
-       ('admin'),
-       ('su');
-
+insert into player_role_group (id, role_group_name)
+select *
+from (
+         select 1 as id, 'guest' union all
+         select 2 as id, 'user' union all
+         select 3 as id, 'admin' union all
+         select 4 as id, 'su'
+     ) dual
+where not exists(select 1 from player_role_group);
 
 -- create relation table between role group and player role
 create table if not exists role_group_role_assignment
@@ -79,15 +93,24 @@ create table if not exists role_group_role_assignment
 );
 
 -- default values for guest group
-insert into role_group_role_assignment (role_group_id, player_role_id)
-values (1, 1),
-       (1, 2),
-       (1, 3),
-       (1, 4),
-       (1, 5),
-       (1, 6),
-       (1, 7);
-
+insert into role_group_role_assignment (id, role_group_id, player_role_id)
+select *
+from (
+         select 1 as id, 1 as role_group_id, 1 as player_role_id
+         union all
+         select 2 as id, 1 as role_group_id, 2 as player_role_id
+         union all
+         select 3 as id, 1 as role_group_id, 3 as player_role_id
+         union all
+         select 4 as id, 1 as role_group_id, 4 as player_role_id
+         union all
+         select 5 as id, 1 as role_group_id, 5 as player_role_id
+         union all
+         select 6 as id, 1 as role_group_id, 6 as player_role_id
+         union all
+         select 7 as id, 1 as role_group_id, 7 as player_role_id
+     ) dual
+where not exists(select 1 from role_group_role_assignment);
 
 
 create table if not exists role_assignment
@@ -96,6 +119,26 @@ create table if not exists role_assignment
     ucid    varchar(255) not null,
     role_id bigint       not null,
     time    timestamp    not null,
+    primary key (id)
+);
+
+create table if not exists motd_message (
+    id bigint not null auto_increment,
+    index int not null,
+    duration int,
+    content varchar(255) not null,
+    message_set bigint,
+
+    primary key (id)
+);
+
+create table if not exists motd_message_set (
+    id bigint not null auto_increment,
+    name varchar(255) not null,
+    create_time timestamp,
+    last_edit_time timestamp,
+    language varchar(100),
+
     primary key (id)
 );
 

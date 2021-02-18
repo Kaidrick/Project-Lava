@@ -4,7 +4,7 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 import moe.ofs.backend.function.triggermessage.exceptions.PlayerNotActiveException;
-import moe.ofs.backend.function.triggermessage.model.TriggerMessage;
+import moe.ofs.backend.domain.admin.message.TriggerMessage;
 import moe.ofs.backend.function.triggermessage.services.TriggerMessageService;
 import moe.ofs.backend.object.FlyableUnit;
 import moe.ofs.backend.dataservice.slotunit.FlyableUnitService;

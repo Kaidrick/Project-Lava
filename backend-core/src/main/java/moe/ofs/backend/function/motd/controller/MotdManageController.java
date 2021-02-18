@@ -1,6 +1,7 @@
 package moe.ofs.backend.function.motd.controller;
 
-import moe.ofs.backend.function.motd.model.MotdMessageSet;
+import moe.ofs.backend.dao.MotdDao;
+import moe.ofs.backend.domain.admin.message.MotdMessageSet;
 import moe.ofs.backend.function.motd.services.MotdManageService;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,8 +14,11 @@ public class MotdManageController {
 
     private final MotdManageService service;
 
-    public MotdManageController(MotdManageService service) {
+    private final MotdDao motdDao;
+
+    public MotdManageController(MotdManageService service, MotdDao motdDao) {
         this.service = service;
+        this.motdDao = motdDao;
     }
 
     @PostMapping("edit")
@@ -29,5 +33,10 @@ public class MotdManageController {
     @GetMapping("all")
     public Set<MotdMessageSet> get() {
         return service.findAll();
+    }
+
+    @GetMapping("test-all")
+    public Set<MotdMessageSet> find() {
+        return motdDao.findAllMotdMessageSet();
     }
 }

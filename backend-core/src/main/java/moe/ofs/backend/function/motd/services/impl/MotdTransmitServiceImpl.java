@@ -25,13 +25,13 @@ public class MotdTransmitServiceImpl implements MotdTransmitService {
     private final NetPlayerRoleService netPlayerRoleService;
     private final PlayerInfoService playerInfoService;
 
-    private final MotdManageService service;
+    private final MotdManageService manageService;
 
-    public MotdTransmitServiceImpl(MessageQueueFactory factory, NetPlayerRoleService netPlayerRoleService, PlayerInfoService playerInfoService, MotdManageService service) {
+    public MotdTransmitServiceImpl(MessageQueueFactory factory, NetPlayerRoleService netPlayerRoleService, PlayerInfoService playerInfoService, MotdManageService manageService) {
         this.factory = factory;
         this.netPlayerRoleService = netPlayerRoleService;
         this.playerInfoService = playerInfoService;
-        this.service = service;
+        this.manageService = manageService;
     }
 
     @Async
@@ -51,7 +51,7 @@ public class MotdTransmitServiceImpl implements MotdTransmitService {
 
                 boolean authorized = netPlayerRoleService.checkRole(playerInfo.getUcid(), 1001);
                 if (authorized) {
-                    service.findAll().stream()
+                    manageService.findAll().stream()
                             .peek(System.out::println)
                             .forEach(motdMessageSet ->
                             motdMessageSet.getMessages().forEach(queue::pend));

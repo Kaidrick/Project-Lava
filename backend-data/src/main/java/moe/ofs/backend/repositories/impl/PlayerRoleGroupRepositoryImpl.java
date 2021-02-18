@@ -6,6 +6,8 @@ import moe.ofs.backend.domain.admin.PlayerRoleGroup;
 import moe.ofs.backend.repositories.PlayerRoleGroupRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class PlayerRoleGroupRepositoryImpl extends ServiceImpl<PlayerRoleGroupDao, PlayerRoleGroup>
         implements PlayerRoleGroupRepository {
@@ -18,5 +20,10 @@ public class PlayerRoleGroupRepositoryImpl extends ServiceImpl<PlayerRoleGroupDa
     @Override
     public PlayerRoleGroup findRolesGroupByName(String name) {
         return getBaseMapper().findRolesGroupByName(name);
+    }
+
+    @Override
+    public List<PlayerRoleGroup> findAllRoleGroup() {
+        return getBaseMapper().findAllRoleGroupWithRoles();
     }
 }
