@@ -7,7 +7,7 @@ import moe.ofs.backend.domain.AdminInfo;
 import moe.ofs.backend.domain.LavaUserToken;
 import moe.ofs.backend.domain.TokenInfo;
 import moe.ofs.backend.security.provider.PasswordTypeProvider;
-import moe.ofs.backend.security.service.AccessTokenMapService;
+import moe.ofs.backend.security.service.AccessTokenService;
 import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class TokenController {
-    private final AccessTokenMapService accessTokenService;
+    private final AccessTokenService accessTokenService;
     private final TokenInfoDao tokenInfoDao;
     private final PasswordTypeProvider passwordTypeProvider;
 

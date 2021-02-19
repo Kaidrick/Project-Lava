@@ -8,8 +8,8 @@ import moe.ofs.backend.domain.AdminInfoDto;
 import moe.ofs.backend.domain.LavaUserToken;
 import moe.ofs.backend.security.annotation.CheckPermission;
 import moe.ofs.backend.security.provider.PasswordTypeProvider;
-import moe.ofs.backend.security.service.AccessTokenMapService;
-import moe.ofs.backend.security.service.AdminInfoMapService;
+import moe.ofs.backend.security.service.AccessTokenService;
+import moe.ofs.backend.security.service.AdminInfoService;
 import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
@@ -37,8 +37,8 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class LavaCheckPermissionAspect {
-    private final AccessTokenMapService accessTokenMapService;
-    private final AdminInfoMapService adminInfoMapService;
+    private final AccessTokenService accessTokenService;
+    private final AdminInfoService adminInfoService;
     private final PasswordTypeProvider passwordTypeProvider;
 
     @Before(value = "@annotation(checkPermission)")
@@ -58,9 +58,9 @@ public class LavaCheckPermissionAspect {
             if (accessToken == null) throw new BadCredentialsException("accessToken不能为空！");
 
 //            获取token中存储的信息，调用provider校验信息
-            boolean b = accessTokenMapService.checkAccessToken(accessToken);
+            boolean b = accessTokenService.checkAccessToken(accessToken);
             if (!b) throw new BadCredentialsException("accessToken已过期，请使用refreshToken刷新");
-            LavaUserToken lavaUserToken = accessTokenMapService.getByAccessToken(accessToken);
+            LavaUserToken lavaUserToken = accessTokenService.getByAccessToken(accessToken);
             PasswordTypeToken token = (PasswordTypeToken) lavaUserToken.getUserInfoToken();
 
             // 判断是否重新认证用户信息
@@ -73,7 +73,7 @@ public class LavaCheckPermissionAspect {
         }
 
         if (username.equals("anonymousUser")) throw new BadCredentialsException("请先登录！");
-        AdminInfoDto adminInfoDto = adminInfoMapService.getOneByName(username);
+        AdminInfoDto adminInfoDto = adminInfoService.getOneByName(username);
         boolean a, b;
         a = checkArray(adminInfoDto.getGroups(), groups, nonGroups);
         b = checkArray(adminInfoDto.getRoles(), roles, nonRoles);

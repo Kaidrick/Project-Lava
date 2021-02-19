@@ -1,4 +1,4 @@
-package moe.ofs.backend.security.service;
+package moe.ofs.backend.security.service.impl;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -10,6 +10,7 @@ import moe.ofs.backend.dao.TokenInfoDao;
 import moe.ofs.backend.domain.LavaUserToken;
 import moe.ofs.backend.domain.TokenInfo;
 import moe.ofs.backend.domain.dcs.BaseEntity;
+import moe.ofs.backend.security.service.AccessTokenService;
 import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -19,17 +20,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @projectName: Project-Lava
- * @className: AccessTokenService
- * @description:
- * @author: alexpetertyler
- * @date: 2021/2/9
- * @version: v1.0
- */
 @Service
 @RequiredArgsConstructor
-public class AccessTokenMapService extends AbstractMapService<LavaUserToken> {
+public class AccessTokenMapService extends AbstractMapService<LavaUserToken> implements AccessTokenService {
     private final TokenInfoDao tokenInfoDao;
 
     public LavaUserToken generate() {
@@ -147,7 +140,6 @@ public class AccessTokenMapService extends AbstractMapService<LavaUserToken> {
         });
     }
 
-
     public LavaUserToken tokenInfoToLavaUserToken(TokenInfo tokenInfo) {
         PasswordTypeToken token = new PasswordTypeToken(tokenInfo.getName(), null);
         LavaUserToken lavaUserToken = new LavaUserToken(token, tokenInfo.getAccessToken(), tokenInfo.getRefreshToken(), tokenInfo.getAccessTokenExpireTime(), tokenInfo.getRefreshTokenExpireTime());
@@ -156,7 +148,7 @@ public class AccessTokenMapService extends AbstractMapService<LavaUserToken> {
     }
 
     @Scheduled(fixedDelay = 2 * 60 * 3600 * 1000L)
-    public void dispose() {
+    public void expire() {
         if (super.getNextId() == 1) return;
         Date date = new Date();
         DateTime week = DateUtil.offsetWeek(date, 2);
