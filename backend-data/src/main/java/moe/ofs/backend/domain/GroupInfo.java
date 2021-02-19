@@ -24,7 +24,7 @@ public class GroupInfo implements Serializable {
     /**
      * 用户组
      */
-    private String group;
+    private String name;
 
     /**
      * 用户组描述

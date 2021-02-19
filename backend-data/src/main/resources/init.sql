@@ -15,19 +15,30 @@ create table if not exists nav_menu
 
 -- default navigational menu configuration
 INSERT INTO nav_menu(ID, NAME, PATH, PID, LEAF, IDENT, ORDINAL)
-SELECT * FROM (
-         SELECT 1 as id, 'System', null, 0, false, '4970e4917f1648ada723cf79e2416dc2', 1 UNION ALL
-         SELECT 2 as id, 'GUI', null, 1, false, '45f1da18c8404c7bb1b622091fdddfcc', 0 UNION ALL
-         SELECT 3 as id, 'Platform', null, 1, false, '0c0a8bb4d5d643b18659fd79a9b704c0', 1 UNION ALL
-         SELECT 4 as id, 'Nav Menus', '/config/nav_menu', 2, true, '50f789b90ea24b309566634c5ed2f9d5', 0 UNION ALL
-         SELECT 5 as id, 'Preference', '/config', 3, true, '33742c3bd69a452abc3802d22785986a', 0 UNION ALL
-         SELECT 6 as id, 'Utilities', null, 0, false, '929c74dab0de4a55a949f23baf8dfbfa', 2 UNION ALL
-         SELECT 7 as id, 'Atlas Map (Test)', '/atlas', 6, true, 'a9ec4118cc3e4fffbdb2fef593ec2d17', 0 UNION ALL
-         SELECT 8 as id, 'Dashboard', '/', 0, true, 'f8876fd3dc964e6995020aa10f521248', 0 UNION ALL
-         SELECT 9 as id, 'Lua Debugger', '/bingo/debugger', 6, true, 'cef9cf5b2a7145f9a58430dda2bc6b19', 1 UNION ALL
-         SELECT 10 as id, 'Addons', '/addons', 0, true, 'd3e5f989283b4278927f8a427d7f19ca', 3 UNION ALL
+SELECT *
+FROM (
+         SELECT 1 as id, 'System', null, 0, false, '4970e4917f1648ada723cf79e2416dc2', 1
+         UNION ALL
+         SELECT 2 as id, 'GUI', null, 1, false, '45f1da18c8404c7bb1b622091fdddfcc', 0
+         UNION ALL
+         SELECT 3 as id, 'Platform', null, 1, false, '0c0a8bb4d5d643b18659fd79a9b704c0', 1
+         UNION ALL
+         SELECT 4 as id, 'Nav Menus', '/config/nav_menu', 2, true, '50f789b90ea24b309566634c5ed2f9d5', 0
+         UNION ALL
+         SELECT 5 as id, 'Preference', '/config', 3, true, '33742c3bd69a452abc3802d22785986a', 0
+         UNION ALL
+         SELECT 6 as id, 'Utilities', null, 0, false, '929c74dab0de4a55a949f23baf8dfbfa', 2
+         UNION ALL
+         SELECT 7 as id, 'Atlas Map (Test)', '/atlas', 6, true, 'a9ec4118cc3e4fffbdb2fef593ec2d17', 0
+         UNION ALL
+         SELECT 8 as id, 'Dashboard', '/', 0, true, 'f8876fd3dc964e6995020aa10f521248', 0
+         UNION ALL
+         SELECT 9 as id, 'Lua Debugger', '/bingo/debugger', 6, true, 'cef9cf5b2a7145f9a58430dda2bc6b19', 1
+         UNION ALL
+         SELECT 10 as id, 'Addons', '/addons', 0, true, 'd3e5f989283b4278927f8a427d7f19ca', 3
+         UNION ALL
          SELECT 11 as id, 'About', '/about', 0, true, 'f439d8f5e0234ab3bc874bc0662141a4', 4
-) dual
+     ) dual
 WHERE NOT EXISTS (SELECT 1 FROM nav_menu);
 
 -- create default player role table
@@ -62,7 +73,7 @@ from (
          union all
          select 9 as id, 3101, ''
      ) dual
-where not exists(select 1 from player_role);
+where not exists (select 1 from player_role);
 
 -- create default role group table
 create table if not exists player_role_group
@@ -76,12 +87,15 @@ create table if not exists player_role_group
 insert into player_role_group (id, role_group_name)
 select *
 from (
-         select 1 as id, 'guest' union all
-         select 2 as id, 'user' union all
-         select 3 as id, 'admin' union all
+         select 1 as id, 'guest'
+         union all
+         select 2 as id, 'user'
+         union all
+         select 3 as id, 'admin'
+         union all
          select 4 as id, 'su'
      ) dual
-where not exists(select 1 from player_role_group);
+where not exists (select 1 from player_role_group);
 
 -- create relation table between role group and player role
 create table if not exists role_group_role_assignment
@@ -110,8 +124,7 @@ from (
          union all
          select 7 as id, 1 as role_group_id, 7 as player_role_id
      ) dual
-where not exists(select 1 from role_group_role_assignment);
-
+where not exists (select 1 from role_group_role_assignment);
 
 create table if not exists role_assignment
 (
@@ -122,22 +135,24 @@ create table if not exists role_assignment
     primary key (id)
 );
 
-create table if not exists motd_message (
-    id bigint not null auto_increment,
+create table if not exists motd_message
+(
+    id          bigint       not null auto_increment,
     index int not null,
-    duration int,
-    content varchar(255) not null,
+    duration    int,
+    content     varchar(255) not null,
     message_set bigint,
 
     primary key (id)
 );
 
-create table if not exists motd_message_set (
-    id bigint not null auto_increment,
-    name varchar(255) not null,
-    create_time timestamp,
+create table if not exists motd_message_set
+(
+    id             bigint       not null auto_increment,
+    name           varchar(255) not null,
+    create_time    timestamp,
     last_edit_time timestamp,
-    language varchar(100),
+    language       varchar(100),
 
     primary key (id)
 );
@@ -207,13 +222,19 @@ create table if not exists group_info
 (
     id          bigint(12) unsigned auto_increment comment '自增ID'
         primary key,
-    `group`     varchar(255) not null comment '用户组',
+    name        varchar(255) not null comment '用户组',
     description varchar(255) null comment '用户组描述'
 );
 
+-- default values for group_info
 insert into group_info
-values (1, 'admin', '管理员组'),
-       (2, 'user', '普通用户组');
+select *
+from (
+         select 1 as id, 'admin' as name, '管理员组' as description
+         union all
+         select 2 as id, 'user' as name, '普通用户组' as description
+     ) dual
+where not exists (select 1 from group_info);
 
 create table if not exists group_role
 (
@@ -223,21 +244,33 @@ create table if not exists group_role
     role_id  bigint(12) unsigned not null comment '角色ID'
 );
 
+-- default values for group_role
 insert into group_role
-values (1, 1, 1),
-       (2, 2, 2);
+select *
+from (
+         select 1 as id, 1 as group_id, 1 as role_id
+         union all
+         select 2 as id, 2 as group_id, 2 as role_id
+     ) dual
+where not exists (select 1 from group_role);
 
 create table if not exists role_info
 (
     id          bigint(12) unsigned auto_increment comment '自增ID'
         primary key,
-    role        varchar(255) null comment '角色',
+    name        varchar(255) null comment '角色',
     description varchar(255) null comment '角色介绍'
 );
 
+-- default values for role_info
 insert into role_info
-values (1, 'admin.super_admin', '超级管理员'),
-       (2, 'user.user', '普通用户');
+select *
+from (
+         select 1 as id, 'admin.super_admin' as name, '超级管理员' as description
+         union all
+         select 2 as id, 'user.user' as name, '普通用户' as description
+     ) dual
+where not exists (select 1 from role_info);
 
 create table if not exists user_group
 (

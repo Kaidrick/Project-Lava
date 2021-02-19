@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class RoleInfo implements Serializable {
 
-    private static final long serialVersionUID=1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * 自增ID
@@ -25,7 +25,7 @@ public class RoleInfo implements Serializable {
     /**
      * 角色
      */
-    private String role;
+    private String name;
 
     /**
      * 角色介绍
