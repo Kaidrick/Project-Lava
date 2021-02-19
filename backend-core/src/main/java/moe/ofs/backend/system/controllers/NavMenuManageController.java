@@ -2,6 +2,7 @@ package moe.ofs.backend.system.controllers;
 
 import cn.hutool.core.lang.tree.Tree;
 import moe.ofs.backend.domain.admin.frontend.NavMenu;
+import moe.ofs.backend.security.annotation.CheckPermission;
 import moe.ofs.backend.system.services.NavMenuManageService;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,6 +11,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("system/nav-menu")  // FIXME: fix underscore
+@CheckPermission(requiredAccessToken = true, roles = {"admin.super_admin"})
 public class NavMenuManageController {
 
     private final NavMenuManageService service;

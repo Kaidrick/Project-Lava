@@ -1,6 +1,5 @@
 package moe.ofs.backend.security.controller;
 
-import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import moe.ofs.backend.dao.TokenInfoDao;
 import moe.ofs.backend.domain.AdminInfo;
@@ -10,6 +9,7 @@ import moe.ofs.backend.security.provider.PasswordTypeProvider;
 import moe.ofs.backend.security.service.AccessTokenMapService;
 import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,13 +23,14 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("token")
 public class TokenController {
     private final AccessTokenMapService accessTokenService;
     private final TokenInfoDao tokenInfoDao;
     private final PasswordTypeProvider passwordTypeProvider;
 
-    @PostMapping("/get/token")
-    public String getToken(
+    @PostMapping("get")
+    public LavaUserToken getToken(
             String username,
             String password
     ) {
@@ -42,19 +43,21 @@ public class TokenController {
         generate.setId(tokenInfo.getId());
         accessTokenService.add(generate);
 
-        generate.setId(null);
-        generate.setUserInfoToken(null);
-        return new Gson().toJson(generate);
+//        generate.setId(null);
+//        generate.setUserInfoToken(null);
+        return generate;
     }
 
-    @PostMapping("/refresh/token")
-    public String refreshToken(
+    @PostMapping("refresh")
+    public LavaUserToken refreshToken(
             @RequestParam("refresh_token") String refreshToken
     ) {
-        if (!accessTokenService.checkRefreshToken(refreshToken)) return "RefreshToken已过期，请重新认证";
+        if (!accessTokenService.checkRefreshToken(refreshToken))
+            throw new RuntimeException("RefreshToken已过期，请重新认证");
+
         LavaUserToken lavaUserToken = accessTokenService.refreshAccessToken(refreshToken);
         lavaUserToken.setUserInfoToken(null);
         lavaUserToken.setId(null);
-        return new Gson().toJson(lavaUserToken);
+        return lavaUserToken;
     }
 }

@@ -14,6 +14,8 @@ import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,48 +43,64 @@ public class LavaCheckPermissionAspect {
     private final AdminInfoMapService adminInfoMapService;
     private final PasswordTypeProvider passwordTypeProvider;
 
-    @Before(value = "@annotation(checkPermission)")
-    public Object[] checkPermission(JoinPoint point, CheckPermission checkPermission) {
-        String[] groups = checkPermission.groups();
-        String[] nonGroups = checkPermission.nonGroups();
-        String[] roles = checkPermission.roles();
-        String[] nonRoles = checkPermission.nonRoles();
-        if (ObjectUtil.isAllEmpty(groups, nonGroups, roles, nonGroups)) return point.getArgs();
+    @Pointcut("@annotation(moe.ofs.backend.security.annotation.CheckPermission)")
+    public void annotatedMethod() {}
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+    @Pointcut("@within(moe.ofs.backend.security.annotation.CheckPermission)")
+    public void annotatedClass() {}
 
-        if (checkPermission.requiredAccessToken()) {
-            HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-            String accessToken = request.getHeader("access_token");
-            if (accessToken == null) throw new BadCredentialsException("accessToken不能为空！");
+    @Before("annotatedMethod() || annotatedClass()")
+    public Object checkClassLevelAnnotation(JoinPoint joinPoint) {
+        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        CheckPermission methodAnnotation = methodSignature.getMethod().getAnnotation(CheckPermission.class);
+        Class<?> clazz = joinPoint.getSignature().getDeclaringType();
+        CheckPermission classAnnotation = clazz.getAnnotation(CheckPermission.class);
+
+        CheckPermission checkPermission = methodAnnotation != null ? methodAnnotation : classAnnotation;
+
+        if (checkPermission != null) {
+            String[] groups = classAnnotation.groups();
+            String[] nonGroups = classAnnotation.nonGroups();
+            String[] roles = classAnnotation.roles();
+            String[] nonRoles = classAnnotation.nonRoles();
+            if (ObjectUtil.isAllEmpty(groups, nonGroups, roles, nonGroups)) return joinPoint.getArgs();
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+
+            if (classAnnotation.requiredAccessToken()) {
+                HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+                String accessToken = request.getHeader("access_token");
+                if (accessToken == null) throw new BadCredentialsException("accessToken不能为空！");
 
 //            获取token中存储的信息，调用provider校验信息
-            boolean b = accessTokenMapService.checkAccessToken(accessToken);
-            if (!b) throw new BadCredentialsException("accessToken已过期，请使用refreshToken刷新");
-            LavaUserToken lavaUserToken = accessTokenMapService.getByAccessToken(accessToken);
-            PasswordTypeToken token = (PasswordTypeToken) lavaUserToken.getUserInfoToken();
+                boolean b = accessTokenMapService.checkAccessToken(accessToken);
+                if (!b) throw new BadCredentialsException("accessToken已过期，请使用refreshToken刷新");
+                LavaUserToken lavaUserToken = accessTokenMapService.getByAccessToken(accessToken);
+                PasswordTypeToken token = (PasswordTypeToken) lavaUserToken.getUserInfoToken();
 
-            // 判断是否重新认证用户信息
-            if (!authentication.getName().equals(token.getName())) {
-                Authentication authenticate = passwordTypeProvider.authenticate(accessToken);
+                // 判断是否重新认证用户信息
+                if (!authentication.getName().equals(token.getName())) {
+                    Authentication authenticate = passwordTypeProvider.authenticate(accessToken);
 //            将用户认证信息存入session
-                SecurityContextHolder.getContext().setAuthentication(authenticate);
+                    SecurityContextHolder.getContext().setAuthentication(authenticate);
+                }
+                username = token.getName();
             }
-            username = token.getName();
-        }
 
-        if (username.equals("anonymousUser")) throw new BadCredentialsException("请先登录！");
-        AdminInfoDto adminInfoDto = adminInfoMapService.getOneByName(username);
-        boolean a, b;
-        a = checkArray(adminInfoDto.getGroups(), groups, nonGroups);
-        b = checkArray(adminInfoDto.getRoles(), roles, nonRoles);
+            if (username.equals("anonymousUser")) throw new BadCredentialsException("请先登录！");
+            AdminInfoDto adminInfoDto = adminInfoMapService.getOneByName(username);
+            boolean a, b;
+            a = checkArray(adminInfoDto.getGroups(), groups, nonGroups);
+            b = checkArray(adminInfoDto.getRoles(), roles, nonRoles);
 
-        if (a && b) {
-            return point.getArgs();
-        } else {
-            throw new RuntimeException("无权访问！");
+            if (a && b) {
+                return joinPoint.getArgs();
+            } else {
+                throw new RuntimeException("无权访问！");
+            }
         }
+        return joinPoint;
     }
 
     private boolean checkArray(List<String> test, String[] exist, String[] noExist) {
