@@ -1,10 +1,11 @@
-package moe.ofs.backend.http.config;
+package moe.ofs.backend.security.config;
 
 import lombok.RequiredArgsConstructor;
-import moe.ofs.backend.http.security.filter.PasswordTypeFilter;
-import moe.ofs.backend.http.security.handler.FailureHandler;
-import moe.ofs.backend.http.security.handler.SuccessHandler;
-import moe.ofs.backend.http.security.provider.PasswordTypeProvider;
+import moe.ofs.backend.security.filter.PasswordTypeFilter;
+import moe.ofs.backend.security.handler.FailureHandler;
+import moe.ofs.backend.security.handler.SuccessHandler;
+import moe.ofs.backend.security.provider.PasswordTypeProvider;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,10 +13,20 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+/**
+ * @projectName: Project-Lava
+ * @className: SecurityConfig
+ * @description:
+ * @author: alexpetertyler
+ * @date: 2021/2/8
+ * @version: v1.0
+ */
+
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, jsr250Enabled = true, securedEnabled = true)
 @RequiredArgsConstructor
-public class WebSecurity extends WebSecurityConfigurerAdapter {
+@Configuration
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final SuccessHandler successHandler;
     private final FailureHandler failureHandler;
     private final PasswordTypeProvider passwordTypeProvider;
@@ -49,5 +60,4 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(passwordTypeProvider);
     }
-
 }

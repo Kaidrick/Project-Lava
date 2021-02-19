@@ -1,6 +1,7 @@
-package moe.ofs.backend.http.security.token;
+package moe.ofs.backend.security.token;
 
-import moe.ofs.backend.http.security.domain.BasicUserInfo;
+import moe.ofs.backend.domain.AdminInfo;
+import moe.ofs.backend.domain.BasicUserInfo;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.GrantedAuthority;
@@ -45,6 +46,10 @@ public class PasswordTypeToken extends AbstractAuthenticationToken {
 
     @Override
     public String getName() {
+        if (this.getPrincipal() instanceof AdminInfo) {
+            return ((AdminInfo) this.getPrincipal()).getName();
+        }
+
         if (this.getPrincipal() instanceof BasicUserInfo) {
             return ((BasicUserInfo) this.getPrincipal()).getName();
         }

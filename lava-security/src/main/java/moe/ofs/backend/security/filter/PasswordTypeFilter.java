@@ -1,6 +1,6 @@
-package moe.ofs.backend.http.security.filter;
+package moe.ofs.backend.security.filter;
 
-import moe.ofs.backend.http.security.token.PasswordTypeToken;
+import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;

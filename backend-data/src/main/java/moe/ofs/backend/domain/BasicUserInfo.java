@@ -1,4 +1,4 @@
-package moe.ofs.backend.http.security.domain;
+package moe.ofs.backend.domain;
 
 import lombok.Data;
 

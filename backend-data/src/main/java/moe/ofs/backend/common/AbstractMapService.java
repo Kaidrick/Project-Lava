@@ -1,13 +1,15 @@
 package moe.ofs.backend.common;
 
 import moe.ofs.backend.domain.dcs.BaseEntity;
-import moe.ofs.backend.common.CrudService;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-public abstract class AbstractMapService <T extends BaseEntity> implements CrudService<T> {
+public abstract class AbstractMapService<T extends BaseEntity> implements CrudService<T> {
 
     protected final ConcurrentMap<Long, T> map = new ConcurrentHashMap<>();
 
