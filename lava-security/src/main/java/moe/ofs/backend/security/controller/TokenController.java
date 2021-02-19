@@ -1,6 +1,5 @@
 package moe.ofs.backend.security.controller;
 
-import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import moe.ofs.backend.dao.TokenInfoDao;
 import moe.ofs.backend.domain.AdminInfo;
@@ -29,7 +28,7 @@ public class TokenController {
     private final PasswordTypeProvider passwordTypeProvider;
 
     @PostMapping("/get/token")
-    public String getToken(
+    public LavaUserToken getToken(
             String username,
             String password
     ) {
@@ -44,17 +43,17 @@ public class TokenController {
 
         generate.setId(null);
         generate.setUserInfoToken(null);
-        return new Gson().toJson(generate);
+        return generate;
     }
 
     @PostMapping("/refresh/token")
-    public String refreshToken(
+    public LavaUserToken refreshToken(
             @RequestParam("refresh_token") String refreshToken
     ) {
-        if (!accessTokenService.checkRefreshToken(refreshToken)) return "RefreshToken已过期，请重新认证";
+        if (!accessTokenService.checkRefreshToken(refreshToken)) throw new RuntimeException("RefreshToken已过期，请重新认证");
         LavaUserToken lavaUserToken = accessTokenService.refreshAccessToken(refreshToken);
         lavaUserToken.setUserInfoToken(null);
         lavaUserToken.setId(null);
-        return new Gson().toJson(lavaUserToken);
+        return lavaUserToken;
     }
 }

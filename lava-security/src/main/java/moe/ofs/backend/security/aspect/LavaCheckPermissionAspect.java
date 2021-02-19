@@ -14,6 +14,8 @@ import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,8 +43,22 @@ public class LavaCheckPermissionAspect {
     private final AdminInfoService adminInfoService;
     private final PasswordTypeProvider passwordTypeProvider;
 
-    @Before(value = "@annotation(checkPermission)")
-    public Object[] checkPermission(JoinPoint point, CheckPermission checkPermission) {
+    @Pointcut("@annotation(checkPermission)")
+    public void annotatedMethods() {
+    }
+
+    @Pointcut("@within(checkPermission)")
+    public void annotatedClasses() {
+    }
+
+    @Before("annotatedClasses()|| annotatedMethods()")
+    public Object checkPermission(JoinPoint point) {
+        MethodSignature signature = (MethodSignature) point.getSignature();
+        CheckPermission methodAnnotation = signature.getMethod().getAnnotation(CheckPermission.class);
+        Class<?> aClass = point.getSignature().getDeclaringType();
+        CheckPermission classAnnotation = aClass.getAnnotation(CheckPermission.class);
+        CheckPermission checkPermission = methodAnnotation != null ? methodAnnotation : classAnnotation;
+
         String[] groups = checkPermission.groups();
         String[] nonGroups = checkPermission.nonGroups();
         String[] roles = checkPermission.roles();
