@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="moe.ofs.backend.dao.TokenInfoDao">
+    <resultMap id="accessToken" type="moe.ofs.backend.domain.TokenInfo">
+        <result property="id" column="id"/>
+        <result property="accessToken" column="access_token"/>
+        <result property="userId" column="user_id"/>
+        <result property="accessTokenExpireTime" column="access_token_expire_time"/>
+        <result property="refreshToken" column="refresh_token"/>
+        <result property="refreshTokenExpireTime" column="refresh_token_expire_time"/>
+        <result property="name" column="name"/>
+        <result property="password" column="password"/>
+    </resultMap>
+
+    <sql id="selectAccessToken">
+        SELECT t.id id,
+               t.access_token,
+               t.access_token_expire_time,
+               t.user_id,
+               t.refresh_token,
+               t.refresh_token_expire_time,
+               a.name,
+               a.password
+        FROM token_info t
+                 inner join admin_info a
+        WHERE a.id = t.user_id
+    </sql>
+
+    <select id="selectOneByAccessToken" resultMap="accessToken">
+        <include refid="selectAccessToken"/>
+          AND t.access_token_expire_time >= CURDATE()
+          AND t.access_token = '${accessToken}';
+    </select>
+
+    <select id="selectOneByRefreshToken" resultMap="accessToken">
+        <include refid="selectAccessToken"/>
+          AND t.refresh_token_expire_time >= CURDATE()
+          AND t.refreshToken = '${refreshToken}';
+    </select>
+</mapper>
