@@ -4,8 +4,9 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.domain.AdminInfoDto;
+import moe.ofs.backend.dto.AdminInfoDto;
 import moe.ofs.backend.domain.LavaUserToken;
+import moe.ofs.backend.domain.Permission;
 import moe.ofs.backend.security.annotation.CheckPermission;
 import moe.ofs.backend.security.provider.PasswordTypeProvider;
 import moe.ofs.backend.security.service.AccessTokenService;
@@ -24,7 +25,10 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * @projectName: Project-Lava
@@ -43,11 +47,11 @@ public class LavaCheckPermissionAspect {
     private final AdminInfoService adminInfoService;
     private final PasswordTypeProvider passwordTypeProvider;
 
-    @Pointcut("@annotation(checkPermission)")
+    @Pointcut("@annotation(moe.ofs.backend.security.annotation.CheckPermission)")
     public void annotatedMethods() {
     }
 
-    @Pointcut("@within(checkPermission)")
+    @Pointcut("@within(moe.ofs.backend.security.annotation.CheckPermission)")
     public void annotatedClasses() {
     }
 
@@ -57,18 +61,18 @@ public class LavaCheckPermissionAspect {
         CheckPermission methodAnnotation = signature.getMethod().getAnnotation(CheckPermission.class);
         Class<?> aClass = point.getSignature().getDeclaringType();
         CheckPermission classAnnotation = aClass.getAnnotation(CheckPermission.class);
-        CheckPermission checkPermission = methodAnnotation != null ? methodAnnotation : classAnnotation;
+        Permission permission = getCheckPermission(methodAnnotation, classAnnotation);
 
-        String[] groups = checkPermission.groups();
-        String[] nonGroups = checkPermission.nonGroups();
-        String[] roles = checkPermission.roles();
-        String[] nonRoles = checkPermission.nonRoles();
+        Set<String> groups = permission.getGroups();
+        Set<String> nonGroups = permission.getNonGroups();
+        Set<String> roles = permission.getRoles();
+        Set<String> nonRoles = permission.getNonRoles();
         if (ObjectUtil.isAllEmpty(groups, nonGroups, roles, nonGroups)) return point.getArgs();
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        if (checkPermission.requiredAccessToken()) {
+        if (permission.isRequiredAccessToken()) {
             HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
             String accessToken = request.getHeader("access_token");
             if (accessToken == null) throw new BadCredentialsException("accessToken不能为空！");
@@ -101,9 +105,24 @@ public class LavaCheckPermissionAspect {
         }
     }
 
-    private boolean checkArray(List<String> test, String[] exist, String[] noExist) {
-        if (ArrayUtil.isAllEmpty(exist, noExist)) return true;
-        if (ArrayUtil.isEmpty(test)) return ArrayUtil.isEmpty(exist);
+    private Permission getCheckPermission(CheckPermission methodAnnotation, CheckPermission classAnnotation) {
+        Permission permission = getCheckPermission(methodAnnotation);
+        if (classAnnotation == null) return permission;
+
+    }
+
+    private Permission getCheckPermission(CheckPermission annotation) {
+        if (annotation.dynamicAuthorization()) {
+
+        } else {
+            Permission permission = new Permission();
+            return permission;
+        }
+    }
+
+    private boolean checkArray(List<String> test, Set<String> exist, Set<String> noExist) {
+        if (noExist.isEmpty() && exist.isEmpty()) return true;
+        if (test.isEmpty()) return exist.isEmpty();
 
 //        test  noExist不为空
         if (ArrayUtil.isEmpty(exist)) {
@@ -121,19 +140,18 @@ public class LavaCheckPermissionAspect {
         return flag1 && flag2;
     }
 
-    private boolean checkNoExist(List<String> test, String[] noExist) {
+    private boolean checkNoExist(List<String> test, Set<String> noExist) {
         Set<String> a = new HashSet<>(test);
-        Set<String> c = new HashSet<>(Arrays.asList(noExist));
-        a.addAll(c);
-        return a.size() == (test.size() + noExist.length);
+        a.addAll(test);
+        return a.size() == (test.size() + noExist.size());
     }
 
-    private boolean checkExist(List<String> test, String[] exist) {
-        if (test.size() < exist.length) return false;
+    private boolean checkExist(List<String> test, Set<String> exist) {
+        if (test.size() < exist.size()) return false;
         Set<String> a = new HashSet<>(test);
-        Set<String> b = new HashSet<>(Arrays.asList(exist));
+        Set<String> b = new HashSet<>(exist);
         b.retainAll(a);
-        return b.size() == exist.length;
+        return b.size() == exist.size();
     }
 
 }

@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import moe.ofs.backend.common.AbstractMapService;
 import moe.ofs.backend.dao.AdminInfoDao;
 import moe.ofs.backend.domain.AdminInfo;
-import moe.ofs.backend.domain.AdminInfoDto;
+import moe.ofs.backend.dto.AdminInfoDto;
 import moe.ofs.backend.security.service.AdminInfoService;
 import org.springframework.stereotype.Service;
 
@@ -61,4 +61,15 @@ public class AdminInfoMapService extends AbstractMapService<AdminInfoDto> implem
         dto.setName(adminInfo.getName());
         return dto;
     }
+
+    public void delete(Long id) {
+        super.deleteById(id);
+        adminInfoDao.deleteById(id);
+    }
+
+    public void deleteByName(String name) {
+        List<AdminInfoDto> collect = findAll().stream().filter(v -> v.getName().equals(name)).collect(Collectors.toList());
+        if (!collect.isEmpty()) delete(collect.get(0).getId());
+    }
+
 }

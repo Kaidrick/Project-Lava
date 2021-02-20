@@ -10,7 +10,7 @@
 //import moe.ofs.backend.dao.PlayerInfoVoDao;
 //import moe.ofs.backend.domain.DcsExportObject;
 //import moe.ofs.backend.domain.connector.Level;
-//import moe.ofs.backend.domain.PlayerInfoVo;
+//import moe.ofs.backend.vo.PlayerInfoVo;
 //import moe.ofs.backend.object.PortConfig;
 //import moe.ofs.backend.connector.ConnectionManager;
 //import org.springframework.http.HttpStatus;

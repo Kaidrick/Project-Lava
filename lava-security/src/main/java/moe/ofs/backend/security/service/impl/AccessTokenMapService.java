@@ -13,6 +13,7 @@ import moe.ofs.backend.domain.dcs.BaseEntity;
 import moe.ofs.backend.security.service.AccessTokenService;
 import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -61,6 +62,16 @@ public class AccessTokenMapService extends AbstractMapService<LavaUserToken> imp
     @Override
     public void delete(LavaUserToken lavaUserToken) {
         this.deleteById(lavaUserToken.getId());
+    }
+
+    @Override
+    public LavaUserToken getByUserName(String userName) {
+        List<LavaUserToken> collect = findAll().stream().filter(v -> {
+            Authentication token = (Authentication) v.getUserInfoToken();
+            return token.getName().equals(userName);
+        }).collect(Collectors.toList());
+        if (collect.isEmpty()) throw new RuntimeException("userName不存在，请检查");
+        return collect.get(0);
     }
 
     public LavaUserToken getByAccessToken(String accessToken) {

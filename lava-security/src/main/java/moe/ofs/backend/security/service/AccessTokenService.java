@@ -17,6 +17,8 @@ public interface AccessTokenService {
 
     void delete(LavaUserToken lavaUserToken);
 
+    LavaUserToken getByUserName(String userName);
+
     LavaUserToken getByAccessToken(String accessToken);
 
     LavaUserToken getByRefreshToken(String refreshToken);
