@@ -18,5 +18,7 @@ public @interface CheckPermission {
 
     boolean requiredAccessToken() default false;
 
+    boolean dynamicAuthorization() default false;
+
     String description() default "Lava自定义权限校验注解";
 }

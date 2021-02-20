@@ -1,4 +1,4 @@
-package moe.ofs.backend.domain;
+package moe.ofs.backend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

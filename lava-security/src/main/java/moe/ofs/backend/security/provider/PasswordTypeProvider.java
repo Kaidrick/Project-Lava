@@ -4,8 +4,8 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import moe.ofs.backend.dao.AdminInfoDao;
 import moe.ofs.backend.domain.AdminInfo;
-import moe.ofs.backend.domain.AdminInfoDto;
-import moe.ofs.backend.security.service.AdminInfoMapService;
+import moe.ofs.backend.dto.AdminInfoDto;
+import moe.ofs.backend.security.service.AdminInfoService;
 import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -16,7 +16,7 @@ import org.springframework.util.DigestUtils;
 @RequiredArgsConstructor
 public class PasswordTypeProvider implements AuthenticationProvider {
     private final AdminInfoDao adminInfoDao;
-    private final AdminInfoMapService mapService;
+    private final AdminInfoService adminInfoService;
 
     @Override
     public Authentication authenticate(Authentication authentication) {
@@ -26,12 +26,11 @@ public class PasswordTypeProvider implements AuthenticationProvider {
         password = DigestUtils.md5DigestAsHex(password.getBytes());
         AdminInfo adminInfo = adminInfoDao.selectOne(Wrappers.<AdminInfo>lambdaQuery().eq(AdminInfo::getName, principal).eq(AdminInfo::getPassword, password));
 
-        if (adminInfo == null) throw new RuntimeException("用户名不正确!");
-        if (!password.equals(adminInfo.getPassword())) throw new RuntimeException("密码不正确!");
+        if (adminInfo == null) throw new RuntimeException("用户名或密码不正确");
 
-        AdminInfoDto dto = mapService.adminInfoToDto(adminInfo);
+        AdminInfoDto dto = adminInfoService.adminInfoToDto(adminInfo);
         adminInfo.setPassword(null);
-        mapService.add(dto);
+        adminInfoService.add(dto);
 
         return new PasswordTypeToken(null, adminInfo, null);
     }

@@ -1,11 +1,12 @@
-package moe.ofs.backend.security.service;
+package moe.ofs.backend.security.service.impl;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import moe.ofs.backend.common.AbstractMapService;
 import moe.ofs.backend.dao.AdminInfoDao;
 import moe.ofs.backend.domain.AdminInfo;
-import moe.ofs.backend.domain.AdminInfoDto;
+import moe.ofs.backend.dto.AdminInfoDto;
+import moe.ofs.backend.security.service.AdminInfoService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -13,17 +14,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * @projectName: Project-Lava
- * @className: AccessTokenService
- * @description:
- * @author: alexpetertyler
- * @date: 2021/2/9
- * @version: v1.0
- */
 @Service
 @RequiredArgsConstructor
-public class AdminInfoMapService extends AbstractMapService<AdminInfoDto> {
+public class AdminInfoMapService extends AbstractMapService<AdminInfoDto> implements AdminInfoService {
     private final AdminInfoDao adminInfoDao;
 
     public Long add(AdminInfoDto adminInfo) {
@@ -68,4 +61,15 @@ public class AdminInfoMapService extends AbstractMapService<AdminInfoDto> {
         dto.setName(adminInfo.getName());
         return dto;
     }
+
+    public void delete(Long id) {
+        super.deleteById(id);
+        adminInfoDao.deleteById(id);
+    }
+
+    public void deleteByName(String name) {
+        List<AdminInfoDto> collect = findAll().stream().filter(v -> v.getName().equals(name)).collect(Collectors.toList());
+        if (!collect.isEmpty()) delete(collect.get(0).getId());
+    }
+
 }

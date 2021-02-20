@@ -28,5 +28,4 @@ public class LavaUserToken extends BaseEntity {
     private String refreshToken;
     private Date accessTokenExpireTime;
     private Date refreshTokenExpireTime;
-
 }

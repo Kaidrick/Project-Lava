@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/authTest")
 @RequiredArgsConstructor
+@CheckPermission(groups = "")
 public class SecurityTestController {
     private final TokenInfoDao tokenInfoDao;
 
@@ -32,8 +33,4 @@ public class SecurityTestController {
         return "欢迎您，admin!";
     }
 
-    @GetMapping("/testDao")
-    public void testDao() {
-        tokenInfoDao.selectOneByAccessToken("");
-    }
 }

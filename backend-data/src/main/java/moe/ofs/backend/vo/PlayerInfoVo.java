@@ -1,4 +1,4 @@
-package moe.ofs.backend.domain;
+package moe.ofs.backend.vo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
