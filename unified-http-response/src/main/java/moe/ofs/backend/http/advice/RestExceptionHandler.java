@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.security.authentication.BadCredentialsException;
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -15,5 +16,11 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Exception> handleGlobalException(
             Exception ex, WebRequest request) {
         return new ResponseEntity<>(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = { BadCredentialsException.class })
+    protected ResponseEntity<Exception> handleBadCredentialException(
+            Exception ex, WebRequest request) {
+        return new ResponseEntity<>(ex, new HttpHeaders(), HttpStatus.FORBIDDEN);
     }
 }

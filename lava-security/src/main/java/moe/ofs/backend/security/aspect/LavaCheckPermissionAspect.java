@@ -91,11 +91,12 @@ public class LavaCheckPermissionAspect {
 
         if (username.equals("anonymousUser")) throw new BadCredentialsException("请先登录！");
         AdminInfoDto adminInfoDto = adminInfoService.getOneByName(username);
-        boolean a, b;
-        a = checkArray(adminInfoDto.getGroups(), groups, nonGroups);
-        b = checkArray(adminInfoDto.getRoles(), roles, nonRoles);
 
-        if (a && b) {
+        boolean inAllowedGroups, hasAllowedRoles;
+        inAllowedGroups = checkArray(adminInfoDto.getGroups(), groups, nonGroups);
+        hasAllowedRoles = checkArray(adminInfoDto.getRoles(), roles, nonRoles);
+
+        if (inAllowedGroups && hasAllowedRoles) {
             return point.getArgs();
         } else {
             throw new RuntimeException("无权访问！");
@@ -104,16 +105,12 @@ public class LavaCheckPermissionAspect {
 
     private Permission getCheckPermission(CheckPermission methodAnnotation, CheckPermission classAnnotation) {
         Permission permission = new Permission();
-        if (methodAnnotation == null) {
+        CheckPermission check = methodAnnotation != null ? methodAnnotation : classAnnotation;
+        if (check != null) {
             permission.getGroups().addAll(Arrays.asList(classAnnotation.groups()));
             permission.getRoles().addAll(Arrays.asList(classAnnotation.roles()));
             permission.getNonGroups().addAll(Arrays.asList(classAnnotation.nonGroups()));
             permission.getNonRoles().addAll(Arrays.asList(classAnnotation.nonRoles()));
-        } else {
-            permission.getGroups().addAll(Arrays.asList(methodAnnotation.groups()));
-            permission.getRoles().addAll(Arrays.asList(methodAnnotation.roles()));
-            permission.getNonGroups().addAll(Arrays.asList(methodAnnotation.nonGroups()));
-            permission.getNonRoles().addAll(Arrays.asList(methodAnnotation.nonRoles()));
         }
         return permission;
 

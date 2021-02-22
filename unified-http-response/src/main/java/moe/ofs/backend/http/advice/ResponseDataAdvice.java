@@ -74,7 +74,7 @@ public class ResponseDataAdvice implements ResponseBodyAdvice<Object> {
         // o is null -> return response
         HttpServletResponse servletResponse = ((ServletServerHttpResponse) serverHttpResponse).getServletResponse();
 
-        if (servletResponse.getStatus() == HttpServletResponse.SC_BAD_REQUEST) {
+        if (servletResponse.getStatus() != HttpServletResponse.SC_OK) {
             Response<?> failResponse = Response.fail();
             if (o instanceof Throwable) {
                 failResponse.setMessage(((Throwable) o).getMessage());
