@@ -7,6 +7,7 @@ import moe.ofs.backend.http.config.EndpointBypassProperties;
 import moe.ofs.backend.http.response.Response;
 import moe.ofs.backend.http.annotations.IgnoreResponseAdvice;
 import moe.ofs.backend.http.response.Responses;
+import moe.ofs.backend.security.exception.BaseSecurityException;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -75,11 +76,19 @@ public class ResponseDataAdvice implements ResponseBodyAdvice<Object> {
         HttpServletResponse servletResponse = ((ServletServerHttpResponse) serverHttpResponse).getServletResponse();
 
         if (servletResponse.getStatus() != HttpServletResponse.SC_OK) {
-            Response<?> failResponse = Response.fail();
-            if (o instanceof Throwable) {
+            Response<Object> failResponse = Response.fail();
+            if (o instanceof BaseSecurityException) {
+                BaseSecurityException baseSecurityException = (BaseSecurityException) o;
+                failResponse.setMessage(baseSecurityException.getMessage());
+                failResponse.setData(baseSecurityException.getMetadata() != null ?
+                        baseSecurityException.getMetadata() : null);
+                failResponse.setErrorCode(baseSecurityException.getErrorCode().getCode());
+            } else if (o instanceof Throwable) {
                 failResponse.setMessage(((Throwable) o).getMessage());
             } else {
-                failResponse.setMessage("Bad Request");
+                failResponse.setMessage("An error occured");
+                failResponse.setStatus(500);
+                failResponse.setData(o);
             }
 
             failResponse.setStatus((servletResponse.getStatus()));

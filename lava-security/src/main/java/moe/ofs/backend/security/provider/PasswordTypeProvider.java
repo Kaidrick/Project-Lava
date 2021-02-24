@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import moe.ofs.backend.dao.AdminInfoDao;
 import moe.ofs.backend.domain.AdminInfo;
 import moe.ofs.backend.dto.AdminInfoDto;
+import moe.ofs.backend.security.exception.authentication.BadLoginCredentialsException;
+import moe.ofs.backend.security.exception.token.InvalidAccessTokenException;
 import moe.ofs.backend.security.service.AdminInfoService;
 import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -26,7 +28,7 @@ public class PasswordTypeProvider implements AuthenticationProvider {
         password = DigestUtils.md5DigestAsHex(password.getBytes());
         AdminInfo adminInfo = adminInfoDao.selectOne(Wrappers.<AdminInfo>lambdaQuery().eq(AdminInfo::getName, principal).eq(AdminInfo::getPassword, password));
 
-        if (adminInfo == null) throw new RuntimeException("用户名或密码不正确");
+        if (adminInfo == null) throw new BadLoginCredentialsException("用户名或密码不正确");
 
         AdminInfoDto dto = adminInfoService.adminInfoToDto(adminInfo);
         adminInfo.setPassword(null);
@@ -37,7 +39,7 @@ public class PasswordTypeProvider implements AuthenticationProvider {
 
     public Authentication authenticate(String accessToken) {
         AdminInfo adminInfo = adminInfoDao.selectOneByAccessToken(accessToken);
-        if (adminInfo == null) throw new RuntimeException("AccessToken已过期或非法");
+        if (adminInfo == null) throw new InvalidAccessTokenException("AccessToken已过期或非法");
         return new PasswordTypeToken(null, adminInfo, null);
     }
 

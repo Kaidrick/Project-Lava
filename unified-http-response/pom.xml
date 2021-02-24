@@ -60,6 +60,12 @@
             <artifactId>backend-data</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>moe.ofs</groupId>
+            <artifactId>lava-security</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

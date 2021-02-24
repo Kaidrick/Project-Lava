@@ -4,10 +4,13 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.dto.AdminInfoDto;
 import moe.ofs.backend.domain.LavaUserToken;
 import moe.ofs.backend.domain.Permission;
+import moe.ofs.backend.dto.AdminInfoDto;
 import moe.ofs.backend.security.annotation.CheckPermission;
+import moe.ofs.backend.security.exception.token.AccessTokenExpiredException;
+import moe.ofs.backend.security.exception.authorization.InsufficientAccessRightException;
+import moe.ofs.backend.security.exception.token.InvalidAccessTokenException;
 import moe.ofs.backend.security.provider.PasswordTypeProvider;
 import moe.ofs.backend.security.service.AccessTokenService;
 import moe.ofs.backend.security.service.AdminInfoService;
@@ -17,7 +20,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -52,7 +54,7 @@ public class LavaCheckPermissionAspect {
     public void annotatedClasses() {
     }
 
-    @Before("annotatedClasses()|| annotatedMethods()")
+    @Before("annotatedClasses() || annotatedMethods()")
     public Object checkPermission(JoinPoint point) {
         MethodSignature signature = (MethodSignature) point.getSignature();
         CheckPermission methodAnnotation = signature.getMethod().getAnnotation(CheckPermission.class);
@@ -72,11 +74,11 @@ public class LavaCheckPermissionAspect {
         if (permission.isRequiredAccessToken()) {
             HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
             String accessToken = request.getHeader("access_token");
-            if (accessToken == null) throw new BadCredentialsException("accessToken不能为空！");
+            if (accessToken == null) throw new InvalidAccessTokenException("accessToken不能为空！");
 
 //            获取token中存储的信息，调用provider校验信息
             boolean b = accessTokenService.checkAccessToken(accessToken);
-            if (!b) throw new BadCredentialsException("accessToken已过期，请使用refreshToken刷新");
+            if (!b) throw new AccessTokenExpiredException("accessToken已过期，请使用refreshToken刷新");
             LavaUserToken lavaUserToken = accessTokenService.getByAccessToken(accessToken);
             PasswordTypeToken token = (PasswordTypeToken) lavaUserToken.getUserInfoToken();
 
@@ -89,7 +91,7 @@ public class LavaCheckPermissionAspect {
             username = token.getName();
         }
 
-        if (username.equals("anonymousUser")) throw new BadCredentialsException("请先登录！");
+        if (username.equals("anonymousUser")) throw new InsufficientAccessRightException("请先登录！");
         AdminInfoDto adminInfoDto = adminInfoService.getOneByName(username);
 
         boolean inAllowedGroups, hasAllowedRoles;
@@ -99,7 +101,7 @@ public class LavaCheckPermissionAspect {
         if (inAllowedGroups && hasAllowedRoles) {
             return point.getArgs();
         } else {
-            throw new RuntimeException("无权访问！");
+            throw new InsufficientAccessRightException("无权访问！");
         }
     }
 

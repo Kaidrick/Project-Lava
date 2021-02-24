@@ -10,10 +10,11 @@ import moe.ofs.backend.dao.TokenInfoDao;
 import moe.ofs.backend.domain.LavaUserToken;
 import moe.ofs.backend.domain.TokenInfo;
 import moe.ofs.backend.domain.dcs.BaseEntity;
+import moe.ofs.backend.security.exception.token.InvalidAccessTokenException;
+import moe.ofs.backend.security.exception.token.InvalidRefreshTokenException;
 import moe.ofs.backend.security.service.AccessTokenService;
 import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -84,7 +85,7 @@ public class AccessTokenMapService extends AbstractMapService<LavaUserToken> imp
 
         TokenInfo tokenInfo = tokenInfoDao.selectOneByAccessToken(accessToken);
 
-        if (tokenInfo == null) throw new BadCredentialsException("AccessToken不存在，请重新获取");
+        if (tokenInfo == null) throw new InvalidAccessTokenException("AccessToken不存在，请重新获取");
 
         LavaUserToken lavaUserToken = tokenInfoToLavaUserToken(tokenInfo);
         add(lavaUserToken);
@@ -100,7 +101,7 @@ public class AccessTokenMapService extends AbstractMapService<LavaUserToken> imp
 
         TokenInfo tokenInfo = tokenInfoDao.selectOneByRefreshToken(refreshToken);
 
-        if (tokenInfo == null) throw new RuntimeException("RefreshToken不存在，请重新认证");
+        if (tokenInfo == null) throw new InvalidRefreshTokenException("RefreshToken不存在，请重新认证");
 
         LavaUserToken lavaUserToken = tokenInfoToLavaUserToken(tokenInfo);
         add(lavaUserToken);
