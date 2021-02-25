@@ -3,6 +3,7 @@ package moe.ofs.backend.security.service.impl;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import moe.ofs.backend.common.AbstractMapService;
 import moe.ofs.backend.dao.TokenInfoDao;
@@ -19,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.sql.Wrapper;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,8 +48,10 @@ public class AccessTokenMapService extends AbstractMapService<LavaUserToken> imp
         deleteById(lavaUserToken.getId());
         AdminInfo adminInfo = (AdminInfo) ((Authentication) lavaUserToken.getUserInfoToken()).getPrincipal();
 
+        tokenInfoDao.delete(Wrappers.<TokenInfo>lambdaQuery().eq(TokenInfo::getUserId, adminInfo.getId()));
         TokenInfo tokenInfo = new TokenInfo(lavaUserToken.getAccessToken(), adminInfo.getId(), lavaUserToken.getAccessTokenExpireTime(), lavaUserToken.getRefreshToken(), lavaUserToken.getRefreshTokenExpireTime());
         tokenInfoDao.insert(tokenInfo);
+        lavaUserToken.setId(tokenInfo.getId());
         add(lavaUserToken);
     }
 
