@@ -28,13 +28,11 @@
 
     <select id="selectOneByAccessToken" resultMap="accessToken">
         <include refid="selectAccessToken"/>
-          AND t.access_token_expire_time >= CURDATE()
-          AND t.access_token = '${accessToken}';
+        AND t.access_token = '${accessToken}';
     </select>
 
     <select id="selectOneByRefreshToken" resultMap="accessToken">
         <include refid="selectAccessToken"/>
-          AND t.refresh_token_expire_time >= CURDATE()
-          AND t.refreshToken = '${refreshToken}';
+        AND t.refreshToken = '${refreshToken}';
     </select>
 </mapper>
