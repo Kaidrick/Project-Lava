@@ -1,5 +1,6 @@
 package moe.ofs.backend.security.controller;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import moe.ofs.backend.dao.TokenInfoDao;
 import moe.ofs.backend.domain.AdminInfo;
@@ -32,6 +33,9 @@ public class TokenController {
         PasswordTypeToken token = new PasswordTypeToken(username, password);
         Authentication authenticate = passwordTypeProvider.authenticate(token);
         AdminInfo adminInfo = (AdminInfo) authenticate.getPrincipal();
+
+        tokenInfoDao.delete(Wrappers.<TokenInfo>lambdaQuery().eq(TokenInfo::getUserId, adminInfo.getId()));
+
         LavaUserToken generate = accessTokenService.generate();
         generate.setUserInfoToken(authenticate);
         TokenInfo tokenInfo = new TokenInfo(generate.getAccessToken(), adminInfo.getId(), generate.getAccessTokenExpireTime(), generate.getRefreshToken(), generate.getRefreshTokenExpireTime());
