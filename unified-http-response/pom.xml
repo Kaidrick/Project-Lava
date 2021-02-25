@@ -66,6 +66,12 @@
             <artifactId>lava-security</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>moe.ofs</groupId>
+            <artifactId>lava-security</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>

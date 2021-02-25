@@ -11,14 +11,6 @@ import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import org.springframework.beans.factory.annotation.Value;
 
-/**
- * @projectName: Project-Lava
- * @className: MybatisPlusGenerator
- * @description:
- * @author: alexpetertyler
- * @date: 2021/1/15
- * @version: v1.0
- */
 //@Service
 public class MybatisPlusGenerator {
     // TODO: use java.util.Properties class to read from configuration files so that this class can be used as a standalone in IDE environment.

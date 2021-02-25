@@ -16,14 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * @projectName: Project-Lava
- * @className: UserController
- * @description:
- * @author: alexpetertyler
- * @date: 2021/2/20
- * @version: v1.0
- */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")

@@ -8,14 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-/**
- * @ProjectName: mybox
- * @ClassName: SuccessHandler
- * @Description:
- * @Author: alexpetertyler
- * @Date: 2020/9/16
- * @Version v1.0
- */
 @Component
 public class FailureHandler implements AuthenticationFailureHandler {
 

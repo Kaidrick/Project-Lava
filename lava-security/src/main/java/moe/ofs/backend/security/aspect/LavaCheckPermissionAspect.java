@@ -8,13 +8,12 @@ import moe.ofs.backend.domain.LavaUserToken;
 import moe.ofs.backend.domain.Permission;
 import moe.ofs.backend.dto.AdminInfoDto;
 import moe.ofs.backend.security.annotation.CheckPermission;
-import moe.ofs.backend.security.exception.token.AccessTokenExpiredException;
 import moe.ofs.backend.security.exception.authorization.InsufficientAccessRightException;
+import moe.ofs.backend.security.exception.token.AccessTokenExpiredException;
 import moe.ofs.backend.security.exception.token.InvalidAccessTokenException;
 import moe.ofs.backend.security.provider.PasswordTypeProvider;
 import moe.ofs.backend.security.service.AccessTokenService;
 import moe.ofs.backend.security.service.AdminInfoService;
-import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -29,14 +28,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-/**
- * @projectName: Project-Lava
- * @className: SecurityAspect
- * @description:
- * @author: alexpetertyler
- * @date: 2021/2/9
- * @version: v1.0
- */
 @Aspect
 @Component
 @RequiredArgsConstructor
@@ -80,7 +71,7 @@ public class LavaCheckPermissionAspect {
             boolean b = accessTokenService.checkAccessToken(accessToken);
             if (!b) throw new AccessTokenExpiredException("accessToken已过期，请使用refreshToken刷新");
             LavaUserToken lavaUserToken = accessTokenService.getByAccessToken(accessToken);
-            PasswordTypeToken token = (PasswordTypeToken) lavaUserToken.getUserInfoToken();
+            Authentication token = (Authentication) lavaUserToken.getUserInfoToken();
 
             // 判断是否重新认证用户信息
             if (!authentication.getName().equals(token.getName())) {

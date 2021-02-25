@@ -41,4 +41,6 @@ public interface AccessTokenService {
     LavaUserToken tokenInfoToLavaUserToken(TokenInfo tokenInfo);
 
     void expire();
+
+    Object findAll();
 }

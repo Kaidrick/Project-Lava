@@ -3,10 +3,11 @@ package moe.ofs.backend.security.service.impl;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.RandomUtil;
-import com.google.gson.Gson;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import moe.ofs.backend.common.AbstractMapService;
 import moe.ofs.backend.dao.TokenInfoDao;
+import moe.ofs.backend.domain.AdminInfo;
 import moe.ofs.backend.domain.LavaUserToken;
 import moe.ofs.backend.domain.TokenInfo;
 import moe.ofs.backend.domain.dcs.BaseEntity;
@@ -19,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.sql.Wrapper;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,8 +32,8 @@ public class AccessTokenMapService extends AbstractMapService<LavaUserToken> imp
 
     public LavaUserToken generate() {
         LavaUserToken token = new LavaUserToken();
-        token.setAccessToken(RandomUtil.randomString(10));
-        token.setRefreshToken(RandomUtil.randomString(20));
+        token.setAccessToken(RandomUtil.randomString(30));
+        token.setRefreshToken(RandomUtil.randomString(50));
         Date now = new Date();
         token.setAccessTokenExpireTime(DateUtil.offsetHour(now, 2));
         token.setRefreshTokenExpireTime(DateUtil.offsetWeek(now, 2));
@@ -43,16 +45,14 @@ public class AccessTokenMapService extends AbstractMapService<LavaUserToken> imp
     }
 
     public void update(LavaUserToken lavaUserToken) {
+        deleteById(lavaUserToken.getId());
+        AdminInfo adminInfo = (AdminInfo) ((Authentication) lavaUserToken.getUserInfoToken()).getPrincipal();
+
+        tokenInfoDao.delete(Wrappers.<TokenInfo>lambdaQuery().eq(TokenInfo::getUserId, adminInfo.getId()));
+        TokenInfo tokenInfo = new TokenInfo(lavaUserToken.getAccessToken(), adminInfo.getId(), lavaUserToken.getAccessTokenExpireTime(), lavaUserToken.getRefreshToken(), lavaUserToken.getRefreshTokenExpireTime());
+        tokenInfoDao.insert(tokenInfo);
+        lavaUserToken.setId(tokenInfo.getId());
         add(lavaUserToken);
-        TokenInfo tokenInfo = tokenInfoDao.selectById(lavaUserToken.getId());
-        if (tokenInfo == null) {
-            super.delete(lavaUserToken);
-            lavaUserToken.setUserInfoToken(null);
-            throw new RuntimeException("token ：" + new Gson().toJson(lavaUserToken) + " 库表不存在！");
-        }
-        tokenInfo.setAccessTokenExpireTime(lavaUserToken.getAccessTokenExpireTime());
-        tokenInfo.setAccessToken(lavaUserToken.getAccessToken());
-        tokenInfoDao.updateById(tokenInfo);
     }
 
     @Override

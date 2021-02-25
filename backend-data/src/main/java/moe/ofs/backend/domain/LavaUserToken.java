@@ -9,14 +9,6 @@ import moe.ofs.backend.domain.dcs.BaseEntity;
 
 import java.util.Date;
 
-/**
- * @projectName: Project-Lava
- * @className: AccessToken
- * @description:
- * @author: alexpetertyler
- * @date: 2021/2/9
- * @version: v1.0
- */
 @Setter
 @Getter
 @AllArgsConstructor

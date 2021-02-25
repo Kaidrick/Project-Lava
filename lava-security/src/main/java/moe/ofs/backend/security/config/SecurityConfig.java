@@ -13,15 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-/**
- * @projectName: Project-Lava
- * @className: SecurityConfig
- * @description:
- * @author: alexpetertyler
- * @date: 2021/2/8
- * @version: v1.0
- */
-
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, jsr250Enabled = true, securedEnabled = true)
 @RequiredArgsConstructor
