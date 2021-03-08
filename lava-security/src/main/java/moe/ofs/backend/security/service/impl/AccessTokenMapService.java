@@ -127,7 +127,7 @@ public class AccessTokenMapService extends AbstractMapService<LavaUserToken> imp
         Date now = new Date();
         DateTime week = DateUtil.offsetWeek(now, 2);
 
-        return DateUtil.isIn(lavaUserToken.getAccessTokenExpireTime(), now, week);
+        return DateUtil.isIn(lavaUserToken.getRefreshTokenExpireTime(), now, week);
     }
 
     public LavaUserToken refreshAccessToken(String refreshToken) {

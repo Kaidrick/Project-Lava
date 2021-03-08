@@ -23,6 +23,8 @@ public class RestfulExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = {BaseSecurityException.class})
     protected ResponseEntity<Exception> handleSecurityException(  // Although the HTTP standard specifies "unauthorized", semantically this response means "unauthenticated".
             Exception ex, WebRequest request) {
+        ex.printStackTrace();
+
         if (ex instanceof BadLoginCredentialsException) {
             return new ResponseEntity<>(ex, new HttpHeaders(), HttpStatus.BAD_REQUEST);
         } else if (ex instanceof InsufficientAccessRightException) {

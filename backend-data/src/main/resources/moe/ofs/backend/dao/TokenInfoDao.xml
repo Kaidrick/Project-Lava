@@ -33,6 +33,6 @@
 
     <select id="selectOneByRefreshToken" resultMap="accessToken">
         <include refid="selectAccessToken"/>
-        AND t.refreshToken = '${refreshToken}';
+        AND t.refresh_token = '${refreshToken}';
     </select>
 </mapper>
