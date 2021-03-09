@@ -6,6 +6,7 @@ import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import moe.ofs.backend.common.AbstractMapService;
+import moe.ofs.backend.dao.AdminInfoDao;
 import moe.ofs.backend.dao.TokenInfoDao;
 import moe.ofs.backend.domain.AdminInfo;
 import moe.ofs.backend.domain.LavaUserToken;
@@ -20,15 +21,16 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.sql.Wrapper;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AccessTokenMapService extends AbstractMapService<LavaUserToken> implements AccessTokenService {
     private final TokenInfoDao tokenInfoDao;
+    private final AdminInfoDao adminInfoDao;
 
     public LavaUserToken generate() {
         LavaUserToken token = new LavaUserToken();
@@ -46,7 +48,7 @@ public class AccessTokenMapService extends AbstractMapService<LavaUserToken> imp
 
     public void update(LavaUserToken lavaUserToken) {
         deleteById(lavaUserToken.getId());
-        AdminInfo adminInfo = (AdminInfo) ((Authentication) lavaUserToken.getUserInfoToken()).getPrincipal();
+        AdminInfo adminInfo =(AdminInfo) ((PasswordTypeToken) lavaUserToken.getUserInfoToken()).getPrincipal();
 
         tokenInfoDao.delete(Wrappers.<TokenInfo>lambdaQuery().eq(TokenInfo::getUserId, adminInfo.getId()));
         TokenInfo tokenInfo = new TokenInfo(lavaUserToken.getAccessToken(), adminInfo.getId(), lavaUserToken.getAccessTokenExpireTime(), lavaUserToken.getRefreshToken(), lavaUserToken.getRefreshTokenExpireTime());
@@ -147,15 +149,16 @@ public class AccessTokenMapService extends AbstractMapService<LavaUserToken> imp
         List<TokenInfo> tokenInfos = tokenInfoDao.selectTokens();
         if (tokenInfos.isEmpty()) return;
 
+        Map<Long, AdminInfo> adminInfoMap = adminInfoDao.selectList(null).stream().collect(Collectors.toMap(AdminInfo::getId, v -> v));
         tokenInfos.forEach(v -> {
             LavaUserToken lavaUserToken = tokenInfoToLavaUserToken(v);
+            lavaUserToken.setUserInfoToken(adminInfoMap.get(v.getUserId()));
             add(lavaUserToken);
         });
     }
 
     public LavaUserToken tokenInfoToLavaUserToken(TokenInfo tokenInfo) {
-        PasswordTypeToken token = new PasswordTypeToken(tokenInfo.getName(), null);
-        LavaUserToken lavaUserToken = new LavaUserToken(token, tokenInfo.getAccessToken(), tokenInfo.getRefreshToken(), tokenInfo.getAccessTokenExpireTime(), tokenInfo.getRefreshTokenExpireTime());
+        LavaUserToken lavaUserToken = new LavaUserToken(null, tokenInfo.getAccessToken(), tokenInfo.getRefreshToken(), tokenInfo.getAccessTokenExpireTime(), tokenInfo.getRefreshTokenExpireTime());
         lavaUserToken.setId(tokenInfo.getId());
         return lavaUserToken;
     }
@@ -171,8 +174,8 @@ public class AccessTokenMapService extends AbstractMapService<LavaUserToken> imp
                 .collect(Collectors.toList());
         if (collect.isEmpty()) return;
 
-        List<Long> idset = collect.stream().map(BaseEntity::getId).collect(Collectors.toList());
-        tokenInfoDao.deleteBatchIds(idset);
-        idset.forEach(this::deleteById);
+        List<Long> idSet = collect.stream().map(BaseEntity::getId).collect(Collectors.toList());
+        tokenInfoDao.deleteBatchIds(idSet);
+        idSet.forEach(this::deleteById);
     }
 }
