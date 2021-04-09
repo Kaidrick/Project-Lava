@@ -7,6 +7,7 @@ import moe.ofs.backend.domain.AdminInfo;
 import moe.ofs.backend.domain.LavaUserToken;
 import moe.ofs.backend.dto.AdminInfoDto;
 import moe.ofs.backend.security.annotation.CheckPermission;
+import moe.ofs.backend.security.provider.PasswordTypeProvider;
 import moe.ofs.backend.security.service.AccessTokenService;
 import moe.ofs.backend.security.service.AdminInfoService;
 import moe.ofs.backend.security.token.PasswordTypeToken;
@@ -23,6 +24,19 @@ public class UserController {
     private final AdminInfoDao adminInfoDao;
     private final AccessTokenService accessTokenService;
     private final AdminInfoService adminInfoService;
+    private final PasswordTypeProvider passwordTypeProvider;
+
+    @PostMapping("/validate")
+    public AdminInfo validateRegisteredUser(String username, String password) {
+        PasswordTypeToken token = new PasswordTypeToken(username, password);
+        Authentication authenticate = passwordTypeProvider.authenticate(token);
+        AdminInfo adminInfo = (AdminInfo) authenticate.getPrincipal();
+        AdminInfo confirm = new AdminInfo();
+        confirm.setEnable(adminInfo.getEnable());
+        confirm.setName(adminInfo.getName());
+
+        return confirm;
+    }
 
     @PostMapping("/user_info/update")
     @CheckPermission(requiredAccessToken = true)
