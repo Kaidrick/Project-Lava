@@ -17,7 +17,7 @@ public class ListenLavaEventSelectAspect {
         assert pjp.getArgs().length > 0;
         if (pjp.getArgs()[0] instanceof TextMessage) {
             TextMessage textMessage = (TextMessage) pjp.getArgs()[0];
-            if (annotation.value().name().equals(textMessage.getJMSType())) {
+            if (annotation.value().name().equals(textMessage.getStringProperty("type"))) {
                 return pjp.proceed(pjp.getArgs());
             }
         }

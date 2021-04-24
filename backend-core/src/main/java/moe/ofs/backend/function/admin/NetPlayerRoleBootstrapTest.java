@@ -14,7 +14,6 @@ import moe.ofs.backend.function.admin.services.NetPlayerRoleService;
 import moe.ofs.backend.repositories.PlayerRoleGroupRepository;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.lang.reflect.Type;

@@ -47,7 +47,7 @@ public class LavaEventPublishMessageAspect {
         Object event = joinPoint.getArgs()[0];
 
         if (event instanceof LavaEvent) {
-            sender.sendToTopicAsJson("lava.event", event, null);
+            sender.sendToTopicAsJson("lava.event", event, ((LavaEvent) event).getType().name());
         }
     }
 }

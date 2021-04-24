@@ -254,7 +254,7 @@ local function get_delta_export_data(current_data, ...)
 										local value_delta = math.abs(previous_data[runtime_id][attribute_name] - attribute_value)  -- calculate delta
 
 										if value_delta > 0.001 then  -- publish change only if delta is larger than 0.001 to avoid frequent update by some weird object position jingling
-											log("publish change because " .. value_delta .. " > 0.001")
+											--log("publish change because " .. value_delta .. " > 0.001")
 											-- change
 											batch_delta[runtime_id] = batch_delta[runtime_id] or {}  -- new table if none
 											batch_delta[runtime_id]["data"] = batch_delta[runtime_id]["data"] or {}
@@ -429,7 +429,7 @@ local function process_request(requests)  -- runs request from Export Request
 		elseif request.method == HANDLE.RESET then
 			-- reset diff comp table
 			initData()
-			log("data reset complete")
+			--log("data reset complete")
 		end
 
 	end
@@ -465,12 +465,12 @@ local function step()
 							process_request(requests)
 						end
 					else
-						log("Request: " .. requests)  -- log error
+						--log("Request: " .. requests)  -- --log error
 						local bytes, status, lastbyte = client:send(JSON:encode(false) .. '\n')
 					end
 					--]]
 				else
-					log(line, err)
+					--log(line, err)
 					client:send("\r\n")
 				end
 			end
@@ -483,10 +483,10 @@ local function step()
 				if err == 'timeout' then
 					if last_comm_timestamp then  
 						if os.time() - last_comm_timestamp > 5 then
-							log("connection is lost")
+							--log("connection is lost")
 							
-							log("current os.time is " .. os.time() .. " and last handshake timestamp is " .. last_comm_timestamp)
-							log("diff is " .. os.time() - last_comm_timestamp)
+							--log("current os.time is " .. os.time() .. " and last handshake timestamp is " .. last_comm_timestamp)
+							--log("diff is " .. os.time() - last_comm_timestamp)
 					
 							client:close()
 							client = nil
@@ -494,18 +494,18 @@ local function step()
 							return
 						end
 					else  -- no successful handshake is made yet
-						log("no handshake")
+						--log("no handshake")
 					end
 			  
 				elseif err == 'closed' then
-					log("connection is closed")
+					--log("connection is closed")
 					client:close()
 					client = nil
 					last_comm_timestamp = nil
 					return
 			  
 				else  -- other error
-					log("Error: " .. err)
+					--log("Error: " .. err)
 				end
 			end
 
@@ -527,7 +527,7 @@ local function step()
 						process_request(requests)
 					end
 				else
-					log("Request: " .. requests)  -- log error
+					--log("Request: " .. requests)  -- --log error
 					local bytes, status, lastbyte = client:send(JSON:encode(false) .. '\n')
 				end
 				--]]
@@ -563,13 +563,13 @@ local function poll_step()
 							process_request(requests)
 						end
 					else
-						env.info(requests)  -- log error
+						env.info(requests)  -- --log error
 						local readyResult = PULL.brew_result()
 						local bytes, status, lastbyte = poll_client:send(JSON:encode(readyResult) .. '\n')
 					end
 					--]]
 				else
-					log(line, err)
+					--log(line, err)
 					poll_client:send("\r\n")
 				end
 			end
@@ -583,10 +583,10 @@ local function poll_step()
 					if last_poll_timestamp then  
 						if os.time() - last_poll_timestamp > 5 then
 							
-							log("current os.time is " .. os.time() .. " and last handshake timestamp is " .. last_poll_timestamp)
-							log("diff is " .. os.time() - last_poll_timestamp)
+							--log("current os.time is " .. os.time() .. " and last handshake timestamp is " .. last_poll_timestamp)
+							--log("diff is " .. os.time() - last_poll_timestamp)
 							
-							log("connection is lost")
+							--log("connection is lost")
 					
 							poll_client:close()
 							poll_client = nil
@@ -594,18 +594,18 @@ local function poll_step()
 							return
 						end
 					else  -- no successful handshake is made yet
-						log("no handshake")
+						--log("no handshake")
 					end
 					
 				elseif err == 'closed' then
-					log("connection is closed")
+					--log("connection is closed")
 					poll_client:close()
 					poll_client = nil
 					last_poll_timestamp = nil
 					return
 			  
 				else  -- other error
-					log("Error: " .. err)
+					--log("Error: " .. err)
 				end
 			end
 
@@ -626,7 +626,7 @@ local function poll_step()
 						process_request(requests)
 					end
 				else
-					env.info(requests)  -- log error
+					env.info(requests)  -- --log error
 					local readyResult = PULL.brew_result()
 					local bytes, status, lastbyte = poll_client:send(JSON:encode(readyResult) .. '\n')
 				end
@@ -700,7 +700,7 @@ local function manage_coroutine()
 					collector(uuid, res, tail)
 				else
 					if res and type(res) == 'string' then  -- error
-						log("Coroutine Error: " .. res)
+						--log("Coroutine Error: " .. res)
 					end
 					
 					if res and next(res) ~= nil then
@@ -714,7 +714,7 @@ local function manage_coroutine()
 end
 
 function LuaExportStart()
-	log("Starting DCS Export Server")
+	--log("Starting DCS Export Server")
 	
 	-- Request Server
 	server = socket.tcp()
@@ -738,12 +738,12 @@ function LuaExportStart()
 	poll_server:setoption("keepalive", true)
 	poll_server:setoption("tcp-nodelay", true)
 	
-	-- write log
+	-- write --log
 	local ip, port = server:getsockname()
 	local poll_ip, poll_port = poll_server:getsockname()
 	
-	log("DCS Export Request Server: Started on Port " .. port .. " at " .. ip)
-	log("DCS Export Poll Server: Started on Port " .. poll_port .. " at " .. poll_ip)
+	--log("DCS Export Request Server: Started on Port " .. port .. " at " .. ip)
+	--log("DCS Export Poll Server: Started on Port " .. poll_port .. " at " .. poll_ip)
 	
 	initData()
 end
@@ -760,7 +760,7 @@ function LuaExportStop()
     if poll_client then poll_client:close() end
     if poll_server then poll_server:close() end
 	
-	log("DCS Export Server Terminated")
+	--log("DCS Export Server Terminated")
 end
 
 local srs_cyclic_counter = 0
@@ -784,7 +784,7 @@ function LuaExportActivityNextEvent(t)
 		end)
 		
 		if not _status then
-			log('ERROR Calling other LuaExportActivityNextEvent from another script: ' .. _result)
+			--log('ERROR Calling other LuaExportActivityNextEvent from another script: ' .. _result)
 		end
 		
 		srs_cyclic_counter = 0
