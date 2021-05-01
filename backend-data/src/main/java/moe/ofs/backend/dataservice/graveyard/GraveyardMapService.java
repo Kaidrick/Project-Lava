@@ -21,7 +21,6 @@ public class GraveyardMapService extends AbstractMapService<GraveyardRecord>
 
     @Override
     public void collect(ExportObject record) {
-        System.out.println("record = " + record);
         GraveyardRecord graveyardRecord =
                 new GraveyardRecord(record, Instant.now().plusSeconds(persistentDuration), Instant.now());
         save(graveyardRecord);

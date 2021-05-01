@@ -32,10 +32,11 @@ local collection = {
 
 handler.ident = "simulationEventCollectorHandler"
 
--- iterate through world.eventHandlers table to check if there is already an existing collector handler
+
+-- remove possible duplicate event handler to make the event handler distinct at initialization
 for _, eventHandler in pairs(world.eventHandlers) do
     if eventHandler.ident == handler.ident then
-        return
+    	world.removeEventHandler(eventHandler)
     end
 end
 

@@ -3,6 +3,7 @@ package moe.ofs.backend.services.mizdb;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.function.mizdb.services.MissionDataService;
 import moe.ofs.backend.connector.util.LuaScripts;
 import moe.ofs.backend.connector.lua.QueryOnAnnotation;
@@ -10,6 +11,7 @@ import moe.ofs.backend.connector.lua.QueryOnAnnotation;
 import java.lang.reflect.Type;
 import java.util.*;
 
+@Slf4j
 public abstract class AbstractPersistentMissionDataService<T> extends QueryOnAnnotation implements MissionDataService<T> {
 
     @Override

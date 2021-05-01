@@ -37,6 +37,16 @@ public class LuaInjectionInitializr implements LuaScriptInjectService {
     }
 
     @Override
+    public boolean has(ScriptInjectionTask task) {
+       return scriptInjectionTasks.contains(task);
+    }
+
+    @Override
+    public List<ScriptInjectionTask> list() {
+        return new ArrayList<>(scriptInjectionTasks);
+    }
+
+    @Override
     public Map<ScriptInjectionTask, Boolean> invokeInjection() {
 
         parseDependencies();
@@ -110,14 +120,13 @@ public class LuaInjectionInitializr implements LuaScriptInjectService {
         recursivelySetLoadOrder(tasks);
 
         log.info("Mapping Lua Script Injection Task Dependencies");
-        scriptInjectionTasks.stream().sorted(Comparator.comparing(ScriptInjectionTask::getOrder)).forEach(task -> {
-            log.info("#{} {}, Initializr Class: {}, Dependency: {}",
-                    task.getOrder(),
-                    task.getScriptIdentName(),
-                    task.getInitializrClass().getName(),
-                    task.getDependencyInitializrClass() != null ?
-                            task.getDependencyInitializrClass().getName() : "None");
-        });
+        scriptInjectionTasks.stream().sorted(Comparator.comparing(ScriptInjectionTask::getOrder))
+                .forEach(task -> log.info("#{} {}, Initializr Class: {}, Dependency: {}",
+                        task.getOrder(),
+                        task.getScriptIdentName(),
+                        task.getInitializrClass().getName(),
+                        task.getDependencyInitializrClass() != null ?
+                                task.getDependencyInitializrClass().getName() : "None"));
     }
 
     private void appendDependency(ScriptInjectionTask task, ScriptInjectionTask dependent) {

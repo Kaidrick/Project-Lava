@@ -181,7 +181,6 @@ public class BackgroundTask {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
-                backgroundThread.interrupt();
                 backgroundThread = null;
 
                 LavaSystemStatus.setPhase(OperationPhase.IDLE);
@@ -353,8 +352,10 @@ public class BackgroundTask {
         LuaScripts.request(LuaQueryEnv.SERVER_CONTROL, "return _ED_VERSION")
                 .addProcessable(this::setDcsApplicationVersion);
 
+        // lua script starter set may or may not change over time; avoid duplicated starter task injection
         luaScriptStarters.stream()
                 .map(LuaScriptStarter::injectScript)
+                .filter(starterTask -> !luaScriptInjectService.has(starterTask))
                 .forEach(luaScriptInjectService::add);
 
         // put inject result into map that can be referenced from other sources

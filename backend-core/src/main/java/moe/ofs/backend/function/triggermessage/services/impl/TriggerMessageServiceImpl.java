@@ -48,13 +48,6 @@ public class TriggerMessageServiceImpl implements TriggerMessageService {
             return;
         }
 
-        String test = LuaScripts.loadAndPrepare("message/send_message_by_group_id.lua",
-                triggerMessage.getReceiverGroupId(), triggerMessage.getMessage(),
-                triggerMessage.getDuration(), triggerMessage.isClearView());
-        System.out.println("test = " + test);
-//        trigger.action.outTextForGroup(%d, [[%s]], %d, %b)
-
-
         LuaScripts.requestWithFile(LuaQueryEnv.MISSION_SCRIPTING,
                 "message/send_message_by_group_id.lua",
                 triggerMessage.getReceiverGroupId(), triggerMessage.getMessage(),

@@ -41,16 +41,18 @@ public class ScriptInjectionTask {
         this.injectionDoneCallback = injectionDoneCallback;
     }
 
+    // TODO: is it really necessary to compare inject? because it can only be compare in bytecode level;
+    // TODO: remove inject from equals and hashCode conditions for now
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ScriptInjectionTask that = (ScriptInjectionTask) o;
-        return Objects.equals(scriptIdentName, that.scriptIdentName) && Objects.equals(initializrClass, that.initializrClass) && Objects.equals(inject, that.inject);
+        return Objects.equals(scriptIdentName, that.scriptIdentName) && Objects.equals(initializrClass, that.initializrClass);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(scriptIdentName, initializrClass, inject);
+        return Objects.hash(scriptIdentName, initializrClass);
     }
 }
