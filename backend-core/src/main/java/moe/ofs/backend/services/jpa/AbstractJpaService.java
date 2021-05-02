@@ -11,7 +11,7 @@ import java.util.Set;
 public abstract class AbstractJpaService<T extends BaseEntity, R extends JpaRepository<T, Long>> implements CrudService<T> {
     protected R repository;
 
-    public AbstractJpaService(R repository) {
+    protected AbstractJpaService(R repository) {
         this.repository = repository;
     }
 

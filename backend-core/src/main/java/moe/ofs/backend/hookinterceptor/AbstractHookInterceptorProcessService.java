@@ -106,11 +106,11 @@ public abstract class AbstractHookInterceptorProcessService
     @LuaInteract
     @Override
     public void gather(Class<T> tClass) throws IOException {
-        poll(tClass).stream()
-                .peek(hookProcessEntity ->  // match and set player info if exists
-                        playerInfoService.findByNetId(hookProcessEntity.getNetId())
-                                .ifPresent(hookProcessEntity::setPlayer))
-                .forEach(this::processEntity);
+        poll(tClass).forEach(hookProcessEntity -> {  // match and set player info if exists
+            playerInfoService.findByNetId(hookProcessEntity.getNetId())
+                    .ifPresent(hookProcessEntity::setPlayer);
+            processEntity(hookProcessEntity);
+        });
     }
 
     private void processEntity(T t) {

@@ -2,12 +2,12 @@ package moe.ofs.backend;
 
 import moe.ofs.backend.connector.Configurable;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 /**
@@ -104,7 +104,24 @@ public interface Plugin extends Configurable {
     }
 
     default String getFullName() {
+        System.out.println("this.getClass() = " + this.getClass());
+
+        try {
+            File file = new File(getClass().getProtectionDomain().getCodeSource().getLocation()
+                    .toURI());
+            System.out.println("file = " + file);
+            JarFile jar = new JarFile(file);
+            InputStream inputStream = jar.getInputStream(jar.getEntry("/META-INF/ident"));
+            String content = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)).lines()
+                    .collect(Collectors.joining("\n"));
+            System.out.println(content + "<---------------");
+
+        } catch (URISyntaxException | IOException e) {
+            e.printStackTrace();
+        }
+
         InputStream in = this.getClass().getResourceAsStream("/META-INF/ident");
+        System.out.println("in = " + in);
         if(in != null) {
             String content = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)).lines()
                     .collect(Collectors.joining("\n"));

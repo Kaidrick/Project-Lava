@@ -25,20 +25,23 @@ public abstract class AbstractKeyValueStorage<T> implements MissionKeyValueServi
         return name;
     }
 
-    public AbstractKeyValueStorage(String name, LuaQueryEnv env) {
+    protected AbstractKeyValueStorage(String name, LuaQueryEnv env) {
         this.name = name;
         this.env = env;
 
         MissionKeyValueService.super.createRepository();
 
-        // check whether task ofr LuaStorageInitService has been completed, if so, call createRepository()
+        // check whether task for LuaStorageInitService has been completed, if so, call createRepository()
         if (LavaSystemStatus.isInitiated()) {
             // TODO: why null check?
             Map<ScriptInjectionTask, Boolean> checkMap = LavaSystemStatus.getInjectionTaskChecks();
             Optional<ScriptInjectionTask> taskOptional = checkMap.keySet().stream()
                     .filter(task -> LuaStorageInitServiceImpl.class.equals(task.getInitializrClass()))
                     .findAny();
-            if (taskOptional.isPresent() && checkMap.get(taskOptional.get())) {
+
+            boolean b = taskOptional.isPresent() && checkMap.get(taskOptional.get());
+
+            if (b) {
                 createRepository();
             }
         }

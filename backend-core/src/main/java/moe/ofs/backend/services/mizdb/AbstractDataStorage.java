@@ -16,17 +16,11 @@ public abstract class AbstractDataStorage<T> implements MissionDataService<T> {
     protected String name;
     protected LuaQueryEnv env;
 
-    public AbstractDataStorage(String name, LuaQueryEnv env) {
+    protected AbstractDataStorage(String name, LuaQueryEnv env) {
         this.name = name;
         this.env = env;
 
         MissionDataService.super.createRepository();
-
-//        MissionStartObservable missionStartObservable = s -> {
-//            createRepository();
-//            log.info("Creating Data Storage: {} in {}", name, env.getEnv());
-//        };
-//        missionStartObservable.register();
     }
 
     @Override

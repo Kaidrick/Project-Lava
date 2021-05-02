@@ -7,6 +7,7 @@ import moe.ofs.backend.connector.ConnectionManager;
 import moe.ofs.backend.connector.LavaSystemStatus;
 import moe.ofs.backend.dao.LogEntryDao;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,7 +42,7 @@ public class BackendConnectionStatusController {
         this.logEntryDao = logEntryDao;
     }
 
-    @RequestMapping(value = "/status", method = RequestMethod.GET)
+    @GetMapping("/status")
     public ConnectionInfoVo getBackendStatus() {
         ConnectionInfoVo status = new ConnectionInfoVo();
         status.setConnected(manager.isBackendConnected());

@@ -77,7 +77,6 @@ public abstract class AbstractPersistentMissionDataService<T> extends QueryOnAnn
         String dataJson = query(LuaScripts.loadAndPrepare("storage/common/table_fetch_all.lua",
                         getRepositoryName())).get();
 
-//        System.out.println("dataJson = " + dataJson);
         Type type = TypeToken.getParameterized(ArrayList.class, tClass).getType();
 
         ArrayList<T> list = gson.fromJson(dataJson, type);
@@ -99,7 +98,7 @@ public abstract class AbstractPersistentMissionDataService<T> extends QueryOnAnn
             list = gson.fromJson(dataJson, type);
             return new HashSet<>(list);
         } catch (JsonSyntaxException e) {
-            System.out.println("dataJson = " + dataJson);
+            log.info("dataJson = {}", dataJson);
             e.printStackTrace();
 
             return Collections.emptySet();
