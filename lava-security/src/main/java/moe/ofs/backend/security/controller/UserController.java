@@ -27,7 +27,10 @@ public class UserController {
     private final PasswordTypeProvider passwordTypeProvider;
 
     @PostMapping("/validate")
-    public AdminInfo validateRegisteredUser(String username, String password) {
+    public AdminInfo validateRegisteredUser(
+            String username,
+            String password
+    ) {
         PasswordTypeToken token = new PasswordTypeToken(username, password);
         Authentication authenticate = passwordTypeProvider.authenticate(token);
         AdminInfo adminInfo = (AdminInfo) authenticate.getPrincipal();

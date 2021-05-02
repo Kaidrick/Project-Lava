@@ -50,8 +50,7 @@ public class TokenController {
     public LavaUserTokenVo refreshToken(
             @RequestParam("refresh_token") String refreshToken
     ) {
-        if (!accessTokenService.checkRefreshToken(refreshToken))
-            throw new RefreshTokenExpiredException("RefreshToken已过期，请重新认证");
+        if (!accessTokenService.checkRefreshToken(refreshToken)) throw new RefreshTokenExpiredException("RefreshToken已过期，请重新认证");
         LavaUserToken lavaUserToken = accessTokenService.refreshAccessToken(refreshToken);
 
         return lavaUserTokenToVo(lavaUserToken);

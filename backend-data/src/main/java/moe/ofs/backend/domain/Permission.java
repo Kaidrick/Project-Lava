@@ -14,7 +14,6 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Permission extends BaseEntity {
-    private String[] target;
 
     private Set<String> roles = new HashSet<>();
 
@@ -24,5 +23,5 @@ public class Permission extends BaseEntity {
 
     private Set<String> nonGroups = new HashSet<>();
 
-    private boolean requiredAccessToken = true;
+    private boolean requiredAccessToken;
 }

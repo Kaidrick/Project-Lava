@@ -38,7 +38,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(passwordTypeFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
 //                所有请求放行
-//                .antMatchers("/h2-console/**")
                 .anyRequest()
                 .permitAll()
                 .and()
