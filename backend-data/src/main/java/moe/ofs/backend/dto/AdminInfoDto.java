@@ -1,28 +1,71 @@
 package moe.ofs.backend.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
-import moe.ofs.backend.domain.dcs.BaseEntity;
 
 import java.io.Serializable;
 import java.util.List;
 
-@Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@AllArgsConstructor
-@NoArgsConstructor
-public class AdminInfoDto extends BaseEntity implements Serializable {
-
+public class AdminInfoDto extends BaseUserInfoDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String name;
+    public AdminInfoDto() {
+        super("AdminInfoDto");
+    }
 
-    private List<String> roles;
+    public AdminInfoDto(String name, List<String> roles, List<String> groups, String className) {
+        super(name, roles, groups, "AdminInfoDto");
+    }
 
-    private List<String> groups;
+    @Override
+    public String getName() {
+        return super.getName();
+    }
 
+    @Override
+    public void setName(String name) {
+        super.setName(name);
+    }
+
+    @Override
+    public List<String> getRoles() {
+        return super.getRoles();
+    }
+
+    @Override
+    public void setRoles(List<String> roles) {
+        super.setRoles(roles);
+    }
+
+    @Override
+    public List<String> getGroups() {
+        return super.getGroups();
+    }
+
+    @Override
+    public void setGroups(List<String> groups) {
+        super.setGroups(groups);
+    }
+
+    @Override
+    public Long getId() {
+        return super.getId();
+    }
+
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
+    }
+
+    @Override
+    public String getClassName() {
+        return super.getClassName();
+    }
+
+    @Override
+    public void setClassName(String className) {
+        super.setClassName(className);
+    }
 }

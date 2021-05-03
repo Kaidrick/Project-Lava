@@ -13,7 +13,6 @@ import moe.ofs.backend.security.service.AdminInfoService;
 import moe.ofs.backend.security.token.PasswordTypeToken;
 import moe.ofs.backend.vo.AdminInfoVo;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +26,10 @@ public class UserController {
     private final PasswordTypeProvider passwordTypeProvider;
 
     @PostMapping("/validate")
-    public AdminInfo validateRegisteredUser(String username, String password) {
+    public AdminInfo validateRegisteredUser(
+            String username,
+            String password
+    ) {
         PasswordTypeToken token = new PasswordTypeToken(username, password);
         Authentication authenticate = passwordTypeProvider.authenticate(token);
         AdminInfo adminInfo = (AdminInfo) authenticate.getPrincipal();
@@ -49,14 +51,12 @@ public class UserController {
         adminInfo.setName(adminInfoVo.getName());
 
         adminInfoDao.updateById(adminInfo);
-        PasswordTypeToken passwordTypeToken = new PasswordTypeToken(null, adminInfo, null);
-        SecurityContextHolder.getContext().setAuthentication(passwordTypeToken);
         AdminInfoDto adminInfoDto = adminInfoService.getOneById(adminInfo.getId());
         adminInfoDto.setName(name);
         adminInfoService.add(adminInfoDto);
 
         LavaUserToken lavaUserToken = accessTokenService.getByUserName(name);
-        lavaUserToken.setUserInfoToken(passwordTypeToken);
+        lavaUserToken.setBaseUserInfoDto(adminInfoDto);
         accessTokenService.add(lavaUserToken);
 
         return new AdminInfoVo(adminInfo.getId(), name);

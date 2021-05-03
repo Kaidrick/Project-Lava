@@ -2,11 +2,14 @@ package moe.ofs.backend.security.aspect;
 
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.domain.AdminInfo;
 import moe.ofs.backend.domain.LavaUserToken;
 import moe.ofs.backend.domain.Permission;
 import moe.ofs.backend.dto.AdminInfoDto;
+import moe.ofs.backend.dto.BaseUserInfoDto;
 import moe.ofs.backend.security.annotation.CheckPermission;
 import moe.ofs.backend.security.exception.authorization.InsufficientAccessRightException;
 import moe.ofs.backend.security.exception.token.AccessTokenExpiredException;
@@ -14,18 +17,18 @@ import moe.ofs.backend.security.exception.token.InvalidAccessTokenException;
 import moe.ofs.backend.security.provider.PasswordTypeProvider;
 import moe.ofs.backend.security.service.AccessTokenService;
 import moe.ofs.backend.security.service.AdminInfoService;
-import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.lang.reflect.Parameter;
 import java.util.*;
 
 @Aspect
@@ -45,52 +48,56 @@ public class LavaCheckPermissionAspect {
     public void annotatedClasses() {
     }
 
-    @Before("annotatedClasses() || annotatedMethods()")
-    public Object checkPermission(JoinPoint point) {
+    @Around("annotatedClasses() || annotatedMethods()")
+    public Object checkPermission(ProceedingJoinPoint point) throws Throwable {
+
         MethodSignature signature = (MethodSignature) point.getSignature();
         CheckPermission methodAnnotation = signature.getMethod().getAnnotation(CheckPermission.class);
         Class<?> aClass = point.getSignature().getDeclaringType();
         CheckPermission classAnnotation = aClass.getAnnotation(CheckPermission.class);
         Permission permission = getCheckPermission(methodAnnotation, classAnnotation);
 
-        Set<String> groups = permission.getGroups();
-        Set<String> nonGroups = permission.getNonGroups();
-        Set<String> roles = permission.getRoles();
-        Set<String> nonRoles = permission.getNonRoles();
-        if (ObjectUtil.isAllEmpty(groups, nonGroups, roles, nonGroups)) return point.getArgs();
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        BaseUserInfoDto baseUserInfoDto = new BaseUserInfoDto();
+        Authentication authentication = null;
 
         if (permission.isRequiredAccessToken()) {
             HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
             String accessToken = request.getHeader("access_token");
-            if (accessToken == null) throw new InvalidAccessTokenException("accessToken不能为空！");
+            if (StrUtil.isBlank(accessToken)) throw new InvalidAccessTokenException("accessToken不能为空！");
 
-//            获取token中存储的信息，调用provider校验信息
             boolean b = accessTokenService.checkAccessToken(accessToken);
             if (!b) throw new AccessTokenExpiredException("accessToken已过期，请使用refreshToken刷新");
             LavaUserToken lavaUserToken = accessTokenService.getByAccessToken(accessToken);
-            Authentication token = (Authentication) lavaUserToken.getUserInfoToken();
+            baseUserInfoDto = lavaUserToken.getBaseUserInfoDto();
 
-            // 判断是否重新认证用户信息
-            if (!authentication.getName().equals(token.getName())) {
-                Authentication authenticate = passwordTypeProvider.authenticate(accessToken);
-//            将用户认证信息存入session
-                SecurityContextHolder.getContext().setAuthentication(authenticate);
+            if (baseUserInfoDto.getClassName().equals(AdminInfoDto.class.getSimpleName())) {
+                authentication = passwordTypeProvider.authenticate(accessToken);
             }
-            username = token.getName();
+
         }
 
-        if (username.equals("anonymousUser")) throw new InsufficientAccessRightException("请先登录！");
-        AdminInfoDto adminInfoDto = adminInfoService.getOneByName(username);
+        Set<String> groups = permission.getGroups();
+        Set<String> nonGroups = permission.getNonGroups();
+        Set<String> roles = permission.getRoles();
+        Set<String> nonRoles = permission.getNonRoles();
+
+        Parameter[] parameters = signature.getMethod().getParameters();
+        int index = -1;
+        if (parameters.length > 0) {
+            for (int i = 0; i < parameters.length; i++) {
+                if (parameters[i].getParameterizedType().equals(Authentication.class)) index = i;
+            }
+        }
+
+        if (ObjectUtil.isAllEmpty(groups, nonGroups, roles, nonGroups))
+            return point.proceed(setTargetMethodArgs(point.getArgs(), index, authentication));
 
         boolean inAllowedGroups, hasAllowedRoles;
-        inAllowedGroups = checkArray(adminInfoDto.getGroups(), groups, nonGroups);
-        hasAllowedRoles = checkArray(adminInfoDto.getRoles(), roles, nonRoles);
+        inAllowedGroups = checkArray(baseUserInfoDto.getGroups(), groups, nonGroups);
+        hasAllowedRoles = checkArray(baseUserInfoDto.getRoles(), roles, nonRoles);
 
         if (inAllowedGroups && hasAllowedRoles) {
-            return point.getArgs();
+            return point.proceed(setTargetMethodArgs(point.getArgs(), index, authentication));
         } else {
             throw new InsufficientAccessRightException("无权访问！");
         }
@@ -98,15 +105,23 @@ public class LavaCheckPermissionAspect {
 
     private Permission getCheckPermission(CheckPermission methodAnnotation, CheckPermission classAnnotation) {
         Permission permission = new Permission();
-        CheckPermission check = methodAnnotation != null ? methodAnnotation : classAnnotation;
-        if (check != null) {
+        if (classAnnotation != null) {
             permission.getGroups().addAll(Arrays.asList(classAnnotation.groups()));
-            permission.getRoles().addAll(Arrays.asList(classAnnotation.roles()));
             permission.getNonGroups().addAll(Arrays.asList(classAnnotation.nonGroups()));
+            permission.getRoles().addAll(Arrays.asList(classAnnotation.roles()));
             permission.getNonRoles().addAll(Arrays.asList(classAnnotation.nonRoles()));
+            permission.setRequiredAccessToken(classAnnotation.requiredAccessToken());
         }
-        return permission;
 
+        if (methodAnnotation != null) {
+            permission.getGroups().addAll(Arrays.asList(methodAnnotation.groups()));
+            permission.getNonGroups().addAll(Arrays.asList(methodAnnotation.nonGroups()));
+            permission.getRoles().addAll(Arrays.asList(methodAnnotation.roles()));
+            permission.getNonRoles().addAll(Arrays.asList(methodAnnotation.nonRoles()));
+            permission.setRequiredAccessToken(methodAnnotation.requiredAccessToken());
+        }
+
+        return permission;
     }
 
     private boolean checkArray(List<String> test, Set<String> exist, Set<String> noExist) {
@@ -143,4 +158,13 @@ public class LavaCheckPermissionAspect {
         return b.size() == exist.size();
     }
 
+    private Object[] setTargetMethodArgs(Object[] args, int index, Authentication authentication) {
+        if (args == null || index == -1) {
+            return args;
+        }
+
+        List<Object> objects = Arrays.asList(args);
+        if (objects.get(index) == null) objects.set(index, authentication);
+        return objects.toArray();
+    }
 }

@@ -12,6 +12,7 @@ import moe.ofs.backend.domain.AdminInfo;
 import moe.ofs.backend.domain.LavaUserToken;
 import moe.ofs.backend.domain.TokenInfo;
 import moe.ofs.backend.domain.dcs.BaseEntity;
+import moe.ofs.backend.dto.BaseUserInfoDto;
 import moe.ofs.backend.security.exception.token.InvalidAccessTokenException;
 import moe.ofs.backend.security.exception.token.InvalidRefreshTokenException;
 import moe.ofs.backend.security.service.AccessTokenService;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 public class AccessTokenMapService extends AbstractMapService<LavaUserToken> implements AccessTokenService {
     private final TokenInfoDao tokenInfoDao;
     private final AdminInfoDao adminInfoDao;
+    private final AdminInfoMapService adminInfoMapService;
 
     public LavaUserToken generate() {
         LavaUserToken token = new LavaUserToken();
@@ -48,10 +50,10 @@ public class AccessTokenMapService extends AbstractMapService<LavaUserToken> imp
 
     public void update(LavaUserToken lavaUserToken) {
         deleteById(lavaUserToken.getId());
-        AdminInfo adminInfo =(AdminInfo) ((PasswordTypeToken) lavaUserToken.getUserInfoToken()).getPrincipal();
+        BaseUserInfoDto baseUserInfoDto = lavaUserToken.getBaseUserInfoDto();
 
-        tokenInfoDao.delete(Wrappers.<TokenInfo>lambdaQuery().eq(TokenInfo::getUserId, adminInfo.getId()));
-        TokenInfo tokenInfo = new TokenInfo(lavaUserToken.getAccessToken(), adminInfo.getId(), lavaUserToken.getAccessTokenExpireTime(), lavaUserToken.getRefreshToken(), lavaUserToken.getRefreshTokenExpireTime());
+        tokenInfoDao.delete(Wrappers.<TokenInfo>lambdaQuery().eq(TokenInfo::getUserId, baseUserInfoDto.getId()));
+        TokenInfo tokenInfo = new TokenInfo(lavaUserToken.getAccessToken(), baseUserInfoDto.getId(), lavaUserToken.getAccessTokenExpireTime(), lavaUserToken.getRefreshToken(), lavaUserToken.getRefreshTokenExpireTime());
         tokenInfoDao.insert(tokenInfo);
         lavaUserToken.setId(tokenInfo.getId());
         add(lavaUserToken);
@@ -71,8 +73,8 @@ public class AccessTokenMapService extends AbstractMapService<LavaUserToken> imp
     @Override
     public LavaUserToken getByUserName(String userName) {
         List<LavaUserToken> collect = findAll().stream().filter(v -> {
-            Authentication token = (Authentication) v.getUserInfoToken();
-            return token.getName().equals(userName);
+            BaseUserInfoDto baseUserInfoDto = v.getBaseUserInfoDto();
+            return baseUserInfoDto.getName().equals(userName);
         }).collect(Collectors.toList());
         if (collect.isEmpty()) throw new RuntimeException("userName不存在，请检查");
         return collect.get(0);
@@ -152,7 +154,8 @@ public class AccessTokenMapService extends AbstractMapService<LavaUserToken> imp
         Map<Long, AdminInfo> adminInfoMap = adminInfoDao.selectList(null).stream().collect(Collectors.toMap(AdminInfo::getId, v -> v));
         tokenInfos.forEach(v -> {
             LavaUserToken lavaUserToken = tokenInfoToLavaUserToken(v);
-            lavaUserToken.setUserInfoToken(adminInfoMap.get(v.getUserId()));
+            AdminInfo adminInfo = adminInfoMap.get(v.getUserId());
+            lavaUserToken.setBaseUserInfoDto(adminInfoMapService.adminInfoToDto(adminInfo));
             add(lavaUserToken);
         });
     }

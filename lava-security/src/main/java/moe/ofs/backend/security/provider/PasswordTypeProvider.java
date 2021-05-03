@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import moe.ofs.backend.dao.AdminInfoDao;
 import moe.ofs.backend.domain.AdminInfo;
-import moe.ofs.backend.dto.AdminInfoDto;
 import moe.ofs.backend.security.exception.authentication.BadLoginCredentialsException;
 import moe.ofs.backend.security.exception.token.InvalidAccessTokenException;
 import moe.ofs.backend.security.service.AdminInfoService;
@@ -29,18 +28,21 @@ public class PasswordTypeProvider implements AuthenticationProvider {
         AdminInfo adminInfo = adminInfoDao.selectOne(Wrappers.<AdminInfo>lambdaQuery().eq(AdminInfo::getName, principal).eq(AdminInfo::getPassword, password));
 
         if (adminInfo == null) throw new BadLoginCredentialsException("用户名或密码不正确");
-
-        AdminInfoDto dto = adminInfoService.adminInfoToDto(adminInfo);
-        adminInfo.setPassword(null);
-        adminInfoService.add(dto);
-
+        addAdminInfoDto(adminInfo);
         return new PasswordTypeToken(null, adminInfo, null);
     }
 
     public Authentication authenticate(String accessToken) {
         AdminInfo adminInfo = adminInfoDao.selectOneByAccessToken(accessToken);
         if (adminInfo == null) throw new InvalidAccessTokenException("AccessToken已过期或非法");
+
+        addAdminInfoDto(adminInfo);
         return new PasswordTypeToken(null, adminInfo, null);
+    }
+
+    private void addAdminInfoDto(AdminInfo adminInfo) {
+        adminInfo.setPassword(null);
+        adminInfoService.getOneByName(adminInfo.getName());
     }
 
     public boolean supports(Class<?> authentication) {

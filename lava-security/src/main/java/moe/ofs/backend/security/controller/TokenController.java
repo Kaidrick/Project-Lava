@@ -6,9 +6,11 @@ import moe.ofs.backend.dao.TokenInfoDao;
 import moe.ofs.backend.domain.AdminInfo;
 import moe.ofs.backend.domain.LavaUserToken;
 import moe.ofs.backend.domain.TokenInfo;
+import moe.ofs.backend.dto.AdminInfoDto;
 import moe.ofs.backend.security.exception.token.RefreshTokenExpiredException;
 import moe.ofs.backend.security.provider.PasswordTypeProvider;
 import moe.ofs.backend.security.service.AccessTokenService;
+import moe.ofs.backend.security.service.impl.AdminInfoMapService;
 import moe.ofs.backend.security.token.PasswordTypeToken;
 import moe.ofs.backend.vo.LavaUserTokenVo;
 import org.springframework.security.core.Authentication;
@@ -24,6 +26,7 @@ public class TokenController {
     private final AccessTokenService accessTokenService;
     private final TokenInfoDao tokenInfoDao;
     private final PasswordTypeProvider passwordTypeProvider;
+    private final AdminInfoMapService adminInfoMapService;
 
     @PostMapping("/get")
     public LavaUserTokenVo getToken(
@@ -37,7 +40,9 @@ public class TokenController {
         tokenInfoDao.delete(Wrappers.<TokenInfo>lambdaQuery().eq(TokenInfo::getUserId, adminInfo.getId()));
 
         LavaUserToken generate = accessTokenService.generate();
-        generate.setUserInfoToken(authenticate);
+        AdminInfoDto adminInfoDto = adminInfoMapService.adminInfoToDto(adminInfo);
+
+        generate.setBaseUserInfoDto(adminInfoDto);
         TokenInfo tokenInfo = new TokenInfo(generate.getAccessToken(), adminInfo.getId(), generate.getAccessTokenExpireTime(), generate.getRefreshToken(), generate.getRefreshTokenExpireTime());
         tokenInfoDao.insert(tokenInfo);
         generate.setId(tokenInfo.getId());
