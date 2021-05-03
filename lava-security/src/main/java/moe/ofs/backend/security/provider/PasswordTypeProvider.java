@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import moe.ofs.backend.dao.AdminInfoDao;
 import moe.ofs.backend.domain.AdminInfo;
-import moe.ofs.backend.dto.AdminInfoDto;
 import moe.ofs.backend.security.exception.authentication.BadLoginCredentialsException;
 import moe.ofs.backend.security.exception.token.InvalidAccessTokenException;
 import moe.ofs.backend.security.service.AdminInfoService;
@@ -41,10 +40,9 @@ public class PasswordTypeProvider implements AuthenticationProvider {
         return new PasswordTypeToken(null, adminInfo, null);
     }
 
-    private void addAdminInfoDto(AdminInfo adminInfo){
-        AdminInfoDto dto = adminInfoService.adminInfoToDto(adminInfo);
+    private void addAdminInfoDto(AdminInfo adminInfo) {
         adminInfo.setPassword(null);
-        adminInfoService.add(dto);
+        adminInfoService.getOneByName(adminInfo.getName());
     }
 
     public boolean supports(Class<?> authentication) {

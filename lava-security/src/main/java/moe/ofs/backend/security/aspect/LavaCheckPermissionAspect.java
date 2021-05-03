@@ -6,8 +6,10 @@ import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.AdminInfo;
+import moe.ofs.backend.domain.LavaUserToken;
 import moe.ofs.backend.domain.Permission;
 import moe.ofs.backend.dto.AdminInfoDto;
+import moe.ofs.backend.dto.BaseUserInfoDto;
 import moe.ofs.backend.security.annotation.CheckPermission;
 import moe.ofs.backend.security.exception.authorization.InsufficientAccessRightException;
 import moe.ofs.backend.security.exception.token.AccessTokenExpiredException;
@@ -55,7 +57,7 @@ public class LavaCheckPermissionAspect {
         CheckPermission classAnnotation = aClass.getAnnotation(CheckPermission.class);
         Permission permission = getCheckPermission(methodAnnotation, classAnnotation);
 
-        AdminInfoDto adminInfoDto = new AdminInfoDto();
+        BaseUserInfoDto baseUserInfoDto = new BaseUserInfoDto();
         Authentication authentication = null;
 
         if (permission.isRequiredAccessToken()) {
@@ -65,11 +67,11 @@ public class LavaCheckPermissionAspect {
 
             boolean b = accessTokenService.checkAccessToken(accessToken);
             if (!b) throw new AccessTokenExpiredException("accessToken已过期，请使用refreshToken刷新");
-            Object userInfoToken = accessTokenService.getByAccessToken(accessToken).getUserInfoToken();
+            LavaUserToken lavaUserToken = accessTokenService.getByAccessToken(accessToken);
+            baseUserInfoDto = lavaUserToken.getBaseUserInfoDto();
 
-            if (userInfoToken instanceof AdminInfo) {
+            if (baseUserInfoDto.getClassName().equals(AdminInfoDto.class.getSimpleName())) {
                 authentication = passwordTypeProvider.authenticate(accessToken);
-                adminInfoDto = adminInfoService.getOneByName(authentication.getName());
             }
 
         }
@@ -91,8 +93,8 @@ public class LavaCheckPermissionAspect {
             return point.proceed(setTargetMethodArgs(point.getArgs(), index, authentication));
 
         boolean inAllowedGroups, hasAllowedRoles;
-        inAllowedGroups = checkArray(adminInfoDto.getGroups(), groups, nonGroups);
-        hasAllowedRoles = checkArray(adminInfoDto.getRoles(), roles, nonRoles);
+        inAllowedGroups = checkArray(baseUserInfoDto.getGroups(), groups, nonGroups);
+        hasAllowedRoles = checkArray(baseUserInfoDto.getRoles(), roles, nonRoles);
 
         if (inAllowedGroups && hasAllowedRoles) {
             return point.proceed(setTargetMethodArgs(point.getArgs(), index, authentication));
@@ -108,7 +110,7 @@ public class LavaCheckPermissionAspect {
             permission.getNonGroups().addAll(Arrays.asList(classAnnotation.nonGroups()));
             permission.getRoles().addAll(Arrays.asList(classAnnotation.roles()));
             permission.getNonRoles().addAll(Arrays.asList(classAnnotation.nonRoles()));
-            permission.setRequiredAccessToken(methodAnnotation.requiredAccessToken());
+            permission.setRequiredAccessToken(classAnnotation.requiredAccessToken());
         }
 
         if (methodAnnotation != null) {
