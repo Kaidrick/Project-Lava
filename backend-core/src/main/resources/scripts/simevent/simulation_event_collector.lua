@@ -19,7 +19,7 @@ local collection = {
 
     --[world.event.S_EVENT_DEAD] = true,
     [world.event.S_EVENT_PILOT_DEAD] = true,
-    --[world.event.S_EVENT_UNIT_LOST] = true,
+    [world.event.S_EVENT_UNIT_LOST] = true,
     [world.event.S_EVENT_LANDING_AFTER_EJECTION] = true,
 
 
