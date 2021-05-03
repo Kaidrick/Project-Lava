@@ -4,10 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.atlas.services.AtlasService;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -24,8 +21,7 @@ public class AtlasController {
     }
 
     //    @ApiOperation(value = "Retrieves map tile image by theater, level, x, and y")
-    @RequestMapping(value = "{theater}/{level}/{x}/{y}",
-            method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "{theater}/{level}/{x}/{y}", produces = MediaType.IMAGE_PNG_VALUE)
     public @ResponseBody
     byte[] getTile(
             @PathVariable

@@ -24,9 +24,12 @@ import java.util.stream.Collectors;
 public class AirdromeDataCollector {
     private static final List<ParkingInfo> parkingList = new ArrayList<>();
 
-    private static final String sampleAirplaneType = "Christen Eagle II";
-    private static final String sampleHelicopterType = "OH-58D";
-    private static final String sampleUnitName = "Test Unit";
+    private static final String SAMPLE_AIRPLANE_TYPE = "Christen Eagle II";
+    private static final String SAMPLE_HELICOPTER_TYPE = "OH-58D";
+    private static final String SAMPLE_UNIT_NAME = "Test Unit";
+
+    private AirdromeDataCollector() {
+    }
 
     public static void collect() {
 
@@ -39,18 +42,18 @@ public class AirdromeDataCollector {
 
         // build sample unit
         Unit.UnitBuilder airplaneBuilder = new Unit.UnitBuilder();
-        Unit airplaneUnit = airplaneBuilder.setCategory(Unit.Category.AIRPLANE).setName(sampleUnitName)
+        Unit airplaneUnit = airplaneBuilder.setCategory(Unit.Category.AIRPLANE).setName(SAMPLE_UNIT_NAME)
                 .setSkill(Unit.Skill.HIGH)
-                .setType(sampleAirplaneType).build();
+                .setType(SAMPLE_AIRPLANE_TYPE).build();
 
         Unit.UnitBuilder takeOffAirplaneBuilder = new Unit.UnitBuilder();
-        Unit takeOffAirplane = takeOffAirplaneBuilder.setCategory(Unit.Category.AIRPLANE).setName(sampleUnitName)
-                .setSkill(Unit.Skill.HIGH).setType(sampleAirplaneType).build();
+        Unit takeOffAirplane = takeOffAirplaneBuilder.setCategory(Unit.Category.AIRPLANE).setName(SAMPLE_UNIT_NAME)
+                .setSkill(Unit.Skill.HIGH).setType(SAMPLE_AIRPLANE_TYPE).build();
 
         Unit.UnitBuilder helicopterBuilder = new Unit.UnitBuilder();
-        Unit helicopterUnit = helicopterBuilder.setCategory(Unit.Category.HELICOPTER).setName(sampleUnitName)
+        Unit helicopterUnit = helicopterBuilder.setCategory(Unit.Category.HELICOPTER).setName(SAMPLE_UNIT_NAME)
                 .setSkill(Unit.Skill.HIGH)
-                .setType(sampleHelicopterType).build();
+                .setType(SAMPLE_HELICOPTER_TYPE).build();
 
         Gson gson = new Gson();
 

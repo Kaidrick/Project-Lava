@@ -3,11 +3,14 @@ package moe.ofs.backend;
 import moe.ofs.backend.connector.Configurable;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 /**
@@ -104,15 +107,31 @@ public interface Plugin extends Configurable {
     }
 
     default String getFullName() {
-        InputStream in = this.getClass().getResourceAsStream("/META-INF/ident");
-        if(in != null) {
-            String content = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)).lines()
-                    .collect(Collectors.joining("\n"));
-            System.out.println("content = " + content);
-            return content;
-        } else {
-//            throw new RuntimeException("Plugin identification must be specified or auto-generated");
-            return null;  // TODO: enforce this later
+        File file;
+        try {
+            file = new File(getClass().getProtectionDomain().getCodeSource().getLocation()
+                    .toURI());
+
+            if (!file.toString().endsWith(".jar")) {
+                return "";
+            }
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return "";
         }
+
+        try (JarFile jar = new JarFile(file)) {
+            InputStream inputStream = jar.getInputStream(jar.getEntry("META-INF/ident"));
+
+            return new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8)).lines()
+                    .collect(Collectors.joining("\n"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //            throw new RuntimeException("Plugin identification must be specified or auto-generated");
+        return null;  // TODO: enforce this later
+
     }
 }

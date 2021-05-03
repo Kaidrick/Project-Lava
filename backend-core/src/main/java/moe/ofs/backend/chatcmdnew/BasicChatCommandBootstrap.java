@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Component
@@ -21,6 +22,9 @@ public class BasicChatCommandBootstrap {
     private final TriggerMessageService triggerMessageService;
     private final NetMessageService netMessageService;
     private final PlayerInfoService playerInfoService;
+
+    private final Random random = new Random();
+
 
     public BasicChatCommandBootstrap(ChatCommandSetManageService commandSetManageService,
                                      TriggerMessageService triggerMessageService,
@@ -88,10 +92,12 @@ public class BasicChatCommandBootstrap {
                                 try {
                                     bound = Double.valueOf(chatCommandProcessEntity.getMessage().substring(
                                             chatCommandProcessEntity.getKeyword().length())).intValue();
-                                } catch (NumberFormatException ignored) {}
+                                } catch (NumberFormatException ignored) {
+                                    //
+                                }
                             }
 
-                            int diceRoll = Math.abs((int) Math.ceil(Math.random() * bound));
+                            int diceRoll = random.nextInt(bound);
 
                             TriggerMessage message = TriggerMessage.builder()
                                     .receiverGroupId(0)

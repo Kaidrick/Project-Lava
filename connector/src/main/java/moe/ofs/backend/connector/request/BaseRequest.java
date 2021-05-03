@@ -39,7 +39,7 @@ public abstract class BaseRequest {
         return params;
     }
 
-    public BaseRequest(Level level) {
+    protected BaseRequest(Level level) {
         this.level = level;
         this.port = level.getPort();
         this.uuid = UUID.randomUUID();

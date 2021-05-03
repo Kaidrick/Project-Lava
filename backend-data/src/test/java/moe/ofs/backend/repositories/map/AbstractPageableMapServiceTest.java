@@ -6,6 +6,7 @@ import moe.ofs.backend.domain.pagination.PageObject;
 import moe.ofs.backend.domain.pagination.PageVo;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -47,7 +48,7 @@ class AbstractPageableMapServiceTest {
         pageObject.setPageSize(10);
 
         PageVo<PlayerInfo> result = service.findPage(pageObject);
-        Assert.assertEquals(2, result.getData().size());
+        Assertions.assertEquals(2, result.getData().size());
 
         // add a new player info object
         PlayerInfo playerInfo = new PlayerInfo();
@@ -61,8 +62,8 @@ class AbstractPageableMapServiceTest {
         service.save(playerInfo);
 
         PageVo<PlayerInfo> resultAfterSave = service.findPage(pageObject);
-        Assert.assertEquals(3, resultAfterSave.getData().size());
-        Assert.assertEquals("Player 666", resultAfterSave.getData().get(2).getName());
+        Assertions.assertEquals(3, resultAfterSave.getData().size());
+        Assertions.assertEquals("Player 666", resultAfterSave.getData().get(2).getName());
 
         service.delete(playerInfo);
     }
