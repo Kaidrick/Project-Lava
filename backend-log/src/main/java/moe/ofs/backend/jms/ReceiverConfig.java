@@ -43,6 +43,17 @@ public class ReceiverConfig {
     }
 
     @Bean
+    public DefaultJmsListenerContainerFactory jmsQueueListenerContainerFactory() {
+        DefaultJmsListenerContainerFactory factory =
+                new DefaultJmsListenerContainerFactory();
+
+        factory.setConnectionFactory(receiverActiveMQConnectionFactory());
+        factory.setPubSubDomain(false);
+
+        return factory;
+    }
+
+    @Bean
     public JmsListenerContainerFactory<?> jsonStringListenerContainerFactory(
             MessageConverter jacksonJmsMessageConverter) {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();

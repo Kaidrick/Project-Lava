@@ -36,6 +36,13 @@ public class SenderConfig {
     }
 
     @Bean
+    public JmsTemplate jmsQueueTemplate() {
+        JmsTemplate jmsTemplate = new JmsTemplate(cachingConnectionFactory());
+        jmsTemplate.setPubSubDomain(false);
+        return jmsTemplate;
+    }
+
+    @Bean
     public Sender sender() {
         return new Sender();
     }

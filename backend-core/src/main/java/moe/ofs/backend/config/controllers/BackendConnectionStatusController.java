@@ -6,11 +6,9 @@ import moe.ofs.backend.config.model.ConnectionInfoVo;
 import moe.ofs.backend.connector.ConnectionManager;
 import moe.ofs.backend.connector.LavaSystemStatus;
 import moe.ofs.backend.dao.LogEntryDao;
+import moe.ofs.backend.jms.Sender;
 import org.springframework.jms.annotation.JmsListener;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
@@ -31,15 +29,18 @@ public class BackendConnectionStatusController {
 
     private final AtomicInteger exportObjectCount = new AtomicInteger(0);
 
+    private final Sender sender;
+
     // TODO: change to "in-game" player count in the future, because ED webGui already has this info
     private final AtomicInteger connectedPlayerCount = new AtomicInteger(0);
 
     public BackendConnectionStatusController(ConnectionManager manager,
                                              BackendOperatingStatusMonitorService statusMonitorService,
-                                             LogEntryDao logEntryDao) {
+                                             LogEntryDao logEntryDao, Sender sender) {
         this.manager = manager;
         this.statusMonitorService = statusMonitorService;
         this.logEntryDao = logEntryDao;
+        this.sender = sender;
     }
 
     @GetMapping("/status")
@@ -65,6 +66,16 @@ public class BackendConnectionStatusController {
             selector = "type = 'depawn'")
     public void receiveUnitDespawnMessage(TextMessage message) throws JMSException {
         exportObjectCount.decrementAndGet();
+    }
+
+    @JmsListener(destination = "luap", containerFactory = "jmsQueueListenerContainerFactory")
+    public void listenForLuaStateActivities(TextMessage textMessage) throws JMSException {
+        log.info(textMessage.getText());
+    }
+
+    @PostMapping("lua/msg-test")
+    public void sendMessageToLuaStateStomp(@RequestBody String text) {
+        sender.sendToQueueAsJson("luaq", text, "speaker");
     }
 
 //    @GetMapping("syslog")
