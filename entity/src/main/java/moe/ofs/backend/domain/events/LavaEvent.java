@@ -25,4 +25,8 @@ public final class LavaEvent extends SimEvent {
         this.type = simEvent.type;
         this.time = simEvent.time;
     }
+
+    public LavaEvent(EventType eventType) {
+        this.type = eventType;
+    }
 }

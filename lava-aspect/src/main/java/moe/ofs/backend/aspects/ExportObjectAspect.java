@@ -3,6 +3,8 @@ package moe.ofs.backend.aspects;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.behaviors.spawnctl.ControlAction;
 import moe.ofs.backend.domain.dcs.poll.ExportObject;
+import moe.ofs.backend.domain.events.EventType;
+import moe.ofs.backend.domain.events.LavaEvent;
 import moe.ofs.backend.jms.Sender;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -42,8 +44,15 @@ public class ExportObjectAspect {
         Object object = joinPoint.getArgs()[0];
 //        log.info("{} - {}", joinPoint.toShortString(), object);
         if (object instanceof ExportObject) {
+            ExportObject exportObject = (ExportObject) object;
+
             sender.sendToTopicAsJson("lava.spawn-control.export-object",
-                    object, ControlAction.SPAWN.getActionName());
+                    exportObject, ControlAction.SPAWN.getActionName());
+
+            LavaEvent inducedLavaEvent = new LavaEvent(EventType.BIRTH);
+            inducedLavaEvent.setInitiator(exportObject);
+
+            sender.sendToTopicAsJson("lava.event", inducedLavaEvent, inducedLavaEvent.getType().name());
         }
     }
 
@@ -51,8 +60,15 @@ public class ExportObjectAspect {
     public void logExportUnitDespawn(JoinPoint joinPoint) {
         Object object = joinPoint.getArgs()[0];
         if (object instanceof ExportObject) {
+            ExportObject exportObject = (ExportObject) object;
+
             sender.sendToTopicAsJson("lava.spawn-control.export-object",
                     object, ControlAction.DESPAWN.getActionName());
+
+            LavaEvent inducedLavaEvent = new LavaEvent(EventType.DEAD);
+            inducedLavaEvent.setInitiator(exportObject);
+
+            sender.sendToTopicAsJson("lava.event", inducedLavaEvent, inducedLavaEvent.getType().name());
         }
     }
 
