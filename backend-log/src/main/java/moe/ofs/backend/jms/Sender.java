@@ -6,9 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.core.JmsTemplate;
 
+import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
 import javax.jms.TextMessage;
 import java.io.Serializable;
+import java.util.Map;
 
 @Slf4j
 public class Sender {
@@ -33,6 +35,24 @@ public class Sender {
             textMessage.setText(gson.toJson(message));
             textMessage.setStringProperty("type", type);
 
+            return textMessage;
+        });
+    }
+
+    public void sendToQueue(String queue, String message, Map<String, String> headers) {
+        jmsQueueTemplate.send(queue, session -> {
+            TextMessage textMessage = session.createTextMessage();
+            textMessage.setText(message);
+
+            if (null != headers) {
+                headers.forEach((key, value) -> {
+                    try {
+                        textMessage.setStringProperty(key, value);
+                    } catch (JMSException e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
             return textMessage;
         });
     }

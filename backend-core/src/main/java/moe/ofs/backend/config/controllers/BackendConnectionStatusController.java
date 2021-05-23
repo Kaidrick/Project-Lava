@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -68,14 +71,34 @@ public class BackendConnectionStatusController {
         exportObjectCount.decrementAndGet();
     }
 
-    @JmsListener(destination = "luap", containerFactory = "jmsQueueListenerContainerFactory")
+    @JmsListener(destination = "luap", containerFactory = "jmsQueueListenerContainerFactory",
+            selector = "JMSType = 'heartbeat'")
     public void listenForLuaStateActivities(TextMessage textMessage) throws JMSException {
-        log.info(textMessage.getText());
+        log.info("heartbeat received: {}", textMessage.getText());
+    }
+
+    @JmsListener(destination = "luap", containerFactory = "jmsQueueListenerContainerFactory",
+            selector = "action like 'dostring:%'")
+    public void listenForActionReceipt(TextMessage textMessage) throws JMSException {
+        log.info("Lua do string action receipt: {}", textMessage.getText());
     }
 
     @PostMapping("lua/msg-test")
     public void sendMessageToLuaStateStomp(@RequestBody String text) {
         sender.sendToQueueAsJson("luaq", text, "speaker");
+    }
+
+    @PostMapping("lua/action")
+    public void testStringInLua(@RequestBody Map<String, Object> map) {
+        String message = String.valueOf(map.get("luaString"));
+        String action = String.valueOf(map.get("action"));
+        String luaState = String.valueOf(map.get("luaState"));
+        UUID messageId = UUID.randomUUID();
+        Map<String, String> headers = new HashMap<>();
+        headers.put("route", luaState);
+        headers.put("action", action);
+        headers.put("action-id", messageId.toString());
+        sender.sendToQueue("luaq", message, headers);
     }
 
 //    @GetMapping("syslog")
