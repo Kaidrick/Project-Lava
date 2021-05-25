@@ -7,15 +7,16 @@ import moe.ofs.backend.connector.ConnectionManager;
 import moe.ofs.backend.connector.LavaSystemStatus;
 import moe.ofs.backend.dao.LogEntryDao;
 import moe.ofs.backend.jms.Sender;
+import org.apache.activemq.artemis.jms.client.ActiveMQDestination;
+import org.apache.activemq.artemis.jms.client.ActiveMQTopic;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.web.bind.annotation.*;
 
+import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -81,6 +82,11 @@ public class BackendConnectionStatusController {
             selector = "action like 'dostring:%'")
     public void listenForActionReceipt(TextMessage textMessage) throws JMSException {
         log.info("Lua do string action receipt: {}", textMessage.getText());
+
+        Destination destination = new ActiveMQTopic("frontend.bus");
+        textMessage.setJMSDestination(destination);
+
+        sender.sendTopicTextMessage(textMessage);
     }
 
     @PostMapping("lua/msg-test")

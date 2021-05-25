@@ -28,6 +28,14 @@ public class Sender {
         jmsTemplate.convertAndSend("test.topic", message);
     }
 
+    public void sendQueueTextMessage(TextMessage textMessage) throws JMSException {
+        jmsTemplate.send(textMessage.getJMSDestination(), session -> textMessage);
+    }
+
+    public void sendTopicTextMessage(TextMessage textMessage) throws JMSException {
+        jmsQueueTemplate.send(textMessage.getJMSDestination(), session -> textMessage);
+    }
+
     public <T> void sendToTopicAsJson(String topic, T message, String type) {
         jmsTemplate.send(topic, session -> {
             Gson gson = new Gson();
