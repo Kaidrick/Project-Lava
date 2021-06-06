@@ -5,15 +5,20 @@ import cn.hutool.core.util.ObjectUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.Permission;
+import moe.ofs.backend.dto.AdminInfoDto;
 import moe.ofs.backend.dto.BaseUserInfoDto;
 import moe.ofs.backend.security.annotation.CheckPermission;
 import moe.ofs.backend.security.exception.authorization.InsufficientAccessRightException;
 import moe.ofs.backend.security.exception.token.AccessTokenExpiredException;
+import moe.ofs.backend.security.service.AdminInfoService;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.orm.hibernate5.SpringSessionContext;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -26,6 +31,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class LavaCheckPermissionAspect {
+    private final AdminInfoService adminInfoService;
 
     @Pointcut("@annotation(moe.ofs.backend.security.annotation.CheckPermission)")
     public void annotatedMethods() {
@@ -45,6 +51,7 @@ public class LavaCheckPermissionAspect {
         Permission permission = getCheckPermission(methodAnnotation, classAnnotation);
 
         BaseUserInfoDto baseUserInfoDto = new BaseUserInfoDto();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (permission.isRequiredAccessToken()) {
             HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
@@ -52,12 +59,22 @@ public class LavaCheckPermissionAspect {
             if (!accessTokenValidate) throw new AccessTokenExpiredException("AccessToken不存在或已失效");
         }
 
+        String userName = authentication.getName();
+
+        try {
+            AdminInfoDto adminInfoDto = adminInfoService.getOneByName(userName);
+            baseUserInfoDto.setGroups(adminInfoDto.getGroups());
+            baseUserInfoDto.setRoles(adminInfoDto.getRoles());
+        } catch (Exception ignored) {
+
+        }
+
         Set<String> groups = permission.getGroups();
         Set<String> nonGroups = permission.getNonGroups();
         Set<String> roles = permission.getRoles();
         Set<String> nonRoles = permission.getNonRoles();
 
-        if (ObjectUtil.isAllEmpty(groups, nonGroups, roles, nonGroups))
+        if (ObjectUtil.isAllEmpty(groups, nonGroups, roles, nonRoles))
             return point.getArgs();
 
         boolean inAllowedGroups, hasAllowedRoles;
