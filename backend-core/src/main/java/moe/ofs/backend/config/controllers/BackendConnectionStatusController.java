@@ -12,6 +12,7 @@ import org.apache.activemq.artemis.jms.client.ActiveMQTopic;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.web.bind.annotation.*;
 
+import javax.jms.BytesMessage;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.TextMessage;

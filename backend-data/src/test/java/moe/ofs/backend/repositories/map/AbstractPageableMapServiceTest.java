@@ -4,7 +4,6 @@ import moe.ofs.backend.common.AbstractPageableMapService;
 import moe.ofs.backend.domain.dcs.poll.PlayerInfo;
 import moe.ofs.backend.domain.pagination.PageObject;
 import moe.ofs.backend.domain.pagination.PageVo;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,25 +83,25 @@ class AbstractPageableMapServiceTest {
         pageObject.setPageSize(10);
 
         PageVo<PlayerInfo> result = service.findPage(pageObject);
-        Assert.assertEquals(2, result.getData().size());
+        Assertions.assertEquals(2, result.getData().size());
 
         pageObject.setCurrentPageNo(1L);
         pageObject.setPageSize(10);
 
         PageVo<PlayerInfo> resultPageOne = service.findPage(pageObject);
-        Assert.assertEquals(10, resultPageOne.getData().size());
+        Assertions.assertEquals(10, resultPageOne.getData().size());
 
         pageObject.setCurrentPageNo(1L);
         pageObject.setPageSize(20);
 
         PageVo<PlayerInfo> resultTwenty = service.findPage(pageObject);
-        Assert.assertEquals(12, resultTwenty.getData().size());
+        Assertions.assertEquals(12, resultTwenty.getData().size());
 
         pageObject.setCurrentPageNo(3L);
         pageObject.setPageSize(20);
 
         PageVo<PlayerInfo> resultOutOfBound = service.findPage(pageObject);
-        Assert.assertEquals(0, resultOutOfBound.getData().size());
+        Assertions.assertEquals(0, resultOutOfBound.getData().size());
 
     }
 }
