@@ -22,17 +22,89 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 public class ApiDocConfig implements WebMvcConfigurer {
     private final Environment environment;
 
-    @Bean
-    public Docket docket() {
+    @Bean("debugDocket")
+    public Docket debugDocket() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
-                .enable(checkEnvironment())
-                .groupName("Debug")
+//                .enable(checkEnvironment())
+                .groupName("Lua调试")
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("moe.ofs.backend.debug.controllers"))
                 .paths(PathSelectors.any())
                 .build();
     }
+
+    @Bean("addonDocket")
+    public Docket addonDocket() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+//                .enable(checkEnvironment())
+                .groupName("插件")
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("moe.ofs.backend.addons.controllers"))
+                .paths(PathSelectors.any())
+                .build();
+    }
+
+    @Bean("roleDocket")
+    public Docket roleDocket() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+//                .enable(checkEnvironment())
+                .groupName("角色")
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("moe.ofs.backend.function.admin.controller"))
+                .paths(PathSelectors.any())
+                .build();
+    }
+
+    @Bean("AirdromeDocket")
+    public Docket AirdromeDocket() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+//                .enable(checkEnvironment())
+                .groupName("机场")
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("moe.ofs.backend.util"))
+                .paths(PathSelectors.any())
+                .build();
+    }
+
+    @Bean("configDocket")
+    public Docket configDocket() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+//                .enable(checkEnvironment())
+                .groupName("脚本配置")
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("moe.ofs.backend.config.controllers"))
+                .paths(PathSelectors.ant("/config/**"))
+                .build();
+    }
+
+    @Bean("serverDocket")
+    public Docket serverDocket() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+//                .enable(checkEnvironment())
+                .groupName("服务器")
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("moe.ofs.backend.config.controllers"))
+                .paths(PathSelectors.ant("/server/**"))
+                .build();
+    }
+
+//    @Bean
+//    public Docket addonDocket() {
+//        return new Docket(DocumentationType.SWAGGER_2)
+//                .apiInfo(apiInfo())
+////                .enable(checkEnvironment())
+//                .groupName("插件管理")
+//                .select()
+//                .apis(RequestHandlerSelectors.basePackage("moe.ofs.backend.addons.controllers"))
+//                .paths(PathSelectors.any())
+//                .build();
+//    }
 
     private ApiInfo apiInfo() {
         Contact contact = new Contact("北欧式的简单 ，Tyler997", "https://github.com/Kaidrick/Project-Lava", "");

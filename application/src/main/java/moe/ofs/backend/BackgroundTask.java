@@ -17,8 +17,8 @@ import moe.ofs.backend.dispatcher.services.LavaTaskDispatcher;
 import moe.ofs.backend.domain.connector.Level;
 import moe.ofs.backend.domain.connector.OperationPhase;
 import moe.ofs.backend.domain.connector.handlers.scripts.LuaScriptStarter;
-import moe.ofs.backend.domain.message.connection.ConnectionStatusChange;
 import moe.ofs.backend.domain.message.connection.ConnectionStatus;
+import moe.ofs.backend.domain.message.connection.ConnectionStatusChange;
 import moe.ofs.backend.handlers.BackgroundTaskRestartObservable;
 import moe.ofs.backend.handlers.LuaScriptInjectionObservable;
 import moe.ofs.backend.handlers.MissionStartObservable;
@@ -155,7 +155,7 @@ public class BackgroundTask {
         // set value anyway
         this.started = started;
 
-        if(started) {
+        if (started) {
 
             log.info("Starting Background Task...");
 
@@ -164,7 +164,7 @@ public class BackgroundTask {
 
             // there can only be one background thread
             // how to ensure this is a singleton?
-            if(backgroundThread == null) {
+            if (backgroundThread == null) {
                 backgroundThread = new Thread(background);
                 backgroundThread.setName("bg task");
                 backgroundThread.start();
@@ -211,7 +211,7 @@ public class BackgroundTask {
 
 
     private void shutdownExecutorService(ExecutorService service) {
-        if(service != null) {
+        if (service != null) {
             service.shutdown();
             try {
                 if (!service.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
@@ -225,11 +225,11 @@ public class BackgroundTask {
 
     // probably should use a property changed handler? so that request handler don't need a backgrountask instance
     public void stop() throws InterruptedException {
-        if(isHalted.get()) {
+        if (isHalted.get()) {
             return;
         }
 
-        if(backgroundThread != null)
+        if (backgroundThread != null)
             backgroundThread.interrupt();
 
         requestHandler.dispose();
@@ -362,7 +362,7 @@ public class BackgroundTask {
         LavaSystemStatus.setInjectionTaskChecks(luaScriptInjectService.invokeInjection());
 //                .forEach(((task, aBoolean) -> System.out.println(task.getScriptIdentName() + " -> " + aBoolean)));
 
-        if(!flag) {
+        if (!flag) {
             log.info("injecting mission persistence");
 
             LuaScriptInjectionObservable.invokeAll();
