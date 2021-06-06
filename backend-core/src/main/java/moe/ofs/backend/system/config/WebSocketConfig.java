@@ -14,8 +14,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.enableStompBrokerRelay("/topic", "/queue")
                 .setRelayHost("localhost").setRelayPort(61613)
-                .setSystemHeartbeatSendInterval(2000)  // 5000
-                .setSystemHeartbeatReceiveInterval(2000);  // 10000
+                .setSystemHeartbeatSendInterval(10000)  // 5000
+                .setSystemHeartbeatReceiveInterval(10000);  // 10000
         registry.setApplicationDestinationPrefixes("/app");
     }
 

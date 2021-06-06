@@ -1,10 +1,12 @@
 package moe.ofs.backend.connector.response;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import moe.ofs.backend.connector.LavaSystemStatus;
 import moe.ofs.backend.connector.exceptions.RequestInvalidStateException;
 import moe.ofs.backend.domain.connector.OperationPhase;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Type;
@@ -106,7 +108,19 @@ public interface LuaResponse extends Resolvable {
         if(!isSent()) {
             throw new RequestInvalidStateException("Request has never been sent and thus has no result.");
         }
-        return gson.fromJson(get(), type);
+
+        String jsonResponseString = get();
+
+        try {
+            return gson.fromJson(jsonResponseString, type);
+        } catch (JsonSyntaxException e) {
+            e.printStackTrace();
+
+            Logger logger = LoggerFactory.getLogger(String.valueOf(this));
+            logger.error("bad string -> {}", jsonResponseString);
+
+            return null;
+        }
     }
 
     default long getAsLong() {
