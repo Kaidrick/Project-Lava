@@ -10,8 +10,13 @@ import moe.ofs.backend.security.service.AdminInfoService;
 import moe.ofs.backend.security.token.PasswordTypeToken;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.util.DigestUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -29,7 +34,13 @@ public class PasswordTypeProvider implements AuthenticationProvider {
 
         if (adminInfo == null) throw new BadLoginCredentialsException("用户名或密码不正确");
         addAdminInfoDto(adminInfo);
-        return new PasswordTypeToken(null, adminInfo, null);
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        for (String role : adminInfo.getRoles()) {
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
+
+        return new PasswordTypeToken(authorities, adminInfo, null);
     }
 
     public Authentication authenticate(String accessToken) {
@@ -37,7 +48,13 @@ public class PasswordTypeProvider implements AuthenticationProvider {
         if (adminInfo == null) throw new InvalidAccessTokenException("AccessToken已过期或非法");
 
         addAdminInfoDto(adminInfo);
-        return new PasswordTypeToken(null, adminInfo, null);
+
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        for (String role : adminInfo.getRoles()) {
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
+
+        return new PasswordTypeToken(authorities, adminInfo, null);
     }
 
     private void addAdminInfoDto(AdminInfo adminInfo) {

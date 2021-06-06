@@ -1,15 +1,13 @@
 package moe.ofs.backend.debug.controllers;
 
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
-import com.github.xiaoymin.knife4j.annotations.DynamicParameter;
-import com.github.xiaoymin.knife4j.annotations.DynamicResponseParameters;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import moe.ofs.backend.debug.model.LuaCommand;
-import moe.ofs.backend.connector.util.LuaScripts;
 import moe.ofs.backend.connector.lua.LuaQueryEnv;
+import moe.ofs.backend.connector.util.LuaScripts;
+import moe.ofs.backend.debug.model.LuaCommand;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,16 +25,12 @@ public class LuaDebugConsoleController {
      * Basic console debug do string method used to load lua string in DCS lua server.
      * Debug Lua string execution should always return a value.
      * The debug command should only be executed if the connection between backend and DCS lua server is established.
+     *
      * @param luaCommand the lua command object that contains the actual string, timestamp, and debug environment.
      * @return the String value that is returned from the dcs Lua server.
      */
     @RequestMapping(value = "/debug", method = RequestMethod.POST)
-    @ApiOperation(value = "Sends Lua string to DCS and return a result if necessary")
-//    这是定义返回结果的
-    @DynamicResponseParameters(properties = {
-            @DynamicParameter(name = "code", value = "状态码", example = "200", dataTypeClass = Integer.class),
-            @DynamicParameter(name = "msg", value = "信息", example = "成功", dataTypeClass = String.class),
-    })
+    @ApiOperation(value = "Lua调试接口")
     public String sendDebugString(
             @ApiParam
             @RequestBody LuaCommand luaCommand) {
@@ -59,7 +53,10 @@ public class LuaDebugConsoleController {
     }
 
     @RequestMapping(value = "/exec", method = RequestMethod.POST)
-    public String sendExecString(@RequestBody LuaCommand luaCommand) {
+    public String sendExecString(
+            @ApiParam
+            @RequestBody LuaCommand luaCommand
+    ) {
         return "should return a exec state here?";
     }
 
