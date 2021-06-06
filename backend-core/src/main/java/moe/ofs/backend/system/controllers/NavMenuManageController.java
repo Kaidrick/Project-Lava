@@ -11,7 +11,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("system/nav-menu")  // FIXME: fix underscore
-@CheckPermission(requiredAccessToken = true, roles = {"admin.super_admin"})
+//@CheckPermission(requiredAccessToken = true, roles = {"admin.super_admin"})
 public class NavMenuManageController {
 
     private final NavMenuManageService service;

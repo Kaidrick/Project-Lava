@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.web.socket.AbstractSecurit
 @Configuration
 public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBrokerConfigurer {
 
-
     @Override
     protected void configureInbound(MessageSecurityMetadataSourceRegistry messages) {
         messages
@@ -16,12 +15,11 @@ public class WebSocketSecurityConfig extends AbstractSecurityWebSocketMessageBro
                 .permitAll()
 
                 .simpDestMatchers("/app/**")
-                .permitAll()
-
+                .hasAuthority("admin.super_admin")
+//                .permitAll()
 
                 .simpSubscribeDestMatchers("/app/**")
-                .permitAll()
-
+                .hasAuthority("admin.super_admin")
 
                 .anyMessage()
                 .denyAll();
