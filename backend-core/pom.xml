@@ -117,6 +117,11 @@
             <artifactId>spring-security-messaging</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.apache.activemq/activemq-spring -->
         <dependency>
             <groupId>org.apache.activemq</groupId>

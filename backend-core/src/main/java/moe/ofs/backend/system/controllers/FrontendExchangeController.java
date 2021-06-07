@@ -3,24 +3,29 @@ package moe.ofs.backend.system.controllers;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import moe.ofs.backend.domain.jms.LogEntry;
-import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.domain.jms.LogLevel;
+import moe.ofs.backend.jms.Sender;
+import moe.ofs.backend.security.annotation.CheckPermission;
 import moe.ofs.backend.system.FrontendStatusMonitor;
+import moe.ofs.backend.system.model.WebSocketAuthInfo;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.jms.TextMessage;
+import java.util.UUID;
 
-@Controller
+@RestController
 @Slf4j
 public class FrontendExchangeController {
 
     private final Sender sender;
+
+    private final Cache websocketAuthCache;
 
     private final FrontendStatusMonitor monitor;
 
@@ -29,10 +34,29 @@ public class FrontendExchangeController {
 
     private final JmsTemplate jmsTemplate;
 
-    public FrontendExchangeController(Sender sender, FrontendStatusMonitor monitor, JmsTemplate jmsTemplate) {
+
+    public FrontendExchangeController(Sender sender, FrontendStatusMonitor monitor,
+                                      JmsTemplate jmsTemplate, CacheManager cacheManager) {
         this.sender = sender;
         this.monitor = monitor;
         this.jmsTemplate = jmsTemplate;
+
+        this.websocketAuthCache = cacheManager.getCache("websockets");
+    }
+
+    @CheckPermission(requiredAccessToken = true)
+    @GetMapping("/app/ws-token")
+    public String requestWebsocketHandshakeToken(@RequestHeader("access_token") String accessToken) {
+        UUID websocketAuthToken = UUID.randomUUID();
+
+        WebSocketAuthInfo authInfo = new WebSocketAuthInfo();
+        authInfo.setOneTimeToken(websocketAuthToken.toString());
+        authInfo.setTimestamp(System.currentTimeMillis());
+        authInfo.setAccessToken(accessToken);
+
+        websocketAuthCache.put(websocketAuthToken.toString(), authInfo);
+
+        return websocketAuthToken.toString();
     }
 
     /**
