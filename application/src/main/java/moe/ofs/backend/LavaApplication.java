@@ -13,7 +13,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -23,7 +22,6 @@ import java.util.Date;
 
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @EnableScheduling
-@EnableCaching
 @Slf4j
 public class LavaApplication {
     private final HeartbeatThreadFactory heartbeatThreadFactory;

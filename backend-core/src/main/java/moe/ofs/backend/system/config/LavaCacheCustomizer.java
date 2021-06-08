@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
-@Component
+//@Component
 public class LavaCacheCustomizer implements CacheManagerCustomizer<ConcurrentMapCacheManager> {
     @Override
     public void customize(ConcurrentMapCacheManager cacheManager) {

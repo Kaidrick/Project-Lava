@@ -1,6 +1,7 @@
 package moe.ofs.backend.system.interceptors.stomp;
 
 import moe.ofs.backend.system.model.WebSocketAuthInfo;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,7 @@ public class StompHandshakeInterceptor implements HandshakeInterceptor {
 
     private final Cache websocketAuthCache;
 
-    public StompHandshakeInterceptor(CacheManager cacheManager) {
+    public StompHandshakeInterceptor(@Qualifier("websocketAuthCacheManager") CacheManager cacheManager) {
         this.websocketAuthCache = cacheManager.getCache("websockets");
     }
 
@@ -48,6 +49,11 @@ public class StompHandshakeInterceptor implements HandshakeInterceptor {
 
     }
 
+    /**
+     * Extract one-time token passed by the request url from client
+     * @param serverHttpRequest the HTTP request that may carry a one-time token
+     * @return extracted token from query string
+     */
     private String getOneTimeToken(ServerHttpRequest serverHttpRequest) {
         UriComponents uriComponents = UriComponentsBuilder.fromHttpRequest(serverHttpRequest).build();
         return uriComponents.getQueryParams().getFirst("token");

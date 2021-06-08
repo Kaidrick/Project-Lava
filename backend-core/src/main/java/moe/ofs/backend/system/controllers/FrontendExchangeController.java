@@ -8,6 +8,7 @@ import moe.ofs.backend.jms.Sender;
 import moe.ofs.backend.security.annotation.CheckPermission;
 import moe.ofs.backend.system.FrontendStatusMonitor;
 import moe.ofs.backend.system.model.WebSocketAuthInfo;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.jms.core.JmsTemplate;
@@ -36,7 +37,8 @@ public class FrontendExchangeController {
 
 
     public FrontendExchangeController(Sender sender, FrontendStatusMonitor monitor,
-                                      JmsTemplate jmsTemplate, CacheManager cacheManager) {
+                                      JmsTemplate jmsTemplate,
+                                      @Qualifier("websocketAuthCacheManager") CacheManager cacheManager) {
         this.sender = sender;
         this.monitor = monitor;
         this.jmsTemplate = jmsTemplate;
