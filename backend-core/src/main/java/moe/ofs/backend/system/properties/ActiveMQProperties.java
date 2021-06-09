@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
-@Configuration
+//@Configuration
 @PropertySource(value = "classpath:activemq-ssl-config.properties", encoding = "UTF-8")
 @ConfigurationProperties(prefix = "activemq.ssl")
 @Getter

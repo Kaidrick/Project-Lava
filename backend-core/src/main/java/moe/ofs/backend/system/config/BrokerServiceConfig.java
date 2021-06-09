@@ -23,7 +23,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 public class BrokerServiceConfig {
 
-    private final ActiveMQProperties activeMQProperties;
+//    private final ActiveMQProperties activeMQProperties;
 
     @Bean(initMethod = "start", destroyMethod = "stop")
     public BrokerService broker() throws Exception {
@@ -36,38 +36,38 @@ public class BrokerServiceConfig {
 //        broker.addConnector("ws://localhost:61618/notting");
 //        broker.addConnector("wss://localhost:61619");
 
-        broker.addSslConnector(activeMQProperties.getBrokerUrl(), readKeystore(), readTruststore(), null);
-
-        SslContext sslContext = new SslContext();
-        sslContext.setKeyManagers(Arrays.asList(readKeystore()));
-        sslContext.setTrustManagers(Arrays.asList(readTruststore()));
-
-        broker.setSslContext(sslContext);
+//        broker.addSslConnector(activeMQProperties.getBrokerUrl(), readKeystore(), readTruststore(), null);
+//
+//        SslContext sslContext = new SslContext();
+//        sslContext.setKeyManagers(Arrays.asList(readKeystore()));
+//        sslContext.setTrustManagers(Arrays.asList(readTruststore()));
+//
+//        broker.setSslContext(sslContext);
 
         return broker;
     }
 
-    private KeyManager[] readKeystore() throws Exception {
-        final KeyManagerFactory
-                theKeyManagerFactory
-                = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-        final KeyStore theKeyStore = KeyStore.getInstance(activeMQProperties.getBrokerKeystoreType());
-
-        final Resource theKeystoreResource = new ClassPathResource(activeMQProperties.getBrokerKeystore());
-        theKeyStore.load(theKeystoreResource.getInputStream(),
-                activeMQProperties.getBrokerKeystorePassword().toCharArray());
-        theKeyManagerFactory.init(theKeyStore, activeMQProperties.getBrokerKeystorePassword().toCharArray());
-        return theKeyManagerFactory.getKeyManagers();
-    }
-
-    private TrustManager[] readTruststore() throws Exception {
-        final KeyStore theTruststore = KeyStore.getInstance(activeMQProperties.getBrokerTruststoreType());
-
-        final Resource theTruststoreResource = new ClassPathResource(activeMQProperties.getBrokerTruststore());
-        theTruststore.load(theTruststoreResource.getInputStream(), null);
-        final TrustManagerFactory theTrustManagerFactory
-                = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        theTrustManagerFactory.init(theTruststore);
-        return theTrustManagerFactory.getTrustManagers();
-    }
+//    private KeyManager[] readKeystore() throws Exception {
+//        final KeyManagerFactory
+//                theKeyManagerFactory
+//                = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+//        final KeyStore theKeyStore = KeyStore.getInstance(activeMQProperties.getBrokerKeystoreType());
+//
+//        final Resource theKeystoreResource = new ClassPathResource(activeMQProperties.getBrokerKeystore());
+//        theKeyStore.load(theKeystoreResource.getInputStream(),
+//                activeMQProperties.getBrokerKeystorePassword().toCharArray());
+//        theKeyManagerFactory.init(theKeyStore, activeMQProperties.getBrokerKeystorePassword().toCharArray());
+//        return theKeyManagerFactory.getKeyManagers();
+//    }
+//
+//    private TrustManager[] readTruststore() throws Exception {
+//        final KeyStore theTruststore = KeyStore.getInstance(activeMQProperties.getBrokerTruststoreType());
+//
+//        final Resource theTruststoreResource = new ClassPathResource(activeMQProperties.getBrokerTruststore());
+//        theTruststore.load(theTruststoreResource.getInputStream(), null);
+//        final TrustManagerFactory theTrustManagerFactory
+//                = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+//        theTrustManagerFactory.init(theTruststore);
+//        return theTrustManagerFactory.getTrustManagers();
+//    }
 }
