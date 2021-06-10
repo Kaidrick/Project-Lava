@@ -1,6 +1,9 @@
 package moe.ofs.backend.system.interceptors.stomp;
 
 import lombok.extern.slf4j.Slf4j;
+import moe.ofs.backend.domain.LavaUserToken;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.lang.NonNull;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -18,14 +21,25 @@ import java.util.List;
 @Component
 public class StompCommandAuthorityInterceptor implements ChannelInterceptor {
 
+    private final Cache websocketUserSession;
+
+
     private final SimpMessageType[] ignoredTypes = {
             SimpMessageType.HEARTBEAT, SimpMessageType.DISCONNECT, SimpMessageType.UNSUBSCRIBE
     };
+
+    public StompCommandAuthorityInterceptor(CacheManager commonCacheManager) {
+        this.websocketUserSession = commonCacheManager.getCache("ws-user-sessions");
+    }
 
     @Override
     public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
+        LavaUserToken ll = websocketUserSession.get(accessor.getSessionAttributes().get("sessionId"), LavaUserToken.class);
+        System.out.println(ll);
+
+        // allow frames with simple commands
         if (Arrays.asList(ignoredTypes).contains(accessor.getMessageType())) {
             return ChannelInterceptor.super.preSend(message, channel);
         }

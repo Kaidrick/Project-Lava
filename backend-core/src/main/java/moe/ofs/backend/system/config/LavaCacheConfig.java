@@ -30,6 +30,6 @@ public class LavaCacheConfig {
     @Primary
     @Bean
     public CacheManager commonCacheManager() {
-        return new ConcurrentMapCacheManager("accessToken");
+        return new ConcurrentMapCacheManager("accessToken", "ws-user-sessions");
     }
 }

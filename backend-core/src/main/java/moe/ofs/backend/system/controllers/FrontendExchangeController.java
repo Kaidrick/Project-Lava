@@ -14,6 +14,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -67,7 +68,8 @@ public class FrontendExchangeController {
      */
     @MessageMapping(FRONTEND_REGISTER_MESSAGE_ENDPOINT)  // - receive message from /app/front.exchange
     @SendTo(FRONTEND_BUS_TOPIC)            // - process and return value to /topic/greetings
-    public String exchangeRegistry(String message) {
+    public String exchangeRegistry(String message, SimpMessageHeaderAccessor accessor) {
+        System.out.println("accessor.getFirstNativeHeader(\"lava-user-ident\") = " + accessor.getFirstNativeHeader("lava-user-ident"));
         System.out.println("message = " + message);
         monitor.changeStatus(FrontendStatusMonitor.Status.CONNECTED);
 //        Thread.sleep(1000);
