@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -66,10 +67,10 @@ public class FrontendExchangeController {
      * - @MessageMapping: Performs mapping of Spring Message with message handling methods.
      * - @SendTo: Converts method return value to Spring Message and send it to specified destination.
      */
-    @MessageMapping(FRONTEND_REGISTER_MESSAGE_ENDPOINT)  // - receive message from /app/front.exchange
-    @SendTo(FRONTEND_BUS_TOPIC)            // - process and return value to /topic/greetings
-    public String exchangeRegistry(String message, SimpMessageHeaderAccessor accessor) {
-        System.out.println("accessor.getFirstNativeHeader(\"lava-user-ident\") = " + accessor.getFirstNativeHeader("lava-user-ident"));
+    @MessageMapping("/frontend.exchange/{userIdent}")  // - receive message from /app/front.exchange
+    @SendTo("/topic/frontend.bus")            // - process and return value to /topic/greetings
+    public String exchangeRegistry(String message, SimpMessageHeaderAccessor accessor, @DestinationVariable String userIdent) {
+        System.out.println("userIdent = " + userIdent);
         System.out.println("message = " + message);
         monitor.changeStatus(FrontendStatusMonitor.Status.CONNECTED);
 //        Thread.sleep(1000);

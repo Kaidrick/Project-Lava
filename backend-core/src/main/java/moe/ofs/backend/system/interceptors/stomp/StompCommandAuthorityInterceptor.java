@@ -36,24 +36,18 @@ public class StompCommandAuthorityInterceptor implements ChannelInterceptor {
     public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
-        LavaUserToken ll = websocketUserSession.get(accessor.getSessionAttributes().get("sessionId"), LavaUserToken.class);
-        System.out.println(ll);
+        // TODO: user role may change in runtime; update cache on authority changes
+        LavaUserToken userToken = websocketUserSession.get(accessor.getSessionAttributes().get("sessionId"), LavaUserToken.class);
+        String userIdent = userToken.getBaseUserInfoDto().getName();
+
+        // role check
+        if (!userToken.getBaseUserInfoDto().getRoles().contains("admin.super_admin")) {
+            throw new AccessDeniedException("Only available for super administrator");
+        }
 
         // allow frames with simple commands
         if (Arrays.asList(ignoredTypes).contains(accessor.getMessageType())) {
             return ChannelInterceptor.super.preSend(message, channel);
-        }
-
-        List<String> lavaUserIdentHeader = accessor.getNativeHeader("lava-user-ident");
-        if (lavaUserIdentHeader == null) {
-            throw new AccessDeniedException("Missing Lava user identification in header");
-        }
-
-        String ident = lavaUserIdentHeader.get(lavaUserIdentHeader.size() - 1);
-
-        // TODO: allow root at the moment
-        if (!ident.equals("root")) {
-            throw new AccessDeniedException("Only available for super administrator");
         }
 
         // only a single topic is exposed to web client to receive messages
@@ -71,7 +65,8 @@ public class StompCommandAuthorityInterceptor implements ChannelInterceptor {
         } else if (StompCommand.SEND.equals(accessor.getCommand())) {
             String destination = accessor.getDestination();
 
-            if (destination != null && destination.equals("/app/frontend.exchange")) {
+            // check for allowed topics or queues
+            if (destination != null && destination.equals(String.format("/app/frontend.exchange/%s", userIdent))) {
                 log.info("trying to send: {}", destination);
             } else {
                 log.info("Send to {} is not allowed.", destination);
